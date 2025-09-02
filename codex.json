@@ -1,0 +1,319 @@
+{
+  "name": "InfoTerminal – Codex Plan",
+  "version": "1.0.0",
+  "owner": "161sam",
+  "default_branch": "main",
+  "goals": [
+    "Vollständige technische Prüfung und Reparatur des Monorepos",
+    "Stabiler Dev-Start (lokal) inkl. Build, Lint, Tests",
+    "Qualitäts-Gates durchsetzen (Lint, Types, Coverage, Policy-Tests)",
+    "Fehlende Tests und minimale Observability-Hooks ergänzen (ohne Over-Engineering)",
+    "Dokumentation in docs/* aktuell halten (Quickstart, Runbooks, ADR-Start)"
+  ],
+  "non_goals": [
+    "Keine produktiven Cloud-Deployments",
+    "Kein irreversibles Refactoring quer durch alle Services ohne klaren Nachweis des Nutzens",
+    "Keine geheimen Keys/Passwörter in Repo-Dateien schreiben"
+  ],
+  "workspace": {
+    "include": [
+      "apps/**",
+      "services/**",
+      "infra/**",
+      "etl/**",
+      "docs/**",
+      "Makefile",
+      ".github/workflows/**",
+      "pyproject.toml",
+      "package.json",
+      "pnpm-workspace.yaml"
+    ],
+    "exclude": [
+      "**/.venv/**",
+      "**/node_modules/**",
+      "**/.mypy_cache/**",
+      "**/.ruff_cache/**",
+      "**/.pytest_cache/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.next/**"
+    ]
+  },
+  "languages": {
+    "python": ">=3.11",
+    "node": ">=20.0.0"
+  },
+  "tooling": {
+    "python": {
+      "package_managers": ["uv", "pip"],
+      "linters": ["ruff"],
+      "formatters": ["ruff"],
+      "typecheck": "mypy",
+      "tests": "pytest",
+      "coverage_min": 0.8
+    },
+    "javascript": {
+      "package_managers": ["pnpm", "npm"],
+      "linters": ["eslint"],
+      "formatters": ["prettier"],
+      "typecheck": "tsc",
+      "tests": "vitest",
+      "e2e": "playwright",
+      "coverage_min": 0.8
+    },
+    "policy": {
+      "opa_conftest": true
+    },
+    "containers": {
+      "scan": ["trivy"],
+      "enabled": false
+    }
+  },
+  "quality_gates": {
+    "fail_on_lint_errors": true,
+    "fail_on_type_errors": true,
+    "fail_on_test_failures": true,
+    "fail_on_coverage_drop": true,
+    "eslint_max_warnings": 0,
+    "opa_policy_tests_required": true
+  },
+  "conventions": {
+    "commits": "conventional",
+    "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
+    "code_style": "pep8 + ruff + eslint + prettier",
+    "docs_style": "docs/ in Markdown; ADRs unter docs/adr"
+  },
+  "paths": {
+    "apps": ["apps/*"],
+    "services": ["services/*"],
+    "infra": ["infra/**"],
+    "etl": ["etl/**"],
+    "docs": ["docs/**"],
+    "tests": ["**/tests/**", "**/__tests__/**"]
+  },
+  "secrets_guardrails": {
+    "block_globs": [
+      "**/.env",
+      "**/.env.*",
+      "**/secrets.*",
+      "**/*credentials*",
+      "**/*key*"
+    ],
+    "sanitize_patterns": [
+      "OPENAI_API_KEY",
+      "KEYCLOAK_*",
+      "POSTGRES_PASSWORD",
+      "NEO4J_AUTH",
+      "OPENSEARCH_PASSWORD",
+      "MINIO_*",
+      "OAUTH_*"
+    ]
+  },
+  "commands": {
+    "detect": [
+      "test -f Makefile || echo 'NO_MAKEFILE'",
+      "command -v uv >/dev/null 2>&1 || echo 'NO_UV'",
+      "command -v pnpm >/dev/null 2>&1 || echo 'NO_PNPM'",
+      "command -v conftest >/dev/null 2>&1 || echo 'NO_CONFTEST'"
+    ],
+    "bootstrap": [
+      "if test -f Makefile; then make bootstrap || true; fi",
+      "if test -f pnpm-lock.yaml; then pnpm install --frozen-lockfile || pnpm install; fi",
+      "python3 -m pip install -U pip || true",
+      "if command -v uv >/dev/null 2>&1; then uv venv .venv || true; fi"
+    ],
+    "lint_python": [
+      "python3 -m pip install -q ruff mypy pytest pytest-asyncio pytest-cov || true",
+      "ruff check --exit-zero .",
+      "ruff format --check .",
+      "mypy --install-types --non-interactive || true",
+      "mypy services || true"
+    ],
+    "lint_js": [
+      "if test -f package.json; then pnpm run -w lint || pnpm run lint || true; fi",
+      "if test -f package.json; then pnpm run -w typecheck || pnpm run typecheck || true; fi",
+      "if test -f package.json; then pnpm run -w format:check || true; fi"
+    ],
+    "test_python": [
+      "pytest -q --maxfail=1 --disable-warnings --cov=.:services --cov-report=term-missing || true"
+    ],
+    "test_js": [
+      "if test -f package.json; then pnpm run -w test:unit -- --run || pnpm run test -- --run || true; fi",
+      "if test -f package.json; then pnpm exec playwright install --with-deps || true; fi",
+      "if test -f package.json; then pnpm run -w test:e2e -- --reporter=list || true; fi"
+    ],
+    "policy_tests": [
+      "if command -v conftest >/dev/null 2>&1; then conftest test infra/**/*.yaml || true; fi"
+    ],
+    "build_frontend": [
+      "if test -f package.json; then pnpm -w build || pnpm build; fi"
+    ],
+    "build_services": [
+      "find services -maxdepth 2 -name 'pyproject.toml' -print0 | xargs -0 -I{} sh -c \"cd \\\"$(dirname {})\\\" && (uv pip install -e .[dev] || pip install -e .[dev])\""
+    ],
+    "dev_up": [
+      "if test -f Makefile; then make dev-up; else echo 'No make dev-up; skipping'; fi"
+    ],
+    "seed_demo": [
+      "if test -f Makefile; then make seed-demo || true; fi"
+    ],
+    "apps_up": [
+      "if test -f Makefile; then make apps-up || true; fi"
+    ],
+    "format_all": [
+      "ruff check --fix . || true",
+      "ruff format . || true",
+      "if test -f package.json; then pnpm -w format || true; fi"
+    ],
+    "k8s_validate": [
+      "if command -v kubeconform >/dev/null 2>&1; then kubeconform -strict -summary -ignore-missing-schemas infra/**/*.yaml || true; fi"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "01-analyze-structure",
+      "title": "Repo-Struktur & Abhängigkeiten erfassen",
+      "steps": [
+        "Listung aller Top-Level-Ordner gegen expected paths (apps, services, infra, etl, docs).",
+        "Erzeuge ein Artefakt docs/dev/INVENTORY.md mit Dateibaum (bis Tiefe 3) und Hinweisen zu Lücken (fehlende README, fehlende pyproject, etc.).",
+        "Erzeuge docs/dev/TODO_INDEX.md mit gruppierten TODO/FIXME/NOTE Funden (grep -R)."
+      ],
+      "acceptance": [
+        "INVENTORY.md und TODO_INDEX.md existieren und verlinken auf relevante Stellen im Code."
+      ]
+    },
+    {
+      "id": "02-bootstrap-build",
+      "title": "Bootstrap & Builds",
+      "steps": [
+        "Führe commands.detect und commands.bootstrap aus.",
+        "Baue Frontend (commands.build_frontend) und Python-Services (commands.build_services).",
+        "Erzeuge artefakt docs/dev/BUILD_REPORT.md (Ergebnis, Warnungen, offene Punkte)."
+      ],
+      "acceptance": [
+        "BUILD_REPORT.md vorhanden, Build ohne kritische Fehler."
+      ]
+    },
+    {
+      "id": "03-lint-typecheck",
+      "title": "Linting & Typprüfung",
+      "steps": [
+        "Führe commands.lint_python und commands.lint_js aus.",
+        "Bei Fehlern: minimal-invasiv fixen (Imports, tsconfig, ruff).",
+        "Aktualisiere pyproject/tsconfig/eslint/prettier falls nötig.",
+        "Erzeuge docs/dev/LINT_TYPECHECK_REPORT.md."
+      ],
+      "acceptance": [
+        "Keine Lint- oder Typfehler (eslint_max_warnings=0, mypy ohne Fehler)."
+      ]
+    },
+    {
+      "id": "04-tests-minimal",
+      "title": "Testsuite–Skeleton & Minimaltests",
+      "steps": [
+        "Falls keine Tests: lege pro Python-Service tests/test_health.py (FastAPI TestClient) an.",
+        "Falls Frontend vorhanden: richte vitest ein und erstelle mind. 1 Rendering-Test.",
+        "Richte Coverage-Reports ein (pytest-cov, vitest --coverage).",
+        "Führe commands.test_python und commands.test_js aus.",
+        "Erzeuge docs/dev/TEST_REPORT.md mit Coverage-Werten."
+      ],
+      "acceptance": [
+        "Tests laufen grün, initiale Coverage >= 0.5, konfigurierte Thresholds dokumentiert."
+      ]
+    },
+    {
+      "id": "05-policy-and-infra-checks",
+      "title": "OPA/Conftest & K8s-Validierung",
+      "steps": [
+        "Führe commands.policy_tests und commands.k8s_validate aus.",
+        "Dokumentiere Ergebnisse in docs/dev/POLICY_INFRA_REPORT.md.",
+        "Wenn nötig: lege Beispiel-Conftest-Tests an (infra/k8s/opa/tests)."
+      ],
+      "acceptance": [
+        "Policy-Tests laufen, K8s-Manifeste validiert (keine Blocker)."
+      ]
+    },
+    {
+      "id": "06-dev-run-path",
+      "title": "Lokaler Dev-Run (optional, falls Makefile vorhanden)",
+      "steps": [
+        "Führe commands.dev_up, commands.apps_up, commands.seed_demo aus.",
+        "Dokumentiere Startreihenfolge und Endpunkte in docs/dev/QUICKSTART_LOCAL.md."
+      ],
+      "acceptance": [
+        "QUICKSTART_LOCAL.md enthält Start/Stop/Health-Check Schritte inkl. bekannte Ports."
+      ]
+    },
+    {
+      "id": "07-missing-tests-and-hooks",
+      "title": "Gezielte Tests & Observability-Hooks",
+      "steps": [
+        "Für je einen Kernservice (z.B. search, graph): füge 2–3 API-Tests (Happy/Edge) hinzu.",
+        "Füge minimale OpenTelemetry-Hooks ein (Start/Stop Span pro Request), Feature-flag-gesteuert.",
+        "Aktualisiere docs/dev/OBSERVABILITY_NOTES.md (Wie OTEL aktivieren, Exporter-Hinweis)."
+      ],
+      "acceptance": [
+        "Neue Tests grün, einfache Tracing-Hooks vorhanden (per ENV aktivierbar)."
+      ]
+    },
+    {
+      "id": "08-docs-refresh",
+      "title": "Doku-Abgleich & ADR-Start",
+      "steps": [
+        "README-Quickstart prüfen/aktualisieren, docs/* synchronisieren.",
+        "Lege docs/adr/0001-architecture-overview.md an (Template + Links).",
+        "Pflege docs/dev/CHANGELOG_DRAFT.md (Änderungen dieser Runde)."
+      ],
+      "acceptance": [
+        "README stimmt mit aktuellem Startpfad überein; ADR vorhanden; Changelog-Entwurf vorhanden."
+      ]
+    }
+  ],
+  "artifact_policy": {
+    "mode": "create_or_update",
+    "no_raw_patch_blobs": true,
+    "respect_gitignore": true,
+    "confirm_overwrite": true
+  },
+  "ci_recommendations": {
+    "workflows": [
+      {
+        "name": "ci.yml",
+        "includes": [
+          "Setup Python (3.11) & Node (20)",
+          "pnpm install, build, lint, typecheck, vitest",
+          "pip install ruff mypy pytest pytest-cov",
+          "ruff check + ruff format --check",
+          "mypy services",
+          "pytest --cov",
+          "conftest test infra/**/*.yaml (optional)"
+        ],
+        "cache": [
+          "pip",
+          "pnpm",
+          "pytest",
+          "mypy",
+          "ruff"
+        ]
+      }
+    ],
+    "gates": {
+      "coverage_python_min": 0.8,
+      "coverage_js_min": 0.8,
+      "eslint_max_warnings": 0
+    }
+  },
+  "acceptance_criteria": [
+    "Repo baut lokal ohne kritische Fehler.",
+    "Lint, Typecheck, Tests laufen grün; Coverage über Schwellwerten.",
+    "Policy-Tests/K8s-Checks ohne Blocker.",
+    "docs/* enthält aktualisierte Quickstarts/Runbooks.",
+    "Keine Secrets im Repo; .env.example vorhanden/falls nötig ergänzt."
+  ],
+  "notes_for_agent": [
+    "Schreibe Dateien direkt als Artefakte in das Repo (keine diff-Patches posten).",
+    "Bevor du bestehende Dateien überschreibst: sichere eine .bak Kopie mit Zeitstempel.",
+    "Achte auf Einheitlichkeit: ruff (inkl. import sorting) und prettier anwenden.",
+    "Erzeuge kleine, fokussierte Commits mit Conventional Commits."
+  ]
+}
