@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: edge-auth }
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: oauth2-proxy-secret, namespace: edge-auth }
+type: Opaque
+stringData:
+  client-id: edge-proxy
+  client-secret: edge-proxy-secret
+  cookie-secret: "replace_with_32byte_random_base64"  # z.B. `openssl rand -base64 32`
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: oauth2-proxy, namespace: edge-auth }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: oauth2-proxy } }
+  template:
+    metadata: { labels: { app: oauth2-proxy } }
+    spec:
+      containers:
+      - name: oauth2-proxy
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+        args:
+          - --provider=keycloak-oidc
+          - --oidc-issuer-url=http://localhost:8081/realms/infoterminal
+          - --client-id=$(CLIENT_ID)
+          - --client-secret=$(CLIENT_SECRET)
+          - --cookie-secret=$(COOKIE_SECRET)
+          - --cookie-secure=false
+          - --email-domain=*
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:4180
+          - --upstream=file:///dev/null
+          - --skip-provider-button=true
+          - --set-authorization-header=true
+          - --pass-authorization-header=true
+          - --pass-user-headers=true
+          - --pass-access-token=true
+        env:
+          - { name: CLIENT_ID, valueFrom: { secretKeyRef: { name: oauth2-proxy-secret, key: client-id } } }
+          - { name: CLIENT_SECRET, valueFrom: { secretKeyRef: { name: oauth2-proxy-secret, key: client-secret } } }
+          - { name: COOKIE_SECRET, valueFrom: { secretKeyRef: { name: oauth2-proxy-secret, key: cookie-secret } } }
+        ports: [{ containerPort: 4180 }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: oauth2-proxy, namespace: edge-auth }
+spec:
+  selector: { app: oauth2-proxy }
+  ports: [{ name: http, port: 80, targetPort: 4180 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+  namespace: edge-auth
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: auth.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: oauth2-proxy, port: { number: 80 } } }
