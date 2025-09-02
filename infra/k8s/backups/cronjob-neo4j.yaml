@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: backup-neo4j, namespace: default }
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: neo4j-dump
+              image: neo4j:5
+              envFrom: [{ secretRef: { name: infoterminal-app-secrets } }]
+              command:
+                - /bin/bash
+                - -lc
+                - |
+                  set -e
+                  neo4j-admin database dump neo4j --to-path=/tmp --overwrite=true
+                  apt-get update && apt-get install -y awscli || true
+                  aws --endpoint-url "${S3_ENDPOINT}" s3 cp /tmp/neo4j.dump s3://"${S3_BUCKET}"/neo4j/neo4j-$(date -u +%F).dump

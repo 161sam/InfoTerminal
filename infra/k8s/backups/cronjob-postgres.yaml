@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: backup-postgres, namespace: default }
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pg-dump
+              image: bitnami/postgresql:16
+              envFrom: [{ secretRef: { name: infoterminal-app-secrets } }]
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: infoterminal-app-secrets
+                      key: POSTGRES_PASSWORD
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  pg_dumpall -h postgres.default.svc -U app > /tmp/pgdump.sql
+                  apk add --no-cache aws-cli || true
+                  aws --endpoint-url "${S3_ENDPOINT}" s3 cp /tmp/pgdump.sql s3://"${S3_BUCKET}"/postgres/pgdump-$(date -u +%F).sql

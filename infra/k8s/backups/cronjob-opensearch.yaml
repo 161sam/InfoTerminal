@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: backup-opensearch, namespace: default }
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: os-snapshot
+              image: curlimages/curl:8.8.0
+              envFrom: [{ secretRef: { name: infoterminal-app-secrets } }]
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  curl -u "admin:${OPENSEARCH_PASSWORD}" -XPUT "http://opensearch.default.svc:9200/_snapshot/daily" -H 'Content-Type: application/json' -d '{
+                    "type": "fs", "settings": { "location": "/snapshots/daily" }
+                  }' || true
+                  curl -u "admin:${OPENSEARCH_PASSWORD}" -XPUT "http://opensearch.default.svc:9200/_snapshot/daily/snap-$(date -u +%F)?wait_for_completion=true"
