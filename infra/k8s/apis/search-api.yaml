@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: apis }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: search-api-app
+  namespace: apis
+data:
+  app.py: |
+    # identisch zu services/search-api/app.py (v0.3) – minimal ohne auth imports:
+    import os
+    from fastapi import FastAPI, HTTPException, Query
+    from fastapi.middleware.cors import CORSMiddleware
+    from opensearchpy import OpenSearch
+    from typing import Optional, List
+    OS_URL = os.getenv("OS_URL","http://opensearch.search.svc.cluster.local:9200")
+    INDEX = os.getenv("OS_INDEX","docs")
+    app = FastAPI(title="Search API (k8s)", version="0.3k")
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+    client = OpenSearch(OS_URL)
+    def _filters_query(entity_types: List[str]|None):
+        must=[]
+        if entity_types:
+            must.append({"nested":{"path":"entities","query":{"terms":{"entities.type":entity_types}}}})
+        return {"bool":{"must":must}} if must else {"match_all":{}}
+    def _aggs():
+        return {"entity_types":{"nested":{"path":"entities"},"aggs":{"types":{"terms":{"field":"entities.type","size":20}}}}}
+    @app.get("/healthz") 
+    def health(): return {"ok":True}
+    @app.get("/search")
+    def search(q: str, entity_type: Optional[str] = Query(None)):
+        try:
+            ets=[s for s in (entity_type.split(",") if entity_type else []) if s]
+            query={"bool":{"must":[{"multi_match":{"query":q,"fields":["title^2","body","entities.name^3"]}}],"filter":[_filters_query(ets)]}}
+            res=client.search(index=INDEX, body={"query":query, "aggs":_aggs(), "size":20})
+            hits=res.get("hits",{}).get("hits",[])
+            aggs=res.get("aggregations",{})
+            facets={"entity_types":[{"key":b["key"],"count":b["doc_count"]} for b in aggs.get("entity_types",{}).get("types",{}).get("buckets",[])]}
+            return {"results":[{"id":h["_id"],"score":h["_score"], **h["_source"]} for h in hits], "facets":facets}
+        except Exception as e:
+            raise HTTPException(500, f"search error: {e}")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: search-api, namespace: apis }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: search-api } }
+  template:
+    metadata: { labels: { app: search-api } }
+    spec:
+      containers:
+      - name: app
+        image: python:3.11-slim
+        command: ["/bin/sh","-c"]
+        args:
+          - pip install -q fastapi uvicorn opensearch-py &&
+            uvicorn app:app --host 0.0.0.0 --port 8080
+        ports: [{ containerPort: 8080 }]
+        env:
+          - { name: OS_URL, value: "http://opensearch.search.svc.cluster.local:9200" }
+        volumeMounts:
+          - { name: app, mountPath: /app }
+      volumes:
+        - name: app
+          configMap: { name: search-api-app }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: search-api, namespace: apis }
+spec:
+  selector: { app: search-api }
+  ports: [{ name: http, port: 80, targetPort: 8080 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: search-api
+  namespace: apis
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: ingress-authz@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: search.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: search-api, port: { number: 80 } } }

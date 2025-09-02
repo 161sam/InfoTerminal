@@ -68,3 +68,21 @@ curl -X POST 'http://127.0.0.1:8003/match' -H 'content-type: application/json' \
 * `etl/` Airflow DAGs, dbt, Schemas
 * `docs/` ADRs, Runbooks, Governance
 
+
+## Extras: Airflow & OPA Gateway
+
+```bash
+kubectl apply -f infra/k8s/airflow/dags-configmap.yaml
+make dev-up   # helmfile deployt jetzt auch Airflow
+kubectl apply -f infra/k8s/opa/authz-proxy.yaml
+kubectl apply -f infra/k8s/traefik/middleware-authz.yaml
+kubectl apply -f infra/k8s/apis/search-api.yaml
+cd apps/frontend && pnpm i && pnpm dev
+```
+
+**UIs**
+
+* Facetten: http://localhost:3000
+* Graph:    http://localhost:3000/graph
+* Airflow:  http://localhost:8084
+* OPA-Test: http://search.127.0.0.1.nip.io/search?q=info
