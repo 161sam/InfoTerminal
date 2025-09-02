@@ -1,0 +1,14 @@
+from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+
+with DAG(
+    dag_id="openbb_equities_daily",
+    schedule="0 4 * * 1-5",
+    start_date=datetime(2025, 9, 1),
+    catchup=False,
+    default_args={"retries": 1, "retry_delay": timedelta(minutes=10)},
+) as dag:
+    pull = BashOperator(task_id="pull_prices", bash_command="echo 'pull via openbb connector (todo)'")
+    transform = BashOperator(task_id="dbt_run", bash_command="cd /opt/dbt && dbt run --select tag:openbb || true")
+    pull >> transform
