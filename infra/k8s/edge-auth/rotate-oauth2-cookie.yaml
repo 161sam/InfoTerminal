@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata: { name: rotate-oauth2-cookie, namespace: edge-auth }
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: rot
+          image: alpine:3.20
+          command: ["/bin/sh","-lc"]
+          args:
+            - |
+              set -e
+              NEW=$(head -c 32 /dev/urandom | base64)
+              kubectl -n edge-auth get secret oauth2-proxy-secret -o json \
+                | jq --arg v "$NEW" '.data["cookie-secret"] = ($v|@base64)' \
+                | kubectl apply -f -
+              kubectl -n edge-auth rollout restart deploy/oauth2-proxy
+              echo "rotated"

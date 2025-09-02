@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata: { name: superset-cert, namespace: analytics }
+spec:
+  secretName: superset-tls
+  commonName: superset.127.0.0.1.nip.io
+  dnsNames: [ "superset.127.0.0.1.nip.io" ]
+  issuerRef: { name: selfsigned-dev, kind: ClusterIssuer }
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: superset-edge
+  namespace: analytics
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: ingress-authz@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts: ["superset.127.0.0.1.nip.io"]
+      secretName: superset-tls
+  rules:
+    - host: superset.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: superset, port: { number: 8088 } } }

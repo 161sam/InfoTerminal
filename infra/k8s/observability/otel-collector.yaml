@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: observability }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: otel-config, namespace: observability }
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc: { endpoint: 0.0.0.0:4317 }
+          http: { endpoint: 0.0.0.0:4318 }
+    processors:
+      batch: {}
+      spanmetrics:
+        metrics_exporter: prometheus
+        dimensions: [http.method, http.route, http.status_code, service.name]
+        histogram:
+          explicit_boundaries: [5ms,10ms,25ms,50ms,100ms,250ms,500ms,1s,2s,5s]
+    exporters:
+      logging: { loglevel: warn }
+      otlp/tempo:
+        endpoint: tempo.observability.svc.cluster.local:4317
+        tls: { insecure: true }
+      prometheus:
+        endpoint: 0.0.0.0:8889
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/tempo, logging]
+        metrics/spanmetrics:
+          receivers: [otlp]
+          processors: [spanmetrics, batch]
+          exporters: [prometheus]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: otel-collector, namespace: observability }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: otel-collector } }
+  template:
+    metadata: { labels: { app: otel-collector } }
+    spec:
+      containers:
+        - name: otel
+          image: otel/opentelemetry-collector:0.100.0
+          args: ["--config=/conf/config.yaml"]
+          ports:
+            - { name: otlp-grpc, containerPort: 4317 }
+            - { name: otlp-http, containerPort: 4318 }
+            - { name: prom, containerPort: 8889 }
+          volumeMounts:
+            - { name: conf, mountPath: /conf }
+      volumes:
+        - name: conf
+          configMap: { name: otel-config }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: otel-collector, namespace: observability }
+spec:
+  selector: { app: otel-collector }
+  ports:
+    - { name: otlp-grpc, port: 4317, targetPort: 4317 }
+    - { name: otlp-http, port: 4318, targetPort: 4318 }
+    - { name: prom-metrics, port: 8889, targetPort: 8889 }
