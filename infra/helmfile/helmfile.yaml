@@ -114,6 +114,26 @@ releases:
               },
             }
           ]
+          # ---- Role Mapping ----
+          AUTH_ROLES_MAPPING = {
+              "admin": ["Admin"],
+              "investigator": ["Alpha"],  # can sqllab & dashboards
+              "analyst": ["Gamma"]
+          }
+          AUTH_ROLES_SYNC_AT_LOGIN = True
+
+          # Optional: Map Keycloak 'tenant' claim to user attribute (if provided)
+          from superset.security import SupersetSecurityManager
+          class MySsm(SupersetSecurityManager):
+              def oauth_user_info(self, provider, response):
+                  # delegate to default first
+                  info = super().oauth_user_info(provider, response)
+                  # read custom claim
+                  tenant = response.get("tenant") or response.get("resource_access",{}).get("tenant","")
+                  if tenant:
+                      info["first_name"] = f"{info.get('first_name','')}[{tenant}]"
+                  return info
+          CUSTOM_SECURITY_MANAGER = MySsm
   - name: airflow
     namespace: workflow
     chart: apache-airflow/airflow

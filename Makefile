@@ -35,6 +35,7 @@ apps-up:
 	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
 	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
 	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
+	@uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
 	@pnpm --dir apps/frontend dev &
 
 apps-down:
@@ -55,6 +56,14 @@ print-info:
 
 opa-test:
 	@docker run --rm -v $(PWD)/infra/k8s/opa:/pol -w /pol openpolicyagent/opa:0.64.0 test -v .
+
+opa-bundle:
+	@docker run --rm -v $(PWD)/infra/k8s/opa/policies:/pol -v $(PWD)/infra/k8s/opa/bundle:/out openpolicyagent/opa:0.64.0 build -b /pol -o /out/policy-bundle.tar.gz
+
+bundle-server-up:
+	kubectl -n policy delete configmap opa-bundle --ignore-not-found
+	kubectl -n policy create configmap opa-bundle --from-file=policy-bundle.tar.gz=infra/k8s/opa/bundle/policy-bundle.tar.gz
+	kubectl apply -f infra/k8s/opa/bundle-server.yaml
 
 aleph-workers-up:
 	kubectl apply -f infra/k8s/aleph/aleph-workers.yaml

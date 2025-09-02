@@ -5,12 +5,23 @@ type Edge = { from: any; to: any; rel: string }
 type Elem = { data: any; position?: any; locked?: boolean }
 
 const STORAGE_KEY = "infoterminal.graph.view"
+const API = "http://127.0.0.1:8004"
+async function saveServer(name:string, elems:any[], pos:any) {
+  const nodes = elems.filter((e:any)=>e.data && !e.data.source).map((e:any)=>e.data)
+  const edges = elems.filter((e:any)=>e.data && e.data.source).map((e:any)=>e.data)
+  const r = await fetch(`${API}/views`, {method:"POST", headers:{"content-type":"application/json","x-user":"dev"}, body: JSON.stringify({name, nodes, edges, positions: pos})})
+  return r.json()
+}
+async function listServer(){ const r = await fetch(`${API}/views`, {headers:{"x-user":"dev"}}); return r.json() }
+async function loadServer(id:number){ const r=await fetch(`${API}/views/${id}`, {headers:{"x-user":"dev"}}); return r.json() }
 
 export default function GraphX() {
   const cyRef = useRef<any>(null)
   const [elements, setElements] = useState<Elem[]>([])
   const [seed, setSeed] = useState("P:alice")
   const [loading, setLoading] = useState(false)
+  const [views, setViews] = useState<any[]>([])
+  const [viewName, setViewName] = useState("My View")
 
   useEffect(()=> {
     // try load saved
@@ -106,6 +117,22 @@ export default function GraphX() {
         <button onClick={layout}>Relayout</button>
         <button onClick={saveView}>Save</button>
         <button onClick={loadView}>Load</button>
+        <button onClick={async ()=>{
+          const res = await saveServer(viewName, elements, getPositions())
+          alert(`Saved on server id=${res.id}`)
+        }}>Save Server</button>
+        <button onClick={async ()=>{
+          const j = await listServer(); setViews(j)
+        }}>List</button>
+        <select onChange={async (e)=>{
+          const j = await loadServer(parseInt(e.target.value,10))
+          setElements([...j.nodes.map((n:any)=>({data:n})), ...j.edges.map((e:any)=>({data:e}))])
+          setTimeout(()=>applyPositions(j.positions||{}),0)
+        }}>
+          <option>-- choose view --</option>
+          {views.map(v=><option key={v.id} value={v.id}>{v.name} #{v.id}</option>)}
+        </select>
+        <input value={viewName} onChange={e=>setViewName(e.target.value)} style={{width:180}}/>
         <button onClick={reset}>Reset</button>
       </div>
       <p style={{opacity:.7, marginTop:-6}}>Tip: double-click a node to pin/unpin.</p>
