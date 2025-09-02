@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: dbt-quality, namespace: analytics }
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: dbt
+              image: ghcr.io/dbt-labs/dbt-core:1.7.10
+              command: ["/bin/sh","-lc"]
+              args:
+                - dbt deps --project-dir /w/etl/dbt &&
+                  dbt run --project-dir /w/etl/dbt --select state:modified+ &&
+                  dbt test --project-dir /w/etl/dbt &&
+                  dbt source freshness --project-dir /w/etl/dbt --output json > /w/etl/dbt/target/sources.json &&
+                  sleep 5
+              volumeMounts: [{ name: repo, mountPath: /w }]
+            - name: exporter
+              image: python:3.11-slim
+              command: ["/bin/sh","-c"]
+              args: ["pip install -q && python /w/etl/dbt/tools/dbt_prom_exporter.py"]
+              ports: [{ containerPort: 9108, name: metrics }]
+              volumeMounts: [{ name: repo, mountPath: /w }]
+          volumes: [{ name: repo, hostPath: { path: "/workspace" } }]
+

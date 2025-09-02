@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: grafana-rule-dbt-freshness, namespace: observability }
+data:
+  rules.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: Freshness
+        folder: "Data Quality"
+        interval: 5m
+        rules:
+          - uid: dq-stale
+            title: "dbt source stale"
+            condition: GT
+            data:
+              - refId: S
+                datasourceUid: prometheus
+                model: { expr: sum(dbt_source_stale) }
+              - refId: GT
+                datasourceUid: __expr__
+                model: { type: math, expression: "S > 0" }
+            annotations: { summary: "One or more sources are stale" }
+            labels: { severity: "warning" }
+
