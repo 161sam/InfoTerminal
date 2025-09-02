@@ -16,7 +16,7 @@
 
 ---
 
-# Abhak-Checkliste (End-to-End)
+# Checkliste (End-to-End)
 
 ## 1) Grundbetrieb & Seed
 
