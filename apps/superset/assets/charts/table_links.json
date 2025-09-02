@@ -1,0 +1,18 @@
+{
+  "slice_name": "table_links",
+  "viz_type": "table",
+  "datasource": "finance_prices",
+  "params": {
+    "groupby": ["asset_id", "ts"],
+    "adhoc_filters": [],
+    "columns": ["asset_id", "ts", "it_url"],
+    "computed_columns": [
+      {
+        "column_name": "it_url",
+        "sql_expression": "concat('https://infoterminal.example.com/asset/', asset_id, '?from=', format_datetime(ts, 'YYYY-MM-DD'), '&to=', format_datetime(ts, 'YYYY-MM-DD'))"
+      }
+    ],
+    "allow_html": true,
+    "emit_filter": true
+  }
+}

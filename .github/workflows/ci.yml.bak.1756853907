@@ -115,15 +115,3 @@ jobs:
       - name: Quick API smoke benchmark (search)
         run: |
           autocannon -d 10 -c 20 http://localhost:8080/search?q=test || true
-
-  superset:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.11" }
-      - name: Lint Superset assets
-        run: |
-          pip install yamllint jq
-          yamllint apps/superset/assets/datasets/*.yaml
-          find apps/superset/assets -name '*.json' -exec jq . {} \;
