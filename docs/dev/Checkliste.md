@@ -1,5 +1,3 @@
----
-
 # Status auf einen Blick
 
 * **Dev-Infra (Kind + Helmfile + Basisdienste)** — ✅ lauffähig (Postgres, OpenSearch, MinIO, Traefik, Keycloak)
