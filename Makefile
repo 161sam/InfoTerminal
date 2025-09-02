@@ -2,7 +2,7 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test
+.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run
 
 auth-up:
 	@bash infra/scripts/keycloak-import.sh
@@ -55,3 +55,13 @@ print-info:
 
 opa-test:
 	@docker run --rm -v $(PWD)/infra/k8s/opa:/pol -w /pol openpolicyagent/opa:0.64.0 test -v .
+
+aleph-workers-up:
+	kubectl apply -f infra/k8s/aleph/aleph-workers.yaml
+
+nifi-registry-up:
+	kubectl apply -f infra/k8s/nifi/registry.yaml
+	bash infra/nifi/scripts/connect-registry.sh
+
+dbt-run:
+	cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test
