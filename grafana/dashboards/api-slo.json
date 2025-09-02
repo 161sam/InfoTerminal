@@ -1,0 +1,29 @@
+{
+  "uid": "api-slo",
+  "title": "API SLO",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "p95 latency",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket[5m])) by (le))", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Throughput",
+      "targets": [
+        { "expr": "sum(rate(http_requests_total[1m]))", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate",
+      "targets": [
+        { "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m]))", "datasource": "Prometheus" }
+      ]
+    }
+  ]
+}

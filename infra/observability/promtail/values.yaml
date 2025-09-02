@@ -1,0 +1,11 @@
+config:
+  clients:
+    - url: http://loki.default.svc:3100/loki/api/v1/push
+  snippets:
+    pipelineStages:
+      - docker: {}
+      - cri: {}
+      - labeldrop:
+          - filename
+  positions:
+    filename: /run/promtail/positions.yaml

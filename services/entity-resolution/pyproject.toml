@@ -2,7 +2,15 @@
 name = "entity-resolution"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["fastapi>=0.111", "uvicorn>=0.30", "rapidfuzz>=3.9"]
-
-[tool.uv]
-index-url = "https://pypi.org/simple"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn>=0.30",
+    "rapidfuzz>=3.9",
+    "opentelemetry-sdk>=1.26.0",
+    "opentelemetry-exporter-otlp>=1.26.0",
+    "opentelemetry-instrumentation-fastapi>=0.46b0",
+    "opentelemetry-instrumentation-requests>=0.46b0",
+    "opentelemetry-instrumentation-logging>=0.46b0",
+    "prometheus-client>=0.20",
+    "starlette-exporter>=0.15",
+]
