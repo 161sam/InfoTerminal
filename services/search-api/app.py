@@ -1,6 +1,13 @@
+try:
+    from obs.otel_boot import *  # noqa
+except Exception:
+    pass
+
 import os
 from typing import Optional, List
 from fastapi import FastAPI, Depends, HTTPException, Header, Query
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+from prometheus_client import make_asgi_app
 from fastapi.middleware.cors import CORSMiddleware
 from opensearchpy import OpenSearch
 from auth import user_from_token
@@ -11,6 +18,8 @@ REQUIRE_AUTH = os.getenv("REQUIRE_AUTH", "0") == "1"
 INDEX = os.getenv("OS_INDEX", "docs")
 
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
+FastAPIInstrumentation().instrument_app(app)
+app.mount("/metrics", make_asgi_app())
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000","http://127.0.0.1:3000"],

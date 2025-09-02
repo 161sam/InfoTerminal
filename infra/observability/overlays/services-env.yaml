@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: search-api, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: search-api }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: search-api
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "search-api" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: graph-api, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: graph-api }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: graph-api
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "graph-api" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: doc-entities, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: doc-entities }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: doc-entities
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "doc-entities" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: entity-resolution, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: entity-resolution }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: entity-resolution
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "entity-resolution" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: graph-views, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: graph-views }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: graph-views
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "graph-views" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: opa-audit-sink, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: opa-audit-sink }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: opa-audit-sink
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "opa-audit-sink" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: gateway, namespace: default }
+spec:
+  template:
+    metadata:
+      labels: { app: gateway }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: gateway
+          env:
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://otel-collector.default.svc:4317" }
+            - { name: OTEL_SERVICE_NAME, value: "gateway" }
+            - { name: OTEL_TRACES_SAMPLER, value: "parentbased_traceidratio" }
+            - { name: OTEL_TRACES_SAMPLER_ARG, value: "0.2" }

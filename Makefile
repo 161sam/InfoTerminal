@@ -32,13 +32,13 @@ dev-down:
 	@kind delete cluster --name $(KIND_CLUSTER) || true
 
 apps-up:
-       @uv run --python 3.11 -q --directory services/search-api ./dev.sh &
-       @uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
-       @uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
-       @uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
-       @uv run --python 3.11 -q --directory services/nlp ./dev.sh &
-       @uv run --python 3.11 -q --directory services/doc-entities ./dev.sh &
-       @pnpm --dir apps/frontend dev &
+	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
+	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
+	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
+	@uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
+	@uv run --python 3.11 -q --directory services/nlp ./dev.sh &
+	@uv run --python 3.11 -q --directory services/doc-entities ./dev.sh &
+	@pnpm --dir apps/frontend dev &
 
 apps-down:
 	@pkill -f "uv run" || true
@@ -75,7 +75,7 @@ nifi-registry-up:
 	bash infra/nifi/scripts/connect-registry.sh
 
 dbt-run:
-        cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test
+	cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test
 
 etl-dbt-build:
 	cd etl/dbt && dbt deps && dbt seed --full-refresh && dbt run && dbt test
@@ -91,3 +91,20 @@ etl-airflow-dag:
 
 etl-superset-warmup:
 	python apps/superset/scripts/warmup_refresh.py
+
+
+.PHONY: obs-up obs-down obs-grafana-dashboards
+
+obs-up:
+	kubectl apply -f infra/observability/otel-collector.yaml
+	# helm install/upgrade prometheus, loki, promtail, tempo with provided values
+	# e.g.: helm upgrade --install prom prometheus-community/prometheus -f infra/observability/prometheus/values.yaml
+	#       helm upgrade --install loki grafana/loki -f infra/observability/loki/values.yaml
+	#       helm upgrade --install promtail grafana/promtail -f infra/observability/promtail/values.yaml
+	#       helm upgrade --install tempo grafana/tempo -f infra/observability/tempo/values.yaml
+
+obs-grafana-dashboards:
+	# copy dashboards to Grafana mount path or use ConfigMap sidecar (implementation note)
+
+obs-down:
+	kubectl delete -f infra/observability/otel-collector.yaml || true

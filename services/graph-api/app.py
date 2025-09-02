@@ -1,6 +1,13 @@
+try:
+    from obs.otel_boot import *  # noqa
+except Exception:
+    pass
+
 import os
 from typing import Optional
 from fastapi import FastAPI, Depends, Header, HTTPException
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+from prometheus_client import make_asgi_app
 from fastapi.middleware.cors import CORSMiddleware
 from neo4j import GraphDatabase
 from auth import user_from_token
@@ -14,6 +21,8 @@ REQUIRE_AUTH = os.getenv("REQUIRE_AUTH","0") == "1"
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASS))
 
 app = FastAPI(title="InfoTerminal Graph API", version="0.1.0")
+FastAPIInstrumentation().instrument_app(app)
+app.mount("/metrics", make_asgi_app())
 app.add_middleware(
   CORSMiddleware,
   allow_origins=["http://localhost:3000","http://127.0.0.1:3000"],
