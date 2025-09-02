@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: superset-rls
+  namespace: analytics
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: rls
+        image: python:3.11-slim
+        command: ["/bin/sh","-c"]
+        args:
+          - pip install -q requests && python /work/rls.py
+        volumeMounts:
+          - { name: work, mountPath: /work }
+        env:
+          - { name: URL, value: "http://superset.analytics.svc.cluster.local:8088" }
+          - { name: USER, value: "admin" }
+          - { name: PASS, value: "adminadmin" }
+      volumes:
+        - name: work
+          configMap: { name: superset-rls-script }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: superset-rls-script
+  namespace: analytics
+data:
+  rls.py: |
+    import os, requests, json
+    U=os.getenv("URL"); s=requests.Session()
+    r=s.post(f"{U}/api/v1/security/login", json={"username":os.getenv("USER"),"password":os.getenv("PASS"),"provider":"db"})
+    s.headers.update({"Authorization": f"Bearer {r.json()['access_token']}"})
+    # find dataset by name
+    q={"filters":[{"col":"table_name","opr":"eq","value":"fct_eod_prices"}]}
+    ds = s.get(f"{U}/api/v1/dataset/?q="+requests.utils.quote(json.dumps(q))).json()["result"][0]
+    dsid = ds["id"]
+    # create RLS rule: only SAP.DE for Gamma role
+    payload = {
+      "filter_type": "Regular",
+      "clause": "symbol = 'SAP.DE'",
+      "group_key": "tenant:A",  # label
+      "description": "Gamma only SAP.DE",
+      "roles": ["Gamma"],
+      "tables": [{"id": dsid, "type": "table"}]
+    }
+    r = s.post(f"{U}/api/v1/rowlevelsecurity/", json=payload)
+    print("RLS:", r.status_code, r.text)
