@@ -17,5 +17,16 @@ dependencies = [
     "opentelemetry-instrumentation-requests>=0.46b0",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
+  "httpx"
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=. --cov-report=xml:coverage.xml --cov-report=term-missing"
+
 [tool.uv]
 index-url = "https://pypi.org/simple"
