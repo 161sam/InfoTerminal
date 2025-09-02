@@ -11,13 +11,12 @@ metadata:
 data:
   allow.rego: |
     package access
-
     default allow = false
 
-    allow {
-      input.user.roles[_] == "admin"
-    }
+    # admins dürfen alles
+    allow { input.user.roles[_] == "admin" }
 
+    # analysts: read auf public
     allow {
       input.user.roles[_] == "analyst"
       input.action == "read"

@@ -33,6 +33,9 @@ export default function Home() {
             <b>{r.title}</b><br/>
             <small>{r.score?.toFixed?.(2)}</small>
             <div>{r.body}</div>
+            <div style={{marginTop:4}}>
+              <a href={`http://127.0.0.1:8002/neighbors?node_id=${encodeURIComponent(r.id || r.title)}`} target="_blank">Graph neighbors</a>
+            </div>
           </li>
         ))}
       </ul>
