@@ -2,9 +2,13 @@
 
 ## Quickstart (Dev • Kind + Helm)
 ```bash
-make dev-up         # Kind-Cluster + Helm-Releases (PG, MinIO, OpenSearch, Keycloak, Traefik)
+make dev-up         # Kind-Cluster + Helm-Releases (PG, MinIO, OpenSearch, Keycloak, Traefik, Superset)
 make seed-demo      # Demo-Index + Demo-User anlegen
-make apps-up        # Startet Search-API (FastAPI) & Frontend (Next.js) lokal mit OIDC
+make auth-up        # Keycloak realm import
+make neo4j-up       # falls noch nicht durch dev-up angeworfen
+make seed-graph     # Demo-Graph in Neo4j
+
+make apps-up        # Startet Search-API, Graph-API, ER-Service & Frontend
 ```
 
 ## Start-Sequenz (kompakt)
@@ -13,7 +17,9 @@ make apps-up        # Startet Search-API (FastAPI) & Frontend (Next.js) lokal mi
 make dev-up         # Helm + OPA + Neo4j
 make seed-demo      # Demo-Index in OpenSearch
 make auth-up        # Keycloak realm import
-make apps-up        # Search-API + Frontend
+make neo4j-up       # (optional) Neo4j Manifeste
+make seed-graph     # Demo-Graph
+make apps-up        # Search-API + Graph-API + ER-Service + Frontend
 ```
 
 **Optional**: Auth wirklich erzwingen
@@ -31,6 +37,28 @@ uvicorn app:app --host 127.0.0.1 --port 8001 --reload
 * OpenSearch (Elasticsearch API) → [http://localhost:9200](http://localhost:9200)
 * PostgreSQL → localhost:5432
 * MinIO (S3) → [http://localhost:9000](http://localhost:9000)
+* Superset → [http://localhost:8088](http://localhost:8088)
+* Neo4j Browser → [http://localhost:7474](http://localhost:7474)
+
+**Services (Dev Endpoints)**
+
+```
+Frontend:        http://localhost:3000
+Search-API:      http://127.0.0.1:8001/healthz
+Graph-API:       http://127.0.0.1:8002/healthz
+ER-Service:      http://127.0.0.1:8003/docs
+Keycloak:        http://localhost:8081
+Superset:        http://localhost:8088
+Neo4j Browser:   http://localhost:7474
+```
+
+**Beispielaufrufe**
+
+```bash
+curl 'http://127.0.0.1:8002/neighbors?node_id=P:alice'
+curl -X POST 'http://127.0.0.1:8003/match' -H 'content-type: application/json' \
+  -d '{"query":"ACME Incorporated","candidates":["ACME Inc.","Globex","Acme, Inc."],"limit":3}'
+```
 
 **Ordner**
 
