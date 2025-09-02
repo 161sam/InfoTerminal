@@ -2,7 +2,7 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo print-info auth-up opa-up neo4j-up
+.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up
 
 auth-up:
 	@bash infra/scripts/keycloak-import.sh
@@ -33,6 +33,8 @@ dev-down:
 
 apps-up:
 	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
+	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
+	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
 	@pnpm --dir apps/frontend dev &
 
 apps-down:
@@ -41,6 +43,9 @@ apps-down:
 
 seed-demo:
 	@bash infra/scripts/seed-demo.sh
+
+seed-graph:
+	@python3 infra/scripts/seed-neo4j.py
 
 print-info:
 	@echo "Kubernetes context: $(K8S_CONTEXT)"

@@ -70,8 +70,7 @@ releases:
     values:
       - service:
           type: NodePort
-          nodePorts:
-            http: 8088
+          nodePorts: { http: 8088 }
         supersetUsername: admin
         supersetPassword: adminadmin
         externalDatabase:
@@ -80,5 +79,36 @@ releases:
           password: app
           database: infoterminal
           port: 5432
-        ingress:
-          enabled: false
+        extraEnvVars:
+          - name: KC_ISSUER
+            value: "http://localhost:8081/realms/infoterminal"
+          - name: KC_CLIENT_ID
+            value: "superset"
+          - name: KC_CLIENT_SECRET
+            value: "superset-secret"
+        supersetExtraConfig: |
+          import os
+          from flask_appbuilder.security.manager import AUTH_OAUTH
+          AUTH_TYPE = AUTH_OAUTH
+          AUTH_USER_REGISTRATION = True
+          AUTH_USER_REGISTRATION_ROLE = "Gamma"
+          # DEV only – vermeidet CSRF-Probleme beim lokalen OIDC-Flow
+          WTF_CSRF_ENABLED = False
+
+          KC_ISSUER = os.getenv("KC_ISSUER", "").rstrip("/")
+          OAUTH_PROVIDERS = [
+            {
+              "name": "keycloak",
+              "icon": "fa-key",
+              "token_key": "access_token",
+              "remote_app": {
+                "client_id": os.getenv("KC_CLIENT_ID", "superset"),
+                "client_secret": os.getenv("KC_CLIENT_SECRET", "superset-secret"),
+                "access_token_url": f"{KC_ISSUER}/protocol/openid-connect/token",
+                "authorize_url": f"{KC_ISSUER}/protocol/openid-connect/auth",
+                "api_base_url": f"{KC_ISSUER}/protocol/openid-connect",
+                "userinfo_endpoint": f"{KC_ISSUER}/protocol/openid-connect/userinfo",
+                "client_kwargs": {"scope": "openid email profile"},
+              },
+            }
+          ]
