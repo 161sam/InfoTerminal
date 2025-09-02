@@ -9,6 +9,7 @@ with DAG(
     catchup=False,
     default_args={"retries": 1, "retry_delay": timedelta(minutes=10)},
 ) as dag:
-    pull = BashOperator(task_id="pull_prices", bash_command="echo 'pull via openbb connector (todo)'")
-    transform = BashOperator(task_id="dbt_run", bash_command="cd /opt/dbt && dbt run --select tag:openbb || true")
-    pull >> transform
+    pull = BashOperator(
+        task_id="pull_prices",
+        bash_command="cd /workspace/services/openbb-connector && uv run python main.py"
+    )
