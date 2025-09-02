@@ -7,7 +7,8 @@
 * **OPA** — 🟨 Policies (RBAC + ABAC), Tests (opa test) und Bundle-Modus vorhanden; noch Feinschliff für Service-Inputs & CI Gate Coverage
 * **Search** — ✅ Search-API (FastAPI) + Facetten + Frontend-Suche (Next.js)
 * **Graph** — ✅ Graph-API (Neo4j) + Viewer (Basis & GraphX mit Expand/Pin/Save); Server-Side Views (CRUD + Share) ✅
-* **Dokumentenplattform** — 🟨 Aleph Web + Ingestor + Worker (Redis/Celery) stehen; produktive Pipelines/Queues noch minimal
+* **AI Layer & Agents** — ⬜️ NLP-Service/Agent-Flows noch nicht verdrahtet
+* **Dokumentenmanagement (Aleph)** — 🟨 Aleph UI + Worker/Redis laufen; kein automatischer NiFi-Ingest, keine NER-Crosslinks im Viewer
 * **ETL** — 🟨 NiFi UI + Registry stehen; Demo-Template deployed; Airflow via Helm + DAG-ConfigMap ✅; KPO-DAG + CronJob für OpenBB 🟨 (Image/secret polishing)
 * **Analytics** — 🟨 Superset Helm + OIDC + Preset-Job + dbt→Superset Sync; RLS-Beispiel (Gamma) gesetzt; weitere Datasets/Charts offen
 * **Datenmodell** — 🟨 dbt Staging/Dim/Fact/Returns + Seeds vorhanden; weitere Modelle/Tests/Docs offen
@@ -99,7 +100,46 @@
   `cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test`
 * [ ] Modelle vorhanden: `stg_openbb_prices`, `dim_asset`, `fct_eod_prices`, `fct_returns_daily`, `dim_asset_enriched`
 
-## 9) Superset (OIDC, Preset, dbt-Sync)
+## 9) AI Layer & Agents
+
+*Mini-Blueprint:* FastAPI-Service (`services/nlp`) für NER/Embeddings/Summary + optionale `/resolve`-Route; n8n/Flowise für Agent-Flows.
+
+* [ ] `services/nlp` deployen (NER, Embed, Summarize)
+  *Befehl:* `uv run --python 3.11 -q --directory services/nlp ./dev.sh`
+* [ ] Search-Rerank aktivieren (Cosine Top-N)
+  *Env:* `export RERANK=1 NLP_URL=http://127.0.0.1:8005`
+* [ ] Entity-Resolver `/resolve` aktiv
+  *URL:* `http://127.0.0.1:8005/resolve`
+* [ ] n8n Flow „Investigation Assistant“
+  *Snippet:*
+  ```json
+  {
+    "name":"Investigation Assistant",
+    "nodes":[{"id":"webhook","type":"n8n-nodes-base.webhook"}]
+  }
+  ```
+* [ ] n8n Flow „Financial Risk Assistant“ (OpenBB + Sanktionsliste)
+* [ ] (Optional) Flowise Agent mit HTTP-Tools auf Search/Graph/NLP
+
+## 10) Dokumentenmanagement (Aleph)
+
+*Mini-Blueprint:* NiFi → Aleph Upload, Aleph Worker für OCR/LID, Batch-Script verknüpft NER mit Graph.
+
+* [ ] NiFi Flow: ListenFile → PutAleph (Upload)
+  *Snippet:*
+  ```bash
+  HTTP Method: POST
+  Content-Type: application/octet-stream
+  ```
+* [ ] OCR/Language-ID über Aleph Worker aktiv
+  *Check:* `kubectl -n docs get pods`
+* [ ] NER→Graph Crosslinks patchen
+  *Snippet:*
+  ```python
+  ents = requests.post(f"{NLP}/ner", {"text":txt}).json()["ents"]
+  ```
+
+## 11) Superset (OIDC, Preset, dbt-Sync)
 
 * [ ] OIDC Login via Edge (oder direkt) klappt
   *URL:* [http://superset.127.0.0.1.nip.io](http://superset.127.0.0.1.nip.io)
@@ -111,14 +151,14 @@
 * [ ] RLS-Beispiel aktiv (Gamma sieht nur `SAP.DE`)
   *Check:* `kubectl -n analytics logs job/superset-rls`
 
-## 10) CI/CD & Policy Gate
+## 12) CI/CD & Policy Gate
 
 * [ ] CI durchläuft (Python/Node Checks)
   *Check:* GitHub Actions „ci“ Pipeline
 * [ ] Conftest Gate prüft K8s-Manifeste
   *Check:* Action „policy-gate“ grün
 
-## 11) Housekeeping & Security
+## 13) Housekeeping & Security
 
 * [ ] Secrets: Dummy-Passwörter durch sichere Werte ersetzt (Keycloak admin, oauth2-proxy cookie secret, DB-Passwörter)
 * [ ] TLS/Ingress: Dev okay, Prod-Pfad (LetsEncrypt/Cert-Manager) geplant
