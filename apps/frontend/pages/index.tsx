@@ -56,7 +56,7 @@ export default function Home() {
         </aside>
 
         <section>
-          <ul style={{marginTop:0}}>
+          <ul data-testid="search-results" style={{marginTop:0}}>
             {res.map((r,i)=>(
               <li key={i} style={{marginBottom:12, paddingBottom:12, borderBottom:"1px solid #eee"}}>
                 <b>{r.title}</b><br/>
