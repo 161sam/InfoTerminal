@@ -13,7 +13,3 @@ dbt_packages/
 # Observability
 infra/observability/tmp/**
 grafana/provisioning/dashboards/*.bak.*
-
-docs/.cache/**
-.doctoc.*
-tmp/**
