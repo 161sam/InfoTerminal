@@ -70,6 +70,7 @@ releases:
     chart: bitnami/superset
     createNamespace: true
     values:
+      - values/superset-values.yaml
       - service:
           type: NodePort
           nodePorts: { http: 8088 }

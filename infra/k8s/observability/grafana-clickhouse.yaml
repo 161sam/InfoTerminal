@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: grafana, namespace: observability }
+spec:
+  template:
+    spec:
+      containers:
+        - name: grafana
+          env:
+            - { name: GF_INSTALL_PLUGINS, value: "grafana-clickhouse-datasource" }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: grafana-ds-clickhouse, namespace: observability }
+data:
+  clickhouse-ds.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: ClickHouse
+        type: grafana-clickhouse-datasource
+        access: proxy
+        isDefault: false
+        jsonData:
+          defaultDatabase: logs
+          server: clickhouse.clickhouse.svc.cluster.local
+          port: 8123
+          username: default
+        secureJsonData:
+          # falls du Auth nutzt, hier password setzen
+          password: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: grafana, namespace: observability }
+spec:
+  template:
+    spec:
+      containers:
+        - name: grafana
+          volumeMounts:
+            - { name: ds2, mountPath: /etc/grafana/provisioning/datasources/clickhouse.yaml, subPath: clickhouse-ds.yaml }
+      volumes:
+        - name: ds2
+          configMap: { name: grafana-ds-clickhouse }
