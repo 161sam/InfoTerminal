@@ -1,0 +1,13 @@
+neo4j:
+  name: neo4j
+  edition: community
+  resources:
+    requests: { cpu: 200m, memory: 1Gi }
+volumes:
+  data:
+    mode: defaultStorageClass
+    defaultStorageClass:
+      requests: 50Gi
+cluster:
+  enabled: true
+  numberOfServers: 3

@@ -1,0 +1,8 @@
+clusterName: opensearch
+replicas: 3
+persistence:
+  enabled: true
+  size: 50Gi
+opensearch.yml:
+  cluster.routing.allocation.awareness.attributes: rack_id
+  cluster.max_shards_per_node: 10000
