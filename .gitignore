@@ -9,3 +9,7 @@ etl/airflow/.env*
 etl/dbt/target/
 etl/dbt/logs/
 dbt_packages/
+
+# Observability
+infra/observability/tmp/**
+grafana/provisioning/dashboards/*.bak.*

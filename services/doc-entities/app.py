@@ -1,6 +1,13 @@
+try:
+    from obs.otel_boot import *  # noqa
+except Exception:
+    pass
+
 import os, json, html
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+from prometheus_client import make_asgi_app
 from pydantic import BaseModel
 import psycopg2, httpx
 
@@ -38,6 +45,8 @@ def init():
 init()
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
+FastAPIInstrumentation().instrument_app(app)
+app.mount("/metrics", make_asgi_app())
 
 class AnnotReq(BaseModel):
   doc_id: str

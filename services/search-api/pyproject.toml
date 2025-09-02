@@ -11,10 +11,13 @@ dependencies = [
     "python-jose[cryptography]>=3.3",
     "opensearch-py>=2.5",
     "cachetools>=5.3",
-    "opentelemetry-distro>=0.46b0",
-    "opentelemetry-exporter-otlp-proto-grpc>=1.26.0",
+    "opentelemetry-sdk>=1.26.0",
+    "opentelemetry-exporter-otlp>=1.26.0",
     "opentelemetry-instrumentation-fastapi>=0.46b0",
     "opentelemetry-instrumentation-requests>=0.46b0",
+    "opentelemetry-instrumentation-logging>=0.46b0",
+    "prometheus-client>=0.20",
+    "starlette-exporter>=0.15",
 ]
 
 [project.optional-dependencies]
@@ -22,7 +25,7 @@ dev = [
   "pytest",
   "pytest-asyncio",
   "pytest-cov",
-  "httpx"
+  "httpx",
 ]
 
 [tool.pytest.ini_options]

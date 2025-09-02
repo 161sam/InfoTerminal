@@ -1,0 +1,29 @@
+{
+  "uid": "infra-overview",
+  "title": "Infra Overview",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "CPU Usage per Pod",
+      "targets": [
+        { "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"\",pod!=\"\"}[5m])) by (pod)", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage per Pod",
+      "targets": [
+        { "expr": "sum(container_memory_usage_bytes{container!=\"\",pod!=\"\"}) by (pod)", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Pod Restarts",
+      "targets": [
+        { "expr": "sum(increase(kube_pod_container_status_restarts_total[1h])) by (pod)", "datasource": "Prometheus" }
+      ]
+    }
+  ]
+}
