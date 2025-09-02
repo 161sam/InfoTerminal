@@ -1,0 +1,105 @@
+{
+  "id": null,
+  "uid": "obs-core",
+  "title": "InfoTerminal — Services (Latency, RPS, Errors)",
+  "tags": ["infoterminal","observability"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": "Prometheus",
+        "refresh": 1,
+        "query": "label_values(spanmetrics_calls_total, service_name)",
+        "includeAll": true,
+        "multi": true,
+        "definition": "label_values(spanmetrics_calls_total, service_name)",
+        "current": {}
+      },
+      {
+        "name": "route",
+        "type": "query",
+        "datasource": "Prometheus",
+        "refresh": 1,
+        "query": "label_values(spanmetrics_latency_bucket{service_name=~\"$service\"}, http_route)",
+        "includeAll": true,
+        "multi": true,
+        "current": {}
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "RPS (total)",
+      "datasource": "Prometheus",
+      "gridPos": {"x":0,"y":0,"w":6,"h":4},
+      "targets": [
+        { "expr": "sum(rate(spanmetrics_calls_total{service_name=~\"$service\"}[5m]))", "legendFormat": "rps" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Error rate %",
+      "datasource": "Prometheus",
+      "gridPos": {"x":6,"y":0,"w":6,"h":4},
+      "targets": [
+        { "expr": "100 * sum(rate(spanmetrics_calls_total{service_name=~\"$service\",http_status_code=~\"5..\"}[5m])) / clamp_min(sum(rate(spanmetrics_calls_total{service_name=~\"$service\"}[5m])), 0.000001)", "legendFormat": "err%" }
+      ],
+      "options": { "reduceOptions": {"calcs":["lastNotNull"]} }
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency p50/p95/p99 (ms)",
+      "datasource": "Prometheus",
+      "gridPos": {"x":12,"y":0,"w":12,"h":8},
+      "targets": [
+        { "expr": "1000*histogram_quantile(0.50, sum by (le,service_name) (rate(spanmetrics_latency_bucket{service_name=~\"$service\"}[5m])))", "legendFormat": "p50" },
+        { "expr": "1000*histogram_quantile(0.95, sum by (le,service_name) (rate(spanmetrics_latency_bucket{service_name=~\"$service\"}[5m])))", "legendFormat": "p95" },
+        { "expr": "1000*histogram_quantile(0.99, sum by (le,service_name) (rate(spanmetrics_latency_bucket{service_name=~\"$service\"}[5m])))", "legendFormat": "p99" }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Top 10 routes by p95 latency (ms)",
+      "datasource": "Prometheus",
+      "gridPos": {"x":0,"y":8,"w":12,"h":8},
+      "options": { "displayMode":"lcd" },
+      "targets": [
+        { "expr": "topk(10, 1000*histogram_quantile(0.95, sum by (le,http_route) (rate(spanmetrics_latency_bucket{service_name=~\"$service\",http_route=~\"$route\"}[5m]))))", "legendFormat": "{{http_route}}" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests per route (rps)",
+      "datasource": "Prometheus",
+      "gridPos": {"x":12,"y":8,"w":12,"h":8},
+      "targets": [
+        { "expr": "sum by (http_route) (rate(spanmetrics_calls_total{service_name=~\"$service\",http_route=~\"$route\"}[5m]))", "legendFormat": "{{http_route}}" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error rate by route (%)",
+      "datasource": "Prometheus",
+      "gridPos": {"x":0,"y":16,"w":12,"h":8},
+      "targets": [
+        { "expr": "100 * sum by (http_route) (rate(spanmetrics_calls_total{service_name=~\"$service\",http_route=~\"$route\",http_status_code=~\"5..\"}[5m])) / clamp_min(sum by (http_route) (rate(spanmetrics_calls_total{service_name=~\"$service\",http_route=~\"$route\"}[5m])), 0.000001)", "legendFormat": "{{http_route}}" }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Avg latency per service (ms)",
+      "datasource": "Prometheus",
+      "gridPos": {"x":12,"y":16,"w":12,"h":8},
+      "targets": [
+        { "expr": "1000 * (sum by (service_name) (rate(spanmetrics_latency_sum{service_name=~\"$service\"}[5m])) / clamp_min(sum by (service_name) (rate(spanmetrics_latency_count{service_name=~\"$service\"}[5m])),0.000001))", "legendFormat": "{{service_name}}" }
+      ],
+      "transformations": [{"id":"organize"}]
+    }
+  ]
+}
