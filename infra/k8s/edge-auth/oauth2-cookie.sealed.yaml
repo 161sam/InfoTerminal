@@ -1,0 +1,11 @@
+# Placeholder sealed secret for oauth2-proxy cookie secret.
+# Generate with:
+# kubeseal --controller-namespace kube-system --format yaml < secret-plain.yaml > infra/k8s/edge-auth/oauth2-cookie.sealed.yaml
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: oauth2-cookie
+  namespace: edge-auth
+spec:
+  encryptedData:
+    cookie-secret: PLACEHOLDER
