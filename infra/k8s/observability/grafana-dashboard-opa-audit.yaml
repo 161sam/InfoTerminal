@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-opa-audit
+  namespace: observability
+  labels: { grafana_dashboard: "1" }
+data:
+  opa-audit.json: |
+    {
+      "id": null,
+      "uid": "opa-audit-ch",
+      "title": "OPA Audit — Decisions (ClickHouse)",
+      "tags": ["opa","audit","clickhouse"],
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "10s",
+      "templating": {
+        "list": [
+          {
+            "name": "tenant",
+            "type": "query",
+            "datasource": "ClickHouse",
+            "query": "SELECT DISTINCT tenant FROM logs.opa_decisions ORDER BY tenant",
+            "includeAll": true,
+            "multi": true,
+            "refresh": 1
+          },
+          {
+            "name": "path",
+            "type": "query",
+            "datasource": "ClickHouse",
+            "query": "SELECT DISTINCT path FROM logs.opa_decisions ORDER BY path",
+            "includeAll": true,
+            "multi": true,
+            "refresh": 1
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Decisions / min",
+          "gridPos": {"x":0,"y":0,"w":6,"h":4},
+          "datasource": "ClickHouse",
+          "targets": [
+            {
+              "query": "SELECT toStartOfMinute(ts) AS t, count() AS c FROM logs.opa_decisions WHERE 1=1 AND (tenant IN (${tenant:csv}) OR '${tenant:csv}' = '') AND (path IN (${path:csv}) OR '${path:csv}' = '') AND ts > now() - INTERVAL 1 HOUR GROUP BY t ORDER BY t",
+              "format": 1
+            }
+          ],
+          "options": {"reduceOptions":{"calcs":["last"]}}
+        },
+        {
+          "type": "stat",
+          "title": "Deny-Rate (%)",
+          "gridPos": {"x":6,"y":0,"w":6,"h":4},
+          "datasource": "ClickHouse",
+          "targets": [
+            {
+              "query": "WITH a AS (SELECT count() c FROM logs.opa_decisions WHERE allowed=1), d AS (SELECT count() c FROM logs.opa_decisions WHERE allowed=0) SELECT 100.0 * d.c / nullIf(a.c + d.c,0) AS deny_pct",
+              "format": 1
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Allows vs Denies (per 1m)",
+          "gridPos": {"x":12,"y":0,"w":12,"h":8},
+          "datasource": "ClickHouse",
+          "targets": [
+            {
+              "query": "SELECT toStartOfMinute(ts) AS t, 'allow' AS kind, count() c FROM logs.opa_decisions WHERE allowed=1 AND ts > now()-INTERVAL 2 HOUR GROUP BY t UNION ALL SELECT toStartOfMinute(ts) AS t, 'deny' AS kind, count() c FROM logs.opa_decisions WHERE allowed=0 AND ts > now()-INTERVAL 2 HOUR GROUP BY t ORDER BY t",
+              "format": 1
+            }
+          ]
+        },
+        {
+          "type": "bargauge",
+          "title": "Top Policies (by denies)",
+          "gridPos": {"x":0,"y":8,"w":12,"h":8},
+          "datasource": "ClickHouse",
+          "targets": [
+            {
+              "query": "SELECT path, count() AS c FROM logs.opa_decisions WHERE allowed=0 GROUP BY path ORDER BY c DESC LIMIT 10",
+              "format": 1
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Top Users (denies)",
+          "gridPos": {"x":12,"y":8,"w":12,"h":8},
+          "datasource": "ClickHouse",
+          "targets": [
+            {
+              "query": "SELECT user, sum(allowed=0) AS denies, sum(allowed=1) AS allows, round(100.0*denies/nullIf(denies+allows,0),1) AS deny_pct FROM logs.opa_decisions GROUP BY user ORDER BY denies DESC LIMIT 20",
+              "format": 1
+            }
+          ]
+        }
+      ]
+    }
