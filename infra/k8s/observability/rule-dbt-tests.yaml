@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: grafana-rule-dbt-tests, namespace: observability }
+data:
+  rules.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: DataQuality
+        folder: "Data Quality"
+        interval: 1m
+        rules:
+          - uid: dq-dbt-fail
+            title: "dbt tests failing"
+            condition: GT
+            data:
+              - refId: F
+                datasourceUid: prometheus
+                model:
+                  expr: dbt_tests_failed > 0
+              - refId: GT
+                datasourceUid: __expr__
+                model: { type: math, expression: "F > 0" }
+            annotations: { summary: "dbt tests failing" }
+            labels: { severity: "critical" }
+

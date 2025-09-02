@@ -76,9 +76,13 @@ spec:
           ports: [{ containerPort: 3000 }]
           volumeMounts:
             - { name: ds, mountPath: /etc/grafana/provisioning/datasources }
+            - { name: alerts, mountPath: /etc/grafana/provisioning/alerting/contactpoints.yaml, subPath: contactpoints.yaml }
+            - { name: alerts, mountPath: /etc/grafana/provisioning/alerting/policies.yaml, subPath: policies.yaml }
       volumes:
         - name: ds
           configMap: { name: grafana-datasources }
+        - name: alerts
+          configMap: { name: grafana-alerting }
 ---
 apiVersion: v1
 kind: Service

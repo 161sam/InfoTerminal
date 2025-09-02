@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: grafana-rule-slo-p95, namespace: observability }
+data:
+  rules.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: SLOs
+        folder: "SLO"
+        interval: 1m
+        rules:
+          - uid: slo-p95
+            title: "p95 latency breach"
+            condition: C
+            data:
+              - refId: A
+                datasourceUid: prometheus
+                relativeTimeRange: { from: 300, to: 0 }
+                model:
+                  expr: 1000*histogram_quantile(0.95, sum by (le) (rate(spanmetrics_latency_bucket{service_name="search-api"}[5m])))
+              - refId: B
+                datasourceUid: prometheus
+                relativeTimeRange: { from: 300, to: 0 }
+                model:
+                  expr: 300
+              - refId: C
+                datasourceUid: __expr__
+                model:
+                  type: math
+                  expression: A > B
+            annotations: { summary: "search-api p95 > 300ms (5m)" }
+            labels: { severity: "warning", service: "search-api" }
+

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+  namespace: observability
+data:
+  contactpoints.yaml: |
+    apiVersion: 1
+    contactPoints:
+      - orgId: 1
+        name: slack-main
+        receivers:
+          - uid: slack
+            type: slack
+            settings:
+              url: https://hooks.slack.com/services/REPLACE/ME/WEBHOOK
+              username: grafana
+              icon_emoji: ":rotating_light:"
+  policies.yaml: |
+    apiVersion: 1
+    policies:
+      - orgId: 1
+        receiver: slack-main
+        group_by: ['alertname']
+        routes:
+          - receiver: slack-main
+            matchers:
+              - severity="critical"
+          - receiver: slack-main
+            matchers:
+              - severity="warning"
+

@@ -84,6 +84,23 @@ data:
               "query": "SELECT path, count() AS c FROM logs.opa_decisions WHERE allowed=0 GROUP BY path ORDER BY c DESC LIMIT 10",
               "format": 1
             }
+          ],
+          "transformations": [
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "superset_url",
+                "mode": "binary",
+                "expression": "\"http://superset.127.0.0.1.nip.io/superset/dashboard/opa-audit-clickhouse/?standalone=0#\" + encodeURIComponent(JSON.stringify({ native_filters: [ { id: \\\"nf-tenant\\\", filterState:{ value: [\\\"${tenant}\\\"] }, targets:[{column:\\\"tenant\\\",datasetId: 77}], type:\\\"select\\\" }, { id: \\\"nf-path\\\", filterState:{ value: [\\\"${__field.name}\\\"] }, targets:[{column:\\\"path\\\",datasetId: 77}], type:\\\"select\\\" } ], time_range: \\\"Last 2 hours\\\" }))"
+              }
+            }
+          ],
+          "links": [
+            {
+              "title": "Open in Superset (filtered)",
+              "url": "${__data.fields.superset_url}",
+              "targetBlank": true
+            }
           ]
         },
         {
