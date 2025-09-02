@@ -1,0 +1,50 @@
+{
+  "dashboard_title": "analytics_prices",
+  "description": "Price analytics dashboard with cross filtering",
+  "charts": [
+    "time_close",
+    "time_volume",
+    "time_volatility",
+    "ohlc",
+    "table_links",
+    "markdown_info"
+  ],
+  "metadata": {
+    "native_filter_configuration": [
+      {
+        "id": "nf_date",
+        "name": "Date Range",
+        "filterType": "date",
+        "targets": [
+          {
+            "datasetId": "finance_prices",
+            "column": "ts"
+          }
+        ]
+      },
+      {
+        "id": "nf_asset",
+        "name": "Asset",
+        "filterType": "select",
+        "targets": [
+          {
+            "datasetId": "finance_prices",
+            "column": "asset_id"
+          }
+        ]
+      },
+      {
+        "id": "nf_type",
+        "name": "Type",
+        "filterType": "select",
+        "targets": [
+          {
+            "datasetId": "finance_prices",
+            "column": "asset_id"
+          }
+        ]
+      }
+    ],
+    "cross_filters_enabled": true
+  }
+}

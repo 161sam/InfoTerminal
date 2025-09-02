@@ -1,0 +1,45 @@
+version: 1
+database: default
+dataset_name: finance_prices
+table_name: fct_price
+schema: public
+sql: |
+  select
+    asset_id,
+    ts::date as ts,
+    close,
+    volume,
+    stddev_samp(close) over (partition by asset_id order by ts rows between 6 preceding and current row) as vol_7d,
+    stddev_samp(close) over (partition by asset_id order by ts rows between 29 preceding and current row) as vol_30d,
+    open,
+    high,
+    low
+  from {{ ref('fct_price') }}
+columns:
+  - name: asset_id
+    type: TEXT
+  - name: ts
+    type: TIMESTAMP
+  - name: close
+    type: FLOAT
+  - name: volume
+    type: FLOAT
+  - name: vol_7d
+    type: FLOAT
+  - name: vol_30d
+    type: FLOAT
+  - name: open
+    type: FLOAT
+  - name: high
+    type: FLOAT
+  - name: low
+    type: FLOAT
+metrics:
+  - metric_name: avg_close
+    expression: AVG(close)
+  - metric_name: sum_volume
+    expression: SUM(volume)
+  - metric_name: vol_7d
+    expression: AVG(vol_7d)
+  - metric_name: vol_30d
+    expression: AVG(vol_30d)

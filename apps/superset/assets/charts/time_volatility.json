@@ -1,0 +1,13 @@
+{
+  "slice_name": "time_volatility",
+  "viz_type": "line",
+  "datasource": "finance_prices",
+  "params": {
+    "metrics": ["vol_7d", "vol_30d"],
+    "groupby": ["ts"],
+    "adhoc_filters": [],
+    "orderby": [["ts", true]],
+    "emit_filter": true,
+    "legend_position": "top"
+  }
+}

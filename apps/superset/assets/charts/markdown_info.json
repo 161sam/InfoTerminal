@@ -1,0 +1,7 @@
+{
+  "slice_name": "markdown_info",
+  "viz_type": "markdown",
+  "params": {
+    "markdown": "Use table links to open assets in InfoTerminal."
+  }
+}
