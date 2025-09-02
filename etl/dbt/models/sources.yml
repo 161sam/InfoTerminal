@@ -4,3 +4,24 @@ sources:
     schema: public
     tables:
       - name: stg_openbb_prices
+        columns:
+          - name: as_of_date
+            tests: [not_null]
+          - name: symbol
+            tests: [not_null]
+          - name: close
+models:
+  - name: dim_asset
+    columns:
+      - name: asset_id
+        tests: [unique, not_null]
+      - name: symbol
+        tests: [unique, not_null]
+  - name: fct_eod_prices
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: as_of_date
+        tests: [not_null]
+      - name: close
+        tests: [not_null]
