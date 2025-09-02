@@ -1,0 +1,65 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: opensearch
+    url: https://opensearch-project.github.io/helm-charts
+  - name: traefik
+    url: https://traefik.github.io/charts
+
+releases:
+  - name: traefik
+    namespace: ingress
+    chart: traefik/traefik
+    createNamespace: true
+    values:
+      - {}
+  - name: postgres
+    namespace: data
+    chart: bitnami/postgresql
+    createNamespace: true
+    values:
+      - primary:
+          service:
+            type: NodePort
+            nodePorts:
+              postgresql: 5432
+        auth:
+          postgresPassword: postgres
+          username: app
+          password: app
+          database: infoterminal
+  - name: minio
+    namespace: data
+    chart: bitnami/minio
+    values:
+      - mode: standalone
+        auth:
+          rootUser: admin
+          rootPassword: adminadmin
+        service:
+          type: NodePort
+          nodePorts:
+            api: 9000
+  - name: opensearch
+    namespace: search
+    chart: opensearch/opensearch
+    values:
+      - singleNode: true
+        persistence:
+          enabled: false
+        service:
+          type: NodePort
+          nodePorts:
+            http: 9200
+  - name: keycloak
+    namespace: auth
+    chart: bitnami/keycloak
+    values:
+      - auth:
+          adminUser: admin
+          adminPassword: adminadmin
+        proxy: edge
+        service:
+          type: NodePort
+          nodePorts:
+            http: 8081

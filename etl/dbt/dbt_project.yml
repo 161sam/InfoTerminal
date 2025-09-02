@@ -1,0 +1,8 @@
+name: "infoterminal_dbt"
+version: "1.0.0"
+profile: "infoterminal"
+models:
+  infoterminal_dbt:
+    +materialized: view
+    staging:
+      +tags: ["openbb"]
