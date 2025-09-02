@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: grafana-rule-opa-deny, namespace: observability }
+data:
+  rules.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: OPA
+        folder: "OPA"
+        interval: 1m
+        rules:
+          - uid: opa-deny
+            title: "OPA deny spike"
+            condition: GT
+            data:
+              - refId: D
+                datasourceUid: clickhouse
+                relativeTimeRange: { from: 900, to: 0 }
+                model:
+                  query: "SELECT toStartOfMinute(ts) t, countIf(allowed=0) c FROM logs.opa_decisions WHERE ts > now()-interval 15 minute GROUP BY t ORDER BY t"
+              - refId: TH
+                datasourceUid: __expr__
+                model: { type: threshold, expression: "20" }
+              - refId: GT
+                datasourceUid: __expr__
+                model: { type: math, expression: "last(D) > TH" }
+            annotations: { summary: "denies/min > 20 in last 15m" }
+            labels: { severity: "warning" }
+
