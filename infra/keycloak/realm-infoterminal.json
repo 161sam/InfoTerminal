@@ -44,6 +44,17 @@
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
       "attributes": { "pkce.code.challenge.method": "S256" }
+    },
+    {
+      "clientId": "edge-proxy",
+      "secret": "edge-proxy-secret",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://auth.127.0.0.1.nip.io/oauth2/callback"],
+      "webOrigins": ["http://auth.127.0.0.1.nip.io"],
+      "standardFlowEnabled": true,
+      "serviceAccountsEnabled": false,
+      "attributes": { "pkce.code.challenge.method": "S256" }
     }
   ],
   "defaultRoles": ["analyst"],

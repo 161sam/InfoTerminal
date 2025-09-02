@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: openbb }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: openbb-prices-daily
+  namespace: openbb
+spec:
+  schedule: "5 4 * * 1-5"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: connector
+            image: openbb-connector:local
+            imagePullPolicy: IfNotPresent
+            env:
+              - { name: PG_HOST, value: "postgres-postgresql.data.svc.cluster.local" }
+              - { name: PG_PORT, value: "5432" }
+              - { name: PG_DB,   value: "infoterminal" }
+              - { name: PG_USER, value: "app" }
+              - { name: PG_PASS, value: "app" }
+              - { name: OPENBB_SYMBOLS, value: "AAPL,MSFT,SAP.DE,NVDA" }

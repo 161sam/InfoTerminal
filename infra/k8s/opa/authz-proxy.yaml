@@ -5,62 +5,56 @@ metadata:
   namespace: policy
 data:
   app.py: |
-    import os, json
+    import os
     from fastapi import FastAPI, Request, Response
     import httpx
-    from jose import jwt
     from cachetools import TTLCache
+    from jose import jwt
 
-    ISSUER = os.getenv("KEYCLOAK_ISSUER","http://localhost:8081/realms/infoterminal")
-    AUD = os.getenv("KEYCLOAK_AUDIENCE","search-api")
-    JWKS_URL = f"{ISSUER}/protocol/openid-connect/certs"
+    OAUTH2_AUTH = os.getenv("OAUTH2_AUTH","http://oauth2-proxy.edge-auth.svc.cluster.local/oauth2/auth")
     OPA_URL = os.getenv("OPA_URL","http://opa.policy.svc.cluster.local:8181/v1/data/access/allow")
+    ISSUER = os.getenv("KEYCLOAK_ISSUER","http://localhost:8081/realms/infoterminal")
     _cache = TTLCache(1, 300)
-
-    def _jwks():
-        if "jwks" in _cache: return _cache["jwks"]
-        d = httpx.get(JWKS_URL, timeout=5).json(); _cache["jwks"]=d; return d
-
-    def _user_from_authz(hv:str|None):
-        if not hv or not hv.startswith("Bearer "): return None
-        token = hv.split(" ",1)[1]
-        claims = jwt.decode(token, _jwks(), algorithms=["RS256"], audience=AUD, issuer=ISSUER)
-        roles = claims.get("roles") or claims.get("realm_access",{}).get("roles",[])
-        return {"sub":claims.get("sub"), "roles":roles, "username":claims.get("preferred_username")}
 
     app = FastAPI()
 
-    @app.get("/health") 
+    @app.get("/health")
     def health(): return {"ok": True}
 
     @app.get("/authz")
     async def authz(request: Request):
-        # allow unauthenticated pass-through (App kann OIDC selbst machen)
-        auth = request.headers.get("authorization")
-        user = None
-        if auth:
-            try:
-                user = _user_from_authz(auth)
-            except Exception:
-                # kein valider Token -> 401
-                return Response(status_code=401)
-
-        # Beispiel-Resource: aus Host/Path grob ableiten
-        host = request.headers.get("x-forwarded-host","")
-        resource = {"classification":"public","host":host}
-        inp = {"input":{"user": user or {"roles":["anonymous"]}, "action":"read", "resource": resource}}
+        # 1) AuthN via oauth2-proxy (Cookie Session)
+        headers = {k:v for k,v in request.headers.items() if k.lower().startswith("cookie") or k.lower().startswith("x-forwarded")}
         try:
-            r = httpx.post(OPA_URL, json=inp, timeout=3); r.raise_for_status()
-            allow = bool(r.json().get("result", False))
+            r = httpx.get(OAUTH2_AUTH, headers=headers, timeout=3.0)
+            if r.status_code != 202:
+                # nicht eingeloggt -> 401, Traefik leitet auf /oauth2/start um
+                return Response(status_code=401)
+            # Nutzerinfos aus oauth2-proxy Headers
+            user = {
+              "username": r.headers.get("X-Auth-Request-User") or r.headers.get("X-Forwarded-User") or "unknown",
+              "email": r.headers.get("X-Auth-Request-Email") or "",
+              "roles": (r.headers.get("X-Auth-Request-Groups") or "").split(",") if r.headers.get("X-Auth-Request-Groups") else ["analyst"]
+            }
         except Exception:
-            allow = True  # dev fail-open
+            # dev fail-open auf authn
+            user = {"username":"dev","roles":["analyst"]}
+
+        # 2) OPA-Decision (AuthZ)
+        host = request.headers.get("x-forwarded-host","")
+        path = request.headers.get("x-forwarded-uri","/")
+        resource = {"classification":"public","host":host,"path":path}
+        payload = {"input": {"user": user, "action":"read", "resource": resource}}
+        allow = True
+        try:
+            rr = httpx.post(OPA_URL, json=payload, timeout=3.0)
+            rr.raise_for_status()
+            allow = bool(rr.json().get("result", False))
+        except Exception:
+            allow = True  # dev
 
         if allow:
-            headers = {}
-            if user:
-                headers["X-User"] = user.get("username") or user.get("sub","")
-                headers["X-Roles"] = ",".join(user.get("roles",[]))
-            return Response(status_code=200, headers=headers)
+            return Response(status_code=200, headers={"X-User":user["username"], "X-Roles":",".join(user["roles"])})
         return Response(status_code=403)
 ---
 apiVersion: apps/v1
