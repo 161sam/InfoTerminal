@@ -8,7 +8,7 @@ make auth-up        # Keycloak realm import
 make neo4j-up       # falls noch nicht durch dev-up angeworfen
 make seed-graph     # Demo-Graph in Neo4j
 
-make apps-up        # Startet Search-API, Graph-API, ER-Service & Frontend
+make apps-up        # Startet Search-API, Graph-API, ER-Service, NLP, Doc-Entities & Frontend
 ```
 
 ## Start-Sequenz (kompakt)
@@ -19,7 +19,7 @@ make seed-demo      # Demo-Index in OpenSearch
 make auth-up        # Keycloak realm import
 make neo4j-up       # (optional) Neo4j Manifeste
 make seed-graph     # Demo-Graph
-make apps-up        # Search-API + Graph-API + ER-Service + Frontend
+make apps-up        # Search-API + Graph-API + ER-Service + NLP + Doc-Entities + Frontend
 ```
 
 **Optional**: Auth wirklich erzwingen
@@ -47,6 +47,8 @@ Frontend:        http://localhost:3000
 Search-API:      http://127.0.0.1:8001/healthz
 Graph-API:       http://127.0.0.1:8002/healthz
 ER-Service:      http://127.0.0.1:8003/docs
+NLP-Service:     http://127.0.0.1:8005/healthz
+Doc-Entities:    http://127.0.0.1:8006/healthz
 Keycloak:        http://localhost:8081
 Superset:        http://localhost:8088
 Neo4j Browser:   http://localhost:7474
@@ -86,3 +88,13 @@ cd apps/frontend && pnpm i && pnpm dev
 * Graph:    http://localhost:3000/graph
 * Airflow:  http://localhost:8084
 * OPA-Test: http://search.127.0.0.1.nip.io/search?q=info
+
+## n8n Flow: Investigation Assistant v1
+
+Die Datei `apps/n8n/investigation-assistant-v1.json` kann in n8n importiert und über den Webhook `/case` aufgerufen werden.
+
+Hinweise:
+
+* Auth: Falls die Airflow API Authentifizierung erfordert, entsprechende Header im HTTP-Node setzen.
+* Superset-Slug: auf den eigenen Dashboard-Slug anpassen (z. B. `openbb-overview`).
+* Symbol-Filter: Native-Filter-Parameter im Superset-Link ggf. anpassen.

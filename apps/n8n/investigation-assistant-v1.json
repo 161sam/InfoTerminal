@@ -1,0 +1,123 @@
+{
+  "name": "Investigation Assistant v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "case",
+        "options": { "responseCode": 200, "responseData": "allEntries" }
+      },
+      "id": "Webhook",
+      "name": "Webhook /case",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [ -200, 0 ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8001/search",
+        "options": {},
+        "queryParametersUi": {
+          "parameter": [
+            { "name": "q", "value": "={{$json.query || ('case:' + $json.caseId)}}" }
+          ]
+        }
+      },
+      "id": "SearchAPI",
+      "name": "Search API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [ 60, 0 ]
+    },
+    {
+      "parameters": { "options": {}, "functionCode": "const res = items[0].json;\nconst top = (res.results || []).slice(0,3);\nreturn top.map(r=>({json:r}));" },
+      "id": "Top3",
+      "name": "Top 3",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [ 300, 0 ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8006/annotate",
+        "options": { "bodyContentType": "json" },
+        "jsonParameters": true,
+        "sendBody": true,
+        "bodyParametersJson": "={\"doc_id\": $json.id || $json.title, \"title\": $json.title, \"text\": $json.body}"
+      },
+      "id": "Annotate",
+      "name": "Doc Annotate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [ 540, -100 ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8005/summarize",
+        "options": { "bodyContentType": "json" },
+        "jsonParameters": true,
+        "sendBody": true,
+        "bodyParametersJson": "={\"text\": $json.body}"
+      },
+      "id": "Summarize",
+      "name": "Summarize",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [ 540, 100 ]
+    },
+    {
+      "parameters": {
+        "options": {},
+        "functionCode": "const caseId = $item(0).$node[\"Webhook /case\"].json.caseId;\nconst rows = [];\nfor (const i of $items(\"Top 3\", 0, $items().length)) {\n  const r = i.json;\n  const sum = i.$node[\"Summarize\"].json.summary || \"\";\n  const docUrl = `http://localhost:3000/docs/${encodeURIComponent(r.id||r.title)}`;\n  rows.push(`- **${r.title}** ([doc](${docUrl}))\\n  ${sum}`);\n}\nconst md = [\n  `# Case ${caseId}`,\n  `## Findings (Top 3)`,\n  rows.join("\\n"),\n].join("\\n\\n");\nreturn [{json: {markdown: md}}];"
+      },
+      "id": "ComposeNote",
+      "name": "Compose Note",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [ 800, 0 ]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8084/api/v1/dags/openbb_kpo_daily/dagRuns",
+        "options": { "bodyContentType": "json" },
+        "jsonParameters": true,
+        "sendBody": true,
+        "bodyParametersJson": "={\"dag_run_id\": \"case-\" + $json.caseId + \"-\" + Date.now()}"
+      },
+      "id": "Airflow",
+      "name": "Trigger Airflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [ -20, 220 ]
+    },
+    {
+      "parameters": {
+        "options": {},
+        "functionCode": "const dash = 'openbb-overview'; // falls Slug anders: anpassen\nconst symbol = 'SAP.DE'; // simple Beispiel, sonst aus Ergebnissen ableiten\nconst supersetUrl = `http://superset.127.0.0.1.nip.io/superset/dashboard/${dash}/?native_filters_key=%7B%7D#`; \nreturn [{json: {superset: supersetUrl}}];"
+      },
+      "id": "SupersetLink",
+      "name": "Superset Link",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [ 1080, 0 ]
+    },
+    {
+      "parameters": {
+        "options": {},
+        "functionCode": "const md = $item(0).$node[\"Compose Note\"].json.markdown;\nconst sup = $item(0).$node[\"Superset Link\"].json.superset;\nreturn [{json: { markdown: md + \"\\n\\n**Analytics:** \" + sup }}];"
+      },
+      "id": "Assemble",
+      "name": "Assemble Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [ 1320, 0 ]
+    }
+  ],
+  "connections": {
+    "Webhook /case": { "main": [[ { "node": "Search API", "type": "main", "index": 0 }, { "node": "Trigger Airflow", "type": "main", "index": 0 } ]] },
+    "Search API": { "main": [[ { "node": "Top 3", "type": "main", "index": 0 } ]] },
+    "Top 3": { "main": [[ { "node": "Doc Annotate", "type": "main", "index": 0 }, { "node": "Summarize", "type": "main", "index": 0 } ]] },
+    "Compose Note": { "main": [[ { "node": "Superset Link", "type": "main", "index": 0 } ]] },
+    "Superset Link": { "main": [[ { "node": "Assemble Response", "type": "main", "index": 0 } ]] }
+  }
+}
