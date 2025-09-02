@@ -5,6 +5,8 @@ repositories:
     url: https://opensearch-project.github.io/helm-charts
   - name: traefik
     url: https://traefik.github.io/charts
+  - name: apache-airflow
+    url: https://airflow.apache.org
 
 releases:
   - name: traefik
@@ -112,3 +114,23 @@ releases:
               },
             }
           ]
+  - name: airflow
+    namespace: workflow
+    chart: apache-airflow/airflow
+    createNamespace: true
+    values:
+      - executor: "LocalExecutor"
+        webserver:
+          service:
+            type: NodePort
+            ports:
+              http:
+                nodePort: 8084
+        dags:
+          existingConfigmap: airflow-dags
+        postgresql:
+          enabled: true
+        redis:
+          enabled: true
+        workers:
+          enabled: false

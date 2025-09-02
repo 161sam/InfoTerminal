@@ -1,0 +1,12 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authz
+  namespace: ingress
+spec:
+  forwardAuth:
+    address: http://authz-proxy.policy.svc.cluster.local/authz
+    trustForwardHeader: true
+    authResponseHeaders:
+      - X-User
+      - X-Roles
