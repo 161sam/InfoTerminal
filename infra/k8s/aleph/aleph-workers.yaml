@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: docs }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: redis, namespace: docs }
+spec:
+  selector: { app: redis }
+  ports: [{ name: redis, port: 6379, targetPort: 6379 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: redis, namespace: docs }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: redis } }
+  template:
+    metadata: { labels: { app: redis } }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports: [{ containerPort: 6379 }]
+---
+# Celery-Worker
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: aleph-worker, namespace: docs }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: aleph-worker } }
+  template:
+    metadata: { labels: { app: aleph-worker } }
+    spec:
+      containers:
+        - name: worker
+          image: alephdata/aleph:latest
+          command: ["aleph","worker"]
+          envFrom:
+            - configMapRef: { name: aleph-env }
+            - secretRef:   { name: aleph-secret }
+          env:
+            - { name: CELERY_BROKER_URL, value: "redis://redis.docs.svc.cluster.local:6379/0" }
+            - { name: CELERY_RESULT_BACKEND, value: "redis://redis.docs.svc.cluster.local:6379/1" }
+          volumeMounts:
+            - { name: data, mountPath: /data }
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+# Ingestor (für Dateiimport & Vorverarbeitung)
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: aleph-ingestor, namespace: docs }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: aleph-ingestor } }
+  template:
+    metadata: { labels: { app: aleph-ingestor } }
+    spec:
+      containers:
+        - name: ingestor
+          image: alephdata/ingest-file:latest
+          envFrom:
+            - configMapRef: { name: aleph-env }
+            - secretRef:   { name: aleph-secret }
+          env:
+            - { name: QUEUE_HOST, value: "redis.docs.svc.cluster.local" }
+            - { name: QUEUE_DATABASE, value: "0" }
+            - { name: QUEUE_RESULT_DATABASE, value: "1" }
+          volumeMounts:
+            - { name: data, mountPath: /data }
+      volumes:
+        - name: data
+          emptyDir: {}

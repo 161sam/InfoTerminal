@@ -1,0 +1,11 @@
+infoterminal:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: app
+      password: app
+      dbname: infoterminal
+      schema: public
