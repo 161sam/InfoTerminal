@@ -1,16 +1,6 @@
 # InfoTerminal — Open, Modular Intelligence Platform
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [Purpose](#purpose)
-- [Prerequisites](#prerequisites)
-- [Quickstart (Dev)](#quickstart-dev)
-- [Health Checks](#health-checks)
-- [Common Tasks](#common-tasks)
-- [Further Reading](#further-reading)
-- [DE Appendix](#de-appendix)
-
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Purpose
@@ -47,9 +37,3 @@ make restart <svc>  # restart a specific service
 - [Runbooks](docs/dev/runbooks)
 - [Architecture Decisions](docs/adr)
 
-
----
-
-## DE Appendix
-
-Kurzanleitung auf Deutsch ist in [docs/dev/Checkliste.md](docs/dev/Checkliste.md) zu finden. Neue Dokumentation erfolgt primär auf Englisch.
