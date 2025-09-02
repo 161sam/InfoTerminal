@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: superset-dbt-sync
+  namespace: analytics
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: sync
+        image: python:3.11-slim
+        command: ["/bin/sh","-c"]
+        args:
+          - pip install -q requests && python /work/superset_dbt_sync.py
+        volumeMounts:
+          - { name: work, mountPath: /work }
+        env:
+          - { name: SUPERSET_URL, value: "http://superset.analytics.svc.cluster.local:8088" }
+          - { name: SUPERSET_USER, value: "admin" }
+          - { name: SUPERSET_PASS, value: "adminadmin" }
+          - { name: PG_HOST, value: "postgres-postgresql.data.svc.cluster.local" }
+          - { name: PG_PORT, value: "5432" }
+          - { name: PG_DB, value: "infoterminal" }
+          - { name: PG_USER, value: "app" }
+          - { name: PG_PASS, value: "app" }
+          - { name: DBT_ARTIFACTS, value: "/work/dbt_artifacts" }
+      volumes:
+        - name: work
+          configMap:
+            name: superset-dbt-sync-scripts
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: superset-dbt-sync-scripts
+  namespace: analytics
+data:
+  superset_dbt_sync.py: |
+    {{ paste the exact content of infra/analytics/superset_dbt_sync.py here if you prefer CM-based deploy }}
+  dbt_artifacts: ""  # optional – mount artifacts here if you load them by ConfigMap
