@@ -1,0 +1,11 @@
+infoterminal:
+  target: ${DBT_TARGET}
+  outputs:
+    ${DBT_TARGET}:
+      type: postgres
+      host: ${DBT_PG_HOST}
+      port: 5432
+      user: ${DBT_PG_USER}
+      password: ${DBT_PG_PASSWORD}
+      dbname: ${DBT_PG_DB}
+      schema: public
