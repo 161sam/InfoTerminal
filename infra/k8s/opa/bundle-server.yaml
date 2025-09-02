@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: opa-bundle-server, namespace: policy }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: opa-bundle-server } }
+  template:
+    metadata: { labels: { app: opa-bundle-server } }
+    spec:
+      containers:
+      - name: server
+        image: nginx:1.25-alpine
+        volumeMounts:
+          - { name: bundle, mountPath: /usr/share/nginx/html/bundles }
+      volumes:
+        - name: bundle
+          configMap: { name: opa-bundle }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: opa-bundle-server, namespace: policy }
+spec:
+  selector: { app: opa-bundle-server }
+  ports: [{ name: http, port: 80, targetPort: 80 }]
