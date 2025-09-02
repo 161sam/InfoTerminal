@@ -1,0 +1,4 @@
+dbt-postgres
+requests
+pandas
+pyarrow
