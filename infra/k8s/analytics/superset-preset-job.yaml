@@ -1,0 +1,105 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: superset-preset
+  namespace: analytics
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: seed
+        image: python:3.11-slim
+        command: ["/bin/sh","-c"]
+        args:
+          - pip install -q requests &&
+            python /work/seed.py
+        volumeMounts:
+          - { name: work, mountPath: /work }
+        env:
+          - { name: SUPERSET_URL, value: "http://superset.analytics.svc.cluster.local:8088" }
+          - { name: SUPERSET_USER, value: "admin" }
+          - { name: SUPERSET_PASS, value: "adminadmin" }
+          - { name: PG_HOST, value: "postgres-postgresql.data.svc.cluster.local" }
+          - { name: PG_PORT, value: "5432" }
+          - { name: PG_DB,   value: "infoterminal" }
+          - { name: PG_USER, value: "app" }
+          - { name: PG_PASS, value: "app" }
+      volumes:
+        - name: work
+          configMap:
+            name: superset-preset-scripts
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: superset-preset-scripts
+  namespace: analytics
+data:
+  seed.py: |
+    import os, time, requests, json
+    U=os.getenv("SUPERSET_URL")
+    s=requests.Session()
+    # 1) Login
+    r=s.post(f"{U}/api/v1/security/login", json={
+      "username": os.getenv("SUPERSET_USER"),
+      "password": os.getenv("SUPERSET_PASS"),
+      "provider": "db"
+    }); r.raise_for_status()
+    access=r.json()["access_token"]
+    s.headers.update({"Authorization": f"Bearer {access}"})
+    # 2) Database
+    conn=f"postgresql+psycopg2://{os.getenv('PG_USER')}:{os.getenv('PG_PASS')}@{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/{os.getenv('PG_DB')}"
+    db_payload={"database_name":"infoterminal_pg","sqlalchemy_uri":conn,"expose_in_sqllab":True}
+    r=s.post(f"{U}/api/v1/database/", json=db_payload); 
+    if r.status_code not in (200,201): print("DB create:",r.text)
+    # get db id
+    dbs=s.get(f"{U}/api/v1/database/") .json()
+    db_id=[d["id"] for d in dbs["result"] if d["database_name"]=="infoterminal_pg"][0]
+    # 3) Dataset
+    ds_payload = {
+      "database": db_id,
+      "schema": "public",
+      "table_name": "stg_openbb_prices",
+      "extras": {}
+    }
+    r=s.post(f"{U}/api/v1/dataset/", json=ds_payload)
+    if r.status_code not in (200,201):
+        # falls bereits vorhanden, suche id
+        dss = s.get(f"{U}/api/v1/dataset/?q="+requests.utils.quote(json.dumps({"filters":[{"col":"table_name","opr":"eq","value":"stg_openbb_prices"}]}))).json()
+        ds_id = dss["result"][0]["id"]
+    else:
+        ds_id = r.json()["id"]
+    # 4) Chart (Time-series Line)
+    chart_payload = {
+      "slice_name": "OpenBB Close Price",
+      "viz_type": "echarts_timeseries_line",
+      "params": json.dumps({
+        "time_range": "No filter",
+        "metrics": ["sum__close"],
+        "groupby": ["symbol"],
+        "adhoc_filters": [],
+        "granularity_sqla": "as_of_date",
+        "x_axis": "as_of_date"
+      }),
+      "datasource_id": ds_id, "datasource_type": "table"
+    }
+    r=s.post(f"{U}/api/v1/chart/", json=chart_payload); 
+    if r.status_code not in (200,201): print("Chart:", r.text)
+    chart_id = (r.json().get("id") if r.status_code in (200,201) else s.get(f"{U}/api/v1/chart/").json()["result"][0]["id"])
+    # 5) Dashboard
+    dash_payload = {"dashboard_title":"OpenBB Overview","json_metadata":"{}","position_json":"{}","published":True,"duplicate_slices":False,"css":"", "slug":"openbb-overview"}
+    r=s.post(f"{U}/api/v1/dashboard/", json=dash_payload)
+    if r.status_code not in (200,201): print("Dashboard:", r.text)
+    dash = s.get(f"{U}/api/v1/dashboard/?q="+requests.utils.quote(json.dumps({"filters":[{"col":"dashboard_title","opr":"eq","value":"OpenBB Overview"}]}))).json()
+    dash_id = dash["result"][0]["id"]
+    # 6) Append chart to dashboard (simple superset pos json)
+    layout = {
+      "DASHBOARD_VERSION_KEY": "v2",
+      "ROOT_ID": {"type": "ROOT", "id": "ROOT_ID", "children": ["GRID_ID"]},
+      "GRID_ID": {"type": "GRID", "id": "GRID_ID", "children": ["ROW_ID"]},
+      "ROW_ID": {"type": "ROW", "id": "ROW_ID", "children": ["CHART_ID"], "meta": {"0":"CHART_ID"}},
+      "CHART_ID": {"type": "CHART", "id": "CHART_ID", "children": [], "meta": {"chartId": chart_id}}
+    }
+    s.put(f"{U}/api/v1/dashboard/{dash_id}", json={"position_json": json.dumps(layout)})
+    print("Superset preset done: Dashboard 'OpenBB Overview'")
