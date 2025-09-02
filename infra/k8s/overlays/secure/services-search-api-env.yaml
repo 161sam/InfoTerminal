@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-api
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - name: search-api
+          envFrom:
+            - secretRef:
+                name: infoterminal-app-secrets
