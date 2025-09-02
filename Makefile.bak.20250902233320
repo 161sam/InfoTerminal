@@ -108,15 +108,3 @@ obs-grafana-dashboards:
 
 obs-down:
 	kubectl delete -f infra/observability/otel-collector.yaml || true
-
-.PHONY: docs-lint docs-toc docs-open
-docs-lint:
-	npx markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json || true
-	npx lychee --accept 200,429 README.md docs/**/*.md || true
-
-docs-toc:
-	npx doctoc README.md docs --github --maxlevel 3
-
-docs-open:
-	python -m http.server --directory docs 8081
-	# open http://localhost:8081 in browser
