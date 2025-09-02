@@ -1,0 +1,98 @@
+{
+  "uid": "obs-slo",
+  "title": "InfoTerminal — SLOs",
+  "tags": ["infoterminal","slo"],
+  "timezone": "browser",
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "version": 1,
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(spanmetrics_calls_total, service_name)",
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "target_p95_ms",
+        "type": "textbox",
+        "label": "SLO p95 target (ms)",
+        "query": "300",
+        "current": { "text": "300", "value": "300" }
+      },
+      {
+        "name": "error_budget_pct",
+        "type": "textbox",
+        "label": "Error budget (%)",
+        "query": "2",
+        "current": { "text": "2", "value": "2" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Current p95 (ms)",
+      "gridPos": {"x":0,"y":0,"w":6,"h":4},
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "1000*histogram_quantile(0.95, sum by (le) (rate(spanmetrics_latency_bucket{service_name=\"$service\"}[5m])))" }
+      ],
+      "options": { "reduceOptions": {"calcs":["lastNotNull"]} }
+    },
+    {
+      "type": "stat",
+      "title": "SLO Met? (p95 ≤ target)",
+      "gridPos": {"x":6,"y":0,"w":6,"h":4},
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "bool( 1000*histogram_quantile(0.95, sum by (le) (rate(spanmetrics_latency_bucket{service_name=\"$service\"}[5m]))) <= $target_p95_ms )" }
+      ],
+      "fieldConfig": { "defaults": { "mappings":[{"type":"value","options":{"0":{"text":"NO"},"1":{"text":"YES"}}}]} }
+    },
+    {
+      "type": "timeseries",
+      "title": "p50/p95/p99 vs Target",
+      "gridPos": {"x":12,"y":0,"w":12,"h":8},
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "1000*histogram_quantile(0.50, sum by (le) (rate(spanmetrics_latency_bucket{service_name=\"$service\"}[5m])))", "legendFormat": "p50" },
+        { "expr": "1000*histogram_quantile(0.95, sum by (le) (rate(spanmetrics_latency_bucket{service_name=\"$service\"}[5m])))", "legendFormat": "p95" },
+        { "expr": "1000*histogram_quantile(0.99, sum by (le) (rate(spanmetrics_latency_bucket{service_name=\"$service\"}[5m])))", "legendFormat": "p99" },
+        { "expr": "$target_p95_ms", "legendFormat": "target" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Error rate (5m) %",
+      "gridPos": {"x":0,"y":8,"w":6,"h":4},
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "100*sum(rate(spanmetrics_calls_total{service_name=\"$service\",http_status_code=~\"5..\"}[5m])) / clamp_min(sum(rate(spanmetrics_calls_total{service_name=\"$service\"}[5m])), 1e-6)" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Error budget remaining (%) — 30d",
+      "gridPos": {"x":6,"y":8,"w":6,"h":4},
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "100 - (100* sum_over_time( (sum(rate(spanmetrics_calls_total{service_name=\"$service\",http_status_code=~\"5..\"}[5m])) / clamp_min(sum(rate(spanmetrics_calls_total{service_name=\"$service\"}[5m])),1e-6)) [30d:5m]) / (30*24*60/5) )" }
+      ],
+      "fieldConfig": { "defaults": { "thresholds": {"mode":"absolute","steps":[{"color":"green","value":20},{"color":"red","value":0}]}} }
+    },
+    {
+      "type": "timeseries",
+      "title": "Multi-Window Burn-Rate (1h/6h)",
+      "gridPos": {"x":12,"y":8,"w":12,"h":8},
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "(sum(rate(spanmetrics_calls_total{service_name=\"$service\",http_status_code=~\"5..\"}[1h])) / clamp_min(sum(rate(spanmetrics_calls_total{service_name=\"$service\"}[1h])),1e-6)) / ($error_budget_pct/100)", "legendFormat":"BR_1h" },
+        { "expr": "(sum(rate(spanmetrics_calls_total{service_name=\"$service\",http_status_code=~\"5..\"}[6h])) / clamp_min(sum(rate(spanmetrics_calls_total{service_name=\"$service\"}[6h])),1e-6)) / ($error_budget_pct/100)", "legendFormat":"BR_6h" }
+      ]
+    }
+  ]
+}
