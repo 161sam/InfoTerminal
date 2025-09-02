@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: superset-edge
+  namespace: analytics
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: ingress-authz@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: superset.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: superset, port: { number: 8088 } } }
