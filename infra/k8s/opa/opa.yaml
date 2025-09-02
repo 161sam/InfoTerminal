@@ -43,7 +43,8 @@ spec:
             - "run"
             - "--server"
             - "--addr=0.0.0.0:8181"
-            - "/policies"
+            - "--set=services.bundle.url=http://opa-bundle-server.policy.svc.cluster.local"
+            - "--set=bundles.main.resource=/bundles/policy-bundle.tar.gz"
           ports:
             - containerPort: 8181
           volumeMounts:
