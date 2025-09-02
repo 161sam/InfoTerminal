@@ -2,7 +2,7 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up
+.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test
 
 auth-up:
 	@bash infra/scripts/keycloak-import.sh
@@ -50,3 +50,8 @@ seed-graph:
 print-info:
 	@echo "Kubernetes context: $(K8S_CONTEXT)"
 	@kubectl --context $(K8S_CONTEXT) get pods -A
+
+
+
+opa-test:
+	@docker run --rm -v $(PWD)/infra/k8s/opa:/pol -w /pol openpolicyagent/opa:0.64.0 test -v .

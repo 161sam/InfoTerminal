@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: docs }
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: aleph-secret, namespace: docs }
+type: Opaque
+stringData:
+  ALEPH_SECRET_KEY: "change_me_supersecret"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: aleph-env, namespace: docs }
+data:
+  ALEPH_DATABASE_URI: "postgresql://app:app@postgres-postgresql.data.svc.cluster.local:5432/infoterminal"
+  ALEPH_ELASTICSEARCH_URI: "http://opensearch.search.svc.cluster.local:9200"
+  ALEPH_ARCHIVE_TYPE: "file"
+  ALEPH_ARCHIVE_PATH: "/data/archive"
+  ALEPH_URL: "http://aleph.127.0.0.1.nip.io"
+  ALEPH_DEBUG: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: aleph, namespace: docs }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: aleph } }
+  template:
+    metadata: { labels: { app: aleph } }
+    spec:
+      containers:
+      - name: web
+        image: alephdata/aleph:latest
+        envFrom:
+          - configMapRef: { name: aleph-env }
+          - secretRef: { name: aleph-secret }
+        ports: [ { containerPort: 8080 } ]
+        volumeMounts:
+          - { name: data, mountPath: /data }
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: { name: aleph, namespace: docs }
+spec:
+  selector: { app: aleph }
+  ports: [ { name: http, port: 8080, targetPort: 8080 } ]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aleph
+  namespace: docs
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: ingress-authz@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: aleph.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: aleph, port: { number: 8080 } } }

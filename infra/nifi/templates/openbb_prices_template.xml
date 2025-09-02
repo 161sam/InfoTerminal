@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+  <name>OpenBB_Prices_Demo</name>
+  <description>InvokeHTTP → LogAttribute (Demo)</description>
+  <snippet>
+    <processGroups/>
+    <remoteProcessGroups/>
+    <processors>
+      <processor>
+        <id>00000000-0000-0000-0000-000000000001</id>
+        <name>GenerateFlowFile</name>
+        <class>org.apache.nifi.processors.standard.GenerateFlowFile</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>10 sec</schedulingPeriod>
+        <autoTerminatedRelationships>
+          <relationship>failure</relationship>
+        </autoTerminatedRelationships>
+        <properties>
+          <property>
+            <name>generate-ff-custom-text</name>
+            <value>{"symbols":"AAPL,MSFT,SAP.DE"}</value>
+          </property>
+          <property>
+            <name>File Size</name><value>0B</value>
+          </property>
+        </properties>
+      </processor>
+      <processor>
+        <id>00000000-0000-0000-0000-000000000002</id>
+        <name>InvokeHTTP (openbb-connector)</name>
+        <class>org.apache.nifi.processors.standard.InvokeHTTP</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>10 sec</schedulingPeriod>
+        <autoTerminatedRelationships>
+          <relationship>failure</relationship>
+        </autoTerminatedRelationships>
+        <properties>
+          <property>
+            <name>HTTP Method</name><value>POST</value>
+          </property>
+          <property>
+            <name>Remote URL</name><value>http://openbb-connector.openbb.svc.cluster.local/run</value>
+          </property>
+          <property>
+            <name>Content-Type</name><value>application/json</value>
+          </property>
+        </properties>
+      </processor>
+      <processor>
+        <id>00000000-0000-0000-0000-000000000003</id>
+        <name>LogAttribute</name>
+        <class>org.apache.nifi.processors.standard.LogAttribute</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>10 sec</schedulingPeriod>
+      </processor>
+    </processors>
+    <connections>
+      <connection>
+        <id>c1</id>
+        <name>gen→invoke</name>
+        <sourceId>00000000-0000-0000-0000-000000000001</sourceId>
+        <sourceRelationship>success</sourceRelationship>
+        <destinationId>00000000-0000-0000-0000-000000000002</destinationId>
+      </connection>
+      <connection>
+        <id>c2</id>
+        <name>invoke→log</name>
+        <sourceId>00000000-0000-0000-0000-000000000002</sourceId>
+        <sourceRelationship>response</sourceRelationship>
+        <destinationId>00000000-0000-0000-0000-000000000003</destinationId>
+      </connection>
+    </connections>
+    <inputPorts/><outputPorts/><funnels/><labels/><controllerServices/>
+  </snippet>
+</template>
