@@ -1,12 +1,21 @@
+try:
+    from obs.otel_boot import *  # noqa
+except Exception:
+    pass
+
 import os, json, datetime, httpx
 from typing import Any, Dict, List
 from fastapi import FastAPI, Request
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+from prometheus_client import make_asgi_app
 
 CH = os.getenv("CH_URL","http://clickhouse.clickhouse.svc.cluster.local:8123")
 CH_DB = os.getenv("CH_DB","logs")
 CH_TABLE = os.getenv("CH_TABLE","opa_decisions")
 
 app = FastAPI(title="OPA Audit Sink", version="0.1.0")
+FastAPIInstrumentation().instrument_app(app)
+app.mount("/metrics", make_asgi_app())
 
 @app.get("/healthz")
 def health(): return {"ok": True}
