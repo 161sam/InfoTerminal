@@ -1,0 +1,9 @@
+architecture: replication
+readReplicas: 2
+primary:
+  persistence: { size: 20Gi }
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+readReplicas:
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
