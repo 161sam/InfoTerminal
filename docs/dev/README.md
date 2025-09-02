@@ -1,5 +1,54 @@
 # InfoTerminal — Open, Modular Intelligence Platform (Gotham-style, OSS)
 
+  ```
+  +--------------------------------------------------------+
+  |                      Benutzer                         |
+  |  - Analysten, Ermittler, Data Scientists              |
+  +------------+--------------------+---------------------+
+               |                    |                       
+       +-------v------+      +------v-------+               
+       |  Visualisierung |    |   Frontend UI |                 
+       |  (Apache Superset|  | (React, Vue.js) |               
+       |  Metabase)      |    |                |               
+       +-------+--------+      +-------+-------+               
+               |                       |                      
+         +-----v-----------------------v-----+                
+         |       API Gateway / Backend           |               
+         |  (Node.js, Flask, FastAPI)            |               
+         +----------------+----------------------+               
+                          |                                    
+       +------------------+--------------------+                 
+       |     Datenanalyse & KI Layer           |                 
+       |  (Apache Spark, TensorFlow, PyTorch)  |                 
+       +------------------+--------------------+                 
+                          |                                    
+           +--------------+---------------+                     
+           |   Datenmanagement & Storage    |                     
+           |  - PostgreSQL / ClickHouse     |                     
+           |  - Elasticsearch               |                     
+           |  - Neo4j (Graph DB)            |                     
+           +--------------+----------------+                     
+                          |                                    
+          +---------------+----------------+                     
+          |   Datenintegration & ETL Layer   |                     
+          |  - Apache NiFi / Airflow          |                     
+          |  - dbt (Transformation)          |                     
+          +---------------+----------------+                     
+                          |                                    
+         +----------------+----------------+                     
+         |        Data Catalog & Security  |                     
+         |  - Amundsen / DataHub            |                     
+         |  - Keycloak (Auth)               |                     
+         +--------------------------------+                     
+                          |                                    
+            +-------------+--------------+                     
+            |     Dokumentenmanagement    |                     
+            |          Aleph              |                     
+            +----------------------------+
+  ```
+
+
+
 ## 0) TL;DR (MVP in 90 Tagen)
 
 * **Woche 1–2:** Monorepo, IaC, CI/CD, Dev-Cluster (Kind), Keycloak + Gateway, basic ETL (NiFi/Airflow), Postgres + Elastic online.
