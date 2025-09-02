@@ -45,6 +45,11 @@ spec:
             - "--addr=0.0.0.0:8181"
             - "--set=services.bundle.url=http://opa-bundle-server.policy.svc.cluster.local"
             - "--set=bundles.main.resource=/bundles/policy-bundle.tar.gz"
+            - "--set=services.audit.url=http://opa-audit-sink.policy.svc.cluster.local"
+            - "--set=decision_logs.service=audit"
+            - "--set=decision_logs.reporting.min_delay_seconds=5"
+            - "--set=decision_logs.reporting.max_delay_seconds=30"
+            - "--set=decision_logs.console=false"
           ports:
             - containerPort: 8181
           volumeMounts:
