@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+  <name>aleph_ingest_watchfolder</name>
+  <description>Watch folder and ingest files into Aleph</description>
+  <snippet>
+    <processors>
+      <processor>
+        <name>ListenFile</name>
+        <type>org.apache.nifi.processors.standard.ListFile</type>
+        <config>
+          <property name="Input Directory">${NIFI_WATCH_DIR}</property>
+          <property name="Polling Interval">${NIFI_POLL_INTERVAL}</property>
+          <property name="Batch Size">${NIFI_BATCH_SIZE}</property>
+        </config>
+      </processor>
+      <processor>
+        <name>FetchFile</name>
+        <type>org.apache.nifi.processors.standard.FetchFile</type>
+      </processor>
+      <processor>
+        <name>DetectContent</name>
+        <type>org.apache.nifi.processors.standard.DetectContent</type>
+      </processor>
+      <processor>
+        <name>UpdateAttribute</name>
+        <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+        <config>
+          <property name="source">watch-folder</property>
+        </config>
+      </processor>
+      <processor>
+        <name>InvokeHTTP</name>
+        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+        <config>
+          <property name="HTTP Method">POST</property>
+          <property name="Remote URL">${NIFI_ALEPH_API_URL}?role=document&amp;mime=${mime.type}</property>
+          <property name="Content-Type">application/octet-stream</property>
+          <property name="InvokeHTTP.Headers">Authorization: ApiKey ${NIFI_ALEPH_API_KEY}</property>
+          <schedulingPeriod>0 sec</schedulingPeriod>
+          <autoTerminatedRelationships>Response</autoTerminatedRelationships>
+        </config>
+      </processor>
+      <processor>
+        <name>PutFileSuccess</name>
+        <type>org.apache.nifi.processors.standard.PutFile</type>
+        <config>
+          <property name="Directory">${NIFI_SUCCESS_DIR}</property>
+        </config>
+      </processor>
+      <processor>
+        <name>PutFileFailure</name>
+        <type>org.apache.nifi.processors.standard.PutFile</type>
+        <config>
+          <property name="Directory">${NIFI_FAILURE_DIR}</property>
+        </config>
+      </processor>
+    </processors>
+    <connections>
+      <connection>
+        <name>list_to_fetch</name>
+        <source>ListenFile</source>
+        <destination>FetchFile</destination>
+      </connection>
+      <connection>
+        <name>fetch_to_detect</name>
+        <source>FetchFile</source>
+        <destination>DetectContent</destination>
+      </connection>
+      <connection>
+        <name>detect_to_update</name>
+        <source>DetectContent</source>
+        <destination>UpdateAttribute</destination>
+      </connection>
+      <connection>
+        <name>update_to_http</name>
+        <source>UpdateAttribute</source>
+        <destination>InvokeHTTP</destination>
+      </connection>
+      <connection>
+        <name>http_success</name>
+        <source>InvokeHTTP</source>
+        <destination>PutFileSuccess</destination>
+        <relationship>success</relationship>
+      </connection>
+      <connection>
+        <name>http_failure</name>
+        <source>InvokeHTTP</source>
+        <destination>PutFileFailure</destination>
+        <relationship>failure</relationship>
+      </connection>
+    </connections>
+  </snippet>
+</template>
