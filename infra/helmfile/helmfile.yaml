@@ -63,3 +63,22 @@ releases:
           type: NodePort
           nodePorts:
             http: 8081
+  - name: superset
+    namespace: analytics
+    chart: bitnami/superset
+    createNamespace: true
+    values:
+      - service:
+          type: NodePort
+          nodePorts:
+            http: 8088
+        supersetUsername: admin
+        supersetPassword: adminadmin
+        externalDatabase:
+          host: postgres-postgresql.data.svc.cluster.local
+          user: app
+          password: app
+          database: infoterminal
+          port: 5432
+        ingress:
+          enabled: false

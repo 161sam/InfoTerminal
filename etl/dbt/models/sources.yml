@@ -1,0 +1,6 @@
+version: 2
+sources:
+  - name: openbb
+    schema: public
+    tables:
+      - name: stg_openbb_prices
