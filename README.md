@@ -7,6 +7,23 @@ make seed-demo      # Demo-Index + Demo-User anlegen
 make apps-up        # Startet Search-API (FastAPI) & Frontend (Next.js) lokal mit OIDC
 ```
 
+## Start-Sequenz (kompakt)
+
+```bash
+make dev-up         # Helm + OPA + Neo4j
+make seed-demo      # Demo-Index in OpenSearch
+make auth-up        # Keycloak realm import
+make apps-up        # Search-API + Frontend
+```
+
+**Optional**: Auth wirklich erzwingen
+
+```bash
+# in services/search-api/dev.sh
+export REQUIRE_AUTH=1
+uvicorn app:app --host 127.0.0.1 --port 8001 --reload
+```
+
 **Services (Dev)**
 
 * Auth: Keycloak (OIDC) → [http://localhost:8081](http://localhost:8081)

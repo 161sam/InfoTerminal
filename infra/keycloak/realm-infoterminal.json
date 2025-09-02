@@ -1,0 +1,61 @@
+{
+  "realm": "infoterminal",
+  "enabled": true,
+  "displayName": "InfoTerminal",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      {"name": "admin", "composite": false, "clientRole": false},
+      {"name": "analyst", "composite": false, "clientRole": false},
+      {"name": "investigator", "composite": false, "clientRole": false}
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "frontend",
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"],
+      "standardFlowEnabled": true,
+      "attributes": { "pkce.code.challenge.method": "S256" }
+    },
+    {
+      "clientId": "search-api",
+      "secret": "search-api-secret",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "serviceAccountsEnabled": true,
+      "redirectUris": ["http://127.0.0.1:8001/*"],
+      "webOrigins": ["*"],
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "defaultRoles": ["analyst"],
+  "realmOptionalClientScopes": ["roles"],
+  "clientScopes": [
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ]
+}

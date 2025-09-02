@@ -2,9 +2,18 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo print-info
+.PHONY: dev-up dev-down apps-up apps-down seed-demo print-info auth-up opa-up neo4j-up
 
-dev-up:
+auth-up:
+	@bash infra/scripts/keycloak-import.sh
+
+opa-up:
+	kubectl apply -f infra/k8s/opa/opa.yaml
+
+neo4j-up:
+	kubectl apply -f infra/k8s/neo4j/neo4j.yaml
+
+dev-up: ## (Erweitert) nach helmfile apply auch OPA & Neo4j
 	@echo "→ Kind cluster"
 	@kind get clusters | grep -q $(KIND_CLUSTER) || kind create cluster --name $(KIND_CLUSTER) --config infra/kind/kind.yaml
 	@echo "→ Helm repos"
@@ -14,6 +23,9 @@ dev-up:
 	@helm repo update >/dev/null
 	@echo "→ Helmfile apply"
 	@helmfile -f infra/helmfile/helmfile.yaml apply
+	@echo "→ Deploy OPA & Neo4j (manifests)"
+	@kubectl apply -f infra/k8s/opa/opa.yaml
+	@kubectl apply -f infra/k8s/neo4j/neo4j.yaml
 
 dev-down:
 	@helmfile -f infra/helmfile/helmfile.yaml destroy || true
