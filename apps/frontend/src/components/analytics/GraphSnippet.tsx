@@ -1,0 +1,25 @@
+import CytoscapeComponent from 'react-cytoscapejs';
+import React from 'react';
+
+export interface GraphData {
+  nodes: { data: { id: string; label: string } }[];
+  edges: { data: { source: string; target: string } }[];
+}
+interface Props {
+  data: GraphData;
+  onNodeClick?: (id: string) => void;
+  cyRef?: (cy: any) => void;
+}
+
+export const GraphSnippet: React.FC<Props> = ({ data, onNodeClick, cyRef }) => (
+  <div data-testid="graph-snippet" style={{ width: '100%', height: 300 }}>
+    <CytoscapeComponent
+      elements={[...data.nodes, ...data.edges]}
+      style={{ width: '100%', height: '100%' }}
+      cy={(cy) => {
+        cyRef && cyRef(cy);
+        cy.on('tap', 'node', (evt) => onNodeClick && onNodeClick(evt.target.id()));
+      }}
+    />
+  </div>
+);

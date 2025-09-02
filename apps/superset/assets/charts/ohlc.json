@@ -1,0 +1,16 @@
+{
+  "slice_name": "ohlc",
+  "viz_type": "candlestick",
+  "datasource": "finance_prices",
+  "params": {
+    "groupby": ["ts"],
+    "columns": {
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "close"
+    },
+    "adhoc_filters": [],
+    "emit_filter": true
+  }
+}
