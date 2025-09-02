@@ -32,11 +32,13 @@ dev-down:
 	@kind delete cluster --name $(KIND_CLUSTER) || true
 
 apps-up:
-	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
-	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
-	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
-	@uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
-	@pnpm --dir apps/frontend dev &
+       @uv run --python 3.11 -q --directory services/search-api ./dev.sh &
+       @uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
+       @uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
+       @uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
+       @uv run --python 3.11 -q --directory services/nlp ./dev.sh &
+       @uv run --python 3.11 -q --directory services/doc-entities ./dev.sh &
+       @pnpm --dir apps/frontend dev &
 
 apps-down:
 	@pkill -f "uv run" || true
