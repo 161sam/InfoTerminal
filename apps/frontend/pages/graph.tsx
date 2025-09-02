@@ -23,7 +23,7 @@ export default function GraphPage() {
     return [...nset.values(), ...es]
   }, [edges])
   return (
-    <main style={{maxWidth:1100, margin:"30px auto", fontFamily:"ui-sans-serif"}}>
+    <main data-testid="graph-view" style={{maxWidth:1100, margin:"30px auto", fontFamily:"ui-sans-serif"}}>
       <h1>Graph Viewer</h1>
       <form onSubmit={e=>{e.preventDefault(); fetchNeighbors()}} style={{display:"flex", gap:8, marginBottom:12}}>
         <input value={nodeId} onChange={e=>setNodeId(e.target.value)} placeholder="Node-ID (z.B. P:alice)" style={{flex:1, padding:8}}/>
