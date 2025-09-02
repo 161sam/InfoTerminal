@@ -2,7 +2,7 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run
+.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run etl-dbt-build etl-nifi-deploy etl-airflow-up etl-airflow-dag etl-superset-warmup
 
 auth-up:
 	@bash infra/scripts/keycloak-import.sh
@@ -75,4 +75,19 @@ nifi-registry-up:
 	bash infra/nifi/scripts/connect-registry.sh
 
 dbt-run:
-	cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test
+        cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test
+
+etl-dbt-build:
+	cd etl/dbt && dbt deps && dbt seed --full-refresh && dbt run && dbt test
+
+etl-nifi-deploy:
+	bash etl/nifi/scripts/deploy_aleph_ingest.sh
+
+etl-airflow-up:
+	docker compose -f etl/airflow/docker-compose.yml up -d  # falls vorhanden
+
+etl-airflow-dag:
+	airflow dags list | grep openbb_dbt_superset || true
+
+etl-superset-warmup:
+	python apps/superset/scripts/warmup_refresh.py
