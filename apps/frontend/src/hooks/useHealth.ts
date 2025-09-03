@@ -1,16 +1,47 @@
-import { useEffect, useState } from 'react';
-type Health = { web?:{ok:boolean}; searchApi?:{ok:boolean}; graphApi?:{ok:boolean} };
-export function useHealth(){
-  const [health,setHealth]=useState<Health>({}); const [loading,setLoading]=useState(true); const [error,setError]=useState<string|null>(null);
-  useEffect(()=>{ let alive=true; (async()=>{
-    try{
-      const [web,searchApi,graphApi]=await Promise.all([
-        fetch('/api/health').then(r=>({ok:r.ok})).catch(()=>({ok:false})),
-        fetch(process.env.NEXT_PUBLIC_SEARCH_API_URL||'http://localhost:8081/health').then(r=>({ok:r.ok})).catch(()=>({ok:false})),
-        fetch(process.env.NEXT_PUBLIC_GRAPH_API_URL||'http://localhost:8082/health').then(r=>({ok:r.ok})).catch(()=>({ok:false})),
-      ]);
-      if(!alive) return; setHealth({web,searchApi,graphApi}); setLoading(false);
-    }catch(e:any){ if(!alive) return; setError(e?.message||'health failed'); setLoading(false); }
-  })(); return ()=>{alive=false}; },[]);
-  return {health,loading,error};
+// apps/frontend/src/hooks/useHealth.ts
+import { useEffect, useState, useCallback } from 'react';
+import type { HealthResponse, ServiceState } from '../../pages/api/health';
+
+export function useHealth(pollIntervalMs: number = 15000) {
+  const [data, setData] = useState<HealthResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchHealth = useCallback(async () => {
+    try {
+      const response = await fetch('/api/health');
+      if (!response.ok) {
+        throw new Error(`Health check failed: ${response.status}`);
+      }
+      const healthData = await response.json() as HealthResponse;
+      setData(healthData);
+      setError(null);
+    } catch (err: any) {
+      setError(err?.message || 'Health check failed');
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchHealth();
+    const interval = setInterval(fetchHealth, pollIntervalMs);
+    return () => clearInterval(interval);
+  }, [fetchHealth, pollIntervalMs]);
+
+  // Calculate aggregate state
+  const stateAggregate: ServiceState = data ? 
+    Object.values(data.services).some(service => service.state === 'down') ? 'down' :
+    Object.values(data.services).some(service => service.state === 'unreachable') ? 'unreachable' :
+    Object.values(data.services).some(service => service.state === 'degraded') ? 'degraded' :
+    'ok' : 'unreachable';
+
+  return {
+    data,
+    loading,
+    error,
+    stateAggregate,
+    refresh: fetchHealth
+  };
 }
