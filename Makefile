@@ -117,3 +117,4 @@ obs-up:
 	docker compose --profile observability up -d
 logs:
 	docker compose logs -f --tail=200
+# ==== Dev targets (idempotent) ====

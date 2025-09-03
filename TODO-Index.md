@@ -13,8 +13,8 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 
 ### 🟡 To-Do
 - [ ] **NLP-Service**
-  - [ ] Projektstruktur `services/nlp-service`
-  - [ ] Endpunkte `/ner`, `/summarize`
+  - [x] Projektstruktur `services/nlp-service`
+  - [x] Endpunkte `/ner`, `/summarize`
   - [ ] Modell: spaCy `en_core_web_sm`
   - [ ] Modell: HuggingFace Summarizer (DistilBART o.ä.)
   - [ ] Integration ins Frontend (Highlighting)

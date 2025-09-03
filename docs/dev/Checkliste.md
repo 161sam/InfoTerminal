@@ -27,6 +27,8 @@
   *Befehle:* `make seed-demo` · `make seed-graph`
 * [ ] Apps lokal gestartet
   *Befehl:* `make apps-up` → Frontend [localhost:3000](http://localhost:3000)
+* [ ] Healthchecks grün
+  *Befehl:* `bash scripts/dev_health.sh`
 
 ## 2) Auth / Edge-OIDC / OPA
 

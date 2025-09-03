@@ -1,0 +1,2 @@
+<!-- TODO: Minimal NiFi template: ListenFile -> Tesseract (OCR) -> PutHTTP (Aleph) -->
+<template name="ingest-demo" version="0">TODO</template>
