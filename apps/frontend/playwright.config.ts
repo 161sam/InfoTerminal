@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
+  testDir: 'e2e/specs',
   timeout: 60_000,
   retries: 1,
   use: {
