@@ -2,7 +2,7 @@
 set -a
 [ -f ./.env.local ] && . ./.env.local
 set +a
-export OTEL_SDK_DISABLED=true
+export OTEL_SDK_DISABLED=1
 export OTEL_TRACES_EXPORTER=none
 export OTEL_METRICS_EXPORTER=none
 export OTEL_LOGS_EXPORTER=none
