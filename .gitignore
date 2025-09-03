@@ -96,3 +96,27 @@ wheels/
 *.backup.*
 migration_*.log
 MIGRATION_SUMMARY.md
+# Next.js / Node
+apps/frontend/.next/
+apps/frontend/node_modules/
+**/node_modules/
+*.log
+*.log.*
+
+# Backups/Temp
+*.backup
+*.backup.*
+*~ 
+*.swp
+*.tmp
+migration_*.log
+MIGRATION_SUMMARY.md
+
+# Installers / Binaries
+tools/installers/
+*.deb
+*.AppImage
+*.run
+*.pkg
+*.exe
+*.dmg
