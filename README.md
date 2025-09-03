@@ -281,6 +281,20 @@ Apache-2.0 (siehe `LICENSE`)
 
 ---
 
+## Demo-Daten laden
+
+Ein Demo-Loader füllt Aleph, Doc-Entities und optionale Dienste mit Beispieldaten.
+
+```bash
+curl -s -X POST http://localhost:3000/api/demo/load \
+  -H "Content-Type: application/json" \
+  -d '{"ingestAleph":true,"annotate":true}'
+```
+
+Mehr dazu unter [docs/dev/demo-loader.md](docs/dev/demo-loader.md).
+
+---
+
 ### Anhang: Nützliche Make-Targets (Beispiele)
 
 ```bash

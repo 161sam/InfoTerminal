@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "id": "acme",
+      "title": "ACME Corp",
+      "text": "ACME Corp is a fictional company",
+      "entity_types": ["Organization"],
+      "tags": ["demo"]
+    }
+  ],
+  "nodes": [
+    {"label": "Organization", "name": "ACME Corp"},
+    {"label": "Domain", "name": "acme.com"}
+  ],
+  "rels": [
+    {
+      "from": {"label": "Organization", "name": "ACME Corp"},
+      "type": "OWNS",
+      "to": {"label": "Domain", "name": "acme.com"}
+    }
+  ]
+}
