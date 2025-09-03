@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* (optional) Basistypo */
+html,body { height:100%; }
+body { @apply bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50; }
