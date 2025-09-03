@@ -12,27 +12,6 @@ opa-up:
 
 neo4j-up:
 	kubectl apply -f infra/k8s/neo4j/neo4j.yaml
-
-dev-up: ## (Erweitert) nach helmfile apply auch OPA & Neo4j
-	@echo "→ Kind cluster"
-	@kind get clusters | grep -q $(KIND_CLUSTER) || kind create cluster --name $(KIND_CLUSTER) --config infra/kind/kind.yaml
-	@echo "→ Helm repos"
-	@helm repo add bitnami https://charts.bitnami.com/bitnami >/dev/null
-	@helm repo add opensearch https://opensearch-project.github.io/helm-charts/ >/dev/null
-	@helm repo add traefik https://traefik.github.io/charts >/dev/null
-	@helm repo update >/dev/null
-	@echo "→ Helmfile apply"
-	@helmfile -f infra/helmfile/helmfile.yaml apply
-	@echo "→ Deploy OPA & Neo4j (manifests)"
-	@kubectl apply -f infra/k8s/opa/opa.yaml
-	@kubectl apply -f infra/k8s/neo4j/neo4j.yaml
-	@docker compose up -d --build nlp-service
-
-dev-down:
-	@helmfile -f infra/helmfile/helmfile.yaml destroy || true
-	@kind delete cluster --name $(KIND_CLUSTER) || true
-	@docker compose down || true
-
 apps-up:
 	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
 	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
@@ -95,11 +74,7 @@ etl-superset-warmup:
 	python apps/superset/scripts/warmup_refresh.py
 
 
-.PHONY: obs-up obs-down obs-reload
-
-obs-up:
-	docker compose up -d prometheus grafana
-
+.PHONY: obs-down obs-reload
 obs-down:
 	docker compose rm -sf prometheus grafana
 
@@ -107,21 +82,21 @@ obs-reload:
 	curl -X POST http://localhost:9090/-/reload || true
 
 nifi-template-import:
-        @bash scripts/nifi_template_import.sh
+	@bash scripts/nifi_template_import.sh
 
 nifi-template-instantiate:
-        @bash scripts/nifi_template_instantiate.sh
+	@bash scripts/nifi_template_instantiate.sh
 
 nifi-start:
-        @bash scripts/nifi_start.sh
+	@bash scripts/nifi_start.sh
 
 nifi-stop:
-        @bash scripts/nifi_stop.sh
+	@bash scripts/nifi_stop.sh
 
 .PHONY: docs-lint docs-toc docs-open
 docs-lint:
-        npx markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json || true
-        npx lychee --accept 200,429 README.md docs/**/*.md || true
+	npx markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json || true
+	npx lychee --accept 200,429 README.md docs/**/*.md || true
 
 docs-toc:
 	npx doctoc README.md docs --github --maxlevel 3
@@ -129,3 +104,16 @@ docs-toc:
 docs-open:
 	python -m http.server --directory docs 8081
 	# open http://localhost:8081 in browser
+
+.PHONY: dev-up dev-down obs-up logs
+
+dev-up:
+	docker compose up -d
+
+dev-down:
+	docker compose down -v
+
+obs-up:
+	docker compose --profile observability up -d
+logs:
+	docker compose logs -f --tail=200
