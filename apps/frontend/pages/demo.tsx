@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Header from '../src/components/layout/Header';
-import { useDemoLoader } from '../src/hooks/useDemoLoader';
+import Header from '@/components/layout/Header';
+import { useDemoLoader } from '@/hooks/useDemoLoader';
 
 export default function DemoPage() {
   const { loading, result, loadDemo } = useDemoLoader();
@@ -16,6 +16,7 @@ export default function DemoPage() {
 
   return (
     <>
+      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}
       <Header />
       <main style={{ maxWidth: 600, margin: '40px auto', fontFamily: 'ui-sans-serif' }}>
         <h1>Demo & Beispiele</h1>
