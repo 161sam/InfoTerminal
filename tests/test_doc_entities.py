@@ -19,11 +19,13 @@ def test_annotate_returns_aleph_id():
     assert "doc_id" in data
     assert isinstance(data["entities"], list)
     assert data["entities"][0]["resolution"]["status"] == "pending"
+    assert "context" in data["entities"][0]
     doc_id = data["doc_id"]
     resp2 = client.get(f"/docs/{doc_id}")
     data2 = resp2.json()
     assert data2["aleph_id"] == "A1"
     assert data2["entities"][0]["resolution"]["status"] == "pending"
+    assert "context" in data2["entities"][0]
 
 
 def test_resolve_placeholder():

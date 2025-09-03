@@ -25,6 +25,7 @@ class Entity(Base):
     span_start = Column(Integer)
     span_end = Column(Integer)
     confidence = Column(Float)
+    context = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

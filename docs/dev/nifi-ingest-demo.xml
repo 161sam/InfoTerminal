@@ -1,2 +1,42 @@
-<!-- TODO: ListenFile -> Tesseract (OCR) -> PutHTTP (Aleph) -->
-<template name="ingest-demo" version="0">TODO</template>
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+  <name>ingest-demo</name>
+  <description>ListenFile -> Tesseract OCR -> PutHTTP Aleph upload</description>
+  <snippet>
+    <processors>
+      <processor>
+        <name>ListenFile</name>
+        <type>org.apache.nifi.processors.standard.ListenFile</type>
+        <properties>
+          <property name="Input Directory">/data/incoming</property>
+        </properties>
+      </processor>
+      <processor>
+        <name>RunTesseract</name>
+        <type>org.apache.nifi.processors.standard.ExecuteStreamCommand</type>
+        <properties>
+          <property name="Command">tesseract</property>
+          <property name="Command Arguments">- -</property>
+        </properties>
+      </processor>
+      <processor>
+        <name>PutAleph</name>
+        <type>org.apache.nifi.processors.standard.PutHTTP</type>
+        <properties>
+          <property name="HTTP Method">POST</property>
+          <property name="Remote URL">http://aleph:8000/api/2/documents</property>
+        </properties>
+      </processor>
+    </processors>
+    <connections>
+      <connection>
+        <source>ListenFile</source>
+        <destination>RunTesseract</destination>
+      </connection>
+      <connection>
+        <source>RunTesseract</source>
+        <destination>PutAleph</destination>
+      </connection>
+    </connections>
+  </snippet>
+</template>
