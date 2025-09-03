@@ -14,6 +14,10 @@ app = FastAPI(title="Entity Resolution v0")
 FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
 class MatchReq(BaseModel):
     query: str
     candidates: List[str]

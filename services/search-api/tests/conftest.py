@@ -1,8 +1,12 @@
-import os, pathlib, sys, pytest
+import os, pathlib, pytest, sys, importlib
 from httpx import AsyncClient, ASGITransport
 
-sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
-from app.main import app  # import FastAPI app
+os.environ.setdefault("OTEL_SDK_DISABLED", "true")
+SERVICE_DIR = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SERVICE_DIR))
+import app.main as app_main  # type: ignore
+sys.modules.setdefault("app.main", app_main)
+app = app_main.app
 
 @pytest.fixture(scope="session")
 def anyio_backend():
