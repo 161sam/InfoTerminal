@@ -26,10 +26,10 @@ from neo4j import GraphDatabase
 from auth import user_from_token
 from opa import allow
 
-NEO4J_URI = os.getenv("NEO4J_URI","bolt://127.0.0.1:7687")
-NEO4J_USER = os.getenv("NEO4J_USER","neo4j")
-NEO4J_PASS = os.getenv("NEO4J_PASS") or os.getenv("NEO4J_PASSWORD","neo4jpass")
-REQUIRE_AUTH = os.getenv("REQUIRE_AUTH","0") == "1"
+NEO4J_URI = os.getenv("NEO4J_URI", "bolt://127.0.0.1:7687")
+NEO4J_USER = os.getenv("NEO4J_USER", os.getenv("NEO4J_USERNAME", "neo4j"))
+NEO4J_PASS = os.getenv("NEO4J_PASS") or os.getenv("NEO4J_PASSWORD", "neo4jpass")
+REQUIRE_AUTH = os.getenv("REQUIRE_AUTH", "0") == "1"
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASS))
 
