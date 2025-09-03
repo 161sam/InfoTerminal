@@ -18,7 +18,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ## 🔖 Versionen & Meilensteine
 
 ### v0.1.0 – MVP (aktueller Stand)
-**Status:** in arbeit
+**Status:** released ✅
 
 - 🔎 **Search:** OpenSearch mit Facetten & API.
 - 🌐 **Graph:** Neo4j-Integration + Viewer.
@@ -28,7 +28,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 - 🐳 **Deployment:** Docker Compose + Helm-Charts für Dev.
 - 📂 **Docs:** Erste Setup- und Dev-Dokumentation.
 
-👉 **Offen (v0.1.x Patches):** NLP-Service, NiFi→Aleph-Flow, Observability, Embedding-Reranking, Flowise-Agenten (Prototyp).
+👉 **Offen (v0.1.x Patches):** Observability, Embedding-Reranking, Flowise-Agenten (Prototyp).
 
 ---
 

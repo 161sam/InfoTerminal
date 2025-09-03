@@ -72,13 +72,16 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
         ents = []
         if req.text.split():
             ent_id = str(uuid.uuid4())
+            word = req.text.split()[0]
+            context = _context(req.text, 0, len(word))
             ents.append(
                 {
                     "id": ent_id,
                     "label": "TEST",
-                    "value": req.text.split()[0],
+                    "value": word,
                     "span_start": 0,
-                    "span_end": len(req.text.split()[0]),
+                    "span_end": len(word),
+                    "context": context,
                     "resolution": {"status": "pending", "node_id": None, "score": None},
                 }
             )
@@ -93,6 +96,7 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
             ents = []
             entity_ids = []
             for e in ner_res:
+                context = _context(req.text, e.get("start"), e.get("end"))
                 ent = Entity(
                     doc_id=doc.id,
                     label=e.get("label", ""),
@@ -100,6 +104,7 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
                     span_start=e.get("start"),
                     span_end=e.get("end"),
                     confidence=e.get("score"),
+                    context=context,
                 )
                 db.add(ent)
                 db.flush()
@@ -112,6 +117,7 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
                         "value": ent.value,
                         "span_start": ent.span_start,
                         "span_end": ent.span_end,
+                        "context": context,
                         "resolution": {"status": "pending", "node_id": None, "score": None},
                     }
                 )
@@ -151,6 +157,7 @@ def get_doc(doc_id: str):
                     "value": ent.value,
                     "span_start": ent.span_start,
                     "span_end": ent.span_end,
+                    "context": ent.context,
                     "resolution": {
                         "status": res.status if res else "pending",
                         "node_id": res.node_id if res else None,
@@ -205,6 +212,14 @@ def _decorate(text: str, entities: List[Dict[str, Any]]):
         cur = e
     out.append(html.escape(text[cur:]))
     return "".join(out)
+
+
+def _context(text: str, start: Optional[int], end: Optional[int], width: int = 30) -> str:
+    if start is None or end is None:
+        return ""
+    s = max(0, start - width)
+    e = min(len(text), end + width)
+    return text[s:e]
 
 
 @app.get("/docs/{doc_id}/html")
