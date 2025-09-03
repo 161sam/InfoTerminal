@@ -7,7 +7,7 @@ can schedule work without crashing.
 from typing import Iterable
 import time
 
-from .metrics import RESOLVER_RUNS, RESOLVER_ENTS, RESOLVER_LAT
+from metrics import RESOLVER_RUNS, RESOLVER_ENTS, RESOLVER_LAT
 
 
 def resolve_entities(entity_ids: Iterable[str], mode: str = "async") -> None:

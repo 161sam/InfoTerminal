@@ -4,14 +4,14 @@ except Exception:
     pass
 
 from fastapi import FastAPI
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from prometheus_client import make_asgi_app
 from pydantic import BaseModel
 from rapidfuzz import process, fuzz
 from typing import List, Dict, Any
 
 app = FastAPI(title="Entity Resolution v0")
-FastAPIInstrumentation().instrument_app(app)
+FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
 
 class MatchReq(BaseModel):

@@ -6,7 +6,7 @@ except Exception:
 import os, json, secrets
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header, Query
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from prometheus_client import make_asgi_app
 import psycopg2
 
@@ -40,7 +40,7 @@ def init():
 init()
 
 app = FastAPI(title="Graph Views API", version="0.1.0")
-FastAPIInstrumentation().instrument_app(app)
+FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
 
 def user_from_header(x_user: Optional[str]):  # simple dev-mode
