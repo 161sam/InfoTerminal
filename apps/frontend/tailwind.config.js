@@ -1,4 +1,7 @@
-/** Tailwind v4+: schlanke Content-Pfade für Editor/Plugins */
 module.exports = {
-  content: ['./pages/**/*.{js,jsx,ts,tsx}', './src/**/*.{js,jsx,ts,tsx}'],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  // TODO: weitere Theme/Plugin-Anpassungen bei Bedarf
 };

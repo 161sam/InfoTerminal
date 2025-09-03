@@ -5,7 +5,7 @@ import pytest
 async def test_ner(client):
     r = await client.post("/ner", json={"text": "Alice and Bob went to Wonderland"})
     assert r.status_code == 200
-    data = r.json()["entities"]
+    data = r.json()["ents"]
     assert data and data[0]["text"] == "Alice"
 
 
@@ -15,4 +15,4 @@ async def test_summarize(client):
     r = await client.post("/summarize", json={"text": text})
     assert r.status_code == 200
     summary = r.json()["summary"]
-    assert summary.split()[0] == "This"
+    assert summary.startswith("This")

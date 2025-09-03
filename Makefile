@@ -2,34 +2,27 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run etl-dbt-build etl-nifi-deploy etl-airflow-up etl-airflow-dag etl-superset-warmup nifi-template-import nifi-template-instantiate nifi-start nifi-stop
+.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run etl-dbt-build etl-nifi-deploy etl-airflow-up etl-airflow-dag etl-superset-warmup nifi-template-import nifi-template-instantiate nifi-start nifi-stop dbt-all
 
 auth-up:
-	@bash infra/scripts/keycloak-import.sh
+		@bash infra/auth/keycloak_import.sh
 
 opa-up:
 	kubectl apply -f infra/k8s/opa/opa.yaml
 
 neo4j-up:
 	kubectl apply -f infra/k8s/neo4j/neo4j.yaml
-apps-up:
-	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
-	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
-	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
-	@uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
-	@uv run --python 3.11 -q --directory services/nlp-service uvicorn app:app --host 0.0.0.0 --port 8003 &
-	@uv run --python 3.11 -q --directory services/doc-entities ./dev.sh &
-	@pnpm --dir apps/frontend dev &
+apps-up: dev-up
 
 apps-down:
 	@pkill -f "uv run" || true
 	@pkill -f "next" || true
 
 seed-demo:
-	@bash infra/scripts/seed-demo.sh
+	@bash scripts/seed_demo.sh
 
 seed-graph:
-	@python3 infra/scripts/seed-neo4j.py
+	@python3 services/graph-api/scripts/seed_graph.py
 
 print-info:
 	@echo "Kubernetes context: $(K8S_CONTEXT)"
@@ -38,15 +31,14 @@ print-info:
 
 
 opa-test:
-	@docker run --rm -v $(PWD)/infra/k8s/opa:/pol -w /pol openpolicyagent/opa:0.64.0 test -v .
+	@opa test -v policy
 
 opa-bundle:
-	@docker run --rm -v $(PWD)/infra/k8s/opa/policies:/pol -v $(PWD)/infra/k8s/opa/bundle:/out openpolicyagent/opa:0.64.0 build -b /pol -o /out/policy-bundle.tar.gz
+	@opa build -b policy -o dist/opa/bundle.tar.gz
 
 bundle-server-up:
-	kubectl -n policy delete configmap opa-bundle --ignore-not-found
-	kubectl -n policy create configmap opa-bundle --from-file=policy-bundle.tar.gz=infra/k8s/opa/bundle/policy-bundle.tar.gz
-	kubectl apply -f infra/k8s/opa/bundle-server.yaml
+	@mkdir -p dist/opa
+	@python3 -m http.server 8077 --directory dist/opa
 
 aleph-workers-up:
 	kubectl apply -f infra/k8s/aleph/aleph-workers.yaml
@@ -57,6 +49,9 @@ nifi-registry-up:
 
 dbt-run:
 	cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test
+
+dbt-all:
+	@bash etl/dbt/dev_run_all.sh
 
 etl-dbt-build:
 	cd etl/dbt && dbt deps && dbt seed --full-refresh && dbt run && dbt test
@@ -108,10 +103,11 @@ docs-open:
 .PHONY: dev-up dev-down obs-up logs
 
 dev-up:
-	docker compose up -d
+	@bash scripts/dev_up.sh
 
 dev-down:
-	docker compose down -v
+	@pkill -f "uvicorn" 2>/dev/null || true
+	@pkill -f "next dev" 2>/dev/null || true
 
 obs-up:
 	docker compose --profile observability up -d

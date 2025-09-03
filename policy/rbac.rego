@@ -1,9 +1,8 @@
 package rbac
 
-default allow = false
+default allow := false
 
-allow {
-  # example RBAC: analyst can read public resources
+allow if {
   input.action == "read"
   input.resource.classification == "public"
   input.user != ""

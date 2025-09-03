@@ -1,9 +1,1 @@
-{{ config(materialized='table') }}
-with sym as (
-  select distinct lower(symbol) as symbol
-  from {{ ref('stg_openbb_prices') }}
-)
-select
-  {{ dbt_utils.generate_surrogate_key(['symbol']) }} as asset_id,
-  symbol
-from sym
+select symbol as asset_key, name from {{ ref('stg_assets') }}
