@@ -1,0 +1,32 @@
+services:
+  flowise-connector:
+    build: ./services/flowise-connector
+    env_file:
+      - .env
+    environment:
+      - FLOWISE_URL=${FLOWISE_URL:-http://flowise:3000}
+      - FLOWISE_TIMEOUT_S=30
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_TRACES_EXPORTER=otlp
+    # Hostport untypisch: 3417 -> Container 8080
+    ports:
+      - "3417:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    profiles: ["agents"]
+
+  # Optional – standardmäßig OHNE Host-Port und wird von dev_up NICHT gestartet.
+  # Wenn du ihn exponieren willst, mach das über ein separates Override-File.
+  opa-audit-sink:
+    build: ./services/opa-audit-sink
+    profiles: ["agents"]
+    # keine ports: – bleibt intern
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+

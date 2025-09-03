@@ -1,3 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+mkdir -p services/gateway services/policy
+
+# --- server.js ---
+cat > services/gateway/server.js <<'JS'
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
@@ -160,3 +169,118 @@ app.use('/api/flowise', createProxyMiddleware(baseProxyOpts(FLOWISE_TARGET, /^\/
 app.use((_,res)=>res.status(404).json({error:'not_found'}));
 
 app.listen(PORT, ()=> console.log(`[gateway] listening on ${PORT} (local_upstreams=${USE_LOCAL_UPSTREAMS})`));
+JS
+
+# --- package.json ---
+cat > services/gateway/package.json <<'JSON'
+{
+  "name": "infoterminal-gateway",
+  "private": true,
+  "main": "server.js",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-jwt": "^8.4.1",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "http-proxy-middleware": "^3.0.2",
+    "jwks-rsa": "^3.1.0",
+    "morgan": "^1.10.0",
+    "prom-client": "^15.1.3"
+  }
+}
+JSON
+
+# --- Dockerfile ---
+cat > services/gateway/Dockerfile <<'DOCKER'
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json ./
+RUN npm i --omit=dev
+COPY server.js ./
+ENV PORT=8080
+EXPOSE 8080
+CMD ["node", "server.js"]
+DOCKER
+
+# --- docker-compose override für Gateway (8610:8080) ---
+cat > docker-compose.gateway.yml <<'YAML'
+version: "3.9"
+services:
+  gateway:
+    build: ./services/gateway
+    env_file:
+      - .env
+    environment:
+      - PORT=8080
+      # Umschalten der Upstreams (Local-Mode nutzt Host-Ports 8611/8612/3417)
+      - USE_LOCAL_UPSTREAMS=${USE_LOCAL_UPSTREAMS:-0}
+      - SEARCH_TARGET=${SEARCH_TARGET:-}
+      - GRAPH_TARGET=${GRAPH_TARGET:-}
+      - FLOWISE_TARGET=${FLOWISE_TARGET:-}
+      # Security
+      - OIDC_ENABLED=${OIDC_ENABLED:-0}
+      - OIDC_ISSUER=${OIDC_ISSUER:-}
+      - OIDC_AUDIENCE=${OIDC_AUDIENCE:-account}
+      - OPA_ENABLED=${OPA_ENABLED:-1}
+      - OPA_URL=${OPA_URL:-http://opa:8181/v1/data/access/allow}
+      - OPA_AUDIT_URL=${OPA_AUDIT_URL:-}
+      # Observability (Services exportieren selbst; Gateway liefert /metrics)
+    ports:
+      - "8610:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+YAML
+
+# --- Beispiel OPA policy (best effort) ---
+cat > services/policy/access.rego <<'REGO'
+package access
+
+default allow = false
+
+# Always allow health/metrics
+allow { input.request.path == "/healthz" }
+allow { input.request.path == "/readyz" }
+allow { input.request.path == "/metrics" }
+
+# Example RBAC:
+viewer {
+  some r
+  r := input.user.roles[_]
+  r == "viewer"
+}
+analyst {
+  some r
+  r := input.user.roles[_]
+  r == "analyst"
+}
+admin {
+  some r
+  r := input.user.roles[_]
+  r == "admin"
+}
+
+# Search: allow viewer+
+allow {
+  startswith(input.request.path, "/api/search")
+  viewer
+}
+
+# Graph: allow analyst+
+allow {
+  startswith(input.request.path, "/api/graph")
+  (analyst or admin)
+}
+
+# Flowise: allow analyst+
+allow {
+  startswith(input.request.path, "/api/flowise")
+  (analyst or admin)
+}
+REGO
+
+echo "✅ Gateway files written (services/gateway, docker-compose.gateway.yml, policy example)."

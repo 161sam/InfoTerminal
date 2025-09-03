@@ -1,0 +1,4 @@
+services:
+  opa:
+    ports:
+      - "8651:8181"   # untypischer Host-Port

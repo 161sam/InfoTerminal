@@ -134,7 +134,7 @@ def status(all: bool = typer.Option(False, "--all", help="Alle Projekte zeigen (
         for proj,file in [(MAIN_PROJ,MAIN_FILE),(OBS_PROJ,OBS_FILE),(AG_PROJ,AG_FILE),(GW_PROJ,GW_FILE),(OPA_PROJ,OPA_FILE)]:
             if (root/file).exists():
                 print(f"[bold]docker compose ps ({proj})[/]")
-                run(["docker","compose","-p",proj,"-f",file,"ps"])
+                run(["docker","compose","-p",proj,"-f",file,"ps"], check=False)
 
 @app.command("up")
 def up(

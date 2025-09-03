@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   search-api:
     build: ./services/search-api
@@ -14,7 +13,7 @@ services:
         condition: service_healthy
   graph-api:
     build: ./services/graph-api
-    ports: ['8612:8081']
+    ports: ['8612:8081', '8612:8080']
     env_file: .env
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8002/healthz"]
@@ -122,7 +121,7 @@ services:
   aleph:
     profiles: ["aleph"]
     image: alephdata/aleph:latest
-    ports: ['8613:8082']
+    ports: ['8613:8082', '8613:8080']
   superset:
     profiles: ["superset"]
     image: apache/superset:latest

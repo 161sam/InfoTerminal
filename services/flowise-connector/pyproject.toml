@@ -1,0 +1,13 @@
+[project]
+name = "flowise-connector"
+version = "0.1.0"
+dependencies = [
+  "fastapi>=0.111",
+  "uvicorn>=0.30",
+  "httpx>=0.27",
+  "python-jose[cryptography]>=3.3",
+  "prometheus-client==0.20.*",
+  "opentelemetry-sdk",
+  "opentelemetry-instrumentation-fastapi",
+  "opentelemetry-exporter-otlp"
+]

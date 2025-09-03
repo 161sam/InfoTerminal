@@ -1,16 +1,17 @@
 {
-  "name": "gateway",
-  "version": "0.1.0",
+  "name": "infoterminal-gateway",
+  "private": true,
   "main": "server.js",
-  "scripts": {
-    "start": "node -r ./obs/otel.cjs server.js"
-  },
+  "engines": { "node": ">=20" },
   "dependencies": {
-    "@opentelemetry/api": "^1.8.0",
-    "@opentelemetry/sdk-node": "^0.46.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.46.0",
-    "@opentelemetry/exporter-trace-otlp-grpc": "^0.46.0",
-    "express": "^4.18.2",
-    "prom-client": "^14.2.0"
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-jwt": "^8.4.1",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "http-proxy-middleware": "^3.0.2",
+    "jwks-rsa": "^3.1.0",
+    "morgan": "^1.10.0",
+    "prom-client": "^15.1.3"
   }
 }
