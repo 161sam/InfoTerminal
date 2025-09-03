@@ -6,5 +6,5 @@ allow {
   input.action == "read"
   input.resource.classification == "public"
   input.user != ""
-  input.roles[_] == "analyst"
+  some r; r = input.roles[_]; r == "analyst"
 }
