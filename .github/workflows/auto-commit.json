@@ -1,0 +1,274 @@
+{
+  "name": "AutoGit CommitAgent Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "events": [
+          "add",
+          "change",
+          "unlink"
+        ],
+        "options": {
+          "depth": 10
+        },
+        "folderPath": "/home/saschi/Games/Roll-a-Ball"
+      },
+      "id": "6bd9a449-6b47-4ea6-851e-542826b3ae53",
+      "name": "Repo File Watcher",
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1520,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "status",
+        "repositoryPath": "/home/saschi/Games/Roll-a-Ball"
+      },
+      "id": "7735e514-7a54-402f-8735-fc8df60573ba",
+      "name": "Git Status",
+      "type": "n8n-nodes-base.git",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const branch = $json.branch || \"\";\nconst defaultBranch = \"dev\";\nif (branch === \"main\") {\n  return [{ routing: \"switch\" }];\n} else {\n  return [{ routing: \"direct\" }];\n}"
+      },
+      "id": "b3b64685-542d-46a1-a3f2-81dc785d7986",
+      "name": "CommitAgent",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "command": "git checkout dev || git checkout -b dev"
+      },
+      "id": "340627cb-e41b-41ea-9fcc-0aa451dfea69",
+      "name": "Switch to Dev",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "add",
+        "repositoryPath": "/home/saschi/Games/Roll-a-Ball",
+        "path": ".",
+        "options": {
+          "additionalFlags": "--all"
+        }
+      },
+      "id": "d673f969-d2bf-42de-a6dc-8d133f105643",
+      "name": "Git Add",
+      "type": "n8n-nodes-base.git",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "command": "git diff --cached"
+      },
+      "id": "933049ec-0ce3-49c1-8267-cadfca9be391",
+      "name": "Get Diff for AI",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.0.45:1234/v1/chat/completions",
+        "method": "POST",
+        "authentication": "none",
+        "responseFormat": "json",
+        "body": {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Du bist ein Git Commit Assistent. Erstelle pr\u00e4gnante Commit-Messages im Stil von Conventional Commits auf Basis von Git-Diffs."
+            },
+            {
+              "role": "user",
+              "content": "Erzeuge eine Commit-Message f\u00fcr diesen Git-Diff:\n\n{{$node[\"Get Diff for AI\"].json[\"stdout\"]}}"
+            }
+          ],
+          "temperature": 0.4,
+          "max_tokens": 128
+        },
+        "headerParameters": {
+          "Content-Type": "application/json"
+        }
+      },
+      "id": "7f4da2e4-c5f5-4892-8291-ca1fb51bfe68",
+      "name": "LM-Studio Commit Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "commit",
+        "repositoryPath": "/home/saschi/Games/Roll-a-Ball",
+        "message": "={{$json[\"choices\"][0][\"message\"][\"content\"]}}"
+      },
+      "id": "46dea2a7-6b8f-4197-9c78-85bfa0807194",
+      "name": "Git Commit",
+      "type": "n8n-nodes-base.git",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "repositoryPath": "/home/saschi/Games/Roll-a-Ball"
+      },
+      "id": "b3da74ed-b308-4c92-8873-fca1e1663a27",
+      "name": "Git Push",
+      "type": "n8n-nodes-base.git",
+      "typeVersion": 1,
+      "position": [
+        96,
+        336
+      ]
+    }
+  ],
+  "connections": {
+    "Repo File Watcher": {
+      "main": [
+        [
+          {
+            "node": "Git Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git Status": {
+      "main": [
+        [
+          {
+            "node": "CommitAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CommitAgent": {
+      "main": [
+        [
+          {
+            "node": "Switch to Dev",
+            "type": "main",
+            "index": 0,
+            "conditions": {
+              "boolean": [
+                {
+                  "value1": "={{$json[\"routing\"]}}",
+                  "operation": "equal",
+                  "value2": "switch"
+                }
+              ]
+            }
+          },
+          {
+            "node": "Git Add",
+            "type": "main",
+            "index": 0,
+            "conditions": {
+              "boolean": [
+                {
+                  "value1": "={{$json[\"routing\"]}}",
+                  "operation": "equal",
+                  "value2": "direct"
+                }
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    "Switch to Dev": {
+      "main": [
+        [
+          {
+            "node": "Git Add",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git Add": {
+      "main": [
+        [
+          {
+            "node": "Get Diff for AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Diff for AI": {
+      "main": [
+        [
+          {
+            "node": "LM-Studio Commit Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LM-Studio Commit Message": {
+      "main": [
+        [
+          {
+            "node": "Git Commit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git Commit": {
+      "main": [
+        [
+          {
+            "node": "Git Push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
