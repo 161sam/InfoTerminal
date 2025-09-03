@@ -10,15 +10,9 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 - [x] `search-api` (OpenSearch angebunden, Basis-Endpunkte)
 - [x] `graph-api` (Neo4j angebunden, Basis-Endpunkte)
 - [x] `doc-entities` (NER/Annotation vorbereitet, HTML-Render)
+- [x] `nlp-service` (NER + Summarizer)
 
 ### 🟡 To-Do
-- [ ] **NLP-Service**
-  - [ ] Projektstruktur `services/nlp-service`
-  - [ ] Endpunkte `/ner`, `/summarize`
-  - [ ] Modell: spaCy `en_core_web_sm`
-  - [ ] Modell: HuggingFace Summarizer (DistilBART o.ä.)
-  - [ ] Integration ins Frontend (Highlighting)
-
 - [ ] **doc-entities erweitern**
   - [ ] Verbindung zu NLP-Service
   - [ ] Rückgabe von Entitäten + Kontext im JSON
@@ -30,8 +24,8 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 - [ ] NiFi Flow vorbereiten:
   - [ ] `ListenFile` → OCR (Tesseract) → `PutAleph`
   - [ ] Beispiel-Template `docs/dev/nifi-ingest-demo.xml`
-- [ ] Airflow DAG:
-  - [ ] Mini-Beispiel (z. B. täglicher CSV-Import in Postgres)
+- [x] Airflow DAG:
+  - [x] Mini-Beispiel (z. B. täglicher CSV-Import in Postgres)
 - [ ] dbt Modelle:
   - [ ] 1 Beispiel-Transformation (CSV → Postgres Table)
 
