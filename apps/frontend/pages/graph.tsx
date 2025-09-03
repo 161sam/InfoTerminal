@@ -1,3 +1,4 @@
+// TODO: consolidate with pages/graphx.tsx; graphx.tsx should be the canonical view.
 import { useEffect, useMemo, useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
 

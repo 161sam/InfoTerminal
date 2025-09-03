@@ -1,7 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* (optional) Basistypo */
-html,body { height:100%; }
-body { @apply bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50; }
+/* Baselines (klein & unaufdringlich) */
+html, body, #__next { height: 100%; }
+body { @apply bg-white text-gray-900 antialiased; }
+
+/* Typo-Basis (vorsichtig, ohne Opinion Overload) */
+@layer base {
+  h1 { @apply text-3xl font-semibold tracking-tight; }
+  h2 { @apply text-2xl font-semibold tracking-tight; }
+  h3 { @apply text-xl font-semibold; }
+  a  { @apply text-blue-600 hover:underline; }
+}
