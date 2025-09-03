@@ -19,3 +19,5 @@ Example:
 ```
 
 The page exposes facet filters with chips, a rerank toggle, pagination and sort selector. Each result links to its document detail view and, when available, to the graph viewer via `/graphx?focus=<node_id>`.
+
+Backend reranking is only active when the `search-api` service runs with `RERANK_ENABLED=1`. The UI simply forwards the `rerank=1` parameter or `X-Rerank: 1` header.
