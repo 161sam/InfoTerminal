@@ -60,31 +60,29 @@
 
 ---
 
-## 🚀 Schnellstart (Dev)
+## Install-Matrix
 
-Voraussetzungen: **Docker**, **kubectl**, **helm**, **make** (optional: **kind**)
+| Methode        | Ziel | Hinweis |
+|---------------|------|---------|
+| Docker Compose | Lokaler Full-Stack | `cp .env.example .env` & `docker compose up -d` |
+| Helm Chart     | Kubernetes Deployment | `helm upgrade --install infoterm charts/infoterminal -n infoterm --create-namespace` |
+| Native         | Einzelservices | Siehe `docs/dev/*` |
+
+## Quickstart (Compose)
 
 ```bash
-# 1) Dev-Stack booten (K8s-Local mit Basiskomponenten)
-make dev-up        # installiert: Traefik, Keycloak, Postgres, OpenSearch, Neo4j, MinIO, Aleph, Superset, Airflow, NiFi
-
-# 2) Services deployen
-make services-up   # FastAPI Microservices builden/deployen (search-api, graph-api, doc-entities, …)
-
-# 3) Frontend starten (lokal)
-make web-up        # Next.js Dev-Server (alternativ: npm run dev im web/)
-
-# 4) Zugänge (Dev-Defaults)
-# - Web-UI:          http://localhost:3000
-# - Keycloak:        http://localhost:8081 (Realm: info-terminal)
-# - Aleph UI:        http://localhost:8082
-# - Superset:        http://localhost:8083
-# - Airflow UI:      http://localhost:8084
-# - NiFi UI:         http://localhost:8085
-# - MinIO Console:   http://localhost:9001
+cp .env.example .env
+docker compose up -d
+open http://localhost:3000
 ```
 
-> **Hinweis:** Die Port-URLs können je nach Setup variieren. Siehe `docs/dev/checklist.md` / `.env.example`.
+## Quickstart (Helm)
+
+```bash
+helm upgrade --install infoterm charts/infoterminal -n infoterm --create-namespace
+kubectl port-forward svc/infoterminal-web 3000:3000 -n infoterm
+open http://localhost:3000
+```
 
 ## Monitoring
 
@@ -287,6 +285,18 @@ Apache-2.0 (siehe `LICENSE`)
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/01-home.svg" width="45%" />
+  <img src="docs/screenshots/02-search.svg" width="45%" />
+  <img src="docs/screenshots/03-doc-detail.svg" width="45%" />
+  <img src="docs/screenshots/04-graph.svg" width="45%" />
+  <img src="docs/screenshots/05-grafana.svg" width="45%" />
+</p>
+
+---
+
 ## Demo-Daten laden
 
 Ein Demo-Loader füllt Aleph, Doc-Entities und optionale Dienste mit Beispieldaten.
@@ -304,10 +314,10 @@ Mehr dazu unter [docs/dev/demo-loader.md](docs/dev/demo-loader.md).
 ### Anhang: Nützliche Make-Targets (Beispiele)
 
 ```bash
-make dev-up         # Dev-Cluster + Basisdienste
-make services-up    # Microservices build/deploy
-make web-up         # Frontend Dev
-make dev-down       # Alles stoppen/aufräumen
+make dev-up         # Compose-Bundle starten
+make obs-up         # Observability-Profile starten
+make logs           # Logs verfolgen
+make dev-down       # Compose-Bundle stoppen
 ```
 
 > Details & Alternativen in `docs/dev/checklist.md` und per-Service-READMEs.

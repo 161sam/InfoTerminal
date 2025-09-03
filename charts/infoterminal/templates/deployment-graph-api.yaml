@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infoterminal-graph-api
+spec:
+  replicas: {{ .Values.graphApi.replicas }}
+  selector:
+    matchLabels:
+      app: graph-api
+  template:
+    metadata:
+      labels:
+        app: graph-api
+    spec:
+      containers:
+        - name: graph-api
+          image: {{ .Values.image.registry }}/graph-api:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8002
+          envFrom:
+            - configMapRef:
+                name: infoterminal-env
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8002
+            initialDelaySeconds: 5
+            periodSeconds: 10
