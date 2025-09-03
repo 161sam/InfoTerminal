@@ -14,7 +14,17 @@ from pathlib import Path
 import httpx
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # type: ignore
-from prometheus_client import make_asgi_app
+from prometheus_fastapi_instrumentator import Instrumentator
+import importlib.util
+from pathlib import Path
+
+SERVICE_DIR = Path(__file__).resolve().parent
+_spec = importlib.util.spec_from_file_location("doc_entities_metrics", SERVICE_DIR / "metrics.py")
+_metrics = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_metrics)  # type: ignore
+RESOLVER_RUNS = _metrics.RESOLVER_RUNS
+RESOLVER_ENTS = _metrics.RESOLVER_ENTS
+RESOLVER_LAT = _metrics.RESOLVER_LAT
 from pydantic import BaseModel
 
 ALLOW_TEST = os.getenv("ALLOW_TEST_MODE")
@@ -34,7 +44,12 @@ GRAPH_URL = os.getenv("GRAPH_UI", "http://localhost:3000/graphx")
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
 FastAPIInstrumentor().instrument_app(app)  # type: ignore
-app.mount("/metrics", make_asgi_app())
+instrumentator = Instrumentator().instrument(app)
+
+
+@app.on_event("startup")
+async def _startup() -> None:
+    instrumentator.expose(app, include_in_schema=False, should_gzip=True)
 
 
 class AnnotReq(BaseModel):

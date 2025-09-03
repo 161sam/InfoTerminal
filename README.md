@@ -86,6 +86,14 @@ make web-up        # Next.js Dev-Server (alternativ: npm run dev im web/)
 
 > **Hinweis:** Die Port-URLs können je nach Setup variieren. Siehe `docs/dev/checklist.md` / `.env.example`.
 
+## Monitoring
+
+Prometheus: http://localhost:9090
+
+Grafana:    http://localhost:3001  (admin/admin)
+
+Dashboards: Folder "InfoTerminal" → API Overview, Search Rerank, Doc Resolver
+
 
 ---
 
