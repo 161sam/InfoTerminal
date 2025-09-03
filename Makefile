@@ -26,17 +26,19 @@ dev-up: ## (Erweitert) nach helmfile apply auch OPA & Neo4j
 	@echo "→ Deploy OPA & Neo4j (manifests)"
 	@kubectl apply -f infra/k8s/opa/opa.yaml
 	@kubectl apply -f infra/k8s/neo4j/neo4j.yaml
+	@docker compose up -d --build nlp-service
 
 dev-down:
 	@helmfile -f infra/helmfile/helmfile.yaml destroy || true
 	@kind delete cluster --name $(KIND_CLUSTER) || true
+	@docker compose down || true
 
 apps-up:
 	@uv run --python 3.11 -q --directory services/search-api ./dev.sh &
 	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
 	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
 	@uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
-	@uv run --python 3.11 -q --directory services/nlp ./dev.sh &
+	@uv run --python 3.11 -q --directory services/nlp-service uvicorn app:app --host 0.0.0.0 --port 8003 &
 	@uv run --python 3.11 -q --directory services/doc-entities ./dev.sh &
 	@pnpm --dir apps/frontend dev &
 
