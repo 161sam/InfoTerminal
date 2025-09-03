@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Simple health check for local services
 set -euo pipefail
 h(){ curl -sf "$1" >/dev/null && echo "OK  $1" || echo "ERR $1"; }
 h http://127.0.0.1:8401/healthz   # search-api
