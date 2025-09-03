@@ -14,7 +14,7 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 
 ### 🟡 To-Do
 - [ ] **doc-entities erweitern**
-  - [ ] Verbindung zu NLP-Service
+  - [x] Verbindung zu NLP-Service
   - [ ] Rückgabe von Entitäten + Kontext im JSON
 
 ---
@@ -23,11 +23,11 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 
 - [ ] NiFi Flow vorbereiten:
   - [ ] `ListenFile` → OCR (Tesseract) → `PutAleph`
-  - [ ] Beispiel-Template `docs/dev/nifi-ingest-demo.xml`
+  - [x] Beispiel-Template `docs/dev/nifi-ingest-demo.xml`
 - [x] Airflow DAG:
   - [x] Mini-Beispiel (z. B. täglicher CSV-Import in Postgres)
 - [ ] dbt Modelle:
-  - [ ] 1 Beispiel-Transformation (CSV → Postgres Table)
+  - [x] 1 Beispiel-Transformation (CSV → Postgres Table)
 - [ ] Demo-Daten Seeds
   - [x] Graph (services/graph-api/scripts/seed_graph.py)
   - [ ] PDFs/CSV (scripts/seed_demo.sh)

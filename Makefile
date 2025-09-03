@@ -99,7 +99,7 @@ docs-open:
 	python -m http.server --directory docs 8081
 	# open http://localhost:8081 in browser
 
-.PHONY: dev-up apps-up dev-down obs-up logs
+.PHONY: dev-up apps-up dev-down dev-health obs-up logs
 
 # ==== Dev targets (idempotent) ====
 dev-up:
@@ -110,6 +110,9 @@ apps-up: dev-up
 dev-down:
         @pkill -f "uvicorn" 2>/dev/null || true
         @pkill -f "next dev" 2>/dev/null || true
+
+dev-health:
+	@bash scripts/dev_health.sh
 
 obs-up:
 	docker compose --profile observability up -d

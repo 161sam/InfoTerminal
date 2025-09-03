@@ -11,7 +11,6 @@ from typing import Any, Dict, List, Optional
 import sys
 from pathlib import Path
 
-import httpx
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # type: ignore
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -35,11 +34,11 @@ if str(SERVICE_DIR) not in sys.path:
 from db import SessionLocal, engine  # type: ignore
 from models import Base, Document, Entity, EntityResolution  # type: ignore
 from resolver import resolve_entities  # type: ignore
+from nlp_client import ner as nlp_ner
 
 if not ALLOW_TEST:
     Base.metadata.create_all(engine)
 
-NLP_URL = os.getenv("NLP_URL", "http://127.0.0.1:8005")
 GRAPH_URL = os.getenv("GRAPH_UI", "http://localhost:3000/graphx")
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
@@ -90,11 +89,10 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
         with SessionLocal() as db:
             doc = Document(id=uuid.UUID(doc_id), title=req.title, aleph_id=meta.get("aleph_id"))
             db.merge(doc)
-            with httpx.Client(timeout=30.0) as cli:
-                ner = cli.post(f"{NLP_URL}/ner", json={"text": req.text}).json()
+            ner_res = nlp_ner(req.text)
             ents = []
             entity_ids = []
-            for e in ner.get("ents", []):
+            for e in ner_res:
                 ent = Entity(
                     doc_id=doc.id,
                     label=e.get("label", ""),
