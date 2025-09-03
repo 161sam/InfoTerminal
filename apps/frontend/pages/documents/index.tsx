@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import UploadBox from '../../src/components/upload/UploadBox';
+import UploadBox from '@/components/upload/UploadBox';
 
 export default function DocumentsPage() {
   const [lastResults, setLastResults] = useState<any[]>([]);

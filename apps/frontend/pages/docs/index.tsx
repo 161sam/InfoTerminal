@@ -1,4 +1,4 @@
-import DocumentUploader from '../../src/components/docs/DocumentUploader';
+import DocumentUploader from '@/components/docs/DocumentUploader';
 
 export default function DocsPage() {
   return (

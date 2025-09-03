@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import EntityHighlighter from '../../src/components/docs/EntityHighlighter';
-import DocCard from '../../src/components/docs/DocCard';
-import { DocRecord } from '../../src/types/docs';
-import EntityBadgeList, { BadgeItem } from '../../src/components/entities/EntityBadgeList';
-import { uniqueEntities } from '../../src/lib/entities';
+import EntityHighlighter from '@/components/docs/EntityHighlighter';
+import DocCard from '@/components/docs/DocCard';
+import { DocRecord } from '@/types/docs';
+import EntityBadgeList, { BadgeItem } from '@/components/entities/EntityBadgeList';
+import { uniqueEntities } from '@/lib/entities';
 
 export default function DocPage() {
   const router = useRouter();

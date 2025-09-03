@@ -5,7 +5,7 @@ vi.mock('next/router', () => ({
   useRouter: () => ({ query: { id: 'A1' }, push: vi.fn() })
 }));
 
-vi.mock('../../src/lib/api', () => ({
+vi.mock('@/lib/api', () => ({
   fetchAsset: async () => ({ name: 'A1' }),
   fetchAssetPrices: async () => [{ ts: '1', open: 1, high: 1, low: 1, close: 1 }],
   fetchGraph: async () => ({ nodes: [], edges: [] }),

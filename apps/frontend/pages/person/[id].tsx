@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { GraphSnippet } from '../../src/components/analytics/GraphSnippet';
-import { NewsTimeline } from '../../src/components/analytics/NewsTimeline';
-import { EntityHeader } from '../../src/components/analytics/EntityHeader';
-import { fetchAsset, fetchGraph, fetchNews } from '../../src/lib/api';
+import { GraphSnippet } from '@/components/analytics/GraphSnippet';
+import { NewsTimeline } from '@/components/analytics/NewsTimeline';
+import { EntityHeader } from '@/components/analytics/EntityHeader';
+import { fetchAsset, fetchGraph, fetchNews } from '@/lib/api';
 
 export default function PersonPage() {
   const router = useRouter();

@@ -16,10 +16,10 @@ import {
   Copy,
   Check
 } from 'lucide-react';
-import DashboardLayout from '../../src/components/layout/DashboardLayout';
-import EntityBadge from '../../src/components/entities/EntityBadge';
-import { DocRecord } from '../../src/types/docs';
-import { uniqueEntities } from '../../src/lib/entities';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import EntityBadge from '@/components/entities/EntityBadge';
+import { DocRecord } from '@/types/docs';
+import { uniqueEntities } from '@/lib/entities';
 
 export default function DocumentDetailPage() {
   const router = useRouter();

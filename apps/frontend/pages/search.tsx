@@ -1,12 +1,12 @@
-import SearchBox from '../src/components/search/SearchBox';
-import FacetPanel from '../src/components/search/FacetPanel';
-import FilterChips from '../src/components/search/FilterChips';
-import ResultItem from '../src/components/search/ResultItem';
-import Pagination from '../src/components/search/Pagination';
-import SortAndRerank from '../src/components/search/SortAndRerank';
-import { useSearchParams } from '../src/hooks/useSearchParams';
-import { useSearch } from '../src/hooks/useSearch';
-import Header from '../src/components/layout/Header';
+import SearchBox from '@/components/search/SearchBox';
+import FacetPanel from '@/components/search/FacetPanel';
+import FilterChips from '@/components/search/FilterChips';
+import ResultItem from '@/components/search/ResultItem';
+import Pagination from '@/components/search/Pagination';
+import SortAndRerank from '@/components/search/SortAndRerank';
+import { useSearchParams } from '@/hooks/useSearchParams';
+import { useSearch } from '@/hooks/useSearch';
+import Header from '@/components/layout/Header';
 
 export default function SearchPage() {
   const { params, set, replaceAll } = useSearchParams();
@@ -85,6 +85,7 @@ export default function SearchPage() {
 
   return (
     <div>
+      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}
       <Header />
       <SearchBox
         value={q}

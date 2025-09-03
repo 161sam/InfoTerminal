@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { TimeSeriesChart } from '../../src/components/analytics/TimeSeriesChart';
-import { OHLCChart } from '../../src/components/analytics/OHLCChart';
-import { GraphSnippet } from '../../src/components/analytics/GraphSnippet';
-import { NewsTimeline } from '../../src/components/analytics/NewsTimeline';
-import { EntityHeader } from '../../src/components/analytics/EntityHeader';
-import { fetchAsset, fetchAssetPrices, fetchGraph, fetchNews } from '../../src/lib/api';
+import { TimeSeriesChart } from '@/components/analytics/TimeSeriesChart';
+import { OHLCChart } from '@/components/analytics/OHLCChart';
+import { GraphSnippet } from '@/components/analytics/GraphSnippet';
+import { NewsTimeline } from '@/components/analytics/NewsTimeline';
+import { EntityHeader } from '@/components/analytics/EntityHeader';
+import { fetchAsset, fetchAssetPrices, fetchGraph, fetchNews } from '@/lib/api';
 
 export default function AssetPage() {
   const router = useRouter();

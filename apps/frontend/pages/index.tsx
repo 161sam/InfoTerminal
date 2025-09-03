@@ -14,8 +14,8 @@ import {
   Clock,
   AlertTriangle
 } from 'lucide-react';
-import DashboardLayout from '../src/components/layout/DashboardLayout';
-import { useHealth } from '../src/hooks/useHealth';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { useHealth } from '@/hooks/useHealth';
 
 interface DashboardStats {
   totalDocuments: number;
