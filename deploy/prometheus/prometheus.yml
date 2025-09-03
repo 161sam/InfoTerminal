@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 10s
+  scrape_timeout: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'search-api'
+    static_configs:
+      - targets: ['search-api:8001']
+    metrics_path: /metrics
+
+  - job_name: 'graph-api'
+    static_configs:
+      - targets: ['graph-api:8002']
+    metrics_path: /metrics
+
+  - job_name: 'doc-entities'
+    static_configs:
+      - targets: ['doc-entities:8006']
+    metrics_path: /metrics
+
+  - job_name: 'nlp-service'
+    static_configs:
+      - targets: ['nlp-service:8003']
+    metrics_path: /metrics

@@ -1,39 +1,40 @@
 # Observability
 
-This stack wires application traces, metrics and logs through a common pipeline.
+This document outlines the monitoring stack for InfoTerminal.
 
 ## Architecture
 
-Applications emit OTLP data which is collected by the **OpenTelemetry Collector**. Traces are exported to **Tempo** and metrics
- to **Prometheus**. Logs are shipped separately by **Promtail** to **Loki**.
-
 ```text
-Apps → OTLP → Otel-Collector → Tempo / Prometheus
-Logs → Promtail → Loki
+Services (FastAPI) → Prometheus → Grafana
 ```
 
-Grafana provides dashboards and access to all data sources.
+Every service exposes metrics at `/metrics`. Prometheus scrapes the
+endpoints and Grafana renders dashboards from the collected time series.
 
-## Environment
+## Service Metrics
 
-Each service is configured with the following defaults:
+| Service       | Metrics |
+|---------------|--------|
+| `search-api`  | `search_requests_total`, `search_errors_total`, `search_latency_seconds`, `search_rerank_requests_total`, `search_rerank_latency_seconds` |
+| `graph-api`   | `graph_requests_total` |
+| `doc-entities`| `resolver_runs_total`, `resolver_entities_total`, `resolver_latency_seconds` |
+| `nlp-service` | `nlp_requests_total`, `nlp_latency_seconds` |
 
-| Variable | Value |
-|----------|-------|
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://otel-collector.default.svc:4317` |
-| `OTEL_SERVICE_NAME` | name of the service |
-| `OTEL_TRACES_SAMPLER` | `parentbased_traceidratio` |
-| `OTEL_TRACES_SAMPLER_ARG` | `0.2` |
+## Prometheus
 
-## Dashboards
+* Scrape interval: **10s**
+* Scrape timeout: **5s**
+* Retention: **7d**
 
-Two core dashboards are provisioned:
+Configuration lives in `deploy/prometheus/prometheus.yml`.
 
-* **API SLO** – latency (p95/p99), throughput and error rate for HTTP endpoints.
-* **Infra Overview** – pod CPU/memory, restarts and collector/promtail stats.
+## Grafana
+
+Grafana is pre-provisioned with a Prometheus datasource and three dashboards
+(API Overview, Search Rerank, Doc Resolver) under the folder **InfoTerminal**.
 
 ## Troubleshooting
 
-* **No traces?** Ensure the sampler env vars are set and the collector is reachable.
-* **No metrics?** Check that `/metrics` responds and Prometheus has a scrape config.
-* **Missing logs?** Confirm promtail is running and targets are discovered in Grafana Loki.
+* `/metrics` returns 404 → middleware not enabled.
+* `up == 0` in Prometheus → target or port unreachable.
+* Latency panels show no data → check histogram buckets match requests.

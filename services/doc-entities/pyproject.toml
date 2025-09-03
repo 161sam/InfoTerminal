@@ -13,8 +13,8 @@ dependencies = [
     "opentelemetry-instrumentation-fastapi>=0.46b0",
     "opentelemetry-instrumentation-requests>=0.46b0",
     "opentelemetry-instrumentation-logging>=0.46b0",
-    "prometheus-client>=0.20",
-    "starlette-exporter>=0.15",
+    "prometheus-client==0.20.*",
+    "prometheus-fastapi-instrumentator==6.1.*",
     "sqlalchemy>=2.0",
     "alembic>=1.13",
 ]
