@@ -21,3 +21,19 @@ The `GlobalHealth` widget polls this API every 15 seconds by default. States map
 - **down/unreachable** – red or gray
 
 If the badge turns red, use the "Force refresh" option or check the Docker compose logs for the affected service.
+
+## Document Upload API
+
+`POST /api/documents/upload` accepts multiple files (`multipart/form-data`). The response contains an array per file:
+
+```json
+{
+  "ok": true,
+  "results": [
+    { "file": "demo1.pdf", "status": "uploaded", "doc_id": "...", "aleph_id": "..." },
+    { "file": "demo2.txt", "status": "error", "message": "Filetype not supported" }
+  ]
+}
+```
+
+The `UploadBox` component provides drag & drop, progress bars, cancel/retry buttons and links to the uploaded document.
