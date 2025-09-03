@@ -3,6 +3,7 @@
 .env.*.local
 !.env.example
 !**/.env.example
+!**/.env.local.example
 secrets/
 *.pem
 *.key

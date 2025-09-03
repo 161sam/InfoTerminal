@@ -10,7 +10,11 @@ from pydantic import BaseModel
 from rapidfuzz import process, fuzz
 from typing import List, Dict, Any
 
-app = FastAPI(title="Entity Resolution v0")
+# Falls app bereits existiert (z.B. durch andere Module), nichts überschreiben
+try:
+    app  # type: ignore[name-defined]
+except NameError:
+    app = FastAPI(title="InfoTerminal Entity Resolution")
 FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
 
