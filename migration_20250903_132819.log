@@ -41,3 +41,9 @@
 [0;34mINFO: Prüfe Frontend-Dependencies...[0m
 [1;33mWARNING: Fehlende Dependencies gefunden:[0m
 [0;34mINFO: Aktualisiere Git Repository...[0m
+[0;32mSUCCESS: Git Commit erstellt[0m
+[0;34mINFO: Erstelle Migrationszusammenfassung...[0m
+[0;32mSUCCESS: Zusammenfassung erstellt: /home/saschi/InfoTerminal/MIGRATION_SUMMARY.md[0m
+[0;32mSUCCESS: ✅ Migration erfolgreich abgeschlossen![0m
+[0;34mINFO: 📋 Log-Datei: /home/saschi/InfoTerminal/migration_20250903_132819.log[0m
+[0;34mINFO: 📄 Zusammenfassung: /home/saschi/InfoTerminal/MIGRATION_SUMMARY.md[0m
