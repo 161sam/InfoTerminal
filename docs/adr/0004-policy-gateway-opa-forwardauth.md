@@ -20,10 +20,10 @@ Unifies authorization checks but adds latency and coupling to gateway availabili
 
 ## Alternatives
 
-* Embed policy checks in each service
-* Custom gateway plugin
+- Embed policy checks in each service
+- Custom gateway plugin
 
 ## References
 
-* [traefik.io](https://traefik.io/)
-* [www.openpolicyagent.org](https://www.openpolicyagent.org/docs/latest/edge/)
+- [traefik.io](https://traefik.io/)
+- [www.openpolicyagent.org](https://www.openpolicyagent.org/docs/latest/)
