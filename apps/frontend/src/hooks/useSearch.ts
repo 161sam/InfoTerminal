@@ -5,6 +5,7 @@ export interface UseSearchInput {
   q?: string;
   filters?: Record<string, string[]>;
   entity?: string[];
+  value?: string[];
   sort?: string;
   rerank?: boolean;
   page?: number;
@@ -31,6 +32,7 @@ export function useSearch(params: UseSearchInput) {
         query.set('limit', String(pageSize));
         query.set('offset', String((page - 1) * pageSize));
         if (params.entity) params.entity.forEach((e) => query.append('entity_type', e));
+        if (params.value) params.value.forEach((v) => query.append('value', v));
         if (params.filters && Object.keys(params.filters).length) {
           query.set('filters', JSON.stringify(params.filters));
         }
@@ -55,7 +57,8 @@ export function useSearch(params: UseSearchInput) {
     params.page,
     params.pageSize,
     JSON.stringify(params.filters),
-    params.entity?.join(',')
+    params.entity?.join(','),
+    params.value?.join(',')
   ]);
 
   return { data, loading, error };

@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react';
 import EntityHighlighter from '../../src/components/docs/EntityHighlighter';
 import DocCard from '../../src/components/docs/DocCard';
 import { DocRecord } from '../../src/types/docs';
+import EntityBadgeList, { BadgeItem } from '../../src/components/entities/EntityBadgeList';
+import { uniqueEntities } from '../../src/lib/entities';
 
 export default function DocPage() {
-  const { query } = useRouter();
+  const router = useRouter();
+  const { query } = router;
   const id = (query.id as string) || '';
   const [doc, setDoc] = useState<DocRecord | null>(null);
   const [error, setError] = useState<string>('');
@@ -23,10 +26,26 @@ export default function DocPage() {
 
   if (error) return <main>{error}</main>;
   if (!doc) return <main>Lade...</main>;
+
+  const badges: BadgeItem[] = uniqueEntities(
+    doc.entities.map((e) => ({ label: e.label, value: e.text || '' })),
+  );
+
+  const handleBadgeClick = (item: BadgeItem) => {
+    if (item.value) router.push(`/search?value=${encodeURIComponent(item.value)}`);
+    else router.push(`/search?entity=${encodeURIComponent(item.label)}`);
+  };
+
   return (
-    <main style={{ maxWidth: 800, margin: '1rem auto' }}>
-      <DocCard doc={doc} />
-      <EntityHighlighter text={doc.text} entities={doc.entities} />
+    <main style={{ maxWidth: 800, margin: '1rem auto', display: 'flex', gap: '1rem' }}>
+      <div style={{ flex: 1 }}>
+        <DocCard doc={doc} />
+        <EntityHighlighter text={doc.text} entities={doc.entities} />
+      </div>
+      <aside style={{ width: 200 }}>
+        <h4>Entitäten</h4>
+        <EntityBadgeList items={badges} onBadgeClick={handleBadgeClick} />
+      </aside>
     </main>
   );
 }
