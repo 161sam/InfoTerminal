@@ -1,5 +1,4 @@
 # Status auf einen Blick
-<!-- markdownlint-disable MD013 MD059 MD026 MD024 -->
 
 * **Dev-Infra (Kind + Helmfile + Basisdienste)** — ✅ lauffähig (Postgres, OpenSearch, MinIO, Traefik, Keycloak)
 * **Auth & Gateway** — 🟨 Keycloak-Realm/Clients vorhanden; Edge-OIDC via oauth2-proxy + OPA-ForwardAuth lauffähig; Feinschliff (Role Claims, Secrets) offen
@@ -17,7 +16,7 @@
 
 ---
 
-## Checkliste (End-to-End)
+# Checkliste (End-to-End)
 
 ## 1) Grundbetrieb & Seed
 
@@ -26,14 +25,14 @@
 * [ ] Seeds ausgeführt
   *Befehle:* `make seed-demo` · `make seed-graph`
 * [ ] Apps lokal gestartet
-  *Befehl:* `make apps-up` → Frontend [localhost:3000](http://localhost:3000)
+  *Befehl:* `make apps-up` → Frontend [http://localhost:3000](http://localhost:3000)
 
 ## 2) Auth / Edge-OIDC / OPA
 
 * [ ] Keycloak Realm importiert
   *Befehl:* `make auth-up` (admin/adminadmin lokal)
 * [ ] oauth2-proxy erreichbar
-  *URL:* [auth.127.0.0.1.nip.io](http://auth.127.0.0.1.nip.io)
+  *URL:* [http://auth.127.0.0.1.nip.io](http://auth.127.0.0.1.nip.io)
 * [ ] OPA ForwardAuth aktiv
   *Test:* `curl -I http://search.127.0.0.1.nip.io/search?q=info` → `401` wenn nicht eingeloggt, `200` mit Session
 * [ ] OPA Tests grün
@@ -44,28 +43,28 @@
 ## 3) Search + Facetten + OPA
 
 * [ ] Search-API Health
-  *URL:* [127.0.0.1:8001](http://127.0.0.1:8001/healthz)
+  *URL:* [http://127.0.0.1:8001/healthz](http://127.0.0.1:8001/healthz)
 * [ ] Faceted Search UI liefert Treffer
-  *URL:*  [localhost:3000](http://localhost:3000) · Query „InfoTerminal“
+  *URL:* [http://localhost:3000](http://localhost:3000) · Query „InfoTerminal“
 * [ ] OPA-Enforcement (Gateway-Variante)
-  *URL:* [search.127.0.0.1.nip.io](http://search.127.0.0.1.nip.io/search?q=info)
+  *URL:* [http://search.127.0.0.1.nip.io/search?q=info](http://search.127.0.0.1.nip.io/search?q=info)
 
 ## 4) Graph
 
 * [ ] Graph-API Health
-  *URL:* [127.0.0.1:8002](http://127.0.0.1:8002/healthz)
+  *URL:* [http://127.0.0.1:8002/healthz](http://127.0.0.1:8002/healthz)
 * [ ] Graph Viewer Basis
-  *URL:* [localhost:3000](http://localhost:3000/graph)
+  *URL:* [http://localhost:3000/graph](http://localhost:3000/graph)
 * [ ] GraphX (Expand/Pin/Save)
-  *URL:* [localhost:3000](http://localhost:3000/graphx)
+  *URL:* [http://localhost:3000/graphx](http://localhost:3000/graphx)
 * [ ] Graph Views Service (CRUD + Share)
-  *URL:* [127.0.0.1:8004](http://127.0.0.1:8004/healthz)
+  *URL:* [http://127.0.0.1:8004/healthz](http://127.0.0.1:8004/healthz)
   *Flow:* Save Server → List → Load funktioniert
 
 ## 5) Aleph (Docs)
 
 * [ ] Aleph UI erreichbar (via Edge-OIDC + OPA)
-  *URL:* [aleph.127.0.0.1.nip.io](http://aleph.127.0.0.1.nip.io)
+  *URL:* [http://aleph.127.0.0.1.nip.io](http://aleph.127.0.0.1.nip.io)
 * [ ] Worker & Ingestor laufen
   *Check:* `kubectl -n docs get pods` → `aleph`, `aleph-worker`, `aleph-ingestor`, `redis` Running
 * [ ] Test-Upload & Suche ok (manuell via UI)
@@ -73,9 +72,9 @@
 ## 6) NiFi & Registry
 
 * [ ] NiFi UI erreichbar
-  *URL:* [nifi.127.0.0.1.nip.io](http://nifi.127.0.0.1.nip.io)
+  *URL:* [http://nifi.127.0.0.1.nip.io](http://nifi.127.0.0.1.nip.io)
 * [ ] NiFi Registry erreichbar & verbunden
-  *URL:* [nifi-registry.127.0.0.1.nip.io](http://nifi-registry.127.0.0.1.nip.io)
+  *URL:* [http://nifi-registry.127.0.0.1.nip.io](http://nifi-registry.127.0.0.1.nip.io)
   *Befehl:* `bash infra/nifi/scripts/connect-registry.sh`
 * [ ] Demo-Template instanziert & läuft
   *Befehl:* `bash infra/nifi/scripts/upload-template.sh`
@@ -83,13 +82,11 @@
 ## 7) Airflow + Jobs
 
 * [ ] Airflow UI erreichbar
-  *URL:* [localhost:8084](http://localhost:8084)
+  *URL:* [http://localhost:8084](http://localhost:8084)
 * [ ] DAGs sichtbar (`openbb_equities_daily`, `openbb_kpo_daily`)
   *Check:* Airflow UI → Activate
 * [ ] OpenBB CronJob (K8s) lädt Daten
-
-### Befehle
-
+  *Befehle:*
   `kind load docker-image openbb-connector:local --name infoterminal`
   `kubectl -n openbb create job --from=cronjob/openbb-prices-daily openbb-test`
   `kubectl -n openbb logs job/openbb-test -f`
@@ -97,11 +94,8 @@
 ## 8) dbt Modelle & Tests
 
 * [ ] dbt deps/seed/run/test grün
-
-### Befehle:
-
+  *Befehle:*
   `cd etl/dbt && dbt deps && dbt seed && dbt run && dbt test`
-
 * [ ] Modelle vorhanden: `stg_openbb_prices`, `dim_asset`, `fct_eod_prices`, `fct_returns_daily`, `dim_asset_enriched`
 
 ## 9) AI Layer & Agents
@@ -111,20 +105,17 @@
 * [ ] `services/nlp` deployen (NER, Embed, Summarize)
   *Befehl:* `uv run --python 3.11 -q --directory services/nlp ./dev.sh`
 * [ ] Search-Rerank aktivieren (Cosine Top-N)
-    *Env:* `export RERANK=1 NLP_URL=http://127.0.0.1:8005`
+  *Env:* `export RERANK=1 NLP_URL=http://127.0.0.1:8005`
 * [ ] Entity-Resolver `/resolve` aktiv
-  *URL:* `[127.0.0.1:8005](http://127.0.0.1:8005/resolve)
+  *URL:* `http://127.0.0.1:8005/resolve`
 * [ ] n8n Flow „Investigation Assistant“
-
-### Snippet
-
+  *Snippet:*
   ```json
   {
     "name":"Investigation Assistant",
     "nodes":[{"id":"webhook","type":"n8n-nodes-base.webhook"}]
   }
   ```
-
 * [ ] n8n Flow „Financial Risk Assistant“ (OpenBB + Sanktionsliste)
 * [ ] (Optional) Flowise Agent mit HTTP-Tools auf Search/Graph/NLP
 
@@ -133,20 +124,15 @@
 *Mini-Blueprint:* NiFi → Aleph Upload, Aleph Worker für OCR/LID, Batch-Script verknüpft NER mit Graph.
 
 * [ ] NiFi Flow: ListenFile → PutAleph (Upload)
-
-### Snippet
-
+  *Snippet:*
   ```bash
   HTTP Method: POST
   Content-Type: application/octet-stream
   ```
-
 * [ ] OCR/Language-ID über Aleph Worker aktiv
   *Check:* `kubectl -n docs get pods`
 * [ ] NER→Graph Crosslinks patchen
-
-### Snippet
-
+  *Snippet:*
   ```python
   ents = requests.post(f"{NLP}/ner", {"text":txt}).json()["ents"]
   ```
@@ -154,7 +140,7 @@
 ## 11) Superset (OIDC, Preset, dbt-Sync)
 
 * [ ] OIDC Login via Edge (oder direkt) klappt
-  *URL:* [superset.127.0.0.1.nip.io](http://superset.127.0.0.1.nip.io)
+  *URL:* [http://superset.127.0.0.1.nip.io](http://superset.127.0.0.1.nip.io)
 * [ ] Preset-Job gelaufen (Dashboard „OpenBB Overview“)
   *Check:* `kubectl -n analytics logs job/superset-preset`
 * [ ] dbt→Superset Sync ok
@@ -191,7 +177,7 @@ make opa-test
 
 ---
 
-## Nächste 7 Tage – Fokusvorschlag
+# Nächste 7 Tage – Fokusvorschlag
 
 1. **Security sweep**
    ⬜️ Secrets rotieren · ⬜️ OPA Inputs pro Service vereinheitlichen (tenant/labels/classification) · ⬜️ Traefik mTLS (intern) optional.
@@ -208,7 +194,7 @@ make opa-test
 
 ---
 
-## Bekannte Lücken / Risiken
+# Bekannte Lücken / Risiken
 
 * **Prod-Härte:** TLS, HPA, PDBs, Requests/Limits, Backups/Restore – noch Dev-Default.
 * **Lizenz & Datenquellen:** OpenBB/3P terms prüfen; Klassifizierung & RLS/OPA abstimmen.
@@ -216,4 +202,4 @@ make opa-test
 * **Multi-Tenant UX:** RLS in Superset ist begrenzt; OPA bleibt „source of truth“ für APIs.
 
 ---
-<!-- markdownlint-enable MD013 MD059 MD026 MD024 -->
+
