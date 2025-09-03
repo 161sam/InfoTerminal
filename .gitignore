@@ -120,3 +120,6 @@ tools/installers/
 *.pkg
 *.exe
 *.dmg
+
+# uv Python lockfiles
+**/uv.lock
