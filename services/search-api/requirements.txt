@@ -4,3 +4,5 @@ opensearch-py>=2.5
 python-jose[cryptography]>=3.3
 httpx>=0.27
 cachetools>=5.3
+numpy>=1.24
+sentence-transformers==2.2.2
