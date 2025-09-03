@@ -18,7 +18,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ## 🔖 Versionen & Meilensteine
 
 ### v0.1.0 – MVP (aktueller Stand)
-**Status:** released ✅
+**Status:** in arbeit
 
 - 🔎 **Search:** OpenSearch mit Facetten & API.
 - 🌐 **Graph:** Neo4j-Integration + Viewer.
