@@ -1,0 +1,7 @@
+{
+  "name": "info-terminal",
+  "private": true,
+  "scripts": {
+    "docs:lint": "markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json"
+  }
+}
