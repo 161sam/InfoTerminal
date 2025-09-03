@@ -31,11 +31,18 @@ export default function SearchPage() {
     : entityParam
     ? [entityParam as string]
     : undefined;
+  const valueParam = params.value;
+  const value = Array.isArray(valueParam)
+    ? (valueParam as string[])
+    : valueParam
+    ? [valueParam as string]
+    : undefined;
 
   const { data, loading, error } = useSearch({
     q,
     filters,
     entity,
+    value,
     sort,
     rerank,
     page,
@@ -55,6 +62,18 @@ export default function SearchPage() {
     const key = `filter.${facet}`;
     const arr = (filters[facet] || []).filter((v) => v !== value);
     set(key, arr.join(',') || undefined);
+    set('page', 1);
+  };
+
+  const handleRemoveEntity = (label: string) => {
+    const arr = (entity || []).filter((e) => e !== label);
+    set('entity', arr.length ? arr : undefined);
+    set('page', 1);
+  };
+
+  const handleRemoveValue = (v: string) => {
+    const arr = (value || []).filter((e) => e !== v);
+    set('value', arr.length ? arr : undefined);
     set('page', 1);
   };
 
@@ -79,7 +98,15 @@ export default function SearchPage() {
         rerank={rerank}
         onRerankToggle={(v) => set('rerank', v ? '1' : undefined)}
       />
-      <FilterChips filters={filters} onRemove={handleRemoveChip} onClearAll={handleClearAll} />
+      <FilterChips
+        filters={filters}
+        entity={entity}
+        value={value}
+        onRemove={handleRemoveChip}
+        onRemoveEntity={handleRemoveEntity}
+        onRemoveValue={handleRemoveValue}
+        onClearAll={handleClearAll}
+      />
       {error && <div>Error: {String(error.message)}</div>}
       {!error && data && data.total === 0 && <div>No results</div>}
       <div style={{ display: 'flex' }}>
