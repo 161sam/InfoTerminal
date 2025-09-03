@@ -46,6 +46,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children, title, subtitle }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
+  // TODO: Layout-Spacings/Typo konsolidieren, sobald Design-Tokens definiert sind.
 
   return (
     <div className="min-h-screen bg-gray-50">
