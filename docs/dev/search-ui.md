@@ -14,10 +14,15 @@ The search page is available at `/search` and supports multiple URL parameters w
 
 Example:
 
-```
+```bash
 /search?q=acme&filter.source=osint&sort=date_desc&rerank=1&page=2
 ```
 
-The page exposes facet filters with chips, a rerank toggle, pagination and sort selector. Each result links to its document detail view and, when available, to the graph viewer via `/graphx?focus=<node_id>`.
+The page exposes facet filters with chips, a rerank toggle,
+pagination and sort selector.
+Each result links to its document detail view and, when available,
+to the graph viewer via `/graphx?focus=<node_id>`.
 
-Backend reranking is only active when the `search-api` service runs with `RERANK_ENABLED=1`. The UI simply forwards the `rerank=1` parameter or `X-Rerank: 1` header.
+Backend reranking is only active when the `search-api` service runs
+with `RERANK_ENABLED=1`.
+The UI simply forwards the `rerank=1` parameter or `X-Rerank: 1` header.

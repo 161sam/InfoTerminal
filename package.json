@@ -2,6 +2,14 @@
   "name": "info-terminal",
   "private": true,
   "scripts": {
-    "docs:lint": "markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json"
+    "lint:md": "markdownlint-cli2 --config .markdownlint.jsonc docs/**/*.md",
+    "lint:md:links": "markdown-link-check -q -c .mlc.config.json docs/**/*.md",
+    "lint:docs": "npm run lint:md && npm run lint:md:links",
+    "fmt:md": "prettier --write $(git ls-files '*.md')"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.15.0",
+    "markdown-link-check": "^3.12.2",
+    "prettier": "^3.3.3"
   }
 }

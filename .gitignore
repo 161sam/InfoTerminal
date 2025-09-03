@@ -1,8 +1,16 @@
 .env
 .env.*
+.env.*.local
 !.env.example
 !**/.env.example
 secrets/
+*.pem
+*.key
+*.crt
+*.p12
+*.keystore
+*.kube/config
+data/**/secrets.json
 
 # ETL-related ignores
 etl/nifi/*.generated.*
