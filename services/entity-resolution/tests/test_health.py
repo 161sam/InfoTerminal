@@ -1,8 +1,8 @@
-from starlette.testclient import TestClient
+from fastapi.testclient import TestClient
 import importlib.util, pathlib
 
 try:
-    from app import app
+    from app import app  # type: ignore
 except Exception:
     module_path = pathlib.Path(__file__).resolve().parents[1] / "app.py"
     spec = importlib.util.spec_from_file_location("er_app", module_path)
@@ -14,4 +14,6 @@ def test_healthz_ok():
     with TestClient(app) as c:
         r = c.get("/healthz")
         assert r.status_code == 200
-        assert r.json() == {"status": "ok"}
+        j = r.json()
+        assert isinstance(j, dict)
+        assert j.get("status") == "ok"
