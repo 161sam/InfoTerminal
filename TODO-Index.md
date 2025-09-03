@@ -79,7 +79,7 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 ## 6. Security & Governance (Dev-Modus)
 
 - [ ] Keycloak Realm + Clients für InfoTerminal
-- [ ] OPA ForwardAuth Beispiel-Policy
+- [x] OPA ForwardAuth Beispiel-Policy
 - [ ] Basic Audit-Log für Plugin-Runs
 
 ---
