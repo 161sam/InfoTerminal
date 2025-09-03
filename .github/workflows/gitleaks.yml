@@ -7,11 +7,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install gitleaks
+      - name: Run gitleaks
         uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: detect --source . --redact --config .gitleaks.toml --report-format sarif --report-path gitleaks.sarif
+          args: --source . --redact --config .gitleaks.toml --report-format sarif --report-path gitleaks.sarif
       - name: Upload SARIF to code scanning
+        if: ${{ github.event_name == 'push' }}
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif
