@@ -86,6 +86,19 @@ make web-up        # Next.js Dev-Server (alternativ: npm run dev im web/)
 
 > **Hinweis:** Die Port-URLs können je nach Setup variieren. Siehe `docs/dev/checklist.md` / `.env.example`.
 
+
+---
+
+## 📊 Einsatzszenarien von InfoTerminal
+
+| **Zielgruppe**                         | **Use Case**                          | **Beispiele**                                            | **Nutzen**                                                                              |
+| -------------------------------------- | ------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Sicherheits- & Ermittlungsbehörden** | Netzwerkanalyse in Ermittlungen       | Telefonlisten, Finanztransaktionen, Ermittlungsakten     | Schnellere Aufdeckung von Verbindungen, visuelle Netzwerkanalyse, bessere Priorisierung |
+| **Finanz- & Wirtschaftsprüfung**       | Risiko- & Compliance-Analyse          | Jahresberichte, Sanktionslisten, Börsendaten             | Automatisierte “Red-Flag”-Berichte, Kombination aus Zahlen, Netzwerken & Dokumenten     |
+| **Journalismus & OSINT**               | Investigative Recherchen              | Datenleaks (Panama Papers), Firmenregister, Social Media | Strukturierte Auswertung großer Datenleaks, Entitätenverknüpfung, visuelle Netzwerke    |
+| **Unternehmen & Compliance**           | Lieferketten- & ESG-Überwachung       | Handelsregister, NGO-Reports, News-Feeds                 | Frühwarnsystem für Risiken in Lieferketten, transparente Compliance-Analysen            |
+| **Forschung & Wissenschaft**           | Soziale & ökonomische Netzwerkanalyse | Interviews, Publikationen, Open Data                     | Reproduzierbare Analysen, offene Methoden, Visualisierung komplexer Beziehungsnetzwerke |
+
 ---
 
 ## 🔌 Wichtige Endpunkte (Beispiele)
@@ -312,3 +325,4 @@ make restart <svc>  # restart a specific service
 
 Kurzanleitung auf Deutsch ist in [docs/dev/Checkliste.md](docs/dev/Checkliste.md) zu finden.
 Neue Dokumentation erfolgt primär auf Englisch.
+
