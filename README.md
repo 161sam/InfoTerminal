@@ -88,11 +88,15 @@ make web-up        # Next.js Dev-Server (alternativ: npm run dev im web/)
 
 ## Monitoring
 
+![Header Health Badge](docs/img/health-badge.svg)
+
 Prometheus: http://localhost:9090
 
 Grafana:    http://localhost:3001  (admin/admin)
 
 Dashboards: Folder "InfoTerminal" → API Overview, Search Rerank, Doc Resolver
+
+> Wenn das Badge rot ist, prüfe die docker compose Logs der betreffenden Services.
 
 
 ---

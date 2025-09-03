@@ -60,8 +60,9 @@ class AnnotReq(BaseModel):
 
 
 @app.get("/healthz")
-def health() -> Dict[str, bool]:
-    return {"ok": True}
+def health() -> Dict[str, str]:
+    """Simple health-check endpoint."""
+    return {"status": "ok"}
 
 
 @app.post("/annotate")
