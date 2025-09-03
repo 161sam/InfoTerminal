@@ -5,17 +5,17 @@ resolve them against Neo4j. The functions here are stubs so that the API
 can schedule work without crashing.
 """
 from typing import Iterable
+import time
+
+from .metrics import RESOLVER_RUNS, RESOLVER_ENTS, RESOLVER_LAT
 
 
-def resolve_entities(entity_ids: Iterable[str]) -> None:
-    """Placeholder resolver.
-
-    Parameters
-    ----------
-    entity_ids: Iterable[str]
-        IDs of entities that should be resolved. The current implementation
-        is a no-op and simply exists so that future workers can hook in.
-    """
-    # TODO: implement resolver logic in v0.1.0
+def resolve_entities(entity_ids: Iterable[str], mode: str = "async") -> None:
+    """Placeholder resolver with metrics hooks."""
+    RESOLVER_RUNS.labels(mode=mode).inc()
+    start = time.perf_counter()
+    n_unmatched = 0
     for _ in entity_ids:
-        pass
+        n_unmatched += 1
+    RESOLVER_ENTS.labels(status="unmatched").inc(n_unmatched)
+    RESOLVER_LAT.observe(time.perf_counter() - start)

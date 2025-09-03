@@ -95,21 +95,16 @@ etl-superset-warmup:
 	python apps/superset/scripts/warmup_refresh.py
 
 
-.PHONY: obs-up obs-down obs-grafana-dashboards
+.PHONY: obs-up obs-down obs-reload
 
 obs-up:
-	kubectl apply -f infra/observability/otel-collector.yaml
-	# helm install/upgrade prometheus, loki, promtail, tempo with provided values
-	# e.g.: helm upgrade --install prom prometheus-community/prometheus -f infra/observability/prometheus/values.yaml
-	#       helm upgrade --install loki grafana/loki -f infra/observability/loki/values.yaml
-	#       helm upgrade --install promtail grafana/promtail -f infra/observability/promtail/values.yaml
-	#       helm upgrade --install tempo grafana/tempo -f infra/observability/tempo/values.yaml
-
-obs-grafana-dashboards:
-	# copy dashboards to Grafana mount path or use ConfigMap sidecar (implementation note)
+	docker compose up -d prometheus grafana
 
 obs-down:
-        kubectl delete -f infra/observability/otel-collector.yaml || true
+	docker compose rm -sf prometheus grafana
+
+obs-reload:
+	curl -X POST http://localhost:9090/-/reload || true
 
 nifi-template-import:
         @bash scripts/nifi_template_import.sh
