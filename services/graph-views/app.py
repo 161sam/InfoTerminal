@@ -10,15 +10,24 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from prometheus_client import make_asgi_app
 import psycopg2
 
-PG=dict(
-  host=os.getenv("PG_HOST","localhost"),
-  port=int(os.getenv("PG_PORT","5432")),
-  dbname=os.getenv("PG_DB","infoterminal"),
-  user=os.getenv("PG_USER","app"),
-  password=os.getenv("PG_PASS","app"),
-)
-
-def conn(): return psycopg2.connect(**PG)
+# --- PG ENV Fallbacks (injected) ---
+import os as _os
+def _pg_env(*names, default=None):
+    for n in names:
+        v = _os.getenv(n)
+        if v:
+            return v
+    return default
+PG = {
+  "host": _pg_env("PG_HOST","PGHOST","POSTGRES_HOST","DB_HOST","DATABASE_HOST","PGHOSTADDR","HOST", default="127.0.0.1"),
+  "port": int(_pg_env("PG_PORT","PGPORT","POSTGRES_PORT","DB_PORT","DATABASE_PORT","PORT", default="5432")),
+  "dbname": _pg_env("PG_DB","PGDATABASE","POSTGRES_DB","DB_NAME","DATABASE_NAME","PGDATABASE", default="it_graph"),
+  "user": _pg_env("PG_USER","PGUSER","POSTGRES_USER","DB_USER","DATABASE_USER", default="it_user"),
+  "password": _pg_env("PG_PASS","PGPASSWORD","PG_PASSWORD","POSTGRES_PASSWORD","DB_PASS","DB_PASSWORD","DATABASE_PASSWORD", default="it_pass"),
+}
+def conn():
+  import psycopg2
+  return psycopg2.connect(**PG)
 
 def init():
   with conn() as c, c.cursor() as cur:
@@ -37,7 +46,9 @@ def init():
       );
       CREATE INDEX IF NOT EXISTS idx_graph_views_owner ON graph_views(owner);
     """)
-init()
+import os as _gv_os
+if _gv_os.getenv("INIT_DB_ON_STARTUP","1")=="1":
+    init()
 
 app = FastAPI(title="Graph Views API", version="0.1.0")
 FastAPIInstrumentor().instrument_app(app)
