@@ -1,13 +1,12 @@
-from prometheus_client import Counter, Histogram
+from prometheus_client import Counter, REGISTRY
 
-RESOLVER_RUNS = Counter(
-    "resolver_runs_total", "Resolver runs total", ["mode"]
-)
-RESOLVER_ENTS = Counter(
-    "resolver_entities_total", "Entities processed", ["status"]
-)
-RESOLVER_LAT = Histogram(
-    "resolver_latency_seconds",
-    "Resolver run latency",
-    buckets=[0.1, 0.25, 0.5, 1, 2, 5, 10],
-)
+def get_or_create_counter(name: str, doc: str) -> Counter:
+    # nutzt die (private) Registry-Map, ist für Dev/Reload absolut ok
+    existing = REGISTRY._names_to_collectors.get(name)
+    if existing and isinstance(existing, Counter):
+        return existing
+    return Counter(name, doc)
+
+RESOLVER_RUNS = get_or_create_counter("resolver_runs", "Number of resolver runs")
+RESOLVER_ENTS = get_or_create_counter("resolver_ents", "Number of entities resolved")
+RESOLVER_LAT  = get_or_create_counter("resolver_latency_ms", "Latency of resolver in ms")
