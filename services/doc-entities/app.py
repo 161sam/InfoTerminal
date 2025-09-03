@@ -1,156 +1,211 @@
 try:
-    from obs.otel_boot import *  # noqa
+    from obs.otel_boot import *  # noqa: F401,F403
 except Exception:
     pass
 
-import os, json, html, uuid
-from typing import Optional, List, Dict, Any
-from fastapi import FastAPI, HTTPException
-try:
-  from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-except Exception:
-  FastAPIInstrumentor = None
+import html
+import json
+import os
+import uuid
+from typing import Any, Dict, List, Optional
+import sys
+from pathlib import Path
+
+import httpx
+from fastapi import BackgroundTasks, FastAPI, HTTPException
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # type: ignore
 from prometheus_client import make_asgi_app
 from pydantic import BaseModel
-import psycopg2, httpx
 
-PG = dict(
-  host=os.getenv("PG_HOST","localhost"),
-  port=int(os.getenv("PG_PORT","5432")),
-  dbname=os.getenv("PG_DB","infoterminal"),
-  user=os.getenv("PG_USER","app"),
-  password=os.getenv("PG_PASS","app"),
-)
-NLP_URL = os.getenv("NLP_URL","http://127.0.0.1:8005")
-GRAPH_URL = os.getenv("GRAPH_UI","http://localhost:3000/graphx")  # UI link
 ALLOW_TEST = os.getenv("ALLOW_TEST_MODE")
+SERVICE_DIR = Path(__file__).resolve().parent
+if str(SERVICE_DIR) not in sys.path:
+    sys.path.append(str(SERVICE_DIR))
 
-if ALLOW_TEST:
-  MEM_TEXTS: Dict[str, Dict[str, Any]] = {}
-  MEM_ENTS: Dict[str, Dict[str, Any]] = {}
-else:
-  def conn(): return psycopg2.connect(**PG)
+from db import SessionLocal, engine  # type: ignore
+from models import Base, Document, Entity, EntityResolution  # type: ignore
+from resolver import resolve_entities  # type: ignore
 
-  def init():
-    with conn() as c, c.cursor() as cur:
-      cur.execute("""
-        CREATE TABLE IF NOT EXISTS doc_texts (
-          doc_id text primary key,
-          title text,
-          text  text,
-          meta  jsonb,
-          created_at timestamptz default now(),
-          updated_at timestamptz default now()
-        );
-        CREATE TABLE IF NOT EXISTS doc_entities (
-          doc_id text references doc_texts(doc_id) on delete cascade,
-          ents   jsonb not null,
-          links  jsonb not null,
-          created_at timestamptz default now(),
-          primary key (doc_id)
-        );
-      """)
-  init()
+if not ALLOW_TEST:
+    Base.metadata.create_all(engine)
+
+NLP_URL = os.getenv("NLP_URL", "http://127.0.0.1:8005")
+GRAPH_URL = os.getenv("GRAPH_UI", "http://localhost:3000/graphx")
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
-if FastAPIInstrumentor:
-  FastAPIInstrumentor().instrument_app(app)
+FastAPIInstrumentor().instrument_app(app)  # type: ignore
 app.mount("/metrics", make_asgi_app())
 
+
 class AnnotReq(BaseModel):
-  text: str
-  doc_id: Optional[str] = None
-  title: Optional[str] = None
-  meta: Optional[Dict[str, Any]] = None
+    text: str
+    doc_id: Optional[str] = None
+    title: Optional[str] = None
+    meta: Optional[Dict[str, Any]] = None
+
 
 @app.get("/healthz")
-def health(): return {"ok": True}
+def health() -> Dict[str, bool]:
+    return {"ok": True}
+
 
 @app.post("/annotate")
-def annotate(req: AnnotReq):
-  doc_id = req.doc_id or str(uuid.uuid4())
-  meta = req.meta or {}
-  if ALLOW_TEST:
-    ents = [{"text": req.text.split()[0], "label": "TEST"}] if req.text.split() else []
-    MEM_TEXTS[doc_id] = {"title": req.title, "text": req.text, "meta": meta}
-    MEM_ENTS[doc_id] = {"ents": ents, "links": []}
-    links: List[Dict[str, Any]] = []
-  else:
-    with conn() as c, c.cursor() as cur:
-      cur.execute("""
-        INSERT INTO doc_texts (doc_id, title, text, meta)
-        VALUES (%s,%s,%s,%s)
-        ON CONFLICT (doc_id) DO UPDATE SET title=EXCLUDED.title, text=EXCLUDED.text, meta=EXCLUDED.meta, updated_at=now()
-      """, (doc_id, req.title, req.text, json.dumps(meta)))
-    with httpx.Client(timeout=30.0) as cli:
-      ner = cli.post(f"{NLP_URL}/ner", json={"text": req.text}).json()
-      links = cli.post(f"{NLP_URL}/resolve", json={"text": req.text, "ents": ner.get("ents", [])}).json()
-    ents = ner.get("ents", [])
-    lks = links.get("links", [])
-    with conn() as c, c.cursor() as cur:
-      cur.execute("""
-        INSERT INTO doc_entities (doc_id, ents, links) VALUES (%s,%s,%s)
-        ON CONFLICT (doc_id) DO UPDATE SET ents=EXCLUDED.ents, links=EXCLUDED.links, created_at=now()
-      """, (doc_id, json.dumps(ents), json.dumps(lks)))
-    links = lks
-  return {"doc_id": doc_id, "entities": ents, "links": links, "aleph_id": meta.get("aleph_id")}
+def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks = None):
+    doc_id = req.doc_id or str(uuid.uuid4())
+    meta = req.meta or {}
+    if ALLOW_TEST:
+        ents = []
+        if req.text.split():
+            ent_id = str(uuid.uuid4())
+            ents.append(
+                {
+                    "id": ent_id,
+                    "label": "TEST",
+                    "value": req.text.split()[0],
+                    "span_start": 0,
+                    "span_end": len(req.text.split()[0]),
+                    "resolution": {"status": "pending", "node_id": None, "score": None},
+                }
+            )
+        MEM_TEXTS[doc_id] = {"title": req.title, "text": req.text, "meta": meta}
+        MEM_ENTS[doc_id] = ents
+        entity_ids = [e["id"] for e in ents]
+    else:
+        with SessionLocal() as db:
+            doc = Document(id=uuid.UUID(doc_id), title=req.title, aleph_id=meta.get("aleph_id"))
+            db.merge(doc)
+            with httpx.Client(timeout=30.0) as cli:
+                ner = cli.post(f"{NLP_URL}/ner", json={"text": req.text}).json()
+            ents = []
+            entity_ids = []
+            for e in ner.get("ents", []):
+                ent = Entity(
+                    doc_id=doc.id,
+                    label=e.get("label", ""),
+                    value=e.get("text", ""),
+                    span_start=e.get("start"),
+                    span_end=e.get("end"),
+                    confidence=e.get("score"),
+                )
+                db.add(ent)
+                db.flush()
+                res = EntityResolution(entity_id=ent.id, status="pending")
+                db.add(res)
+                ents.append(
+                    {
+                        "id": str(ent.id),
+                        "label": ent.label,
+                        "value": ent.value,
+                        "span_start": ent.span_start,
+                        "span_end": ent.span_end,
+                        "resolution": {"status": "pending", "node_id": None, "score": None},
+                    }
+                )
+                entity_ids.append(str(ent.id))
+            db.commit()
+    if resolve and entity_ids and background_tasks:
+        background_tasks.add_task(resolve_entities, entity_ids)
+    return {"doc_id": doc_id, "entities": ents, "aleph_id": meta.get("aleph_id")}
+
 
 @app.get("/docs/{doc_id}")
 def get_doc(doc_id: str):
-  if ALLOW_TEST:
-    info = MEM_TEXTS.get(doc_id)
-    if not info: raise HTTPException(404, "not found")
-    ents = MEM_ENTS.get(doc_id, {}).get("ents", [])
-    links = MEM_ENTS.get(doc_id, {}).get("links", [])
-    meta = info.get("meta")
-    return {"doc_id": doc_id, "title": info.get("title"), "text": info.get("text"), "meta": meta, "entities": ents, "links": links, "aleph_id": (meta or {}).get("aleph_id")}
-  with conn() as c, c.cursor() as cur:
-    cur.execute("SELECT title,text,meta FROM doc_texts WHERE doc_id=%s", (doc_id,))
-    row = cur.fetchone()
-    if not row: raise HTTPException(404, "not found")
-    title, text, meta = row
-    cur.execute("SELECT ents,links FROM doc_entities WHERE doc_id=%s", (doc_id,))
-    er = cur.fetchone()
-  ents, links = (er or ([ ] ,[ ]) )
-  return {"doc_id": doc_id, "title": title, "text": text, "meta": meta, "entities": ents, "links": links, "aleph_id": (meta or {}).get("aleph_id")}
+    if ALLOW_TEST:
+        info = MEM_TEXTS.get(doc_id)
+        if not info:
+            raise HTTPException(404, "not found")
+        ents = MEM_ENTS.get(doc_id, [])
+        return {
+            "doc_id": doc_id,
+            "title": info.get("title"),
+            "text": info.get("text"),
+            "meta": info.get("meta"),
+            "entities": ents,
+            "aleph_id": (info.get("meta") or {}).get("aleph_id"),
+        }
+    with SessionLocal() as db:
+        doc = db.get(Document, uuid.UUID(doc_id))
+        if not doc:
+            raise HTTPException(404, "not found")
+        ents = []
+        for ent in db.query(Entity).filter_by(doc_id=doc.id).all():
+            res = db.get(EntityResolution, ent.id)
+            ents.append(
+                {
+                    "id": str(ent.id),
+                    "label": ent.label,
+                    "value": ent.value,
+                    "span_start": ent.span_start,
+                    "span_end": ent.span_end,
+                    "resolution": {
+                        "status": res.status if res else "pending",
+                        "node_id": res.node_id if res else None,
+                        "score": res.score if res else None,
+                    },
+                }
+            )
+        return {
+            "doc_id": doc_id,
+            "title": doc.title,
+            "text": None,
+            "meta": None,
+            "entities": ents,
+            "aleph_id": doc.aleph_id,
+        }
 
 
-def _decorate(text: str, links: List[Dict[str,Any]]):
-  # markiere nur gelinkte Entitäten (mit node_id)
-  spans = []
-  for lk in links:
-    if "text" in lk and "node_id" in lk:
-      spans.append((lk.get("start"), lk.get("end"), lk["text"], lk["node_id"]))
-  # falls start/end fehlen, simple global replace (low-fi)
-  if not spans:
-    out = html.escape(text)
-    for lk in links:
-      t = html.escape(lk.get("text",""))
-      nid = lk.get("node_id","")
-      if not t or not nid: continue
-      out = out.replace(
-        t, f'<a class="ent" href="{GRAPH_URL}?focus={html.escape(nid)}" title="open in graph">{t}</a>'
-      )
-    return out
-  # mit Offsets (robuster)
-  spans = sorted([s for s in spans if s[0] is not None and s[1] is not None], key=lambda x: x[0])
-  out, cur = [], 0
-  for s,e,txt,nid in spans:
-    s = max(0, s); e = min(len(text), e or s)
-    out.append(html.escape(text[cur:s]))
-    out.append(f'<a class="ent" href="{GRAPH_URL}?focus={html.escape(nid)}" title="open in graph">{html.escape(text[s:e])}</a>')
-    cur = e
-  out.append(html.escape(text[cur:]))
-  return "".join(out)
+@app.post("/resolve/{doc_id}")
+def resolve_doc(doc_id: str):
+    raise HTTPException(status_code=501, detail="resolver not implemented")
+
+
+@app.post("/resolve/entity/{entity_id}")
+def resolve_entity(entity_id: str):
+    raise HTTPException(status_code=501, detail="resolver not implemented")
+
+
+def _decorate(text: str, entities: List[Dict[str, Any]]):
+    spans = []
+    for e in entities:
+        res = e.get("resolution", {})
+        if res.get("node_id"):
+            spans.append((e.get("span_start"), e.get("span_end"), e.get("value"), res["node_id"]))
+    if not spans:
+        out = html.escape(text)
+        for e in entities:
+            res = e.get("resolution", {})
+            if res.get("node_id"):
+                t = html.escape(e.get("value", ""))
+                nid = res["node_id"]
+                out = out.replace(t, f'<a class="ent" href="{GRAPH_URL}?focus={nid}" title="open in graph">{t}</a>')
+        return out
+    spans = sorted([s for s in spans if s[0] is not None and s[1] is not None], key=lambda x: x[0])
+    out, cur = [], 0
+    for s, e, txt, nid in spans:
+        s = max(0, s)
+        e = min(len(text), e or s)
+        out.append(html.escape(text[cur:s]))
+        out.append(
+            f'<a class="ent" href="{GRAPH_URL}?focus={html.escape(nid)}" title="open in graph">{html.escape(text[s:e])}</a>'
+        )
+        cur = e
+    out.append(html.escape(text[cur:]))
+    return "".join(out)
+
 
 @app.get("/docs/{doc_id}/html")
 def get_doc_html(doc_id: str):
-  d = get_doc(doc_id)
-  body = _decorate(d["text"], d.get("links", []))
-  title = html.escape(d.get("title") or d["doc_id"])
-  html_doc = f"""<!doctype html>
+    d = get_doc(doc_id)
+    body = _decorate(d.get("text", ""), d.get("entities", []))
+    title = html.escape(d.get("title") or d["doc_id"])
+    html_doc = f"""<!doctype html>
   <html><head><meta charset=\"utf-8\"><title>{title}</title>
   <style> body{{font:14px ui-sans-serif; max-width:860px; margin:24px auto;}}
   .ent{{background:#fffae6; padding:1px 3px; border-radius:3px; text-decoration:none; border-bottom:1px dotted #888;}}</style>
   </head><body><h1>{title}</h1><div>{body}</div></body></html>"""
-  return html_doc
+    return html_doc
+
+
+if ALLOW_TEST:
+    MEM_TEXTS: Dict[str, Dict[str, Any]] = {}
+    MEM_ENTS: Dict[str, List[Dict[str, Any]]] = {}
