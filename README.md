@@ -110,6 +110,11 @@ curl -X POST http://localhost:8003/ner -H "Content-Type: application/json" -d '{
 curl -X POST http://localhost:8003/summarize -H "Content-Type: application/json" -d '{"text":"..."}'
 ```
 
+## 📄 Dokumente & NLP
+
+Die Web-Oberfläche unter [/docs](http://localhost:3000/docs) ermöglicht das Hochladen von PDF/Text-Dateien oder das direkte Einfügen von Text. Die Inhalte werden über den `doc-entities`-Service annotiert und mit hervorgehobenen Entitäten dargestellt.
+
+
 ## 🔌 Wichtige Endpunkte (Beispiele)
 
 ```http

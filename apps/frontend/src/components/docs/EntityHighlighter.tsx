@@ -1,5 +1,3 @@
-Neu
-+33-0
 import Link from 'next/link';
 import { Entity } from '../../types/docs';
 
