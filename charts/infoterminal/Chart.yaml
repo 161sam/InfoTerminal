@@ -1,0 +1,5 @@
+apiVersion: v2
+name: infoterminal
+description: Minimal Helm chart for InfoTerminal
+version: 0.1.0
+appVersion: "v0.1.0"

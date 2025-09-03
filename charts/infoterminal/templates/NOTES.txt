@@ -1,0 +1,4 @@
+1. Get the application URL by running:
+
+   kubectl port-forward svc/infoterminal-web 3000:3000 -n {{ .Release.Namespace }}
+   echo "Visit http://localhost:3000"
