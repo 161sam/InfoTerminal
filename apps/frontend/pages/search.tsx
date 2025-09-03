@@ -6,6 +6,7 @@ import Pagination from '../src/components/search/Pagination';
 import SortAndRerank from '../src/components/search/SortAndRerank';
 import { useSearchParams } from '../src/hooks/useSearchParams';
 import { useSearch } from '../src/hooks/useSearch';
+import Header from '../src/components/layout/Header';
 
 export default function SearchPage() {
   const { params, set, replaceAll } = useSearchParams();
@@ -65,6 +66,7 @@ export default function SearchPage() {
 
   return (
     <div>
+      <Header />
       <SearchBox
         value={q}
         onChange={(v) => set('q', v)}

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { signIn, signOut, useSession } from "next-auth/react"
+import Header from "../src/components/layout/Header"
 
 type FacetBucket = { key: string; count: number }
 export default function Home() {
@@ -28,6 +29,8 @@ export default function Home() {
   }
 
   return (
+    <>
+    <Header />
     <main style={{maxWidth:1100, margin:"40px auto", fontFamily:"ui-sans-serif"}}>
       <h1>InfoTerminal</h1>
       <div style={{display:"flex", gap:8, marginBottom:12}}>
@@ -72,5 +75,6 @@ export default function Home() {
         </section>
       </div>
     </main>
+    </>
   )
 }
