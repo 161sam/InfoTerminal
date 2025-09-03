@@ -3,10 +3,13 @@ try:
 except Exception:
     pass
 
-import os, json, html
+import os, json, html, uuid
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentation
+try:
+  from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+except Exception:
+  FastAPIInstrumentor = None
 from prometheus_client import make_asgi_app
 from pydantic import BaseModel
 import psycopg2, httpx
@@ -20,38 +23,44 @@ PG = dict(
 )
 NLP_URL = os.getenv("NLP_URL","http://127.0.0.1:8005")
 GRAPH_URL = os.getenv("GRAPH_UI","http://localhost:3000/graphx")  # UI link
+ALLOW_TEST = os.getenv("ALLOW_TEST_MODE")
 
-def conn(): return psycopg2.connect(**PG)
+if ALLOW_TEST:
+  MEM_TEXTS: Dict[str, Dict[str, Any]] = {}
+  MEM_ENTS: Dict[str, Dict[str, Any]] = {}
+else:
+  def conn(): return psycopg2.connect(**PG)
 
-def init():
-  with conn() as c, c.cursor() as cur:
-    cur.execute("""
-      CREATE TABLE IF NOT EXISTS doc_texts (
-        doc_id text primary key,
-        title text,
-        text  text,
-        meta  jsonb,
-        created_at timestamptz default now(),
-        updated_at timestamptz default now()
-      );
-      CREATE TABLE IF NOT EXISTS doc_entities (
-        doc_id text references doc_texts(doc_id) on delete cascade,
-        ents   jsonb not null,
-        links  jsonb not null,
-        created_at timestamptz default now(),
-        primary key (doc_id)
-      );
-    """)
-init()
+  def init():
+    with conn() as c, c.cursor() as cur:
+      cur.execute("""
+        CREATE TABLE IF NOT EXISTS doc_texts (
+          doc_id text primary key,
+          title text,
+          text  text,
+          meta  jsonb,
+          created_at timestamptz default now(),
+          updated_at timestamptz default now()
+        );
+        CREATE TABLE IF NOT EXISTS doc_entities (
+          doc_id text references doc_texts(doc_id) on delete cascade,
+          ents   jsonb not null,
+          links  jsonb not null,
+          created_at timestamptz default now(),
+          primary key (doc_id)
+        );
+      """)
+  init()
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
-FastAPIInstrumentation().instrument_app(app)
+if FastAPIInstrumentor:
+  FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
 
 class AnnotReq(BaseModel):
-  doc_id: str
-  title: Optional[str] = None
   text: str
+  doc_id: Optional[str] = None
+  title: Optional[str] = None
   meta: Optional[Dict[str, Any]] = None
 
 @app.get("/healthz")
@@ -59,28 +68,42 @@ def health(): return {"ok": True}
 
 @app.post("/annotate")
 def annotate(req: AnnotReq):
-  # store text
-  with conn() as c, c.cursor() as cur:
-    cur.execute("""
-      INSERT INTO doc_texts (doc_id, title, text, meta)
-      VALUES (%s,%s,%s,%s)
-      ON CONFLICT (doc_id) DO UPDATE SET title=EXCLUDED.title, text=EXCLUDED.text, meta=EXCLUDED.meta, updated_at=now()
-    """, (req.doc_id, req.title, req.text, json.dumps(req.meta or {})))
-  # NER
-  with httpx.Client(timeout=30.0) as cli:
-    ner = cli.post(f"{NLP_URL}/ner", json={"text": req.text}).json()
-    links = cli.post(f"{NLP_URL}/resolve", json={"text": req.text, "ents": ner.get("ents", [])}).json()
-  ents = ner.get("ents", [])
-  lks  = links.get("links", [])
-  with conn() as c, c.cursor() as cur:
-    cur.execute("""
-      INSERT INTO doc_entities (doc_id, ents, links) VALUES (%s,%s,%s)
-      ON CONFLICT (doc_id) DO UPDATE SET ents=EXCLUDED.ents, links=EXCLUDED.links, created_at=now()
-    """, (req.doc_id, json.dumps(ents), json.dumps(lks)))
-  return {"doc_id": req.doc_id, "ents": ents, "links": lks}
+  doc_id = req.doc_id or str(uuid.uuid4())
+  meta = req.meta or {}
+  if ALLOW_TEST:
+    ents = [{"text": req.text.split()[0], "label": "TEST"}] if req.text.split() else []
+    MEM_TEXTS[doc_id] = {"title": req.title, "text": req.text, "meta": meta}
+    MEM_ENTS[doc_id] = {"ents": ents, "links": []}
+    links: List[Dict[str, Any]] = []
+  else:
+    with conn() as c, c.cursor() as cur:
+      cur.execute("""
+        INSERT INTO doc_texts (doc_id, title, text, meta)
+        VALUES (%s,%s,%s,%s)
+        ON CONFLICT (doc_id) DO UPDATE SET title=EXCLUDED.title, text=EXCLUDED.text, meta=EXCLUDED.meta, updated_at=now()
+      """, (doc_id, req.title, req.text, json.dumps(meta)))
+    with httpx.Client(timeout=30.0) as cli:
+      ner = cli.post(f"{NLP_URL}/ner", json={"text": req.text}).json()
+      links = cli.post(f"{NLP_URL}/resolve", json={"text": req.text, "ents": ner.get("ents", [])}).json()
+    ents = ner.get("ents", [])
+    lks = links.get("links", [])
+    with conn() as c, c.cursor() as cur:
+      cur.execute("""
+        INSERT INTO doc_entities (doc_id, ents, links) VALUES (%s,%s,%s)
+        ON CONFLICT (doc_id) DO UPDATE SET ents=EXCLUDED.ents, links=EXCLUDED.links, created_at=now()
+      """, (doc_id, json.dumps(ents), json.dumps(lks)))
+    links = lks
+  return {"doc_id": doc_id, "entities": ents, "links": links, "aleph_id": meta.get("aleph_id")}
 
 @app.get("/docs/{doc_id}")
 def get_doc(doc_id: str):
+  if ALLOW_TEST:
+    info = MEM_TEXTS.get(doc_id)
+    if not info: raise HTTPException(404, "not found")
+    ents = MEM_ENTS.get(doc_id, {}).get("ents", [])
+    links = MEM_ENTS.get(doc_id, {}).get("links", [])
+    meta = info.get("meta")
+    return {"doc_id": doc_id, "title": info.get("title"), "text": info.get("text"), "meta": meta, "entities": ents, "links": links, "aleph_id": (meta or {}).get("aleph_id")}
   with conn() as c, c.cursor() as cur:
     cur.execute("SELECT title,text,meta FROM doc_texts WHERE doc_id=%s", (doc_id,))
     row = cur.fetchone()
@@ -89,7 +112,8 @@ def get_doc(doc_id: str):
     cur.execute("SELECT ents,links FROM doc_entities WHERE doc_id=%s", (doc_id,))
     er = cur.fetchone()
   ents, links = (er or ([ ] ,[ ]) )
-  return {"doc_id": doc_id, "title": title, "text": text, "meta": meta, "ents": ents, "links": links}
+  return {"doc_id": doc_id, "title": title, "text": text, "meta": meta, "entities": ents, "links": links, "aleph_id": (meta or {}).get("aleph_id")}
+
 
 def _decorate(text: str, links: List[Dict[str,Any]]):
   # markiere nur gelinkte Entitäten (mit node_id)
@@ -125,7 +149,7 @@ def get_doc_html(doc_id: str):
   body = _decorate(d["text"], d.get("links", []))
   title = html.escape(d.get("title") or d["doc_id"])
   html_doc = f"""<!doctype html>
-  <html><head><meta charset="utf-8"><title>{title}</title>
+  <html><head><meta charset=\"utf-8\"><title>{title}</title>
   <style> body{{font:14px ui-sans-serif; max-width:860px; margin:24px auto;}}
   .ent{{background:#fffae6; padding:1px 3px; border-radius:3px; text-decoration:none; border-bottom:1px dotted #888;}}</style>
   </head><body><h1>{title}</h1><div>{body}</div></body></html>"""
