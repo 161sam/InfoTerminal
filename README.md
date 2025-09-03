@@ -313,6 +313,15 @@ make apps-up        # backend services + frontend
 make seed-demo      # demo data into search/graph
 ```
 
+## Volltextsuche
+
+Die Web-UI stellt eine facettierte Suche unter `/search` bereit.
+
+![Search UI](docs/dev/img/search-ui.png)
+
+Beispiel: [http://localhost:3000/search?q=acme&filter.source=osint&sort=date_desc&rerank=1](http://localhost:3000/search?q=acme&filter.source=osint&sort=date_desc&rerank=1)
+
+
 ## Health Checks
 
 * Frontend: [localhost:3000](http://localhost:3000)
