@@ -1,0 +1,29 @@
+{
+  "uid": "doc-resolver",
+  "title": "Doc Resolver",
+  "schemaVersion": 38,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Resolver Runs/min",
+      "targets": [
+        { "expr": "increase(resolver_runs_total[5m])", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Entities by Status",
+      "targets": [
+        { "expr": "increase(resolver_entities_total[5m]) by (status)", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Resolver Latency p95",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(resolver_latency_seconds_bucket[5m])) by (le))", "datasource": "Prometheus" }
+      ]
+    }
+  ]
+}

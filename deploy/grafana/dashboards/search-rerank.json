@@ -1,0 +1,37 @@
+{
+  "uid": "search-rerank",
+  "title": "Search Rerank",
+  "schemaVersion": 38,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Rerank Requests",
+      "targets": [
+        { "expr": "increase(search_rerank_requests_total[5m])", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Rerank Latency p95",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(search_rerank_latency_seconds_bucket[5m])) by (le))", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Search Latency p95",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(search_latency_seconds_bucket[5m])) by (le))", "datasource": "Prometheus" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Toggle Impact",
+      "targets": [
+        { "expr": "sum(rate(search_requests_total{rerank=\"1\"}[5m]))", "datasource": "Prometheus" },
+        { "expr": "sum(rate(search_requests_total{rerank=\"0\"}[5m]))", "datasource": "Prometheus" }
+      ]
+    }
+  ]
+}
