@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  nlp-service:
+    build: ./services/nlp-service
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8003/healthz').getcode()==200 else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

@@ -101,6 +101,15 @@ make web-up        # Next.js Dev-Server (alternativ: npm run dev im web/)
 
 ---
 
+## 🧠 NLP-Service
+
+Der NLP-Service stellt Named Entity Recognition und Text-Zusammenfassung bereit.
+
+```bash
+curl -X POST http://localhost:8003/ner -H "Content-Type: application/json" -d '{"text":"Barack Obama was born in Hawaii."}'
+curl -X POST http://localhost:8003/summarize -H "Content-Type: application/json" -d '{"text":"..."}'
+```
+
 ## 🔌 Wichtige Endpunkte (Beispiele)
 
 ```http

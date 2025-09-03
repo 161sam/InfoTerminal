@@ -33,6 +33,7 @@ export default function Home() {
       <div style={{display:"flex", gap:8, marginBottom:12}}>
         {!session ? <button onClick={()=>signIn()}>Login</button> : <button onClick={()=>signOut()}>Logout</button>}
         <span>{session?.user?.name || session?.user?.email}</span>
+        <a href="/nlp">NLP</a>
       </div>
 
       <form onSubmit={search} style={{display:"flex", gap:8, marginBottom:10}}>
