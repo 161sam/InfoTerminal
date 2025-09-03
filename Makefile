@@ -17,7 +17,7 @@ apps-up:
 	@uv run --python 3.11 -q --directory services/graph-api ./dev.sh &
 	@uv run --python 3.11 -q --directory services/entity-resolution ./dev.sh &
 	@uv run --python 3.11 -q --directory services/graph-views ./dev.sh &
-	@uv run --python 3.11 -q --directory services/nlp-service uvicorn app:app --host 0.0.0.0 --port 8003 &
+	@uv run --python 3.11 -q --directory services/nlp-service uvicorn app:app --host 0.0.0.0 --port 8405 &
 	@uv run --python 3.11 -q --directory services/doc-entities ./dev.sh &
 	@pnpm --dir apps/frontend dev &
 
