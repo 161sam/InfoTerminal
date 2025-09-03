@@ -6,7 +6,7 @@
 * **OPA** — 🟨 Policies (RBAC + ABAC), Tests (opa test) und Bundle-Modus vorhanden; noch Feinschliff für Service-Inputs & CI Gate Coverage
 * **Search** — ✅ Search-API (FastAPI) + Facetten + Frontend-Suche (Next.js)
 * **Graph** — ✅ Graph-API (Neo4j) + Viewer (Basis & GraphX mit Expand/Pin/Save); Server-Side Views (CRUD + Share) ✅
-* **AI Layer & Agents** — ⬜️ NLP-Service/Agent-Flows noch nicht verdrahtet
+* **AI Layer & Agents** — 🟨 NLP-Service (NER/Summary) erreichbar; Agent-Flows offen
 * **Dokumentenmanagement (Aleph)** — 🟨 Aleph UI + Worker/Redis laufen; kein automatischer NiFi-Ingest, keine NER-Crosslinks im Viewer
 * **ETL** — 🟨 NiFi UI + Registry stehen; Demo-Template deployed; Airflow via Helm + DAG-ConfigMap ✅; KPO-DAG + CronJob für OpenBB 🟨 (Image/secret polishing)
 * **Analytics** — 🟨 Superset Helm + OIDC + Preset-Job + dbt→Superset Sync; RLS-Beispiel (Gamma) gesetzt; weitere Datasets/Charts offen
@@ -106,10 +106,12 @@
 
 ## 9) AI Layer & Agents
 
-*Mini-Blueprint:* FastAPI-Service (`services/nlp`) für NER/Embeddings/Summary + optionale `/resolve`-Route; n8n/Flowise für Agent-Flows.
+*Mini-Blueprint:* FastAPI-Service (`services/nlp-service`) für NER/Embeddings/Summary + optionale `/resolve`-Route; n8n/Flowise für Agent-Flows.
 
-* [ ] `services/nlp` deployen (NER, Embed, Summarize)
-  *Befehl:* `uv run --python 3.11 -q --directory services/nlp ./dev.sh`
+* [ ] `services/nlp-service` deployen (NER, Embed, Summarize)
+  *Befehl:* `uv run --python 3.11 -q --directory services/nlp-service uvicorn app:app --port 8003`
+* [ ] NLP-Service Health
+  *URL:* [127.0.0.1:8003](http://127.0.0.1:8003/healthz)
 * [ ] Search-Rerank aktivieren (Cosine Top-N)
     *Env:* `export RERANK=1 NLP_URL=http://127.0.0.1:8005`
 * [ ] Entity-Resolver `/resolve` aktiv
