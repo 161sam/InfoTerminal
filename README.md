@@ -126,6 +126,12 @@ curl -X POST http://localhost:8003/summarize -H "Content-Type: application/json"
 
 Die Web-Oberfläche unter [/docs](http://localhost:3000/docs) ermöglicht das Hochladen von PDF/Text-Dateien oder das direkte Einfügen von Text. Die Inhalte werden über den `doc-entities`-Service annotiert und mit hervorgehobenen Entitäten dargestellt.
 
+### Dokument-Upload
+
+Unter [/documents](http://localhost:3000/documents) können mehrere Dateien per Drag&Drop hochgeladen werden. Fortschrittsbalken, Fehlerfeedback und Links zur Detailansicht verbessern die UX.
+
+![Upload Progress](docs/dev/img/upload-progress.png)
+
 
 ## 🔌 Wichtige Endpunkte (Beispiele)
 
