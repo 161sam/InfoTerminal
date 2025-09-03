@@ -1,0 +1,17 @@
+title = "InfoTerminal Gitleaks Config"
+
+[allowlist]
+description = "Allow common false positives and sample placeholders"
+paths = [
+  '''^\.?.env\.example$''',
+  '''^docs/''',
+  '''^examples/''',
+  '''^deploy/grafana/''',
+  '''^deploy/prometheus/'''
+]
+commits = []
+regexes = [
+  '''(?i)changeme|your_api_key_here|your_token_here''',
+  '''OPENSEARCH_JAVA_OPTS=-Xms[0-9]+m\s+-Xmx[0-9]+m''',
+  '''https?://(localhost|127\.0\.0\.1)(:[0-9]{2,5})?'''
+]
