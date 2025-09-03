@@ -11,3 +11,6 @@ export const NLP_API = process.env.NEXT_PUBLIC_NLP_API || '';
 if (!NLP_API) console.warn('NEXT_PUBLIC_NLP_API is not set');
 
 export const GRAFANA_URL = process.env.NEXT_PUBLIC_GRAFANA_URL || '';
+
+export const SEARCH_FILTER_MODE =
+  process.env.NEXT_PUBLIC_SEARCH_FILTER_MODE || 'quote_query';
