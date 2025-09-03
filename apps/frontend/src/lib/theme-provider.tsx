@@ -1,4 +1,5 @@
-// apps/frontend/src/lib/theme-provider.tsx
+// apps/frontend/src/lib/theme-provider.tsx - Enhanced Theme Provider with Dark Mode
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -7,6 +8,7 @@ interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   resolvedTheme: 'light' | 'dark';
+  isDark: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -14,16 +16,20 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Load theme from localStorage
     const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme) {
+    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
       setTheme(savedTheme);
     }
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const root = window.document.documentElement;
     
     const updateTheme = () => {
@@ -37,13 +43,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       
       setResolvedTheme(newResolvedTheme);
       
+      // Update DOM
       root.classList.remove('light', 'dark');
       root.classList.add(newResolvedTheme);
       
-      // Update meta theme-color
+      // Update meta theme-color for mobile browsers
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
       if (metaThemeColor) {
         metaThemeColor.setAttribute('content', newResolvedTheme === 'dark' ? '#1f2937' : '#ffffff');
+      }
+
+      // Update CSS custom properties
+      if (newResolvedTheme === 'dark') {
+        root.style.setProperty('--color-bg-primary', '#1f2937');
+        root.style.setProperty('--color-bg-secondary', '#111827');
+        root.style.setProperty('--color-text-primary', '#f9fafb');
+        root.style.setProperty('--color-text-secondary', '#d1d5db');
+        root.style.setProperty('--color-border', '#374151');
+      } else {
+        root.style.setProperty('--color-bg-primary', '#ffffff');
+        root.style.setProperty('--color-bg-secondary', '#f8fafc');
+        root.style.setProperty('--color-text-primary', '#1f2937');
+        root.style.setProperty('--color-text-secondary', '#6b7280');
+        root.style.setProperty('--color-border', '#e5e7eb');
       }
     };
 
@@ -52,18 +74,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Listen for system theme changes
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      mediaQuery.addEventListener('change', updateTheme);
-      return () => mediaQuery.removeEventListener('change', updateTheme);
+      const handleChange = () => updateTheme();
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
-  }, [theme]);
+  }, [theme, mounted]);
 
   const handleSetTheme = (newTheme: Theme) => {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
   };
 
+  const value = {
+    theme,
+    setTheme: handleSetTheme,
+    resolvedTheme,
+    isDark: resolvedTheme === 'dark'
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme, resolvedTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
@@ -77,11 +107,23 @@ export function useTheme() {
   return context;
 }
 
-// Theme Toggle Component
+// Enhanced Theme Toggle Component
 import { Sun, Moon, Monitor } from 'lucide-react';
 
-export function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+interface ThemeToggleProps {
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'button' | 'dropdown';
+  showLabel?: boolean;
+  className?: string;
+}
+
+export function ThemeToggle({ 
+  size = 'md', 
+  variant = 'button', 
+  showLabel = false,
+  className = '' 
+}: ThemeToggleProps) {
+  const { theme, setTheme, resolvedTheme, isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -89,10 +131,27 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
+    const sizeClasses = {
+      sm: 'w-8 h-8',
+      md: 'w-9 h-9', 
+      lg: 'w-10 h-10'
+    };
     return (
-      <div className="w-9 h-9 rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      <div className={`${sizeClasses[size]} rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse ${className}`} />
     );
   }
+
+  const sizeClasses = {
+    sm: 'p-1.5',
+    md: 'p-2',
+    lg: 'p-2.5'
+  };
+
+  const iconSizes = {
+    sm: 14,
+    md: 16,
+    lg: 18
+  };
 
   const toggleTheme = () => {
     if (theme === 'light') {
@@ -105,121 +164,80 @@ export function ThemeToggle() {
   };
 
   const getIcon = () => {
-    if (theme === 'system') return <Monitor size={16} />;
-    if (theme === 'dark') return <Moon size={16} />;
-    return <Sun size={16} />;
+    if (theme === 'system') return <Monitor size={iconSizes[size]} />;
+    if (theme === 'dark') return <Moon size={iconSizes[size]} />;
+    return <Sun size={iconSizes[size]} />;
   };
+
+  const getLabel = () => {
+    if (theme === 'system') return 'System';
+    if (theme === 'dark') return 'Dark';
+    return 'Light';
+  };
+
+  if (variant === 'dropdown') {
+    return (
+      <div className={`relative ${className}`}>
+        <select
+          value={theme}
+          onChange={(e) => setTheme(e.target.value as Theme)}
+          className="pr-8 pl-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 appearance-none"
+        >
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+    );
+  }
 
   return (
     <button
       onClick={toggleTheme}
       className={`
-        p-2 rounded-lg border transition-all duration-200 hover:scale-105
-        ${resolvedTheme === 'dark' 
-          ? 'bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700' 
+        ${sizeClasses[size]} rounded-lg border transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+        ${isDark 
+          ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700' 
           : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
         }
+        ${showLabel ? 'flex items-center gap-2 px-3' : 'flex items-center justify-center'}
+        ${className}
       `}
       title={`Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'} theme`}
+      aria-label={`Current theme: ${getLabel()}. Click to switch theme.`}
     >
       {getIcon()}
+      {showLabel && <span className="text-sm font-medium">{getLabel()}</span>}
     </button>
   );
 }
 
-// Extended Tailwind Config for Dark Mode
-export const darkModeConfig = `
-// tailwind.config.js additions for dark mode
-module.exports = {
-  darkMode: 'class', // Enable class-based dark mode
-  theme: {
-    extend: {
-      colors: {
-        // Dark mode specific colors
-        dark: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
-          800: '#1f2937',
-          900: '#111827',
-          950: '#030712',
-        }
-      }
+// Dark Mode Styles Hook
+export function useDarkModeStyles() {
+  const { isDark } = useTheme();
+
+  return {
+    // Background classes
+    bg: {
+      primary: isDark ? 'bg-gray-900' : 'bg-white',
+      secondary: isDark ? 'bg-gray-800' : 'bg-gray-50',
+      tertiary: isDark ? 'bg-gray-700' : 'bg-gray-100',
+    },
+    // Text classes
+    text: {
+      primary: isDark ? 'text-gray-100' : 'text-gray-900',
+      secondary: isDark ? 'text-gray-300' : 'text-gray-600',
+      tertiary: isDark ? 'text-gray-400' : 'text-gray-500',
+    },
+    // Border classes
+    border: {
+      default: isDark ? 'border-gray-600' : 'border-gray-300',
+      light: isDark ? 'border-gray-700' : 'border-gray-200',
+    },
+    // Interactive classes
+    hover: {
+      bg: isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50',
+      text: isDark ? 'hover:text-gray-200' : 'hover:text-gray-700',
     }
-  }
-}`;
-
-// Dark Mode Styles Component
-export function DarkModeStyles() {
-  return (
-    <style jsx global>{`
-      /* Dark mode variables */
-      :root {
-        --color-bg-primary: #ffffff;
-        --color-bg-secondary: #f8fafc;
-        --color-text-primary: #1f2937;
-        --color-text-secondary: #6b7280;
-        --color-border: #e5e7eb;
-      }
-
-      .dark {
-        --color-bg-primary: #1f2937;
-        --color-bg-secondary: #111827;
-        --color-text-primary: #f9fafb;
-        --color-text-secondary: #d1d5db;
-        --color-border: #374151;
-      }
-
-      /* Smooth transitions for theme changes */
-      * {
-        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-      }
-
-      /* Dark mode scrollbars */
-      .dark ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-
-      .dark ::-webkit-scrollbar-track {
-        background: #374151;
-        border-radius: 4px;
-      }
-
-      .dark ::-webkit-scrollbar-thumb {
-        background: #6b7280;
-        border-radius: 4px;
-      }
-
-      .dark ::-webkit-scrollbar-thumb:hover {
-        background: #9ca3af;
-      }
-
-      /* Dark mode selection */
-      .dark ::selection {
-        background: #3b82f6;
-        color: white;
-      }
-
-      /* Dark mode focus rings */
-      .dark *:focus {
-        ring-color: #3b82f6;
-      }
-    `}</style>
-  );
-}
-
-// Usage in _app.tsx
-export function AppWithDarkMode({ Component, pageProps }: any) {
-  return (
-    <ThemeProvider>
-      <DarkModeStyles />
-      <Component {...pageProps} />
-    </ThemeProvider>
-  );
+  };
 }
