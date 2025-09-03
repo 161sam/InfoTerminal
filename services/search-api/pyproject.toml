@@ -11,6 +11,8 @@ dependencies = [
     "python-jose[cryptography]>=3.3",
     "opensearch-py>=2.5",
     "cachetools>=5.3",
+    "numpy>=1.24",
+    "sentence-transformers==2.2.2",
     "opentelemetry-sdk>=1.26.0",
     "opentelemetry-exporter-otlp>=1.26.0",
     "opentelemetry-instrumentation-fastapi>=0.46b0",

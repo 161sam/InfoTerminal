@@ -2,7 +2,7 @@ import os, pathlib, sys, pytest
 from httpx import AsyncClient, ASGITransport
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
-from app import app  # import FastAPI app
+from app.main import app  # import FastAPI app
 
 @pytest.fixture(scope="session")
 def anyio_backend():
