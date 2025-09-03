@@ -1,4 +1,5 @@
 # CI workflow: Node/Python tests, OPA policies, and Conftest gate
+# Runs unit tests and policy checks
 name: ci
 on: [push, pull_request]
 jobs:

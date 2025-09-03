@@ -2,6 +2,8 @@ import re
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+# Minimal NLP endpoints for NER and summarization
+
 app = FastAPI(title="NLP Service (MVP)")
 
 class TextIn(BaseModel):
