@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { signIn, signOut, useSession } from "next-auth/react"
+import Header from "../src/components/layout/Header"
 
 type FacetBucket = { key: string; count: number }
 export default function Home() {
