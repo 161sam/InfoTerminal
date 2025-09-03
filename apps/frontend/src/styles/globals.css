@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
-/* Baselines (klein & unaufdringlich) */
+/* Baseline */
+:root { color-scheme: light; }
 html, body, #__next { height: 100%; }
-body { @apply bg-white text-gray-900 antialiased; }
+body { @apply antialiased; }
 
-/* Typo-Basis (vorsichtig, ohne Opinion Overload) */
-@layer base {
-  h1 { @apply text-3xl font-semibold tracking-tight; }
-  h2 { @apply text-2xl font-semibold tracking-tight; }
-  h3 { @apply text-xl font-semibold; }
-  a  { @apply text-blue-600 hover:underline; }
-}
+/* Typo/Spacing TODOs:
+   - Definierte scale für headings
+   - Container paddings (sm/md/lg)
+   - Dark-Mode tokens
+*/

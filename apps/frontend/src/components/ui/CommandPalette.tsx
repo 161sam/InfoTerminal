@@ -345,7 +345,15 @@ function CommandPalette({ customCommands }: { customCommands: Command[] }) {
         close();
       }
     }
-  ].filter(cmd => !cmd.condition || cmd.condition());
+  ].filter((cmd) => !cmd.condition || cmd.condition()), [
+    router,
+    close,
+    theme,
+    user,
+    setTheme,
+    logout,
+    notifications,
+  ]);
 
   // Combine all commands
   const allCommands = [...builtInCommands, ...customCommands];
