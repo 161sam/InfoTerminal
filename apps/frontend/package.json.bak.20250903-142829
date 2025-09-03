@@ -2,9 +2,9 @@
   "name": "infoterminal-frontend",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3411",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start -p 3411",
+    "start": "next start -p 3000",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",

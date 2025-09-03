@@ -1,50 +1,55 @@
 version: "3.9"
+
 services:
   search-api:
     build: ./services/search-api
-    ports: ['8611:8080']
+    ports: ["8001:8001"]
     env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8001/healthz"]
+      test: ["CMD","curl","-fsS","http://localhost:8001/healthz"]
       interval: 10s
       timeout: 3s
       retries: 10
     depends_on:
       opensearch:
         condition: service_healthy
+
   graph-api:
     build: ./services/graph-api
-    ports: ['8612:8081']
+    ports: ["8002:8002"]
     env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8002/healthz"]
+      test: ["CMD","curl","-fsS","http://localhost:8002/healthz"]
       interval: 10s
       timeout: 3s
       retries: 10
     depends_on:
       neo4j:
         condition: service_healthy
+
   nlp-service:
     build: ./services/nlp-service
     ports: ["8003:8003"]
     env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8003/healthz"]
+      test: ["CMD","curl","-fsS","http://localhost:8003/healthz"]
       interval: 10s
       timeout: 3s
       retries: 10
+
   doc-entities:
     build: ./services/doc-entities
     ports: ["8006:8006"]
     env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8006/healthz"]
+      test: ["CMD","curl","-fsS","http://localhost:8006/healthz"]
       interval: 10s
       timeout: 3s
       retries: 10
     depends_on:
       nlp-service:
         condition: service_healthy
+
   web:
     build: ./apps/frontend
     ports: ["3000:3000"]
@@ -58,6 +63,7 @@ services:
         condition: service_healthy
       doc-entities:
         condition: service_healthy
+
   opensearch:
     image: opensearchproject/opensearch:2
     environment:
@@ -66,12 +72,13 @@ services:
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m # adjust memory
     ports: ["9200:9200"]
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:9200/_cluster/health"]
+      test: ["CMD","curl","-fsS","http://localhost:9200/_cluster/health"]
       interval: 15s
       timeout: 5s
       retries: 20
     volumes:
       - opensearch_data:/usr/share/opensearch/data
+
   neo4j:
     image: neo4j:5
     environment:
@@ -79,14 +86,15 @@ services:
       - NEO4J_dbms_memory_pagecache_size=256M # tune for production
       - NEO4J_server_memory_heap_initial__size=512m
       - NEO4J_server_memory_heap_max__size=512m
-    ports: ['8744:7474', '8743:7473', '8767:7687']
+    ports: ["7474:7474","7687:7687"]
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:7474"]
+      test: ["CMD","wget","--spider","-q","http://localhost:7474"]
       interval: 15s
       timeout: 5s
       retries: 20
     volumes:
       - neo4j_data:/data
+
   # Optional modules --------------------------------------------------
   prometheus:
     profiles: ["observability"]
@@ -94,7 +102,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=7d
-    ports: ['8642:9090']
+    ports: ["9090:9090"]
     volumes:
       - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
@@ -106,35 +114,41 @@ services:
         condition: service_healthy
       nlp-service:
         condition: service_healthy
+
   grafana:
     profiles: ["observability"]
     image: grafana/grafana:10.4.5
     environment:
       - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin}
-    ports: ['8641:3000']
+    ports: ["3001:3000"]
     volumes:
       - ./deploy/grafana/provisioning:/etc/grafana/provisioning
       - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       prometheus:
         condition: service_started
+
   aleph:
     profiles: ["aleph"]
     image: alephdata/aleph:latest
-    ports: ['8613:8082']
+    ports: ["8082:8080"]
+
   superset:
     profiles: ["superset"]
     image: apache/superset:latest
-    ports: ['8644:8088']
+    ports: ["8083:8088"]
+
   airflow:
     profiles: ["airflow"]
     image: apache/airflow:2
     ports: ["8084:8080"]
+
   nifi:
     profiles: ["nifi"]
     image: apache/nifi:1.24.0
     ports: ["8085:8080"]
+
 volumes:
   opensearch_data:
   neo4j_data:
