@@ -1,10 +1,10 @@
 package rbac
 
-default allow := false
+default allow = false
 
-allow if {
+allow {
   input.action == "read"
   input.resource.classification == "public"
   input.user != ""
-  input.roles[_] == "analyst"
+  some r; r := input.roles[_]; r == "analyst"
 }
