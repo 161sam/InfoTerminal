@@ -1,78 +1,74 @@
 # InfoTerminal — Open, Modular Intelligence Platform (Gotham-style, OSS)
-<!-- markdownlint-disable MD013 -->
-```text
+
+  ```
   +--------------------------------------------------------+
   |                      Benutzer                         |
   |  - Analysten, Ermittler, Data Scientists              |
   +------------+--------------------+---------------------+
-               |                    |
-       +-------v------+      +------v-------+
-       |  Visualisierung |    |   Frontend UI |
-       |  (Apache Superset|  | (React, Vue.js) |
-       |  Metabase)      |    |                |
-       +-------+--------+      +-------+-------+
-               |                       |
-         +-----v-----------------------v-----+
-         |       API Gateway / Backend           |
-         |  (Node.js, Flask, FastAPI)            |
-         +----------------+----------------------+
-                          |
-       +------------------+--------------------+
-       |     Datenanalyse & KI Layer           |
-       |  (Apache Spark, TensorFlow, PyTorch)  |
-       +------------------+--------------------+
-                          |
-           +--------------+---------------+
-           |   Datenmanagement & Storage    |
-           |  - PostgreSQL / ClickHouse     |
-           |  - Elasticsearch               |
-           |  - Neo4j (Graph DB)            |
-           +--------------+----------------+
-                          |
-          +---------------+----------------+
-          |   Datenintegration & ETL Layer   |
-          |  - Apache NiFi / Airflow          |
-          |  - dbt (Transformation)          |
-          +---------------+----------------+
-                          |
-         +----------------+----------------+
-         |        Data Catalog & Security  |
-         |  - Amundsen / DataHub            |
-         |  - Keycloak (Auth)               |
-         +--------------------------------+
-                          |
-            +-------------+--------------+
-            |     Dokumentenmanagement    |
-            |          Aleph              |
+               |                    |                       
+       +-------v------+      +------v-------+               
+       |  Visualisierung |    |   Frontend UI |                 
+       |  (Apache Superset|  | (React, Vue.js) |               
+       |  Metabase)      |    |                |               
+       +-------+--------+      +-------+-------+               
+               |                       |                      
+         +-----v-----------------------v-----+                
+         |       API Gateway / Backend           |               
+         |  (Node.js, Flask, FastAPI)            |               
+         +----------------+----------------------+               
+                          |                                    
+       +------------------+--------------------+                 
+       |     Datenanalyse & KI Layer           |                 
+       |  (Apache Spark, TensorFlow, PyTorch)  |                 
+       +------------------+--------------------+                 
+                          |                                    
+           +--------------+---------------+                     
+           |   Datenmanagement & Storage    |                     
+           |  - PostgreSQL / ClickHouse     |                     
+           |  - Elasticsearch               |                     
+           |  - Neo4j (Graph DB)            |                     
+           +--------------+----------------+                     
+                          |                                    
+          +---------------+----------------+                     
+          |   Datenintegration & ETL Layer   |                     
+          |  - Apache NiFi / Airflow          |                     
+          |  - dbt (Transformation)          |                     
+          +---------------+----------------+                     
+                          |                                    
+         +----------------+----------------+                     
+         |        Data Catalog & Security  |                     
+         |  - Amundsen / DataHub            |                     
+         |  - Keycloak (Auth)               |                     
+         +--------------------------------+                     
+                          |                                    
+            +-------------+--------------+                     
+            |     Dokumentenmanagement    |                     
+            |          Aleph              |                     
             +----------------------------+
   ```
 
+
+
 ## 0) TL;DR (MVP in 90 Tagen)
 
-* **Woche 1–2:** Monorepo, IaC, CI/CD, Dev-Cluster (Kind), Keycloak + Gateway, basic ETL (NiFi/Airflow),
-  Postgres + Elastic online.
-* **Woche 3–4:** Schema + Ontologie (LinkML/JSON Schema), Entity Resolution (basic),
-  Aleph für Doku-Intake, erste Dashboards (Superset).
-* **Woche 5–6:** Graph-Layer (Neo4j), Relationship Explorer UI,
-  Volltextsuche mit Cross-Linking zu Graph/Docs.
-* **Woche 7–8:** KI-Services (NER, Linking), n8n/Flowise Agents,
-  OpenBB-Integration (Finanzdaten).
-* **Woche 9–10:** Security & Governance (OPA Policies, Audit),
-  Lineage/Metadata (DataHub/Amundsen).
-* **Woche 11–12:** Hardening, E2E-Tests,
-  Demo Datasets & Playbooks, Release v0.1.
+* **Woche 1–2:** Monorepo, IaC, CI/CD, Dev-Cluster (Kind), Keycloak + Gateway, basic ETL (NiFi/Airflow), Postgres + Elastic online.
+* **Woche 3–4:** Schema + Ontologie (LinkML/JSON Schema), Entity Resolution (basic), Aleph für Doku-Intake, erste Dashboards (Superset).
+* **Woche 5–6:** Graph-Layer (Neo4j), Relationship Explorer UI, Volltextsuche mit Cross-Linking zu Graph/Docs.
+* **Woche 7–8:** KI-Services (NER, Linking), n8n/Flowise Agents, OpenBB-Integration (Finanzdaten).
+* **Woche 9–10:** Security & Governance (OPA Policies, Audit), Lineage/Metadata (DataHub/Amundsen).
+* **Woche 11–12:** Hardening, E2E-Tests, Demo Datasets & Playbooks, Release v0.1.
 
 ---
 
 ## 1) Projektziele & Nicht-Ziele
 
-### Ziele
+**Ziele**
 
 * Heterogene Datenquellen integrieren (Batch/Stream), **durchsuchbar**, **verknüpfbar** und **visuell analysierbar** machen.
 * Graph- & Dokumenten-Ermittlungsworkflows, Dashboards, KI-unterstützte Mustererkennung.
 * **Transparenz, Reproduzierbarkeit, Data Lineage, Governance** by default.
 
-### Nicht-Ziele (v0.1)
+**Nicht-Ziele (v0.1)**
 
 * Keine mission-kritischen Realtime-Command-&-Control Workflows.
 * Kein proprietärer Datentransport; alles standardisiert (APIs, connectors, open formats).
@@ -134,7 +130,7 @@ flowchart LR
   FE -->|Graph/Docs/Search| SVC
 ```
 
-### Kerneigenschaften
+**Kerneigenschaften**
 
 * **API-first**: Jede Funktion als Service mit OpenAPI.
 * **Storage-Spezialisierung**: Relational (PG/CH), Suchindex (ES), Graph (Neo4j), Doks (Aleph + S3).
@@ -145,7 +141,7 @@ flowchart LR
 
 ## 3) Monorepo Layout (pnpm + uv + Docker + Helm)
 
-```bash
+```
 info-terminal/
 ├─ apps/
 │  ├─ frontend/               # Next.js (React), OIDC login, viewers (graph, map, doc)
@@ -343,34 +339,34 @@ with DAG(
 
 ## 13) Roadmap (Detail 0–12 Wochen)
 
-### W1–2 (Foundation)
+**W1–2 (Foundation)**
 
 * Monorepo scaffold, Coding-Standards, pre-commit, Ruff/ESLint, GitHub Actions.
 * Helmfile/Kustomize, Kind Dev-Cluster; Keycloak + Gateway + OPA „allow-by-default in dev“.
 * Elastic + Postgres + MinIO up; NiFi oder Airflow wählbar.
 
-### W3–4 (Data Basics)
+**W3–4 (Data Basics)**
 
 * LinkML/JSON Schemas für Kernobjekte; dbt Setup; erste Seeds.
 * Search-API (FastAPI) mit Basic Queries; Frontend OIDC Login + simple search UI.
 * Aleph deployment + minimaler File Intake Pfad.
 
-### W5–6 (Graph & Relations)
+**W5–6 (Graph & Relations)**
 
 * Neo4j online, Graph-API Endpunkte (neighbors, shortest\_path, ego-net).
 * Entity Resolution v0 (deterministisch + fuzzy), Clerical Review UI in Frontend.
 
-### W7–8 (AI & OpenBB)
+**W7–8 (AI & OpenBB)**
 
 * NER + Linking pipeline; embeddings für rerank.
 * OpenBB Connector + DAGs; Superset Dashboards; Cross-refs zu Graph/Aleph.
 
-### W9–10 (Governance & Metadata)
+**W9–10 (Governance & Metadata)**
 
 * OPA Policies (ABAC), Audit Trails; DataHub (sources, lineage, glossary).
 * dbt tests & Great Expectations (optional) für gold layer.
 
-### W11–12 (Hardening & Release)
+**W11–12 (Hardening & Release)**
 
 * E2E-Tests, Load Tests, Security Review; Demo-Walkthrough + Tutorials; v0.1 tag.
 
@@ -440,5 +436,5 @@ def search(q: str, user=Depends(oidc_user)):
 
 ---
 
+
 Sag einfach „**bootstrap**“, dann generiere ich die Dateien als Copy-Paste-Blöcke.
-<!-- markdownlint-enable MD013 -->
