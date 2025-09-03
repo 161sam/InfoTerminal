@@ -34,6 +34,9 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
   - [ ] Mini-Beispiel (z. B. täglicher CSV-Import in Postgres)
 - [ ] dbt Modelle:
   - [ ] 1 Beispiel-Transformation (CSV → Postgres Table)
+- [ ] Demo-Daten Seeds
+  - [x] Graph (services/graph-api/scripts/seed_graph.py)
+  - [ ] PDFs/CSV (scripts/seed_demo.sh)
 
 ---
 
@@ -53,6 +56,7 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 - [ ] Superset:
   - [ ] Beispiel-Dashboard (Entity Counts, Dokumente pro Kategorie)
   - [ ] OIDC-Login aktivieren (Keycloak)
+  - [ ] dbt Dataset Sync (`infra/analytics/superset_dbt_sync.py`)
 - [ ] Grafana:
   - [ ] Mini-Dashboard (API Latency, Request Count)
 
@@ -79,12 +83,20 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 ## 6. Security & Governance (Dev-Modus)
 
 - [ ] Keycloak Realm + Clients für InfoTerminal
+  - [ ] Automatisierter Import via `infra/auth/keycloak_import.sh`
 - [x] OPA ForwardAuth Beispiel-Policy
 - [ ] Basic Audit-Log für Plugin-Runs
 
 ---
 
-## 7. Doku
+## 7. Observability
+
+- [ ] Otel Collector + Prometheus + Grafana + Loki scaffold
+- [ ] /metrics Endpunkte der Services prüfen
+
+---
+
+## 8. Doku
 
 - [ ] **Quickstart (Compose)**
   - [ ] Install prerequisites
@@ -109,7 +121,7 @@ Ziel: Erste veröffentlichbare Version (MVP), die Datenintegration, Suche, Graph
 
 ---
 
-## 8. Release Management
+## 9. Release Management
 
 - [ ] Version `v0.1.0` taggen
 - [ ] GitHub Release mit:
