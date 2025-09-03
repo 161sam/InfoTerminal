@@ -3,7 +3,7 @@
 
 * **Dev-Infra (Kind + Helmfile + Basisdienste)** — ✅ lauffähig (Postgres, OpenSearch, MinIO, Traefik, Keycloak)
 * **Auth & Gateway** — 🟨 Keycloak-Realm/Clients vorhanden; Edge-OIDC via oauth2-proxy + OPA-ForwardAuth lauffähig; Feinschliff (Role Claims, Secrets) offen
-* **OPA** — 🟨 Policies (RBAC + ABAC), Tests (opa test) und Bundle-Modus vorhanden; noch Feinschliff für Service-Inputs & CI Gate Coverage
+* **OPA** — 🟨 Policies (ForwardAuth, RBAC, ABAC), Tests (opa test) und Bundle-Modus vorhanden; noch Feinschliff für Service-Inputs & CI Gate Coverage
 * **Search** — ✅ Search-API (FastAPI) + Facetten + Frontend-Suche (Next.js)
 * **Graph** — ✅ Graph-API (Neo4j) + Viewer (Basis & GraphX mit Expand/Pin/Save); Server-Side Views (CRUD + Share) ✅
 * **AI Layer & Agents** — 🟨 NLP-Service (NER/Summary) erreichbar; Agent-Flows offen
