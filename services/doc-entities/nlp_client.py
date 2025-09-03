@@ -1,5 +1,4 @@
-import os
-import requests
+import os, requests
 
 NLP_URL = os.getenv("NLP_URL", "http://127.0.0.1:8405")
 

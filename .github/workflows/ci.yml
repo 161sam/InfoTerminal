@@ -1,5 +1,5 @@
 # CI workflow: Node/Python tests, OPA policies, and Conftest gate
-# Runs unit tests and policy checks
+# Tolerant; skips external services and continues on failure where noted
 name: ci
 on: [push, pull_request]
 jobs:
