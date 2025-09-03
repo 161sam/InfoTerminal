@@ -11,8 +11,7 @@ opa-up:
 	kubectl apply -f infra/k8s/opa/opa.yaml
 
 neo4j-up:
-	kubectl apply -f infra/k8s/neo4j/neo4j.yaml
-apps-up: dev-up
+        kubectl apply -f infra/k8s/neo4j/neo4j.yaml
 
 apps-down:
 	@pkill -f "uv run" || true
@@ -100,14 +99,17 @@ docs-open:
 	python -m http.server --directory docs 8081
 	# open http://localhost:8081 in browser
 
-.PHONY: dev-up dev-down obs-up logs
+.PHONY: dev-up apps-up dev-down obs-up logs
 
+# ==== Dev targets (idempotent) ====
 dev-up:
-	@bash scripts/dev_up.sh
+        @bash scripts/dev_up.sh
+
+apps-up: dev-up
 
 dev-down:
-	@pkill -f "uvicorn" 2>/dev/null || true
-	@pkill -f "next dev" 2>/dev/null || true
+        @pkill -f "uvicorn" 2>/dev/null || true
+        @pkill -f "next dev" 2>/dev/null || true
 
 obs-up:
 	docker compose --profile observability up -d

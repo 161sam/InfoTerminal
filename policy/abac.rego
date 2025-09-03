@@ -1,14 +1,14 @@
 package abac
 
-default allow := false
+default allow = false
 
-allow if {
+allow {
   input.action == "read"
   input.resource.type == "graph"
   not deny_by_clearance
 }
 
-deny_by_clearance if {
+deny_by_clearance {
   # TODO: Clearance vs. classification durchsetzen
   false
 }

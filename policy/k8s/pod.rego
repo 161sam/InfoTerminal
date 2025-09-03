@@ -1,6 +1,6 @@
 package k8s.policies
 
-deny[msg] if {
+deny[msg] {
   input.kind == "Pod"
   input.spec.containers[_].securityContext.privileged == true
   msg := "Privileged container forbidden"

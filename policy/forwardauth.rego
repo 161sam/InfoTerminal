@@ -1,9 +1,9 @@
 package forwardauth
 
-default allow := false
+default allow = false
 
-allow if {
+allow {
   input.user != ""
   startswith(input.path, "/search")
-  input.roles[_] == "analyst"
+  some r; r := input.roles[_]; r == "analyst"
 }
