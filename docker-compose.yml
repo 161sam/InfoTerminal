@@ -1,5 +1,26 @@
 version: "3.9"
 services:
+  redis:
+    image: redis:7-alpine
+
+  opensearch:
+    image: opensearchproject/opensearch:2
+    environment:
+      discovery.type: single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aleph
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   nlp-service:
     build: ./services/nlp-service
     ports:
@@ -11,3 +32,55 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  doc-entities:
+    build: ./services/doc-entities
+    ports:
+      - "8006:8006"
+    env_file:
+      - .env
+    environment:
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_DB: aleph
+      PG_USER: postgres
+      PG_PASS: postgres
+      NLP_URL: http://nlp-service:8003
+    depends_on:
+      - postgres
+      - nlp-service
+
+  aleph:
+    image: alephdata/aleph:latest
+    ports:
+      - "8082:8080"
+    environment:
+      ALEPH_SECRET_KEY: devsecret
+      ALEPH_DEBUG: "true"
+      ALEPH_APP_TITLE: InfoTerminal Aleph
+      ALEPH_ELASTICSEARCH_URL: http://opensearch:9200
+      ALEPH_BROKER_URL: redis://redis:6379/0
+      ALEPH_DATABASE_URI: postgresql://postgres:postgres@postgres:5432/aleph
+    volumes:
+      - aleph:/var/lib/aleph
+    depends_on:
+      - redis
+      - postgres
+      - opensearch
+
+  nifi:
+    image: apache/nifi:1.24.0
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./data/inbox:/opt/nifi/inbox
+      - ./data/outbox:/opt/nifi/outbox
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/nifi"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  pgdata:
+  aleph:
