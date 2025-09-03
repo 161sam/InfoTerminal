@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+  <name>infoterminal_aleph_ingest</name>
+  <description>Watch inbox and ingest documents into Aleph</description>
+  <snippet>
+    <processors>
+      <processor>
+        <name>ListFile</name>
+        <type>org.apache.nifi.processors.standard.ListFile</type>
+        <config>
+          <property name="Input Directory">/opt/nifi/inbox</property>
+          <property name="File Filter">(?i).*(\\.(pdf|docx|txt))$</property>
+          <property name="Keep Source File">false</property>
+        </config>
+      </processor>
+      <processor>
+        <name>FetchFile</name>
+        <type>org.apache.nifi.processors.standard.FetchFile</type>
+      </processor>
+      <processor>
+        <name>UpdateAttribute</name>
+        <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+        <config>
+          <property name="document.title">${filename}</property>
+          <property name="document.source">nifi-inbox</property>
+          <property name="document.mime">${mime.type:orElse('application/octet-stream')}</property>
+          <property name="document.uuid">${uuid()}</property>
+        </config>
+      </processor>
+      <processor>
+        <name>InvokeHTTP-Aleph</name>
+        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+        <config>
+          <property name="HTTP Method">POST</property>
+          <property name="Remote URL">http://aleph:8080/api/2/ingest</property>
+          <property name="Send Message Body">true</property>
+          <property name="Content-Type">multipart/form-data</property>
+          <property name="Multipart Form Name">file</property>
+          <property name="Form Parameters">title=${document.title}&amp;source=${document.source}&amp;mime_type=${document.mime}</property>
+          <property name="Add Headers">Authorization: ApiKey ${env.ALEPH_API_KEY}</property>
+        </config>
+      </processor>
+      <processor>
+        <name>EvaluateJsonPath</name>
+        <type>org.apache.nifi.processors.standard.EvaluateJsonPath</type>
+        <config>
+          <property name="Destination">flowfile-attribute</property>
+          <property name="aleph_id">$.id</property>
+        </config>
+      </processor>
+      <processor>
+        <name>PutFile-success</name>
+        <type>org.apache.nifi.processors.standard.PutFile</type>
+        <config>
+          <property name="Directory">/opt/nifi/outbox/success</property>
+        </config>
+      </processor>
+      <processor>
+        <name>PutFile-fail</name>
+        <type>org.apache.nifi.processors.standard.PutFile</type>
+        <config>
+          <property name="Directory">/opt/nifi/outbox/fail</property>
+        </config>
+      </processor>
+    </processors>
+    <connections>
+      <connection>
+        <source>ListFile</source>
+        <destination>FetchFile</destination>
+      </connection>
+      <connection>
+        <source>FetchFile</source>
+        <destination>UpdateAttribute</destination>
+      </connection>
+      <connection>
+        <source>UpdateAttribute</source>
+        <destination>InvokeHTTP-Aleph</destination>
+      </connection>
+      <connection>
+        <source>InvokeHTTP-Aleph</source>
+        <success>EvaluateJsonPath</success>
+        <failure>PutFile-fail</failure>
+      </connection>
+      <connection>
+        <source>EvaluateJsonPath</source>
+        <destination>PutFile-success</destination>
+      </connection>
+    </connections>
+  </snippet>
+</template>

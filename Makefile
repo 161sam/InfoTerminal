@@ -2,7 +2,7 @@ SHELL := /bin/bash
 KIND_CLUSTER := infoterminal
 K8S_CONTEXT := kind-$(KIND_CLUSTER)
 
-.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run etl-dbt-build etl-nifi-deploy etl-airflow-up etl-airflow-dag etl-superset-warmup
+.PHONY: dev-up dev-down apps-up apps-down seed-demo seed-graph print-info auth-up opa-up neo4j-up opa-test aleph-workers-up nifi-registry-up dbt-run etl-dbt-build etl-nifi-deploy etl-airflow-up etl-airflow-dag etl-superset-warmup nifi-template-import nifi-template-instantiate nifi-start nifi-stop
 
 auth-up:
 	@bash infra/scripts/keycloak-import.sh
@@ -109,12 +109,24 @@ obs-grafana-dashboards:
 	# copy dashboards to Grafana mount path or use ConfigMap sidecar (implementation note)
 
 obs-down:
-	kubectl delete -f infra/observability/otel-collector.yaml || true
+        kubectl delete -f infra/observability/otel-collector.yaml || true
+
+nifi-template-import:
+        @bash scripts/nifi_template_import.sh
+
+nifi-template-instantiate:
+        @bash scripts/nifi_template_instantiate.sh
+
+nifi-start:
+        @bash scripts/nifi_start.sh
+
+nifi-stop:
+        @bash scripts/nifi_stop.sh
 
 .PHONY: docs-lint docs-toc docs-open
 docs-lint:
-	npx markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json || true
-	npx lychee --accept 200,429 README.md docs/**/*.md || true
+        npx markdownlint-cli2 README.md 'docs/**/*.md' -c .markdownlint.json || true
+        npx lychee --accept 200,429 README.md docs/**/*.md || true
 
 docs-toc:
 	npx doctoc README.md docs --github --maxlevel 3
