@@ -115,7 +115,9 @@
 * [ ] Search-Rerank aktivieren (Cosine Top-N)
     *Env:* `export RERANK=1 NLP_URL=http://127.0.0.1:8005`
 * [ ] Entity-Resolver `/resolve` aktiv
-  *URL:* `[127.0.0.1:8005](http://127.0.0.1:8005/resolve)
+  *URL:* `[127.0.0.1:8005](http://127.0.0.1:8005/resolve)`
+* [ ] Frontend: `/docs` Upload & NER-Highlights testen
+  *Flow:* Text eingeben → Annotieren → Entitäten erscheinen
 * [ ] n8n Flow „Investigation Assistant“
 
 ### Snippet
