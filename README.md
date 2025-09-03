@@ -3,27 +3,32 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Purpose](#purpose)
-- [Prerequisites](#prerequisites)
-- [Quickstart (Dev)](#quickstart-dev)
-- [Health Checks](#health-checks)
-- [Common Tasks](#common-tasks)
-- [Further Reading](#further-reading)
-- [DE Appendix](#de-appendix)
+* [Purpose](#purpose)
+* [Prerequisites](#prerequisites)
+* [Quickstart (Dev)](#quickstart-dev)
+* [Health Checks](#health-checks)
+* [Common Tasks](#common-tasks)
+* [Further Reading](#further-reading)
+* [DE Appendix](#de-appendix)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Purpose
-InfoTerminal stitches together search, graph and analytics services to explore heterogeneous data. The platform runs on Kubernetes and is optimized for local development. See the [developer docs](docs/dev/README.md) for details on architecture and components.
+
+InfoTerminal stitches together search, graph and analytics services to explore heterogeneous data.
+The platform runs on Kubernetes and is optimized for local development.
+See the [developer docs](docs/dev/README.md) for details on architecture and components.
 
 ## Prerequisites
-- Docker 24+
-- Kubernetes / Kind 0.20+
-- Helm 3+
-- pnpm 8+
-- uv 0.1+
+
+* Docker 24+
+* Kubernetes / Kind 0.20+
+* Helm 3+
+* pnpm 8+
+* uv 0.1+
 
 ## Quickstart (Dev)
+
 ```bash
 make dev-up         # infra (kind/helmfile) + base services
 make apps-up        # backend services + frontend
@@ -31,11 +36,13 @@ make seed-demo      # demo data into search/graph
 ```
 
 ## Health Checks
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Search API: [http://localhost:8001/health](http://localhost:8001/health)
-- Graph API: [http://localhost:8002/health](http://localhost:8002/health)
+
+* Frontend: [localhost:3000](http://localhost:3000)
+* Search API: [localhost:8001](http://localhost:8001/health)
+* Graph API: [localhost:8002](http://localhost:8002/health)
 
 ## Common Tasks
+
 ```bash
 make dev-down       # tear down cluster
 make logs           # tail all service logs
@@ -43,13 +50,14 @@ make restart <svc>  # restart a specific service
 ```
 
 ## Further Reading
-- [Developer Docs](docs/README.md)
-- [Runbooks](docs/dev/runbooks)
-- [Architecture Decisions](docs/adr)
 
+* [Developer Docs](docs/README.md)
+* [Runbooks](docs/dev/runbooks)
+* [Architecture Decisions](docs/adr)
 
 ---
 
 ## DE Appendix
 
-Kurzanleitung auf Deutsch ist in [docs/dev/Checkliste.md](docs/dev/Checkliste.md) zu finden. Neue Dokumentation erfolgt primär auf Englisch.
+Kurzanleitung auf Deutsch ist in [docs/dev/Checkliste.md](docs/dev/Checkliste.md) zu finden.
+Neue Dokumentation erfolgt primär auf Englisch.

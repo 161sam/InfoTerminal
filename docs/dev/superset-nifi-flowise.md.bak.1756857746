@@ -99,7 +99,7 @@ Wir verwenden Variante **A** (Multipart Upload `ingest`).
    * Multipart: FlowFile als `file`, zusätzliche Teile `meta` (JSON) und `title`
 4. **LogAttribute** – loggt `filename_original, aleph_response`
 
-#### Quick-cURL zum Abgleich
+**Quick-cURL zum Abgleich**
 
 ```bash
 curl -X POST "http://aleph.127.0.0.1.nip.io/api/2/collections/<COLL_ID>/ingest?sync=1" \
@@ -121,7 +121,7 @@ Erwartung: `200/202` mit `document_id` im JSON.
 
 ### 3.2 System-Prompt
 
-```yaml
+```
 You are the InfoTerminal Investigation Assistant.
 Tools: search_docs, graph_neighbors, summarize_text, annotate_doc.
 
@@ -133,7 +133,7 @@ Rules / Guardrails:
 - For graph_neighbors, limit ≤ 100 and never enumerate PII or secrets beyond the returned data.
 - Respect tenant & classification constraints: do not fabricate data. If a call fails, report minimal error.
 - Token budget: keep your final answer ≤ 250 words. Prefer bullet points.
-Output format:
+Output format: 
 1) Findings (bullets),
 2) Evidence (links or ids),
 3) Next steps (bullets).
@@ -149,8 +149,7 @@ Output format:
 
 ### 3.4 Beispiel-User-Prompt
 
-> „Analysiere Fall 42: Fokus ACME Berlin. Was sind die Top-Dokumente, kurze Zusammenfassung.
-> Zeig mir direkte Verbindungen zu ‘O\:acme’.“
+> „Analysiere Fall 42: Fokus ACME Berlin. Was sind die Top-Dokumente, kurze Zusammenfassung. Zeig mir direkte Verbindungen zu ‘O\:acme’.“
 
 Erwartetes Tool-Pattern:
 
@@ -160,7 +159,7 @@ Erwartetes Tool-Pattern:
 
 Antwortformat:
 
-```text
+```
 * Findings: • …
 * Evidence: • doc links, graph link (`http://localhost:3000/graphx?focus=O:acme`)
 * Next steps: • …
@@ -170,9 +169,9 @@ Antwortformat:
 
 ## Mini-Checkliste
 
-* [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern
-* [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
-* [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
-* [ ] **Smoke Tests**:
-  * `POST /annotate` → `/docs/{id}/html` zeigt Entities → GraphX
-  * Flowise Prompt ausführen → Tool-Aufrufe im Log sichtbar
+- [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern
+- [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
+- [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
+- [ ] **Smoke Tests**:
+  - `POST /annotate` → `/docs/{id}/html` zeigt Entities → GraphX
+  - Flowise Prompt ausführen → Tool-Aufrufe im Log sichtbar
