@@ -1,0 +1,17 @@
+[project]
+name = "infoterminal-cli"
+version = "0.1.0"
+description = "Unified CLI for InfoTerminal (dev-local & dockerized, obs, agents, gateway, opa, health, ports)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.7",
+]
+
+[project.scripts]
+it = "infoterminal_cli.cli:app"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
