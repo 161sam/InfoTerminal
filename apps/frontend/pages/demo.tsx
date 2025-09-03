@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from '@/components/layout/Header';
+
 import { useDemoLoader } from '@/hooks/useDemoLoader';
 
 export default function DemoPage() {
@@ -16,9 +16,7 @@ export default function DemoPage() {
 
   return (
     <>
-      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}
-      <Header />
-      <main style={{ maxWidth: 600, margin: '40px auto', fontFamily: 'ui-sans-serif' }}>
+      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}<main style={{ maxWidth: 600, margin: '40px auto', fontFamily: 'ui-sans-serif' }}>
         <h1>Demo & Beispiele</h1>
         <div>
           {Object.keys(opts).map((k) => (

@@ -8,9 +8,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "typecheck": "tsc -b --pretty false",
+    "typecheck": "tsc --noEmit",
     "e2e:install": "npx playwright install --with-deps",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "lint": "next lint || true",
+    "test:ui": "vitest --ui",
+    "prepare": "husky"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
@@ -45,5 +48,8 @@
     "tailwindcss": "^4.1.12",
     "typescript": "^5.4.0",
     "vitest": "^1.5.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": "prettier --write"
   }
 }

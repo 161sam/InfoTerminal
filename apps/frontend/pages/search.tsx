@@ -6,7 +6,6 @@ import Pagination from '@/components/search/Pagination';
 import SortAndRerank from '@/components/search/SortAndRerank';
 import { useSearchParams } from '@/hooks/useSearchParams';
 import { useSearch } from '@/hooks/useSearch';
-import Header from '@/components/layout/Header';
 
 export default function SearchPage() {
   const { params, set, replaceAll } = useSearchParams();
@@ -85,9 +84,7 @@ export default function SearchPage() {
 
   return (
     <div>
-      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}
-      <Header />
-      <SearchBox
+      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}<SearchBox
         value={q}
         onChange={(v) => set('q', v)}
         onSubmit={(v) => set('q', v)}
