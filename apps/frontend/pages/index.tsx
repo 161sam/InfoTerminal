@@ -28,6 +28,8 @@ export default function Home() {
   }
 
   return (
+    <>
+    <Header />
     <main style={{maxWidth:1100, margin:"40px auto", fontFamily:"ui-sans-serif"}}>
       <h1>InfoTerminal</h1>
       <div style={{display:"flex", gap:8, marginBottom:12}}>
@@ -72,5 +74,6 @@ export default function Home() {
         </section>
       </div>
     </main>
+    </>
   )
 }
