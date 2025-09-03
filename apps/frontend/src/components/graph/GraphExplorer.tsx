@@ -1,4 +1,4 @@
-// apps/frontend/pages/graphx.tsx - Moderner Graph Viewer
+// GraphExplorer.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { 
   Network, 
