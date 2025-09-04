@@ -49,7 +49,7 @@ export default function SearchPage() {
   const chips = ["demo", "graph", "open source"];
 
   return (
-    <Layout>
+    <Layout showHealth>
       <h1 className="mb-4">Search</h1>
       <div className="mb-4 flex items-end gap-2">
         <Field
