@@ -270,7 +270,7 @@ def test_pg_env_and_setup_pool(monkeypatch):
     real_import = builtins.__import__
 
     def fake_import(name, *a, **k):
-        if name == "obs.otel_boot":
+        if name == "_shared.obs.otel_boot":
             raise ImportError("missing")
         return real_import(name, *a, **k)
 
