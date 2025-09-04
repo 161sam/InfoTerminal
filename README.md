@@ -50,7 +50,7 @@ kubectl port-forward svc/infoterminal-web 3411:3411 -n infoterm
 Installiere die CLI separat per `pipx`:
 
 ```bash
-pipx install infoterminal-cli
+pipx install cli/infoterminal-cli
 ```
 
 Die wichtigsten Kommandos:
