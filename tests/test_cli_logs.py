@@ -31,7 +31,7 @@ def test_logs_follow(monkeypatch, tmp_path):
         yield "y\n"
 
     monkeypatch.setattr(infra, "_follow_file", fake_follow)
-    result = runner.invoke(infra.app, ["logs", "--services", "search-api", "-f", "--lines", "1"])
+    result = runner.invoke(infra.app, ["logs", "--services", "search-api", "--follow", "--lines", "1"])
     assert result.exit_code == 0
     assert "x" in result.stdout and "y" in result.stdout
 
@@ -44,6 +44,6 @@ def test_logs_docker(monkeypatch):
         return SimpleNamespace(returncode=0, stderr="")
 
     monkeypatch.setattr(infra.subprocess, "run", fake_run)
-    result = runner.invoke(infra.app, ["logs", "--services", "neo4j", "--lines", "5", "-f"])
+    result = runner.invoke(infra.app, ["logs", "--services", "neo4j", "--lines", "5", "--follow"])
     assert result.exit_code == 0
     assert ["docker", "logs", "--tail", "5", "-f", "neo4j"] in calls

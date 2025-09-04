@@ -162,6 +162,25 @@ def _display_docker_logs(container: str, lines: int, follow: bool) -> None:
     subprocess.run(cmd, check=False)
 
 
+def show_logs(service: str, lines: int = 200, follow: bool = False) -> None:
+    """Display logs for *service* from file or docker container.
+
+    Parameters are plain ``int``/``bool`` values to allow reuse outside Typer
+    commands.
+    """
+    path = Path(LOG_FILES.get(service, ""))
+    if path.is_file():
+        console.print(log_panel(service))
+        _display_file_logs(path, lines, follow)
+        return
+    container = CONTAINER_MAP.get(service)
+    if container:
+        console.print(log_panel(service))
+        _display_docker_logs(container, lines, follow)
+        return
+    raise FileNotFoundError(service)
+
+
 async def probe_http(name: str, url: str) -> Dict[str, str]:
     start = time.perf_counter()
     status = "UNAVAILABLE"
@@ -329,26 +348,22 @@ def status(
 def logs(
     services: List[str] = typer.Option(..., "--services", "-s", help="Service names", min=1),
     lines: int = typer.Option(200, "--lines", help="Number of lines"),
-    follow: bool = typer.Option(False, "--follow", "-f", help="Tail logs"),
-    since: str | None = typer.Option(None, "--since", help="Since duration"),
-    compose_file: List[Path] = typer.Option(None, "--compose-file"),
+    follow: bool = typer.Option(False, "--follow", "-F", help="Tail logs"),
+    compose_file: List[Path] = typer.Option(None, "--compose-file", "-f"),
     project_name: str | None = typer.Option(None, "--project-name", "-p"),
+    env_file: List[Path] = typer.Option(None, "--env-file"),
+    profile: List[str] = typer.Option(None, "--profile"),
 ) -> None:
     """Show logs for services."""
     _ = resolve_compose_files(compose_file)
     _ = resolve_project_name(project_name)
+    _ = resolve_env_files(env_file)
+    _ = resolve_profiles(profile)
     for service in services:
-        path = Path(LOG_FILES.get(service, ""))
-        if path.is_file():
-            console.print(log_panel(service))
-            _display_file_logs(path, lines, follow)
-            continue
-        container = CONTAINER_MAP.get(service)
-        if container:
-            console.print(log_panel(service))
-            _display_docker_logs(container, lines, follow)
-            continue
-        raise typer.BadParameter(f"Unknown service: {service}")
+        try:
+            show_logs(service, lines, follow)
+        except FileNotFoundError:
+            raise typer.BadParameter(f"Unknown service: {service}")
 
 
 @app.command()

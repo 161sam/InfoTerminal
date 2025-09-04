@@ -45,6 +45,15 @@ app.add_typer(tui.app, name="ui", help="Textual TUI")
 # load plugins
 load_plugins(app)
 
+# top-level aliases for infra commands
+app.command("up")(infra.up)
+app.command("down")(infra.down)
+app.command("start")(infra.up)
+app.command("stop")(infra.down)
+app.command("restart")(infra.restart)
+app.command("status")(infra.status)
+app.command("logs")(infra.logs)
+
 
 def main() -> None:
     """CLI entry point that prints banner before running Typer."""

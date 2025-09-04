@@ -7,6 +7,9 @@ import subprocess
 import sys
 
 from it_cli import __version__
+from typer.testing import CliRunner
+from it_cli.__main__ import app as main_app
+from it_cli.commands import infra
 
 
 def _run_cli(args: list[str], env: dict[str, str] | None = None):
@@ -47,3 +50,18 @@ def test_banner_once_per_invocation():
     result = _run_cli(["settings", "show"])
     assert result.returncode == 0
     assert result.stdout.count("InfoTerminal CLI") == 1
+
+
+def test_logs_alias_passes_primitives(monkeypatch):
+    runner = CliRunner()
+    captured = {}
+
+    def fake_show_logs(service: str, lines: int = 0, follow: bool = False) -> None:
+        captured["types"] = (type(service), type(lines), type(follow))
+        captured["values"] = (service, lines, follow)
+
+    monkeypatch.setattr(infra, "show_logs", fake_show_logs)
+    result = runner.invoke(main_app, ["logs", "-s", "search-api", "--lines", "7", "--follow"])
+    assert result.exit_code == 0
+    assert captured["types"] == (str, int, bool)
+    assert captured["values"] == ("search-api", 7, True)

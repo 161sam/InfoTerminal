@@ -18,6 +18,10 @@ it --help
 
 # show version
 it -V
+
+# top-level aliases for infra commands
+it up -d                      # same as `it infra up`
+it logs -s search-api --follow      # tail logs and follow
 ```
 
 The CLI prints a banner on each run. Set `IT_NO_BANNER=1` to disable it
@@ -26,10 +30,10 @@ for scripting or CI environments.
 ### Infra commands
 
 ```bash
-# start local stack (alias: `start`)
+# start local stack (alias: `start` or top-level `it up`)
 it infra start -f docker-compose.yml -f docker-compose.override.yml -p myproj -d
 
-# stop services (aliases: `stop`, `halt`)
+# stop services (aliases: `stop`, `halt` or top-level `it down`)
 it infra stop -p myproj --services graph-api --services frontend
 
 # restart with extras
@@ -38,13 +42,16 @@ it infra restart --agents --gateway
 # check status for selected services
 it infra status -s search-api -s graph-api --timeout 5
 
-# tail logs for a service
+# tail & follow logs for a service
 it infra logs -s graph-api --compose-file docker-compose.yml -p myproj --follow
 ```
 
 Compose files and project names are discovered in this order of precedence:
 CLI flags > environment variables (`IT_COMPOSE_FILE`, `IT_PROJECT_NAME`) >
 auto-discovery (`docker-compose.yml`, `compose.yml`).
+
+Additional compose options like `--env-file`, `--profile` and multiple
+`--services` values are available for `up`, `down`, `restart` and `status`.
 
 Use `--dry-run` to print commands without executing them. `--verbose` shows
 subprocess calls, while `--quiet` minimizes output. Set `NO_COLOR=1` or use
