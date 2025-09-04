@@ -58,6 +58,27 @@
           "datasource": "Prometheus"
         }
       ]
+    },
+    {
+      "type": "logs",
+      "title": "Logs",
+      "targets": [
+        {
+          "expr": "{container=~\"search-api|graph-api|graph-views\"}",
+          "datasource": "Loki"
+        }
+      ],
+      "options": {"showLabels": false, "showTime": true}
+    },
+    {
+      "type": "timeseries",
+      "title": "Trace Latency avg",
+      "targets": [
+        {
+          "expr": "rate(tempo_spanmetrics_latency_sum{service=\"$service\"}[5m]) / rate(tempo_spanmetrics_latency_count{service=\"$service\"}[5m])",
+          "datasource": "Prometheus"
+        }
+      ]
     }
   ]
 }

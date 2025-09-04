@@ -11,3 +11,4 @@ starlette-exporter==0.15.*
 opentelemetry-sdk
 opentelemetry-instrumentation-fastapi
 opentelemetry-exporter-otlp
+opentelemetry-instrumentation-requests

@@ -1,7 +1,8 @@
 try:
-    from obs.otel_boot import *  # noqa
-except Exception:
-    pass
+    from obs.otel_boot import setup_otel  # type: ignore
+except Exception:  # pragma: no cover
+    def setup_otel(app, service_name: str = "entity-resolution"):
+        return app
 
 from fastapi import FastAPI
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -16,6 +17,7 @@ try:
 except NameError:
     app = FastAPI(title="InfoTerminal Entity Resolution")
 FastAPIInstrumentor().instrument_app(app)
+setup_otel(app)
 app.mount("/metrics", make_asgi_app())
 
 @app.get("/healthz")

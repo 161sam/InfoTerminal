@@ -10,6 +10,8 @@
 - Prometheus: 3412
 - Grafana: 3413
 - Alertmanager: 3414
+- Loki: 3415
+- Tempo: 3416
 
 ## Health Endpoints
 - `GET /healthz` – liveness
@@ -74,10 +76,29 @@ it start -d --profile observability
 Standardmäßig sind die `/metrics`-Endpoints der Services deaktiviert. Setze
 `IT_ENABLE_METRICS=1` (oder aktiviere das Profil), um sie zu exponieren.
 
+### Logs & Traces (Dev)
+Zusätzlich zu Prometheus/Grafana können Loki (Logs) und Tempo (Traces) im gleichen
+Profil gestartet werden. Die Host-Ports werden über `.env.dev.ports`
+und `scripts/patch_ports.sh` gesteuert.
+
+```bash
+it start -d --profile observability
+IT_ENABLE_METRICS=1 IT_OTEL=1 uvicorn app.main:app
+```
+
+Services exportieren Traces via OTLP HTTP an `http://tempo:4318`. Die Sampling-Rate
+ist über `OTEL_TRACES_SAMPLER_ARG` einstellbar (Standard 0.1 = 10 %).
+
+Grafana ist unter `http://127.0.0.1:${GRAFANA_PORT}` erreichbar und enthält
+vorkonfigurierte Datasources für Prometheus, Loki und Tempo.
+
 ### Troubleshooting
 - Prometheus-Scrape-Fehler: Targets unter `Status → Targets` prüfen.
 - `404` an `/metrics`: `IT_ENABLE_METRICS` nicht gesetzt?
 - Port belegt: Werte in `.env.dev.ports` anpassen und `scripts/patch_ports.sh` ausführen.
+- Loki/Tempo nicht erreichbar: Container-Logs prüfen (`docker compose logs loki`).
+- Leere Logs: Promtail läuft? Pfade in `promtail-config.yml` stimmen?
+- Keine Traces: `IT_OTEL=1` gesetzt und Endpoint erreichbar?
 
 ## Troubleshooting
 - Ensure the Neo4j development password has at least 8 characters.

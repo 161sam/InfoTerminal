@@ -1,0 +1,12 @@
+server:
+  http_listen_port: 3200
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+        grpc:
+storage:
+  trace:
+    backend: local
+    path: /tmp/tempo
