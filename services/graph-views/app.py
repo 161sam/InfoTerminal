@@ -3,10 +3,9 @@ try:
 except Exception:
     pass
 
-import os, json, secrets, socket
+import os, json, secrets, time
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header, Query
-from fastapi.responses import JSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from prometheus_client import make_asgi_app
 from contextlib import asynccontextmanager, contextmanager
@@ -65,31 +64,31 @@ async def lifespan(app: FastAPI):
   global pool
   try:
     pool = setup_pool()
+    app.state.pool = pool
     if os.getenv("INIT_DB_ON_STARTUP","1") == "1":
       init()
   except Exception:
     pool = None
+    app.state.pool = None
   yield
   if pool:
     pool.closeall()
+    app.state.pool = None
+
 
 app = FastAPI(title="Graph Views API", version="0.1.0", lifespan=lifespan)
 FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
+app.state.service_name = "graph-views"
+app.state.start_time = time.time()
+app.state.version = os.getenv("GIT_SHA", "dev")
+
+import health  # noqa: E402
+
+app.include_router(health.router)
 
 def user_from_header(x_user: Optional[str]):  # simple dev-mode
   return x_user or "dev"
-
-@app.get("/healthz")
-def health():
-  try:
-    with socket.create_connection((PG["host"], PG["port"]), timeout=1):
-      pass
-    with conn() as c, c.cursor() as cur:
-      cur.execute("SELECT 1")
-    return {"ok": True}
-  except Exception:
-    return JSONResponse({"ok": False}, status_code=503)
 
 @app.post("/views")
 def create_view(payload: Dict[str, Any], x_user: Optional[str]=Header(None)):

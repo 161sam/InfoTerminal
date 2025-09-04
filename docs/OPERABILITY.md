@@ -26,9 +26,24 @@ Both endpoints return JSON in the form:
 
 `/healthz` performs no external checks. `/readyz` reports dependency checks in `checks`. Each check contains a `status` of `ok`, `fail` or `skipped` with optional details.
 
+### `search-api`
+- Probes OpenSearch with a short HTTP request (~0.8s timeout) when `OPENSEARCH_URL` is set.
+- Example `checks` entry: `{ "opensearch": { "status": "ok", "latency_ms": 42.1 } }`
+- If OpenSearch URL is missing the check is `skipped`.
+
+### `graph-api`
+- Probes Neo4j via `RETURN 1` with ~0.8s timeout.
+- Example `checks` entry: `{ "neo4j": { "status": "ok", "latency_ms": 12.3 } }`
+- Missing Neo4j connection details result in a `skipped` check.
+
+### `graph-views`
+- Probes Postgres via `SELECT 1` with ~0.8s timeout.
+- Example `checks` entry: `{ "postgres": { "status": "ok", "latency_ms": 5.1 } }`
+- If the connection pool cannot be initialised the check is `skipped`.
+
 ## Environment Flags
 - `IT_FORCE_READY`: when set to `1`, `/readyz` skips external checks and reports ready.
-- `OPENSEARCH_URL`: if set, `/readyz` probes OpenSearch with a short timeout. When unset, the check is marked `skipped`.
+- Missing connection details for a dependency result in a `skipped` check with a reason.
 
 ## Troubleshooting
 - Ensure the Neo4j development password has at least 8 characters.

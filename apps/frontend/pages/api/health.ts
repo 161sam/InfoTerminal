@@ -17,7 +17,7 @@ async function ping(url: string): Promise<{ state: ServiceState; latencyMs: numb
   const timeout = setTimeout(() => controller.abort(), 5000);
   const start = Date.now();
   try {
-    const res = await fetch(url + '/healthz', { signal: controller.signal });
+    const res = await fetch(url + '/readyz', { signal: controller.signal });
     const latencyMs = Date.now() - start;
     clearTimeout(timeout);
     if (!res.ok) {
@@ -26,7 +26,7 @@ async function ping(url: string): Promise<{ state: ServiceState; latencyMs: numb
     const info = await res.json().catch(() => ({}));
     let state: ServiceState = 'ok';
     if (info.status === 'degraded') state = 'degraded';
-    else if (info.status === 'down') state = 'down';
+    else if (info.status === 'fail') state = 'down';
     else if (info.status !== 'ok') state = 'unreachable';
     return { state, latencyMs, info };
   } catch {
