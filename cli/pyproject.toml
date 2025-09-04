@@ -10,6 +10,7 @@ dependencies = [
   "httpx",
   "pydantic>=2",
   "pydantic-settings",
+  "pyyaml",
   "plotext",
   "asciichartpy",
   "networkx",
