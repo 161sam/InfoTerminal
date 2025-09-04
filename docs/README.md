@@ -3,14 +3,15 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-* [Quickstart](#quickstart)
-* [Architecture](#architecture)
-* [Runbooks](#runbooks)
-* [Data](#data)
-* [Security](#security)
-* [Observability](#observability)
-* [Pipelines](#pipelines)
-* [Analytics](#analytics)
+- [Quickstart](#quickstart)
+- [Architecture](#architecture)
+- [Runbooks](#runbooks)
+- [Data](#data)
+- [Security](#security)
+- [Observability](#observability)
+- [Pipelines](#pipelines)
+- [Analytics](#analytics)
+- [Testing](#testing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -46,3 +47,7 @@
 ## Analytics
 
 * [Superset & Dashboards](dev/analytics_frontend.md)
+
+## Testing
+
+* [Testing and Coverage](testing.md)
