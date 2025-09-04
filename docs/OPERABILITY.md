@@ -179,6 +179,22 @@ via OTLP HTTP an `http://tempo:4318`. Die Sampling-Rate wird über
 - The frontend polls each configured service's `/readyz` endpoint roughly every 10 s and shows a badge per service (`ok`, `degraded`, `fail`, `unknown`). Clicking the matrix reveals latency and any `skipped` checks.
 - Endpoint URLs can be overridden via the Settings page. Values are stored in `localStorage` under `it.settings.endpoints` and can be verified with the "Test" button which calls `<base>/healthz`.
 
+## Frontend Settings & Deep-Links
+
+- `NEXT_PUBLIC_GRAPH_DEEPLINK_BASE` setzt die Standardbasis für Graph-Deep-Links. Standard ist `/graphx?focus=`.
+- Einträge unter `localStorage.it.settings.graph.deeplinkBase` überschreiben den ENV-Wert.
+- Fallback-Regel: **LocalStorage > ENV > Default**.
+- Werte können relativ (`/graphx?focus=`) oder absolut (`https://graph.dev/graphx?focus=`) sein.
+- Programmatic-Use:
+
+```ts
+import { buildGraphDeepLink } from '../apps/frontend/lib/deeplink';
+const url = buildGraphDeepLink({ id: '123', type: 'entity', filters: { tag: ['a', 'b'] } });
+```
+
+- Relatives Beispiel: `/graphx?focus=123&type=entity`
+- Absolutes Beispiel: `https://graph.dev/graphx?focus=123`
+
 ## Security / Gateway & OPA-Audit
 
 Der optionale Gateway-Dienst (Port 8610) kann sämtlichen API-Verkehr unter `/api/*` bündeln. Im Frontend lässt sich dies über den Abschnitt **Gateway Proxy** aktivieren; Einstellungen werden in `localStorage.it.settings.gateway` persistiert. Bei aktivem Toggle leitet das Frontend Anfragen an `${GATEWAY_URL}/api/search`, `${GATEWAY_URL}/api/graph` und `${GATEWAY_URL}/api/views`.
