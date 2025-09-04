@@ -94,3 +94,5 @@ it search query "neo4j" --chart
 | Prometheus   | 3412 |
 | Grafana      | 3413 |
 | Alertmanager | 3414 |
+| Loki         | 3415 |
+| Tempo        | 3416 |

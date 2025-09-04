@@ -12,6 +12,8 @@ def test_patch_ports_generates_keys(tmp_path):
         assert "PROMETHEUS_PORT=3412" in content
         assert "GRAFANA_PORT=3413" in content
         assert "ALERTMANAGER_PORT=3414" in content
+        assert "LOKI_PORT=3415" in content
+        assert "TEMPO_PORT=3416" in content
     finally:
         env_file.write_text(original)
 

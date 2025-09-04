@@ -1,7 +1,8 @@
 try:
-    from obs.otel_boot import *  # noqa
-except Exception:
-    pass
+    from obs.otel_boot import setup_otel  # type: ignore
+except Exception:  # pragma: no cover
+    def setup_otel(app, service_name: str = "opa-audit-sink"):
+        return app
 
 import os, json, datetime, httpx
 from typing import Any, Dict, List
@@ -15,6 +16,7 @@ CH_TABLE = os.getenv("CH_TABLE","opa_decisions")
 
 app = FastAPI(title="OPA Audit Sink", version="0.1.0")
 FastAPIInstrumentation().instrument_app(app)
+setup_otel(app)
 app.mount("/metrics", make_asgi_app())
 
 @app.get("/healthz")

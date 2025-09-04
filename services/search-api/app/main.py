@@ -1,7 +1,8 @@
 try:
-    from obs.otel_boot import *  # noqa
-except Exception:
-    pass
+    from obs.otel_boot import setup_otel  # type: ignore
+except Exception:  # pragma: no cover - otel optional
+    def setup_otel(app, service_name: str = "search-api"):
+        return app
 
 import os
 import time
@@ -40,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
 FastAPIInstrumentor().instrument_app(app)
+setup_otel(app)
 
 if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
     from starlette_exporter import PrometheusMiddleware, handle_metrics

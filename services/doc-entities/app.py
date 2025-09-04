@@ -1,7 +1,8 @@
 try:
-    from obs.otel_boot import *  # noqa: F401,F403
-except Exception:
-    pass
+    from obs.otel_boot import setup_otel  # type: ignore
+except Exception:  # pragma: no cover
+    def setup_otel(app, service_name: str = "doc-entities"):
+        return app
 
 import html
 import json
@@ -43,6 +44,7 @@ GRAPH_URL = os.getenv("GRAPH_UI", "http://localhost:3000/graphx")
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
 FastAPIInstrumentor().instrument_app(app)  # type: ignore
+setup_otel(app)
 instrumentator = Instrumentator().instrument(app)
 
 

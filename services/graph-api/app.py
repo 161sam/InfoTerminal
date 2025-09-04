@@ -1,7 +1,8 @@
 try:
-    from obs.otel_boot import *  # noqa: F401,F403
-except Exception:
-    pass
+    from obs.otel_boot import setup_otel  # type: ignore
+except Exception:  # pragma: no cover
+    def setup_otel(app, service_name: str = "graph-api"):
+        return app
 
 import os
 import sys
@@ -51,6 +52,7 @@ if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1"
 import health  # noqa: E402
 
 app.include_router(health.router)
+setup_otel(app)
 
 
 @app.get("/neo4j/ping")

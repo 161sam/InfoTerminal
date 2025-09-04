@@ -1,7 +1,8 @@
 try:
-    from obs.otel_boot import *  # noqa
-except Exception:
-    pass
+    from obs.otel_boot import setup_otel  # type: ignore
+except Exception:  # pragma: no cover
+    def setup_otel(app, service_name: str = "graph-views"):
+        return app
 
 import os, json, secrets, time
 from typing import Optional, List, Dict, Any
@@ -77,6 +78,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Graph Views API", version="0.1.0", lifespan=lifespan)
 FastAPIInstrumentor().instrument_app(app)
+setup_otel(app)
 
 if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
   from starlette_exporter import PrometheusMiddleware, handle_metrics
