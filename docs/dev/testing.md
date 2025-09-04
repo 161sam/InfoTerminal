@@ -12,7 +12,17 @@ The frontend respects a `TEST_MODE` via a localStorage token. E2E tests use `E2E
 
 ## Coverage
 
-All unit-test suites target **100 % line and branch coverage** for project code. Generated files and framework boilerplate are excluded via configuration.
+All unit-test suites target **100 % line and branch coverage** for project code.
+Generated files and framework boilerplate are excluded via configuration.
+
+Key rules:
+
+- Treat 100 % coverage as a hard requirement.
+  Configure `coverage.py` and Vitest to fail the build if thresholds are not met.
+- Omit generated files and third‑party wrappers using the respective `omit` or
+  `exclude` settings so coverage focuses on project code.
+- Tests must be repeatable and idempotent; rerunning them should not create additional files or require manual cleanup.
+- Never rely on live network services. Mock Neo4j, Postgres, HTTP APIs, and timeouts so suites run fully offline.
 
 Coverage reports are written to `coverage.xml` for Python services and to the `coverage/` directory for the frontend.
 CI jobs fail if coverage ever drops below 100 % for the measured source paths.
@@ -27,7 +37,8 @@ pytest --cov --cov-report=term-missing
 npm test -- --coverage
 ```
 
-All tests must run without network access. External services (HTTP APIs, Neo4j, Postgres, etc.) are mocked or replaced with in-memory stubs so that the suite is deterministic and fast.
+All tests must run without network access. External services (HTTP APIs, Neo4j, Postgres, etc.) are mocked or replaced with
+in-memory stubs so that the suite is deterministic and fast.
 
 ## Continuous Integration
 
