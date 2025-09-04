@@ -61,10 +61,10 @@ export default function GraphXPage() {
 
   return (
     <Layout>
-      <h1 className="mb-4 text-2xl font-semibold">GraphX</h1>
+      <h1 className="mb-4">GraphX</h1>
       <div className="space-y-6">
         <Card>
-          <h2 className="mb-2 text-lg font-semibold">Connections</h2>
+          <h2 className="mb-2">Connections</h2>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               <Button onClick={pingGraph}>Ping Graph API</Button>
@@ -78,7 +78,7 @@ export default function GraphXPage() {
         </Card>
 
         <Card>
-          <h2 className="mb-2 text-lg font-semibold">Query</h2>
+          <h2 className="mb-2">Query</h2>
           <textarea
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -96,7 +96,7 @@ export default function GraphXPage() {
         </Card>
 
         <Card>
-          <h2 className="mb-2 text-lg font-semibold">Output</h2>
+          <h2 className="mb-2">Output</h2>
           {output ? (
             <pre className="max-h-96 overflow-auto text-xs">
               {JSON.stringify(output, null, 2)}
