@@ -13,6 +13,16 @@ secrets/
 *.kube/config
 data/**/secrets.json
 
+# Build & cache directories
+/node_modules/
+/.next/
+/dist/
+/coverage/
+*.pyc
+__pycache__/
+.pytest_cache/
+.DS_Store
+
 # ETL-related ignores
 etl/nifi/*.generated.*
 etl/airflow/.env*

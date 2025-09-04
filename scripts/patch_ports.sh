@@ -1,6 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+#
+# Port patching helper for development and compose setups.
+#
+# Port policy
+# ------------
+# Dev services:
+#   search-api   8401
+#   graph-api    8402
+#   graph-views  8403
+#   frontend     3411
+#   agents       3417
+#   gateway      8610
+# Docker Compose (container → host):
+#   search-api   8080 -> 8611
+#   graph-api    8080 -> 8612
+#   web          3000 -> 3411
+# Observability:
+#   Prometheus   3412
+#   Grafana      3413
+#   Alertmanager 3414
+#   Loki         3415
+#   Tempo        3416
+# Frontend ENV keys:
+#   NEXT_PUBLIC_SEARCH_API, NEXT_PUBLIC_GRAPH_API, NEXT_PUBLIC_VIEWS_API,
+#   optional NEXT_PUBLIC_GATEWAY_URL, NEXT_PUBLIC_GRAPH_DEEPLINK_BASE
+#
+# The script is idempotent and warns before overwriting differing values.
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DC="$ROOT/docker-compose.yml"
 DC_OBS="$ROOT/docker-compose.observability.yml"
@@ -75,6 +103,22 @@ patch_port_yaml_simple() { # file service host_port container_port
   " "$f" 2>/dev/null || true
 }
 
+set_env_var() { # file key value
+  local f="$1" k="$2" v="$3"
+  mkdir -p "$(dirname "$f")"
+  touch "$f"
+  if grep -q "^$k=" "$f" 2>/dev/null; then
+    local current
+    current="$(grep "^$k=" "$f" | head -n1 | cut -d'=' -f2-)"
+    if [[ "$current" != "$v" ]]; then
+      echo "⚠️  $f: $k differs ($current → $v)" >&2
+      sed -i "s#^$k=.*#$k=$v#" "$f"
+    fi
+  else
+    echo "$k=$v" >> "$f"
+  fi
+}
+
 # -----------------------------
 # 1) docker-compose.yml (App-Services)
 # -----------------------------
@@ -141,18 +185,16 @@ fi
 ENV_PORTS="$ROOT/.env.dev.ports"
 echo "🔧 Patch .env.dev.ports"
 backup_file "$ENV_PORTS"
-{
-  echo "SEARCH_API_URL=http://127.0.0.1:8401"
-  echo "GRAPH_API_URL=http://127.0.0.1:8402"
-  echo "GRAPH_VIEWS_URL=http://127.0.0.1:8403"
-  echo "ENTITY_RESOLUTION_URL=http://127.0.0.1:8404"
-  echo "DOC_ENTITIES_URL=http://127.0.0.1:8406"
-  echo "PROMETHEUS_PORT=$OBS_PROM"
-  echo "GRAFANA_PORT=$OBS_GRAFANA"
-  echo "ALERTMANAGER_PORT=$OBS_ALERT"
-  echo "LOKI_PORT=$OBS_LOKI"
-  echo "TEMPO_PORT=$OBS_TEMPO"
-} > "$ENV_PORTS"
+set_env_var "$ENV_PORTS" SEARCH_API_URL "http://127.0.0.1:8401"
+set_env_var "$ENV_PORTS" GRAPH_API_URL "http://127.0.0.1:8402"
+set_env_var "$ENV_PORTS" GRAPH_VIEWS_URL "http://127.0.0.1:8403"
+set_env_var "$ENV_PORTS" ENTITY_RESOLUTION_URL "http://127.0.0.1:8404"
+set_env_var "$ENV_PORTS" DOC_ENTITIES_URL "http://127.0.0.1:8406"
+set_env_var "$ENV_PORTS" PROMETHEUS_PORT "$OBS_PROM"
+set_env_var "$ENV_PORTS" GRAFANA_PORT "$OBS_GRAFANA"
+set_env_var "$ENV_PORTS" ALERTMANAGER_PORT "$OBS_ALERT"
+set_env_var "$ENV_PORTS" LOKI_PORT "$OBS_LOKI"
+set_env_var "$ENV_PORTS" TEMPO_PORT "$OBS_TEMPO"
 
 # -----------------------------
 # 6) Frontend .env.local + package.json
@@ -160,12 +202,10 @@ backup_file "$ENV_PORTS"
 echo "🔧 Patch Frontend .env.local & package.json"
 mkdir -p "$FRONTEND_DIR"
 backup_file "$ENV_LOCAL"
-{
-  echo "PORT=3411"
-  echo "NEXT_PUBLIC_SEARCH_API=http://127.0.0.1:8401"
-  echo "NEXT_PUBLIC_GRAPH_API=http://127.0.0.1:8402"
-  echo "NEXT_PUBLIC_VIEWS_API=http://127.0.0.1:8403"
-} > "$ENV_LOCAL"
+set_env_var "$ENV_LOCAL" PORT "3411"
+set_env_var "$ENV_LOCAL" NEXT_PUBLIC_SEARCH_API "http://127.0.0.1:8401"
+set_env_var "$ENV_LOCAL" NEXT_PUBLIC_GRAPH_API "http://127.0.0.1:8402"
+set_env_var "$ENV_LOCAL" NEXT_PUBLIC_VIEWS_API "http://127.0.0.1:8403"
 
 if [[ -f "$PKG" ]]; then
   backup_file "$PKG"
