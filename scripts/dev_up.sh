@@ -68,6 +68,10 @@ fi
 # Lokale Dev-Ports (840x), Frontend (3411) sowie mögliche dockerisierte App-Hostports (861x)
 for p in 8401 8402 8403 8404 8406 3411 8611 8612 8613; do kill_port "$p"; done
 
+log "Ports: search-api=8401 graph-api=8402 graph-views=8403 nlp=8404 frontend=3411"
+log "Neo4j user=${NEO4J_USER:-neo4j}"
+log "Postgres user=${PG_USER:-it_user} db=${PG_DB:-it_graph} port=${PG_PORT:-5432}"
+
 start_plain() {
   local path="$1" name="$2"
   log "Starting $name (local)"
@@ -82,11 +86,12 @@ if [ "$DEV_LOCAL" = "1" ]; then
   # graph-api (local) mit Neo4j-Env
   if [ -x services/graph-api/dev_run.sh ]; then
     log "Starting graph-api (local, Neo4j env)"
+    log "NEO4J_URI=bolt://127.0.0.1:7687 NEO4J_USER=neo4j"
     (
       cd services/graph-api
       NEO4J_URI="bolt://127.0.0.1:7687" \
       NEO4J_USER="neo4j" \
-      NEO4J_PASSWORD="test123" \
+      NEO4J_PASSWORD="test12345" \
       bash dev_run.sh
     ) > /tmp/it_graph-api.log 2>&1 &
   fi
@@ -94,6 +99,7 @@ if [ "$DEV_LOCAL" = "1" ]; then
   # graph-views (local) mit Postgres-Env
   if [ -x services/graph-views/dev_run.sh ]; then
     log "Starting graph-views (local, PG env)"
+    log "PG_HOST=127.0.0.1 PG_PORT=5432 PG_DB=it_graph PG_USER=it_user"
     (
       cd services/graph-views
       PG_HOST=127.0.0.1 PG_PORT=5432 PG_DB=it_graph PG_USER=it_user PG_PASSWORD=it_pass \

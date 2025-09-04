@@ -4,6 +4,10 @@ HOST="${HOST:-127.0.0.1}"; PORT="${PORT:-8403}"
 PG_HOST="${PG_HOST:-127.0.0.1}"; PG_PORT="${PG_PORT:-5432}"
 PG_DB="${PG_DB:-it_graph}"; PG_USER="${PG_USER:-it_user}"; PG_PASSWORD="${PG_PASSWORD:-it_pass}"
 
+# OpenTelemetry in lokaler Entwicklung deaktivieren
+export OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-1}
+unset OTEL_EXPORTER_OTLP_ENDPOINT OTEL_TRACES_EXPORTER OTEL_METRICS_EXPORTER OTEL_LOGS_EXPORTER
+
 # venv + Deps
 if [ ! -x .venv/bin/python ]; then
   python3 -m venv .venv
