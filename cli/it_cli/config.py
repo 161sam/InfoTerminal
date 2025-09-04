@@ -16,7 +16,14 @@ class Settings(BaseSettings):
     search_api: str = "http://127.0.0.1:8401"
     graph_api: str = "http://127.0.0.1:8402"
     views_api: str = "http://127.0.0.1:8403"
+    frontend_url: str = "http://127.0.0.1:3411"
     nlp_api: str = "http://127.0.0.1:8404"
+
+    # Ports for local dockerized services
+    gateway_port: int = 8610
+    agents_port: int = 3417
+    opensearch_port: int = 9200
+    neo4j_port: int = 7687
 
     # Neo4j
     neo4j_uri: str = "bolt://127.0.0.1:7687"
@@ -29,6 +36,9 @@ class Settings(BaseSettings):
     pg_db: str = "it_graph"
     pg_user: str = "it_user"
     pg_password: str = "it_pass"
+
+    # Mode
+    dev_local: bool = True
 
     class Config:
         env_prefix = "IT_"
