@@ -13,42 +13,56 @@
 - Loki: 3415
 - Tempo: 3416
 
-## Health Endpoints
+## Health & Readiness
 - `GET /healthz` – liveness
 - `GET /readyz` – readiness
 
-Both endpoints return JSON in the form:
+### JSON Schema
+`/healthz`:
 ```json
 {
-  "status": "ok|degraded|fail",
-  "service": "<name>",
-  "version": "<git-sha|dev>",
+  "service": "<str>",
+  "version": "<str>",
+  "status": "ok",
   "time": "<UTC ISO8601>",
-  "uptime_s": <float>,
-  "checks": { ... }  // only on /readyz
+  "uptime_s": <float>
 }
 ```
 
-`/healthz` performs no external checks. `/readyz` reports dependency checks in `checks`. Each check contains a `status` of `ok`, `fail` or `skipped` with optional details.
+`/readyz`:
+```json
+{
+  "service": "<str>",
+  "version": "<str>",
+  "status": "ok|degraded|fail",
+  "time": "<UTC ISO8601>",
+  "uptime_s": <float>,
+  "checks": {
+    "<dep>": {
+      "status": "ok|fail|skipped",
+      "latency_ms": <float|null>,
+      "error": "<str|null>",
+      "reason": "<str|null>"
+    }
+  }
+}
+```
 
-### `search-api`
-- Probes OpenSearch with a short HTTP request (~0.8s timeout) when `OPENSEARCH_URL` is set.
-- Example `checks` entry: `{ "opensearch": { "status": "ok", "latency_ms": 42.1 } }`
-- If OpenSearch URL is missing the check is `skipped`.
+### Aggregation & Codes
+- Any `fail` → HTTP 503 with `status="fail"`
+- No `fail` but at least one `skipped` → HTTP 200 with `status="degraded"`
+- All `ok` → HTTP 200 with `status="ok"`
 
-### `graph-api`
-- Probes Neo4j via `RETURN 1` with ~0.8s timeout.
-- Example `checks` entry: `{ "neo4j": { "status": "ok", "latency_ms": 12.3 } }`
-- Missing Neo4j connection details result in a `skipped` check.
+### Feature Flags & Timeouts
+- `IT_FORCE_READY=1` skips all probes and returns `status="ok"` with empty `checks`.
+- Each probe times out after ~800 ms; timeouts result in `error="timeout"`.
 
-### `graph-views`
-- Probes Postgres via `SELECT 1` with ~0.8s timeout.
-- Example `checks` entry: `{ "postgres": { "status": "ok", "latency_ms": 5.1 } }`
-- If the connection pool cannot be initialised the check is `skipped`.
+### Service Checks
+- **search-api**: OpenSearch `OPENSEARCH_URL/_cluster/health`
+- **graph-api**: Neo4j `RETURN 1`
+- **graph-views**: Postgres `SELECT 1`
 
-## Environment Flags
-- `IT_FORCE_READY`: when set to `1`, `/readyz` skips external checks and reports ready.
-- Missing connection details for a dependency result in a `skipped` check with a reason.
+All services return `skipped` when a dependency is not configured.
 
 ## CORS
 ```bash
