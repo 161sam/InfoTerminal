@@ -1,9 +1,9 @@
 """InfoTerminal CLI package."""
-__all__ = ["get_version"]
+from importlib import metadata
 
+try:
+    __version__ = metadata.version("infoterminal-cli")
+except metadata.PackageNotFoundError:
+    __version__ = "0.0.0.dev"
 
-def get_version() -> str:
-    """Return the CLI version from environment or fallback."""
-    import os
-
-    return os.environ.get("IT_VERSION", "dev")
+__all__ = ["__version__"]
