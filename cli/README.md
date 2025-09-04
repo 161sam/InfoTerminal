@@ -102,3 +102,12 @@ it search query "neo4j" --chart
 | Alertmanager | 3414 |
 | Loki         | 3415 |
 | Tempo        | 3416 |
+
+### Quickstart Observability
+
+```bash
+it status
+docker compose -f docker-compose.observability.yml --profile observability up -d
+open http://localhost:3413
+open http://localhost:3412
+```

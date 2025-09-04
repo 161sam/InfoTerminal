@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "search-api"
+    static_configs:
+      - targets: ["search-api:8080"]
+    # /metrics active when IT_ENABLE_METRICS=1
+
+  - job_name: "graph-api"
+    static_configs:
+      - targets: ["graph-api:8080"]
+    # /metrics active when IT_ENABLE_METRICS=1
+
+  - job_name: "graph-views"
+    static_configs:
+      - targets: ["graph-views:8000"]
+    # /metrics active when IT_ENABLE_METRICS=1
+
+  - job_name: "gateway"
+    static_configs:
+      - targets: ["gateway:8080"]
+    # /metrics active when IT_ENABLE_METRICS=1
+
+  - job_name: "flowise-connector"
+    static_configs:
+      - targets: ["flowise-connector:8080"]
+    # optional; /metrics active when IT_ENABLE_METRICS=1

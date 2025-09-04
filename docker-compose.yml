@@ -101,37 +101,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
   # Optional modules --------------------------------------------------
-  prometheus:
-    profiles: ["observability"]
-    image: prom/prometheus:v2.54.1
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.retention.time=7d
-    ports: ['8642:9090']
-    volumes:
-      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-      search-api:
-        condition: service_healthy
-      graph-api:
-        condition: service_healthy
-      doc-entities:
-        condition: service_healthy
-      nlp-service:
-        condition: service_healthy
-  grafana:
-    profiles: ["observability"]
-    image: grafana/grafana:10.4.5
-    environment:
-      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin}
-    ports: ['8641:3000']
-    volumes:
-      - ./deploy/grafana/provisioning:/etc/grafana/provisioning
-      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards
-    depends_on:
-      prometheus:
-        condition: service_started
   aleph:
     profiles: ["aleph"]
     image: alephdata/aleph:latest
