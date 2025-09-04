@@ -49,3 +49,8 @@ Both endpoints return JSON in the form:
 - Ensure the Neo4j development password has at least 8 characters.
 - Restrict CORS in development to `http://localhost:3411`.
 - Disable OTEL exporters in development unless needed.
+
+## Frontend Health Matrix & Settings
+
+- The frontend polls each configured service's `/readyz` endpoint roughly every 10 s and shows a badge per service (`ok`, `degraded`, `fail`, `unknown`). Clicking the matrix reveals latency and any `skipped` checks.
+- Endpoint URLs can be overridden via the Settings page. Values are stored in `localStorage` under `it.settings.endpoints` and can be verified with the "Test" button which calls `<base>/healthz`.

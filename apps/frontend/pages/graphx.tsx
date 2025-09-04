@@ -60,7 +60,7 @@ export default function GraphXPage() {
   };
 
   return (
-    <Layout>
+    <Layout showHealth>
       <h1 className="mb-4">GraphX</h1>
       <div className="space-y-6">
         <Card>

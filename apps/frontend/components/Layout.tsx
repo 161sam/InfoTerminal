@@ -1,14 +1,16 @@
 import React from "react";
 import Link from "next/link";
+import ServiceHealthMatrix from "./ServiceHealthMatrix";
 
 export interface LayoutProps {
   children: React.ReactNode;
+  showHealth?: boolean;
 }
 
 /**
  * Basic layout with top navigation and centered content container.
  */
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, showHealth }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b">
@@ -16,11 +18,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Link href="/" className="font-semibold">
             InfoTerminal
           </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link href="/search">Search</Link>
-            <Link href="/graphx">GraphX</Link>
-            <Link href="/settings">Settings</Link>
-          </nav>
+          <div className="flex items-center gap-4 text-sm">
+            <nav className="flex items-center gap-4">
+              <Link href="/search">Search</Link>
+              <Link href="/graphx">GraphX</Link>
+              <Link href="/settings">Settings</Link>
+            </nav>
+            {showHealth && <ServiceHealthMatrix />}
+          </div>
         </div>
       </header>
       <main className="container mx-auto max-w-7xl flex-1 p-6">{children}</main>
