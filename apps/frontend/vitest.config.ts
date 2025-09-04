@@ -13,6 +13,13 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'src/__tests__/**/*.{ts,tsx}'],
     exclude: ['e2e/**', 'node_modules/**'],
-    coverage: { reporter: ['text', 'json', 'lcov'] }
+    coverage: {
+      reporter: ['text', 'json', 'lcov'],
+      lines: 100,
+      functions: 100,
+      branches: 100,
+      statements: 100,
+      exclude: ['.next/**']
+    }
   }
 });

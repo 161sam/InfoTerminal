@@ -6,11 +6,17 @@ This repository targets **100% line and branch coverage** for all project code. 
 
 ### Python services and CLI
 
+`pytest` is configured via `pytest.ini` to measure branch coverage and fail when
+coverage drops below 100 %.
+
 ```bash
-pytest --cov --cov-report=term-missing
+pytest
 ```
 
 ### Frontend
+
+The frontend uses `vitest` with coverage thresholds set to 100 % for all
+metrics.
 
 ```bash
 npm test -- --coverage
