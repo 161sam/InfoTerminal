@@ -1,14 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
-export OTEL_SDK_DISABLED=1
-export OTEL_TRACES_EXPORTER=none
-export OTEL_METRICS_EXPORTER=none
-export OTEL_LOGS_EXPORTER=none
-unset OTEL_EXPORTER_OTLP_ENDPOINT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-cd "$(dirname "$0")"
-set -a; [ -f ./.env.local ] && . ./.env.local; set +a
-echo "[graph-api] Using Neo4j ENV:"
-env | grep -E "^(NEO4J|BOLT|GRAPH)_" | sed -E "s/(NEO4J_(PASS|PASSWORD)=).*/\1****/; s/(NEO4J_AUTH=neo4j\/).*/\1****/"
-. .venv/bin/activate 2>/dev/null || true
-exec uvicorn app:app --host 127.0.0.1 --port 8402 --reload
 
+HOST="${HOST:-127.0.0.1}"
+PORT="${PORT:-8402}"
+
+export NEO4J_URI="${NEO4J_URI:-bolt://127.0.0.1:7687}"
+export NEO4J_USER="${NEO4J_USER:-neo4j}"
+# Passwort in BEIDEN Variablen bereitstellen (Kompatibilität)
+export NEO4J_PASSWORD="${NEO4J_PASSWORD:-${NEO4J_PASS:-test12345}}"
+export NEO4J_PASS="${NEO4J_PASS:-$NEO4J_PASSWORD}"
+
+# venv sicherstellen + Deps
+if [ ! -x .venv/bin/python ]; then
+  python3 -m venv .venv
+  . .venv/bin/activate
+  python -m pip install -U pip wheel
+  if [ -f requirements.txt ]; then
+    pip install -r requirements.txt
+  else
+    pip install fastapi "uvicorn[standard]" neo4j pydantic httpx
+  fi
+else
+  . .venv/bin/activate
+fi
+
+echo "[graph-api] Using Neo4j ENV:"
+echo "NEO4J_URI=${NEO4J_URI}"
+echo "NEO4J_USER=${NEO4J_USER}"
+echo "NEO4J_PASSWORD=****"
+echo "NEO4J_PASS=****"
+
+# Warten bis Bolt bereit
+for i in {1..60}; do (echo >/dev/tcp/127.0.0.1/7687) >/dev/null 2>&1 && break || sleep 1; done
+
+exec python -m uvicorn app:app --host "${HOST}" --port "${PORT}" --reload

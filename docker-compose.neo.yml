@@ -1,0 +1,18 @@
+services:
+  neo4j:
+    image: neo4j:5.22
+    container_name: it-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/test123
+      # kleine, konservative Memory-Settings (optional)
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 256m
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - it-neo4j-data:/data
+volumes:
+  it-neo4j-data:
+    name: it-neo4j-data
