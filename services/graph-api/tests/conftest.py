@@ -1,8 +1,16 @@
 import os, pathlib, pytest, importlib.util, sys
 from httpx import AsyncClient, ASGITransport
+from prometheus_client import REGISTRY, PROCESS_COLLECTOR, PLATFORM_COLLECTOR
 
 os.environ.setdefault("OTEL_SDK_DISABLED", "true")
 MODULE_PATH = pathlib.Path(__file__).resolve().parents[1] / "app.py"
+for collector in list(REGISTRY._collector_to_names):
+    try:
+        REGISTRY.unregister(collector)
+    except Exception:
+        pass
+REGISTRY.register(PROCESS_COLLECTOR)
+REGISTRY.register(PLATFORM_COLLECTOR)
 spec = importlib.util.spec_from_file_location("graph_api_app", MODULE_PATH)
 app_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(app_module)

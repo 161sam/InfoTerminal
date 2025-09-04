@@ -7,6 +7,9 @@
 - graph-views: 8403
 - agents: 3417
 - gateway: 8610
+- Prometheus: 3412
+- Grafana: 3413
+- Alertmanager: 3414
 
 ## Health Endpoints
 - `GET /healthz` – liveness
@@ -57,6 +60,24 @@ it rm -v                            # Umgebung inkl. Volumes entfernen
 ```
 
 Weitere Details und Optionen sind in [cli/README.md](../cli/README.md) dokumentiert.
+
+## Observability (Dev)
+
+Das optionale Profil `observability` startet Prometheus, Grafana und Alertmanager.
+
+```bash
+docker compose --profile observability up -d
+# oder mit CLI
+it start -d --profile observability
+```
+
+Standardmäßig sind die `/metrics`-Endpoints der Services deaktiviert. Setze
+`IT_ENABLE_METRICS=1` (oder aktiviere das Profil), um sie zu exponieren.
+
+### Troubleshooting
+- Prometheus-Scrape-Fehler: Targets unter `Status → Targets` prüfen.
+- `404` an `/metrics`: `IT_ENABLE_METRICS` nicht gesetzt?
+- Port belegt: Werte in `.env.dev.ports` anpassen und `scripts/patch_ports.sh` ausführen.
 
 ## Troubleshooting
 - Ensure the Neo4j development password has at least 8 characters.

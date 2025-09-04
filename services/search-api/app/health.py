@@ -7,6 +7,8 @@ from urllib import request as urlrequest
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from .metrics import READYZ_LATENCY
+
 router = APIRouter()
 
 
@@ -34,6 +36,7 @@ def readyz(request: Request):
     payload = _base_payload(request)
     checks: Dict[str, Any] = {}
     status = "ok"
+    start_total = time.perf_counter()
 
     if os.getenv("IT_FORCE_READY") == "1":
         checks["opensearch"] = {"status": "skipped", "reason": "IT_FORCE_READY"}
@@ -71,4 +74,6 @@ def readyz(request: Request):
     payload["checks"] = checks
     payload["status"] = status
     http_status = 200 if status == "ok" else 503
+    duration = time.perf_counter() - start_total
+    READYZ_LATENCY.labels(request.app.state.service_name).observe(duration)
     return JSONResponse(payload, status_code=http_status)

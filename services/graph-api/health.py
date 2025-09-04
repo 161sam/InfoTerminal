@@ -1,5 +1,7 @@
 import os
 import time
+import os
+import time
 from datetime import datetime, timezone
 from typing import Any, Dict
 
@@ -8,6 +10,7 @@ from fastapi.responses import JSONResponse
 from neo4j import exceptions as neo_exceptions
 
 from utils.neo4j_client import neo_session
+from metrics import READYZ_LATENCY
 
 router = APIRouter()
 
@@ -36,6 +39,7 @@ def readyz(request: Request):
     payload = _base_payload(request)
     checks: Dict[str, Any] = {}
     status = "ok"
+    start_total = time.perf_counter()
 
     if os.getenv("IT_FORCE_READY") == "1":
         checks["neo4j"] = {"status": "skipped", "reason": "IT_FORCE_READY"}
@@ -72,4 +76,6 @@ def readyz(request: Request):
     payload["checks"] = checks
     payload["status"] = status
     http_status = 200 if status == "ok" else 503
+    duration = time.perf_counter() - start_total
+    READYZ_LATENCY.labels(request.app.state.service_name).observe(duration)
     return JSONResponse(payload, status_code=http_status)

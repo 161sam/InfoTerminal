@@ -42,6 +42,12 @@ app.state.service_name = "graph-api"
 app.state.start_time = time.time()
 app.state.version = os.getenv("GIT_SHA", "dev")
 
+if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
+    from starlette_exporter import PrometheusMiddleware, handle_metrics
+
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
+
 import health  # noqa: E402
 
 app.include_router(health.router)

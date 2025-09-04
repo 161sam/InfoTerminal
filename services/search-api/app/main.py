@@ -18,7 +18,6 @@ except Exception:  # pragma: no cover - optional
         def instrument_app(self, app):
             return app
 
-from prometheus_fastapi_instrumentator import Instrumentator
 from .metrics import (
     SEARCH_ERRORS,
     SEARCH_LATENCY,
@@ -41,15 +40,17 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
 FastAPIInstrumentor().instrument_app(app)
-instrumentator = Instrumentator().instrument(app)
+
+if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
+    from starlette_exporter import PrometheusMiddleware, handle_metrics
+
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
 
 app.state.service_name = "search-api"
 app.state.start_time = time.time()
 app.state.version = os.getenv("GIT_SHA", "dev")
 
-@app.on_event("startup")
-async def _startup() -> None:
-    instrumentator.expose(app, include_in_schema=False, should_gzip=True)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
