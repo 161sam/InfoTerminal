@@ -1,17 +1,33 @@
 # Operability
 
-## Dev Ports
-- Frontend: 3411
-- search-api: 8401
-- graph-api: 8402
-- graph-views: 8403
-- agents: 3417
-- gateway: 8610
-- Prometheus: 3412
-- Grafana: 3413
-- Alertmanager: 3414
-- Loki: 3415
-- Tempo: 3416
+## Quickstart
+
+```bash
+pipx install ./cli
+it start -d
+it status
+docker compose -f docker-compose.observability.yml --profile observability up -d
+```
+
+Open http://localhost:3411 and verify the health matrix. The frontend includes a **Gateway Proxy** toggle in Settings to route API calls through `http://localhost:8610`.
+
+Metrics and tracing can be enabled with `IT_ENABLE_METRICS=1` and `IT_OTEL=1`.
+
+## Ports
+
+| Service      | Port |
+| ------------ | ---- |
+| Frontend     | 3411 |
+| search-api   | 8401 |
+| graph-api    | 8402 |
+| graph-views  | 8403 |
+| Gateway      | 8610 |
+| Agents       | 3417 |
+| Prometheus   | 3412 |
+| Grafana      | 3413 |
+| Alertmanager | 3414 |
+| Loki         | 3415 |
+| Tempo        | 3416 |
 
 ## Health & Readiness
 - `GET /healthz` – liveness
