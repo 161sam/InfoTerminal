@@ -2,6 +2,8 @@
   "name": "infoterminal-frontend",
   "private": true,
   "scripts": {
+    "prebuild": "bash ../../scripts/tailwind_v4_guard.sh",
+    "predev": "bash ../../scripts/tailwind_v4_guard.sh",
     "dev": "next dev -p 3411",
     "build": "next build",
     "start": "next start -p 3411",
