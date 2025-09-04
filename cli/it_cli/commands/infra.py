@@ -17,8 +17,9 @@ from rich.table import Table
 from ..config import get_settings
 from ..http import client
 from ..renderers.tables import status_table, log_panel
+from ..utils import NaturalOrderGroup
 
-app = typer.Typer()
+app = typer.Typer(cls=NaturalOrderGroup)
 console = Console(no_color=bool(os.environ.get("NO_COLOR")))
 
 DEV_UP = Path("scripts/dev_up.sh")
@@ -42,6 +43,31 @@ CONTAINER_MAP: Dict[str, str] = {
     "opensearch": "opensearch",
     "postgres": "postgres",
 }
+
+
+def _services_callback(ctx: typer.Context, param: typer.CallbackParam, value: List[str] | None) -> List[str] | None:
+    if not value:
+        return value
+    result: List[str] = []
+    for item in value:
+        result.extend([v.strip() for v in item.split(",") if v.strip()])
+    return result
+
+
+COMPOSE_FILE_OPTION = typer.Option(None, "--compose-file", "-f", help="Compose file")
+PROJECT_NAME_OPTION = typer.Option(None, "--project-name", "-p", help="Compose project")
+ENV_FILE_OPTION = typer.Option(None, "--env-file", help="Env file")
+PROFILE_OPTION = typer.Option(None, "--profile", help="Compose profile")
+SERVICES_OPTION = typer.Option([], "--services", "-s", help="Limit to services", callback=_services_callback)
+SERVICES_REQUIRED_OPTION = typer.Option(..., "--services", "-s", help="Service names", min=1, callback=_services_callback)
+DETACH_OPTION = typer.Option(False, "--detach", "-d", help="Detached")
+RETRIES_OPTION = typer.Option(1, "--retries", help="Status retries")
+TIMEOUT_OPTION = typer.Option(5, "--timeout", help="Retry timeout")
+DRY_RUN_OPTION = typer.Option(False, "--dry-run", "-n", help="Print commands")
+VERBOSE_OPTION = typer.Option(False, "--verbose", "-v", help="Verbose output")
+QUIET_OPTION = typer.Option(False, "--quiet", "-q", help="Quiet output")
+VOLUMES_OPTION = typer.Option(False, "--volumes", "-v", help="Remove volumes")
+IMAGES_OPTION = typer.Option("none", "--images", help="Remove images")
 
 
 def _parse_list(value: Optional[str]) -> List[str]:
@@ -119,6 +145,12 @@ def execute(cmd: List[str], env: dict | None, dry_run: bool, verbose: bool, quie
     if verbose and not quiet:
         console.print(" ".join(cmd))
     return subprocess.run(cmd, env=env, **kwargs)
+
+
+def _warn_deprecated(replacement: str) -> None:
+    if os.environ.get("IT_CLI_SILENCE_DEPRECATIONS") == "1":
+        return
+    typer.echo(f"Deprecated, use '{replacement}'", err=True)
 
 
 @app.callback()
@@ -226,22 +258,21 @@ async def gather_status() -> List[Dict[str, str]]:
     return await asyncio.gather(*tasks)
 
 
-@app.command()
-def up(
+def start(
     agents: bool = typer.Option(False, "--agents", help="Start agents connector"),
     gateway: bool = typer.Option(False, "--gateway", help="Start gateway"),
     opa_host: str | None = typer.Option(None, "--opa-host", help="OPA host"),
-    compose_file: List[Path] = typer.Option(None, "--compose-file", "-f", help="Compose file"),
-    project_name: str | None = typer.Option(None, "--project-name", "-p", help="Compose project"),
-    env_file: List[Path] = typer.Option(None, "--env-file", help="Env file"),
-    profile: List[str] = typer.Option(None, "--profile", help="Compose profile"),
-    services: List[str] = typer.Option(None, "--services", "-s", help="Limit to services"),
-    detach: bool = typer.Option(False, "--detach", "-d", help="Detached"),
-    retries: int = typer.Option(1, "--retries", help="Status retries"),
-    timeout: int = typer.Option(5, "--timeout", help="Retry timeout"),
-    dry_run: bool = typer.Option(False, "--dry-run", "-n", help="Print commands"),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
-    quiet: bool = typer.Option(False, "--quiet", "-q", help="Quiet"),
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    services: List[str] = SERVICES_OPTION,
+    detach: bool = DETACH_OPTION,
+    retries: int = RETRIES_OPTION,
+    timeout: int = TIMEOUT_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = VERBOSE_OPTION,
+    quiet: bool = QUIET_OPTION,
 ) -> None:
     """Start local development infrastructure."""
     compose_files = resolve_compose_files(compose_file)
@@ -281,78 +312,100 @@ def up(
 
     for _ in range(retries):
         rows = asyncio.run(gather_status())
-        if all(r["status"] == "UP" for r in rows):
+        if all(r["status"].startswith("UP") for r in rows):
             break
         time.sleep(timeout)
     console.print(status_table(rows))
 
 
-@app.command()
-def down(
-    all: bool = typer.Option(False, "--all", help="Stop all services"),
-    compose_file: List[Path] = typer.Option(None, "--compose-file", "-f", help="Compose file"),
-    project_name: str | None = typer.Option(None, "--project-name", "-p"),
-    env_file: List[Path] = typer.Option(None, "--env-file"),
-    profile: List[str] = typer.Option(None, "--profile"),
-    services: List[str] = typer.Option(None, "--services", "-s"),
-    dry_run: bool = typer.Option(False, "--dry-run", "-n"),
-    verbose: bool = typer.Option(False, "--verbose", "-v"),
-    quiet: bool = typer.Option(False, "--quiet", "-q"),
+def stop(
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    services: List[str] = SERVICES_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = VERBOSE_OPTION,
+    quiet: bool = QUIET_OPTION,
 ) -> None:
-    """Stop local development infrastructure."""
+    """laufende Services anhalten"""
     compose_files = resolve_compose_files(compose_file)
     project = resolve_project_name(project_name)
     env_files = resolve_env_files(env_file)
     profiles = resolve_profiles(profile)
     run_env = load_env_files(env_files)
-    if DEV_DOWN.exists():
-        cmd = [str(DEV_DOWN)]
-        if all:
-            cmd.append("--all")
-        execute(cmd, run_env, dry_run, verbose, quiet)
-    else:
-        base = ["down", "--remove-orphans"] + (services if services else [])
-        execute(compose_cmd(base, compose_files, project, profiles), run_env, dry_run, verbose, quiet)
-        if all:
-            if Path("docker-compose.agents.yml").exists():
-                execute(compose_cmd(["down", "--remove-orphans"], ["docker-compose.agents.yml"], project, profiles), run_env, dry_run, verbose, quiet)
-            if Path("docker-compose.gateway.yml").exists():
-                execute(compose_cmd(["down", "--remove-orphans"], ["docker-compose.gateway.yml"], project, profiles), run_env, dry_run, verbose, quiet)
+    base = ["stop"] + (services if services else [])
+    execute(compose_cmd(base, compose_files, project, profiles), run_env, dry_run, verbose, quiet)
     if not quiet:
-        console.print("Infra stopped", style="green")
+        console.print("Services stopped", style="green")
 
 
-@app.command()
+def rm(
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    services: List[str] = SERVICES_OPTION,
+    volumes: bool = VOLUMES_OPTION,
+    images: str = IMAGES_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = typer.Option(False, "--verbose", help="Verbose output"),
+    quiet: bool = QUIET_OPTION,
+) -> None:
+    """Umgebung entfernen"""
+    compose_files = resolve_compose_files(compose_file)
+    project = resolve_project_name(project_name)
+    env_files = resolve_env_files(env_file)
+    profiles = resolve_profiles(profile)
+    run_env = load_env_files(env_files)
+    base = ["down", "--remove-orphans"] + (services if services else [])
+    if volumes:
+        base.append("-v")
+    if images != "none":
+        base.extend(["--rmi", images])
+    execute(compose_cmd(base, compose_files, project, profiles), run_env, dry_run, verbose, quiet)
+    if not quiet:
+        console.print("Infra removed", style="green")
+
+
 def status(
-    services: List[str] = typer.Option(None, "--services", "-s", help="Filter services"),
-    compose_file: List[Path] = typer.Option(None, "--compose-file", "-f"),
-    project_name: str | None = typer.Option(None, "--project-name", "-p"),
-    env_file: List[Path] = typer.Option(None, "--env-file"),
-    profile: List[str] = typer.Option(None, "--profile"),
+    services: List[str] = SERVICES_OPTION,
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    retries: int = RETRIES_OPTION,
+    timeout: int = TIMEOUT_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = VERBOSE_OPTION,
+    quiet: bool = QUIET_OPTION,
 ) -> None:
     """Check health of services."""
     _ = resolve_compose_files(compose_file)
     _ = resolve_project_name(project_name)
     _ = resolve_env_files(env_file)
     _ = resolve_profiles(profile)
-    rows = asyncio.run(gather_status())
+    rows: List[Dict[str, str]] = []
+    for _ in range(retries):
+        rows = asyncio.run(gather_status())
+        if all(r["status"].startswith("UP") for r in rows):
+            break
+        time.sleep(timeout)
     if services:
         rows = [r for r in rows if r["service"] in services]
     console.print(status_table(rows))
-    core = {"search-api", "graph-api", "views-api"}
-    exit_code = 0 if all(r["status"] == "UP" for r in rows if r["service"] in core) else 1
+    exit_code = 1 if any(r["status"].startswith("DOWN") for r in rows) else 0
     raise typer.Exit(exit_code)
 
 
-@app.command()
 def logs(
-    services: List[str] = typer.Option(..., "--services", "-s", help="Service names", min=1),
+    services: List[str] = SERVICES_REQUIRED_OPTION,
     lines: int = typer.Option(200, "--lines", help="Number of lines"),
     follow: bool = typer.Option(False, "--follow", "-F", help="Tail logs"),
-    compose_file: List[Path] = typer.Option(None, "--compose-file", "-f"),
-    project_name: str | None = typer.Option(None, "--project-name", "-p"),
-    env_file: List[Path] = typer.Option(None, "--env-file"),
-    profile: List[str] = typer.Option(None, "--profile"),
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
 ) -> None:
     """Show logs for services."""
     _ = resolve_compose_files(compose_file)
@@ -366,28 +419,26 @@ def logs(
             raise typer.BadParameter(f"Unknown service: {service}")
 
 
-@app.command()
 def restart(
     ctx: typer.Context,
     agents: bool = typer.Option(False, "--agents"),
     gateway: bool = typer.Option(False, "--gateway"),
     opa_host: str | None = typer.Option(None, "--opa-host"),
-    compose_file: List[Path] = typer.Option(None, "--compose-file", "-f"),
-    project_name: str | None = typer.Option(None, "--project-name", "-p"),
-    env_file: List[Path] = typer.Option(None, "--env-file"),
-    profile: List[str] = typer.Option(None, "--profile"),
-    services: List[str] = typer.Option(None, "--services", "-s"),
-    detach: bool = typer.Option(False, "--detach", "-d"),
-    retries: int = typer.Option(1, "--retries"),
-    timeout: int = typer.Option(5, "--timeout"),
-    dry_run: bool = typer.Option(False, "--dry-run", "-n"),
-    verbose: bool = typer.Option(False, "--verbose", "-v"),
-    quiet: bool = typer.Option(False, "--quiet", "-q"),
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    services: List[str] = SERVICES_OPTION,
+    detach: bool = DETACH_OPTION,
+    retries: int = RETRIES_OPTION,
+    timeout: int = TIMEOUT_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = VERBOSE_OPTION,
+    quiet: bool = QUIET_OPTION,
 ) -> None:
     """Restart infrastructure."""
     ctx.invoke(
-        down,
-        all=False,
+        stop,
         compose_file=compose_file,
         project_name=project_name,
         env_file=env_file,
@@ -398,7 +449,7 @@ def restart(
         quiet=quiet,
     )
     ctx.invoke(
-        up,
+        start,
         agents=agents,
         gateway=gateway,
         opa_host=opa_host,
@@ -416,7 +467,78 @@ def restart(
     )
 
 
-# Aliases
-app.command("start")(up)
-app.command("stop")(down)
-app.command("halt")(down)
+def up(
+    ctx: typer.Context,
+    agents: bool = typer.Option(False, "--agents"),
+    gateway: bool = typer.Option(False, "--gateway"),
+    opa_host: str | None = typer.Option(None, "--opa-host"),
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    services: List[str] = SERVICES_OPTION,
+    detach: bool = DETACH_OPTION,
+    retries: int = RETRIES_OPTION,
+    timeout: int = TIMEOUT_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = VERBOSE_OPTION,
+    quiet: bool = QUIET_OPTION,
+) -> None:
+    _warn_deprecated("it start")
+    ctx.invoke(
+        start,
+        agents=agents,
+        gateway=gateway,
+        opa_host=opa_host,
+        compose_file=compose_file,
+        project_name=project_name,
+        env_file=env_file,
+        profile=profile,
+        services=services,
+        detach=detach,
+        retries=retries,
+        timeout=timeout,
+        dry_run=dry_run,
+        verbose=verbose,
+        quiet=quiet,
+    )
+
+
+def down(
+    ctx: typer.Context,
+    compose_file: List[Path] = COMPOSE_FILE_OPTION,
+    project_name: str | None = PROJECT_NAME_OPTION,
+    env_file: List[Path] = ENV_FILE_OPTION,
+    profile: List[str] = PROFILE_OPTION,
+    services: List[str] = SERVICES_OPTION,
+    volumes: bool = VOLUMES_OPTION,
+    images: str = IMAGES_OPTION,
+    dry_run: bool = DRY_RUN_OPTION,
+    verbose: bool = typer.Option(False, "--verbose", help="Verbose output"),
+    quiet: bool = QUIET_OPTION,
+) -> None:
+    _warn_deprecated("it rm")
+    ctx.invoke(
+        rm,
+        compose_file=compose_file,
+        project_name=project_name,
+        env_file=env_file,
+        profile=profile,
+        services=services,
+        volumes=volumes,
+        images=images,
+        dry_run=dry_run,
+        verbose=verbose,
+        quiet=quiet,
+    )
+
+
+# register commands in desired order
+app.command("up")(up)
+app.command("down")(down)
+app.command("status")(status)
+app.command("logs")(logs)
+app.command("start")(start)
+app.command("stop")(stop)
+app.command("restart")(restart)
+app.command("halt")(stop)

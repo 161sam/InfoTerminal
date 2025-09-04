@@ -11,9 +11,14 @@ from . import __version__
 from .banner import print_banner
 from .commands import analytics, graph, infra, search, settings, tui, views
 from .plugins import load_plugins
+from .utils import NaturalOrderGroup
 
 console = Console()
-app = typer.Typer(no_args_is_help=True, help="InfoTerminal CLI – modular & pretty")
+app = typer.Typer(
+    no_args_is_help=True,
+    help="InfoTerminal CLI – modular & pretty",
+    cls=NaturalOrderGroup,
+)
 
 
 @app.callback(invoke_without_command=True)
@@ -33,7 +38,15 @@ def _root(
         raise typer.Exit()
 
 
-# register subcommands
+# register lifecycle commands in explicit order
+app.command("start", help="Start local development infrastructure.")(infra.start)
+app.command("stop", help="laufende Services anhalten")(infra.stop)
+app.command("rm", help="Umgebung entfernen")(infra.rm)
+app.command("restart", help="Restart infrastructure.")(infra.restart)
+app.command("status", help="Check health of services.")(infra.status)
+app.command("logs", help="Show logs for services.")(infra.logs)
+
+# remaining command groups
 app.add_typer(infra.app, name="infra", help="Infra: up/down/status/logs")
 app.add_typer(search.app, name="search", help="Search API")
 app.add_typer(graph.app, name="graph", help="Neo4j / Graph")
@@ -44,15 +57,6 @@ app.add_typer(tui.app, name="ui", help="Textual TUI")
 
 # load plugins
 load_plugins(app)
-
-# top-level aliases for infra commands
-app.command("up")(infra.up)
-app.command("down")(infra.down)
-app.command("start")(infra.up)
-app.command("stop")(infra.down)
-app.command("restart")(infra.restart)
-app.command("status")(infra.status)
-app.command("logs")(infra.logs)
 
 
 def main() -> None:
