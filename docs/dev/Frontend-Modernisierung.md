@@ -60,6 +60,9 @@ cp tailwind.config.js tailwind.config.js.backup
 # Core Dependencies
 npm install @tailwindcss/forms @tailwindcss/typography @tailwindcss/line-clamp
 
+# Ab Next.js 14 ist das PostCSS-Plugin erforderlich
+npm install -D @tailwindcss/postcss
+
 # Optional Advanced Components
 npm install @headlessui/react @heroicons/react
 

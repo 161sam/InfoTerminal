@@ -66,7 +66,10 @@ def run() -> None:
         def action_logs(self) -> None:  # pragma: no cover - UI
             if not self.table.rows:
                 return
-            service = self.table.get_row_at(self.table.cursor_row)[0]
-            infra.logs(service=service)
+            service = str(self.table.get_row_at(self.table.cursor_row)[0])
+            try:
+                infra.show_logs(service, lines=200, follow=False)
+            except FileNotFoundError:
+                console.print(f"No logs found for {service}")
 
     ITUI().run()
