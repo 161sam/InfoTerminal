@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # 📍 InfoTerminal Roadmap
 
 Diese Roadmap beschreibt den Entwicklungsweg von **v0.1.0 (MVP)** bis zur ersten stabilen **v1.0.0 (Production Ready)**.  
@@ -18,6 +20,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ## 🔖 Versionen & Meilensteine
 
 ### v0.1.0 – MVP (aktueller Stand)
+
 **Status:** released ✅
 
 - 🔎 **Search:** OpenSearch mit Facetten & API.
@@ -33,6 +36,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.2.0 – KI-Assistent & Workflows
+
 **Fokus:** Smarte Unterstützung, Automatisierung
 
 - 🤖 **Flowise-Agent**: Investigation Assistant, LLM-gestützt, ruft Search/Graph/Docs-APIs auf.
@@ -45,6 +49,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.3.0 – Erweiterte Analysen & Datenqualität
+
 **Fokus:** Tiefe Analysen, Data Governance, Skalierung
 
 - 📈 **Graph-Algorithmen:** Zentralität, Communities, Export/Share.
@@ -58,6 +63,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.4.0 – UX-Optimierung & Plugin-System
+
 **Fokus:** Benutzerfreundlichkeit & Erweiterbarkeit
 
 - 🎨 **UX-Politur**: konsistentes UI, verbesserte Graph-/Doc-Viewer.
@@ -71,6 +77,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.5.0 – Monetarisierung & Enterprise (Release Candidate)
+
 **Fokus:** Open-Core & kommerzieller Betrieb
 
 - 💼 **Enterprise-Modul**: RBAC/ABAC, Multi-Tenancy, spezielle Konnektoren.
@@ -84,6 +91,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.6.0 – Observability & DevOps
+
 **Fokus:** Monitoring, CI/CD, Deployment-Optimierung
 
 - 📊 **Observability-Stack**: Prometheus, Grafana, OpenTelemetry (Tracing + Metriken).
@@ -97,6 +105,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.7.0 – Security & Compliance
+
 **Fokus:** Sicherheit, Rechte, Governance
 
 - 🔐 **Zero-Trust-Policies**: Feingranulare RBAC/ABAC mit OPA + Keycloak.
@@ -110,6 +119,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.8.0 – Scaling & Federation
+
 **Fokus:** Verteilte Deployments, Federation
 
 - ⚡ **HA-Cluster** für OpenSearch, Neo4j, Postgres (Replication, Failover).
@@ -123,6 +133,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v0.9.0 – Final Hardening & User Experience
+
 **Fokus:** Letzte Vorbereitungen für 1.0
 
 - 🎨 **UX-Politur**: Endgültiges UI-Design, konsistentes Styling, Dark/Light Mode.
@@ -136,6 +147,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ### v1.0.0 – Production Ready
+
 **Fokus:** Sicherheit, Stabilität, Vollständigkeit
 
 - 🔐 **Security Hardening**: TLS, sichere Defaults, regelmäßige Audits.
@@ -150,6 +162,7 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 ---
 
 ## 📆 Hinweis
+
 - Zeitrahmen flexibel – Meilensteine sind *feature-driven*, nicht kalendarisch fix.
 - Priorität: **Funktionalität → Usability → Stabilität → Security → Monetarisierung**.
 

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { cfg } from '@/lib/config';
+import config from '@/lib/config';
 
 type Health = { key: string; name: string; url: string; ok: boolean; status?: number; error?: string };
 
 const SERVICES: Array<{key:string; name:string; base:string}> = [
-  { key: 'search', name: 'search-api', base: cfg.SEARCH_API },
-  { key: 'graph',  name: 'graph-api',  base: cfg.GRAPH_API },
-  { key: 'docs',   name: 'doc-entities', base: cfg.DOC_API },
+  { key: 'search', name: 'search-api', base: config.SEARCH_API },
+  { key: 'graph',  name: 'graph-api',  base: config.GRAPH_API },
+  { key: 'docs',   name: 'doc-entities', base: config.DOCENTITIES_API },
   // { key: 'er', name: 'entity-resolution', base: process.env.NEXT_PUBLIC_ER_API ?? 'http://localhost:8404' }, // TODO: optional einblenden
 ];
 

@@ -1,16 +1,26 @@
 [project]
 name = "infoterminal-cli"
 version = "0.1.0"
-description = "Unified CLI for InfoTerminal (dev-local & dockerized, obs, agents, gateway, opa, health, ports)"
+description = "Modular CLI for InfoTerminal"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "typer>=0.12",
-  "rich>=13.7",
+  "typer[all]",
+  "rich",
+  "httpx",
+  "pydantic>=2",
+  "pydantic-settings",
+  "plotext",
+  "asciichartpy",
+  "networkx",
+  "textual",
 ]
 
 [project.scripts]
-it = "infoterminal_cli.cli:app"
+it = "it_cli.__main__:app"
+
+[project.entry-points."info_terminal.plugins"]
+# external packages can register their Typer apps here
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]

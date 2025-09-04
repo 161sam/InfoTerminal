@@ -10,6 +10,10 @@ export NEO4J_USER="${NEO4J_USER:-neo4j}"
 export NEO4J_PASSWORD="${NEO4J_PASSWORD:-${NEO4J_PASS:-test12345}}"
 export NEO4J_PASS="${NEO4J_PASS:-$NEO4J_PASSWORD}"
 
+# OpenTelemetry noise in local dev unbedingt aus
+export OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-1}
+unset OTEL_EXPORTER_OTLP_ENDPOINT OTEL_TRACES_EXPORTER OTEL_METRICS_EXPORTER OTEL_LOGS_EXPORTER
+
 # venv sicherstellen + Deps
 if [ ! -x .venv/bin/python ]; then
   python3 -m venv .venv

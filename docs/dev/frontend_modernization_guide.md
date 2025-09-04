@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # InfoTerminal Frontend Modernisierung - Implementierung Guide
 
 ## 🎯 Überblick
@@ -41,6 +43,7 @@ export default function App({ Component, pageProps }) {
 2. **Navigation**: Aktualisiere alle Seiten um das neue Layout zu verwenden
 
 Beispiel für Page-Updates:
+
 ```typescript
 import DashboardLayout from '../src/components/layout/DashboardLayout';
 
@@ -65,6 +68,7 @@ Ersetze diese Komponenten schrittweise:
 ### 5. Icon System
 
 Alle Lucide React Icons sind bereits verfügbar. Konsistente Icon-Verwendung:
+
 - Navigation: 20px
 - Buttons: 16px
 - Status: 16px
@@ -73,6 +77,7 @@ Alle Lucide React Icons sind bereits verfügbar. Konsistente Icon-Verwendung:
 ### 6. Color System & Branding
 
 Das neue Farbschema verwendet:
+
 - **Primary**: Blau (#0ea5e9) - Hauptaktionen
 - **Secondary**: Grau (#64748b) - Support-Elemente
 - **Success**: Grün (#22c55e) - Positive Aktionen
@@ -82,6 +87,7 @@ Das neue Farbschema verwendet:
 ### 7. Responsive Design
 
 Alle Komponenten sind mobile-first responsive:
+
 - `sm:` - 640px+
 - `md:` - 768px+
 - `lg:` - 1024px+ (Desktop Navigation)
@@ -110,7 +116,7 @@ Alle Komponenten sind mobile-first responsive:
 
 ### Komponenten Architektur
 
-```
+```text
 src/components/
 ├── layout/
 │   ├── DashboardLayout.tsx     # Main layout
@@ -134,6 +140,7 @@ src/components/
 ### State Management
 
 Verwende React Hooks für lokalen State:
+
 - `useState` für UI State
 - `useEffect` für Side Effects
 - Custom Hooks für Business Logic
@@ -148,11 +155,13 @@ Verwende React Hooks für lokalen State:
 ## 📱 Mobile Experience
 
 ### Responsive Navigation
+
 - Hamburger Menu auf Mobile
 - Swipe Gestures für Sidebar
 - Touch-optimierte Button Sizes
 
 ### Mobile-First Components
+
 - Stack Layout auf kleinen Bildschirmen
 - Horizontal Scroll für Chips/Badges
 - Optimized Form Inputs
@@ -160,6 +169,7 @@ Verwende React Hooks für lokalen State:
 ## 🎭 Animation & Transitions
 
 ### CSS Transitions
+
 ```css
 .component {
   transition: all 0.2s ease-in-out;
@@ -167,6 +177,7 @@ Verwende React Hooks für lokalen State:
 ```
 
 ### Loading Animations
+
 - Spinner für aktive Ladevorgänge
 - Skeleton Loaders für Content
 - Progress Bars für File Uploads
@@ -174,16 +185,19 @@ Verwende React Hooks für lokalen State:
 ## 🧪 Testing
 
 ### Unit Tests
+
 ```bash
 npm run test
 ```
 
 ### E2E Tests
+
 ```bash
 npm run e2e
 ```
 
 ### Visual Regression Tests
+
 Playwright Screenshots für UI-Konsistenz
 
 ## 🚀 Deployment Checklist
@@ -239,6 +253,7 @@ Nach der Basis-Implementierung:
 ## 🎯 Erfolgsmessung
 
 KPIs für die UI-Modernisierung:
+
 - **User Experience**: Task Completion Rate
 - **Performance**: Core Web Vitals
 - **Accessibility**: WCAG Compliance
