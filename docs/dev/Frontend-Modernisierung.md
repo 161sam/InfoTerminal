@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # 🚀 InfoTerminal Frontend Modernisierung - Kompletter Setup Guide
 
 ## 📋 Überblick der Modernisierung
@@ -80,7 +82,7 @@ mkdir -p src/components/upload
 #### Core Files
 
 1. **Design System** → `src/lib/theme.ts`
-2. **Theme Provider** → `src/lib/theme-provider.tsx` 
+2. **Theme Provider** → `src/lib/theme-provider.tsx`
 3. **Notifications** → `src/lib/notifications.tsx`
 4. **Command Palette** → `src/components/ui/CommandPalette.tsx`
 5. **Real-time** → `src/lib/realtime.tsx`
@@ -208,36 +210,42 @@ NEXT_PUBLIC_GRAFANA_URL=http://localhost:3001
 ## 🎯 Schritt-für-Schritt Migration
 
 ### Phase 1: Design System (Tag 1-2)
+
 - ✅ Theme System installieren
 - ✅ Tailwind Config updaten
 - ✅ Dark Mode implementieren
 - ✅ Basic Layout testen
 
 ### Phase 2: Navigation & Layout (Tag 3-4)
+
 - ✅ DashboardLayout implementieren
 - ✅ Mobile Navigation hinzufügen
 - ✅ Header/Sidebar modernisieren
 - ✅ Responsive Design testen
 
 ### Phase 3: Core Components (Tag 5-7)
+
 - ✅ Form System implementieren
 - ✅ Data Table hinzufügen
 - ✅ Charts integrieren
 - ✅ Error Boundaries einbauen
 
 ### Phase 4: Advanced Features (Tag 8-10)
+
 - ✅ Command Palette aktivieren
 - ✅ Notifications implementieren
 - ✅ Real-time Updates einbauen
 - ✅ Authentication Flow
 
 ### Phase 5: Pages Migration (Tag 11-12)
+
 - ✅ Homepage modernisieren
 - ✅ Search Page übarbeiten
 - ✅ Document Detail optimieren
 - ✅ Graph Viewer erweitern
 
 ### Phase 6: Polish & Testing (Tag 13-14)
+
 - ✅ Mobile Testing
 - ✅ Performance Optimierung
 - ✅ Accessibility Check
@@ -367,6 +375,7 @@ export const buttonVariants = {
 ### Häufige Probleme & Lösungen
 
 #### 1. Build Errors
+
 ```bash
 # TypeScript Errors
 npm run typecheck
@@ -377,6 +386,7 @@ npm install
 ```
 
 #### 2. Styling Issues
+
 ```bash
 # Tailwind CSS nicht lädt
 npm run build:css
@@ -386,12 +396,14 @@ rm -rf .next
 ```
 
 #### 3. Performance Issues
+
 ```bash
 # Bundle Analyzer
 npm install --save-dev @next/bundle-analyzer
 ```
 
 #### 4. Mobile Issues
+
 ```bash
 # Viewport Meta Tag prüfen
 # <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -414,12 +426,14 @@ npm install --save-dev @next/bundle-analyzer
 ## 🎯 Success Metrics
 
 ### Vor der Modernisierung (Baseline)
+
 - ❌ Keine Mobile Unterstützung
 - ❌ Inline Styles überall
 - ❌ Keine Konsistenz im Design
 - ❌ Grundlegende Funktionalität nur
 
 ### Nach der Modernisierung (Ziel)
+
 - ✅ **90%+ Mobile Satisfaction Score**
 - ✅ **< 2s Page Load Time**
 - ✅ **95%+ Component Reusability**
@@ -441,11 +455,11 @@ npm install --save-dev @next/bundle-analyzer
 
 ---
 
-## 🎉 Herzlichen Glückwunsch!
+## 🎉 Herzlichen Glückwunsch
 
 Nach der vollständigen Implementierung haben Sie InfoTerminal in eine **moderne, professionelle und benutzerfreundliche Anwendung** verwandelt, die mit aktuellen Enterprise-Standards mithalten kann.
 
-### Was Sie erreicht haben:
+### Was Sie erreicht haben
 
 - 🚀 **10x bessere User Experience**
 - 📱 **Mobile-First Design**  
