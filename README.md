@@ -1,6 +1,6 @@
 # InfoTerminal
 
-> **Open-Source-Plattform für Datenintegration, Suche, Graph-Analyse und Dokumentenmanagement – inspiriert von Palantir Gotham.**
+> **Open-Source-Plattform für Datenintegration, Suche, Graph-Analyse und Dokumentenmanagement**
 
 [![Status](https://img.shields.io/badge/status-v0.1.0--pre-blue)](#) [![License](https://img.shields.io/badge/license-Apache--2.0-green)](#)
 
