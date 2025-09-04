@@ -9,7 +9,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: { primary: colors.blue },
+      colors: { primary: colors.sky },
     },
   },
   plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
