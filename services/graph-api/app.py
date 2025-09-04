@@ -44,6 +44,11 @@ instrumentator = Instrumentator().instrument(app)
 @app.on_event("startup")
 async def _startup() -> None:
     instrumentator.expose(app, include_in_schema=False, should_gzip=True)
+
+
+@app.on_event("shutdown")
+def _shutdown() -> None:
+    driver.close()
 app.add_middleware(
   CORSMiddleware,
   allow_origins=["http://localhost:3000","http://127.0.0.1:3000"],

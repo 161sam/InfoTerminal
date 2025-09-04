@@ -263,7 +263,7 @@ export default function GraphX() {
 
   return (
     <main style={{ maxWidth: 1200, margin: "30px auto", fontFamily: "ui-sans-serif" }}>
-      <h1>Graph Viewer (expand / pin / save)</h1>
+      <h1 className="text-2xl font-semibold">Graph Viewer (expand / pin / save)</h1>
       
       {error && (
         <div style={{ 
