@@ -21,6 +21,13 @@ Diese umfassende Frontend-Modernisierung verwandelt das InfoTerminal von einer e
 - **📈 Performance Monitoring** - Web Vitals Tracking
 - **🔍 Advanced Search** - Faceted Search mit Reranking
 
+### Richtlinien für Theme & Config
+
+- Primärfarben werden in `tailwind.config.js` unter `theme.extend.colors.primary` definiert.
+- Fokus-Ringe nutzen konsequent `ring-primary-500` und sind global über `:focus-visible` aktiviert.
+- Konfiguration immer mit `import config from "@/lib/config"` einbinden (Default-Import).
+- API-Fehler führen nicht zum Absturz, sondern werden als Badge oder Hinweis im UI angezeigt.
+
 ### 🛠️ Technische Verbesserungen
 
 - **TypeScript** - Vollständige Typisierung

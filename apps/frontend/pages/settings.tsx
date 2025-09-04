@@ -23,15 +23,6 @@ async function ping(url?: string): Promise<Status> {
 }
 
 export default function SettingsPage() {
-  if (!config) {
-    return (
-      <Layout>
-        <h1 className="mb-4 text-2xl font-semibold">Settings</h1>
-        <StatusPill status="fail">Config not loaded (check import)</StatusPill>
-      </Layout>
-    );
-  }
-
   const endpoints = [
     { key: "SEARCH_API", label: "Search API", url: config?.SEARCH_API },
     { key: "GRAPH_API", label: "Graph API", url: config?.GRAPH_API },
@@ -39,7 +30,9 @@ export default function SettingsPage() {
     { key: "VIEWS_API", label: "Views API", url: config?.VIEWS_API },
     { key: "NLP_API", label: "NLP API", url: config?.NLP_API },
   ];
-
+  const [values, setValues] = useState<Record<string, string>>(
+    Object.fromEntries(endpoints.map((e) => [e.key, e.url ?? ""]))
+  );
   const [status, setStatus] = useState<Record<string, Status>>({});
   const runtime = typeof window === "undefined" ? "server" : "client";
 
@@ -51,20 +44,28 @@ export default function SettingsPage() {
 
   return (
     <Layout>
-      <h1 className="mb-4 text-2xl font-semibold">Settings</h1>
+      <h1 className="mb-4">Settings</h1>
       <div className="space-y-6">
         <Card>
-          <h2 className="mb-2 text-lg font-semibold">Theme</h2>
+          <h2 className="mb-2">Theme</h2>
           <p className="text-sm text-gray-600">Dark mode toggle coming soon.</p>
         </Card>
 
         <Card>
-          <h2 className="mb-4 text-lg font-semibold">API Endpoints</h2>
+          <h2 className="mb-4">API Endpoints</h2>
           <div className="space-y-4">
             {endpoints.map((e) => (
               <div key={e.key} className="flex items-center gap-2">
-                <Field label={e.label} value={e.url ?? ""} readOnly className="flex-1" />
-                <Button onClick={() => handlePing(e.key, e.url)}>Ping</Button>
+                <Field
+                  label={e.label}
+                  value={values[e.key]}
+                  onChange={(ev) =>
+                    setValues((v) => ({ ...v, [e.key]: ev.target.value }))
+                  }
+                  helper={!e.url ? "Not configured" : undefined}
+                  className="flex-1"
+                />
+                <Button onClick={() => handlePing(e.key, values[e.key])}>Ping</Button>
                 {status[e.key] && <StatusPill status={status[e.key]} />}
               </div>
             ))}
@@ -72,7 +73,7 @@ export default function SettingsPage() {
         </Card>
 
         <Card>
-          <h2 className="mb-2 text-lg font-semibold">Environment</h2>
+          <h2 className="mb-2">Environment</h2>
           <ul className="text-sm text-gray-600">
             <li>NODE_ENV: {safe(process.env.NODE_ENV, "development")}</li>
             <li>Runtime: {runtime}</li>
