@@ -37,6 +37,29 @@ pytest --cov --cov-report=term-missing
 npm test -- --coverage
 ```
 
+### Project commands
+
+Run the suites from the repository root, or change into a service directory
+if you want to run a single project. All commands enforce a `100%` coverage
+threshold and must execute without any network access:
+
+```bash
+# Search API
+cd services/search-api && pytest --cov --cov-report=term-missing
+
+# Graph API
+cd services/graph-api && pytest --cov --cov-report=term-missing
+
+# Graph Views
+cd services/graph-views && pytest --cov --cov-report=term-missing
+
+# CLI
+cd cli/it_cli && pytest --cov --cov-report=term-missing
+
+# Frontend
+cd apps/frontend && npm test -- --coverage
+```
+
 All tests must run without network access. External services (HTTP APIs, Neo4j, Postgres, etc.) are mocked or replaced with
 in-memory stubs so that the suite is deterministic and fast.
 
