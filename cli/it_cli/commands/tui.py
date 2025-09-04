@@ -1,5 +1,7 @@
-"""Placeholder for Textual TUI."""
+"""Minimal Textual TUI for infra management."""
 from __future__ import annotations
+
+import asyncio
 
 import typer
 from rich.console import Console
@@ -10,5 +12,58 @@ console = Console()
 
 @app.command()
 def run() -> None:
-    """Run the Textual TUI (placeholder)."""
-    console.print("TUI not implemented.")
+    """Run the Textual TUI."""
+    try:  # pragma: no cover - optional dependency
+        from textual.app import App, ComposeResult
+        from textual.widgets import DataTable, Footer, Header
+    except Exception:  # pragma: no cover - textual not installed
+        console.print("TUI not available")
+        raise typer.Exit(0)
+
+    from . import infra
+
+    class ITUI(App):
+        BINDINGS = [
+            ("r", "refresh", "Refresh"),
+            ("u", "up", "Up"),
+            ("d", "down", "Down"),
+            ("s", "status", "Status"),
+            ("l", "logs", "Logs"),
+        ]
+
+        def compose(self) -> ComposeResult:  # pragma: no cover - UI
+            yield Header()
+            self.table = DataTable(zebra_stripes=True)
+            yield self.table
+            yield Footer()
+
+        async def on_mount(self) -> None:  # pragma: no cover - UI
+            await self.refresh()
+            self.set_interval(3, self.refresh)
+
+        async def refresh(self) -> None:  # pragma: no cover - UI
+            rows = await infra.gather_status()
+            self.table.clear(columns=True)
+            self.table.add_columns("Service", "Status", "Port", "Latency")
+            for r in rows:
+                self.table.add_row(r["service"], r["status"], str(r.get("port", "")), r.get("latency", ""))
+
+        async def action_refresh(self) -> None:  # pragma: no cover - UI
+            await self.refresh()
+
+        def action_up(self) -> None:  # pragma: no cover - UI
+            infra.up()
+
+        def action_down(self) -> None:  # pragma: no cover - UI
+            infra.down()
+
+        async def action_status(self) -> None:  # pragma: no cover - UI
+            await self.refresh()
+
+        def action_logs(self) -> None:  # pragma: no cover - UI
+            if not self.table.rows:
+                return
+            service = self.table.get_row_at(self.table.cursor_row)[0]
+            infra.logs(service=service)
+
+    ITUI().run()

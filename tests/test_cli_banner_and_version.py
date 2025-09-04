@@ -41,3 +41,9 @@ def test_no_banner_env(monkeypatch):
     assert result.returncode == 0
     lines = [line for line in result.stdout.splitlines() if line.strip()]
     assert lines[0].lstrip().startswith("Usage:")
+
+
+def test_banner_once_per_invocation():
+    result = _run_cli(["settings", "show"])
+    assert result.returncode == 0
+    assert result.stdout.count("InfoTerminal CLI") == 1
