@@ -27,6 +27,7 @@ def run() -> None:
             ("d", "down", "Down"),
             ("s", "status", "Status"),
             ("l", "logs", "Logs"),
+            ("f", "follow_logs", "Follow"),
         ]
 
         def compose(self) -> ComposeResult:  # pragma: no cover - UI
@@ -69,6 +70,15 @@ def run() -> None:
             service = str(self.table.get_row_at(self.table.cursor_row)[0])
             try:
                 infra.show_logs(service, lines=200, follow=False)
+            except FileNotFoundError:
+                console.print(f"No logs found for {service}")
+
+        def action_follow_logs(self) -> None:  # pragma: no cover - UI
+            if not self.table.rows:
+                return
+            service = str(self.table.get_row_at(self.table.cursor_row)[0])
+            try:
+                infra.show_logs(service, lines=200, follow=True)
             except FileNotFoundError:
                 console.print(f"No logs found for {service}")
 

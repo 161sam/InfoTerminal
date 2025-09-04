@@ -263,7 +263,7 @@ def up(
             cmd.append("-d")
         execute(cmd, run_env, dry_run, verbose, quiet)
     else:
-        base_services = services if services else ["opensearch", "neo4j"]
+        base_services = services if services else ["opensearch", "neo4j", "postgres"]
         cmd = compose_cmd(["up"] + (["-d"] if detach else []) + base_services, compose_files, project, profiles)
         try:
             execute(cmd, run_env, dry_run, verbose, quiet, check=True, capture_output=True, text=True)

@@ -63,7 +63,9 @@ subprocess calls, while `--quiet` minimizes output. Set `NO_COLOR=1` or use
 it ui run
 
 # Key bindings within the TUI:
-#   r refresh   u up   d down   s status   l logs of selected service
+#   r refresh   u up   d down   s status   l logs   f follow logs
+# Die TUI ruft den internen Helper `show_logs` aus `infra` auf –
+# Typer-Commands selbst werden im UI nicht verwendet.
 ```
 
 ### Other examples

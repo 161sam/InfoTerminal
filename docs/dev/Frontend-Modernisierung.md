@@ -27,6 +27,7 @@ Diese umfassende Frontend-Modernisierung verwandelt das InfoTerminal von einer e
 - Fokus-Ringe nutzen konsequent `ring-primary-500` und sind global über `:focus-visible` aktiviert.
 - Konfiguration immer mit `import config from "@/lib/config"` einbinden (Default-Import).
 - API-Fehler führen nicht zum Absturz, sondern werden als Badge oder Hinweis im UI angezeigt.
+- Das globale Stylesheet `src/styles/globals.css` bindet ganz oben `@import "tailwindcss";` ein, danach folgen eigene `@layer`-Regeln.
 
 ### 🛠️ Technische Verbesserungen
 
