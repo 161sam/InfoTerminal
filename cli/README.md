@@ -26,18 +26,29 @@ for scripting or CI environments.
 ### Infra commands
 
 ```bash
-# start local stack
-it infra up
+# start local stack (alias: `start`)
+it infra start -f docker-compose.yml -f docker-compose.override.yml -p myproj -d
 
-# check status (exit code 0 only if search/graph/views are up)
-it infra status
+# stop services (aliases: `stop`, `halt`)
+it infra stop -p myproj --services graph-api --services frontend
 
-# follow logs
-it infra logs -f --service graph-api
+# restart with extras
+it infra restart --agents --gateway
 
-# stop services
-it infra down
+# check status for selected services
+it infra status -s search-api -s graph-api --timeout 5
+
+# tail logs for a service
+it infra logs -s graph-api --compose-file docker-compose.yml -p myproj --follow
 ```
+
+Compose files and project names are discovered in this order of precedence:
+CLI flags > environment variables (`IT_COMPOSE_FILE`, `IT_PROJECT_NAME`) >
+auto-discovery (`docker-compose.yml`, `compose.yml`).
+
+Use `--dry-run` to print commands without executing them. `--verbose` shows
+subprocess calls, while `--quiet` minimizes output. Set `NO_COLOR=1` or use
+`--no-color` to disable colored output.
 
 ### Text User Interface
 
