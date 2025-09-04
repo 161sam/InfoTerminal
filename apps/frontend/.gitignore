@@ -1,3 +1,6 @@
 # Override parent ignore for src/lib
 !src/lib/
 !src/lib/**
+# Include runtime config
+!lib/
+!lib/**

@@ -1,128 +1,105 @@
-import SearchBox from '@/components/search/SearchBox';
-import FacetPanel from '@/components/search/FacetPanel';
-import FilterChips from '@/components/search/FilterChips';
-import ResultItem from '@/components/search/ResultItem';
-import Pagination from '@/components/search/Pagination';
-import SortAndRerank from '@/components/search/SortAndRerank';
-import { useSearchParams } from '@/hooks/useSearchParams';
-import { useSearch } from '@/hooks/useSearch';
+import { useRef, useState } from "react";
+import Layout from "../components/Layout";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import Field from "../components/ui/Field";
+import StatusPill from "../components/ui/StatusPill";
+import config from "../lib/config";
+
+type SearchResult = {
+  id: string;
+  title?: string;
+  snippet?: string;
+  score?: number;
+  date?: string;
+};
 
 export default function SearchPage() {
-  const { params, set, replaceAll } = useSearchParams();
-  const q = (params.q as string) || '';
-  const page = parseInt((params.page as string) || '1', 10);
-  const pageSize = parseInt((params.pageSize as string) || '20', 10);
-  const sort = (params.sort as string) || 'relevance';
-  const rerank = params.rerank === '1';
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState("relevance");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const controller = useRef<AbortController | null>(null);
 
-  const filters: Record<string, string[]> = {};
-  Object.entries(params).forEach(([k, v]) => {
-    if (k.startsWith('filter.')) {
-      const facet = k.replace('filter.', '');
-      const arr = typeof v === 'string' ? v.split(',') : Array.isArray(v) ? v : [];
-      filters[facet] = arr.filter(Boolean);
+  const runSearch = async () => {
+    const params = new URLSearchParams({ q, sort, limit: "20" });
+    setIsLoading(true);
+    setError(null);
+    controller.current?.abort();
+    const c = new AbortController();
+    controller.current = c;
+    try {
+      let r = await fetch(`/api/search?${params.toString()}`, { signal: c.signal });
+      if (r.status === 404) {
+        const base = config?.SEARCH_API;
+        if (!base) throw new Error("Search API not configured");
+        r = await fetch(`${base}/search?${params.toString()}`, { signal: c.signal });
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      setResults(j.items || j.results || []);
+    } catch (e: any) {
+      if (e.name !== "AbortError") setError(e.message || "search failed");
+    } finally {
+      setIsLoading(false);
     }
-  });
-
-  const entityParam = params.entity;
-  const entity = Array.isArray(entityParam)
-    ? (entityParam as string[])
-    : entityParam
-    ? [entityParam as string]
-    : undefined;
-  const valueParam = params.value;
-  const value = Array.isArray(valueParam)
-    ? (valueParam as string[])
-    : valueParam
-    ? [valueParam as string]
-    : undefined;
-
-  const { data, loading, error } = useSearch({
-    q,
-    filters,
-    entity,
-    value,
-    sort,
-    rerank,
-    page,
-    pageSize,
-  });
-
-  const handleFilterToggle = (facet: string, value: string) => {
-    const key = `filter.${facet}`;
-    const arr = filters[facet] ? [...filters[facet]] : [];
-    const idx = arr.indexOf(value);
-    if (idx >= 0) arr.splice(idx, 1); else arr.push(value);
-    set(key, arr.join(',') || undefined);
-    set('page', 1);
   };
 
-  const handleRemoveChip = (facet: string, value: string) => {
-    const key = `filter.${facet}`;
-    const arr = (filters[facet] || []).filter((v) => v !== value);
-    set(key, arr.join(',') || undefined);
-    set('page', 1);
-  };
-
-  const handleRemoveEntity = (label: string) => {
-    const arr = (entity || []).filter((e) => e !== label);
-    set('entity', arr.length ? arr : undefined);
-    set('page', 1);
-  };
-
-  const handleRemoveValue = (v: string) => {
-    const arr = (value || []).filter((e) => e !== v);
-    set('value', arr.length ? arr : undefined);
-    set('page', 1);
-  };
-
-  const handleClearAll = () => {
-    const next: Record<string, any> = {};
-    if (q) next.q = q;
-    replaceAll(next);
-  };
+  const chips = ["demo", "graph", "open source"];
 
   return (
-    <div>
-      {/* TODO: Replace with DashboardLayout to avoid duplicate headers */}<SearchBox
-        value={q}
-        onChange={(v) => set('q', v)}
-        onSubmit={(v) => set('q', v)}
-        loading={loading}
-      />
-      <SortAndRerank
-        sort={sort}
-        onSortChange={(v) => set('sort', v)}
-        rerank={rerank}
-        onRerankToggle={(v) => set('rerank', v ? '1' : undefined)}
-      />
-      <FilterChips
-        filters={filters}
-        entity={entity}
-        value={value}
-        onRemove={handleRemoveChip}
-        onRemoveEntity={handleRemoveEntity}
-        onRemoveValue={handleRemoveValue}
-        onClearAll={handleClearAll}
-      />
-      {error && <div>Error: {String(error.message)}</div>}
-      {!error && data && data.total === 0 && <div>No results</div>}
-      <div style={{ display: 'flex' }}>
-        <FacetPanel aggregations={data?.aggregations} selectedFilters={filters} onToggle={handleFilterToggle} />
-        <div data-testid="search-results" style={{ marginLeft: '1rem' }}>
-          {data?.items.map((hit) => (
-            <ResultItem key={hit.id} hit={hit} />
-          ))}
-        </div>
-      </div>
-      {data && data.total > pageSize && (
-        <Pagination
-          page={page}
-          pageSize={pageSize}
-          total={data.total}
-          onPageChange={(p) => set('page', p)}
+    <Layout>
+      <h1 className="mb-4 text-2xl font-semibold">Search</h1>
+      <div className="mb-4 flex items-end gap-2">
+        <Field
+          label="Query"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          className="flex-1"
         />
-      )}
-    </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Sort</label>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="rounded-md border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500"
+          >
+            <option value="relevance">relevance</option>
+            <option value="date_desc">date_desc</option>
+            <option value="date_asc">date_asc</option>
+          </select>
+        </div>
+        <Button onClick={runSearch} isLoading={isLoading} disabled={!q}>
+          Search
+        </Button>
+      </div>
+      <div className="mb-4 flex gap-2">
+        {chips.map((c) => (
+          <button
+            key={c}
+            className="rounded-full bg-gray-200 px-3 py-1 text-xs"
+            onClick={() => setQ(c)}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+      {error && <StatusPill status="fail">{error}</StatusPill>}
+      <div className="space-y-4">
+        {isLoading && <div>Loading...</div>}
+        {!isLoading &&
+          results.map((r) => (
+            <Card key={r.id}>
+              <h3 className="font-semibold">{r.title || r.id}</h3>
+              {r.snippet && <p className="text-sm text-gray-600">{r.snippet}</p>}
+              {r.score !== undefined && (
+                <p className="text-xs text-gray-500">Score: {r.score}</p>
+              )}
+              {r.date && <p className="text-xs text-gray-500">{r.date}</p>}
+            </Card>
+          ))}
+      </div>
+    </Layout>
   );
 }

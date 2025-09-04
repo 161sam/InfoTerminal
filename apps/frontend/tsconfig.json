@@ -25,7 +25,8 @@
   "include": [
     "src",
     "pages",
-    "lib"
+    "lib",
+    "components"
   ],
   "exclude": [
     "node_modules"
