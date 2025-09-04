@@ -47,13 +47,24 @@ kubectl port-forward svc/infoterminal-web 3411:3411 -n infoterm
 
 ### 3. CLI (optional)
 
-Mit der CLI kannst du InfoTerminal bequem starten/stoppen:
+Installiere die CLI separat per `pipx`:
 
 ```bash
 pipx install infoterminal-cli
-it up     # Startet alle Dienste
-it down   # Stoppt alles wieder
 ```
+
+Die wichtigsten Kommandos:
+
+```bash
+it start    # Services hochfahren
+it stop     # Services stoppen
+it restart  # Neustart via docker compose restart
+it rm       # Umgebung entfernen (down --remove-orphans)
+it status   # Status der Container
+it logs -s SERVICE --lines 50
+```
+
+`-n/--dry-run` zeigt nur die ausgeführten `docker compose` Kommandos an.
 
 ---
 
