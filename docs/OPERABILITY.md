@@ -50,6 +50,15 @@ Both endpoints return JSON in the form:
 - `IT_FORCE_READY`: when set to `1`, `/readyz` skips external checks and reports ready.
 - Missing connection details for a dependency result in a `skipped` check with a reason.
 
+## CORS
+```bash
+IT_CORS_ORIGINS=http://localhost:3411,http://127.0.0.1:3411
+IT_CORS_CREDENTIALS=0
+IT_CORS_MAX_AGE=600
+```
+
+If `IT_CORS_ORIGINS` is unset, services default to the development origins above. For production, always specify trusted origins explicitly and avoid wildcards. Credentials are disabled by default and only enabled when `IT_CORS_CREDENTIALS=1`. The `X-Request-Id` header is exposed for correlation.
+
 ## CLI
 
 Die wichtigsten Workflows laufen über den `it`-Befehl:
@@ -119,7 +128,6 @@ via OTLP HTTP an `http://tempo:4318`. Die Sampling-Rate wird über
 
 ## Troubleshooting
 - Ensure the Neo4j development password has at least 8 characters.
-- Restrict CORS in development to `http://localhost:3411`.
 - Disable OTEL exporters in development unless needed.
 
 ## Frontend Health Matrix & Settings
