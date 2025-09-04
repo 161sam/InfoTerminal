@@ -9,7 +9,7 @@ import sys
 from it_cli import __version__
 from typer.testing import CliRunner
 from it_cli.__main__ import app as main_app
-from it_cli.commands import infra
+from it_cli import infra
 
 
 def _run_cli(args: list[str], env: dict[str, str] | None = None):
@@ -47,20 +47,34 @@ def test_no_banner_env(monkeypatch):
 
 
 def test_banner_once():
-    result = _run_cli(["settings", "show"])
+    result = _run_cli(["status", "-n"])
     assert result.returncode == 0
-    assert result.stdout.count("InfoTerminal CLI") == 1
+    assert result.stdout.count("INFOTERMINAL") == 1
 
 
 def test_logs_alias_passes_primitives(monkeypatch):
     runner = CliRunner()
     captured = {}
 
-    def fake_show_logs(service: str, lines: int = 0, follow: bool = False) -> None:
+    def fake_logs(
+        compose_file=None,
+        project_name=None,
+        env_file=None,
+        profile=None,
+        services=None,
+        follow: bool = False,
+        lines: int = 0,
+        format: str = "plain",
+        dry_run: bool = False,
+        verbose: bool = False,
+        quiet: bool = False,
+    ) -> int:
+        service = services[0] if services else None
         captured["types"] = (type(service), type(lines), type(follow))
         captured["values"] = (service, lines, follow)
+        return 0
 
-    monkeypatch.setattr(infra, "show_logs", fake_show_logs)
+    monkeypatch.setattr(infra, "logs", fake_logs)
     result = runner.invoke(main_app, ["logs", "-s", "search-api", "--lines", "7", "--follow"])
     assert result.exit_code == 0
     assert captured["types"] == (str, int, bool)

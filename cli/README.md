@@ -1,11 +1,11 @@
 # InfoTerminal CLI
 
-Modular developer command-line interface for the InfoTerminal platform.
+Modular developer command-line interface for InfoTerminal.
 
 ## Installation
 
-Install via [pipx](https://pypa.github.io/pipx/) to keep the CLI isolated
-without creating virtual environments in your home directory:
+Install via [pipx](https://pypa.github.io/pipx/) to avoid virtual
+environments in your home directory:
 
 ```bash
 pipx install --force ./cli
@@ -15,99 +15,60 @@ pipx install --force ./cli
 
 ```bash
 it --help
-
-# show version
-it -V
+it -V            # show version
+IT_NO_BANNER=1 it status -n  # suppress banner
 ```
 
-The CLI prints a banner on each run. Set `IT_NO_BANNER=1` to disable it
-for scripting or CI environments.
+The CLI prints a banner once per run. Set `IT_NO_BANNER=1` to disable it.
+`--version`/`-V` prints the version and exits.
 
 ### Lifecycle commands
 
-```bash
-it start -f docker-compose.yml -p myproj -d -s neo4j,opensearch
-it stop --services neo4j
-it restart -n -s neo4j
-it rm -n -v --images local
-it status -s graph-api,search-api
-it logs -s neo4j -F --lines 200
-it start -d --profile observability
-```
+The root command exposes a small set of docker-compose wrappers which
+forward to the `infra` namespace:
 
-Structured logs can be streamed as NDJSON via:
+- `start` – bring services up
+- `stop` – stop running services
+- `restart` – restart services via `docker compose restart`
+- `rm` – remove environment via `docker compose down --remove-orphans`
+- `status` – show service status
+- `logs` – stream logs (requires `--services`)
 
-```bash
-it logs --format jsonl -s search-api
-```
-
-`infra` ist ein Power-User-Namespace und hält die traditionellen
-Subcommands bereit:
+Examples:
 
 ```bash
-it infra --help   # zeigt up/down/status/logs/start/stop/restart/halt
+it start -n -f docker-compose.yml -p dev -s neo4j,opensearch --profile observability
+it status -n --format json
+it logs -n -s neo4j --lines 10
 ```
-
-Compose files und Projekt-Namen werden wie folgt ermittelt:
-CLI-Flags > Umgebungsvariablen (`IT_COMPOSE_FILE`, `IT_PROJECT_NAME`) >
-Auto-Discovery (`docker-compose.yml`, `compose.yml`).
 
 ### Flags
 
-| Flag                          | start | stop | rm | restart | status | logs |
-| ----------------------------- | :---: | :--: | :-:| :-----: | :----: | :--: |
-| `-f`, `--compose-file`        |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✔️ |
-| `-p`, `--project-name`        |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✔️ |
-| `--env-file`                  |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✔️ |
-| `--profile`                   |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✔️ |
-| `-s`, `--services`            |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✔️ (req) |
-| `-d`, `--detach`              |  ✔️   |  ✖️  | ✖️ |   ✔️    |   ✖️   | ✖️ |
-| `--retries` / `--timeout`     |  ✔️   |  ✖️  | ✖️ |   ✔️    |   ✔️   | ✖️ |
-| `-n`, `--dry-run`             |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✖️ |
-| `-v`, `--verbose`             |  ✔️   |  ✔️  | --verbose | ✔️ | ✔️ | ✖️ |
-| `-q`, `--quiet`               |  ✔️   |  ✔️  | ✔️ |   ✔️    |   ✔️   | ✖️ |
-| `-v`, `--volumes`             |  ✖️   |  ✖️  | ✔️ |   ✖️    |   ✖️   | ✖️ |
-| `--images`                    |  ✖️   |  ✖️  | ✔️ |   ✖️    |   ✖️   | ✖️ |
-| `-F`, `--follow` / `--lines`  |  ✖️   |  ✖️  | ✖️ |   ✖️    |   ✖️   | ✔️ |
+Common flags are available across commands:
 
-`rm` nutzt `-v` für Volumes; hier steht `--verbose` nur als Langform zur Verfügung.
+| Flag | Description |
+| --- | --- |
+| `-f`, `--compose-file` | Additional compose file (repeatable) |
+| `-p`, `--project-name` | Compose project name |
+| `--env-file` | Env file passed to compose |
+| `--profile` | Compose profile (repeatable) |
+| `-s`, `--services` | Limit to given services (comma separated or repeat) |
+| `-n`, `--dry-run` | Print command without executing |
+| `--verbose` | Show subprocess output |
+| `-q`, `--quiet` | Minimal output |
 
-Use `--dry-run` to print commands without executing them. `--verbose` shows
-subprocess calls, while `--quiet` minimizes output. Set `NO_COLOR=1` or use
-`--no-color` to disable colored output.
+Specific flags:
 
-### Text User Interface
+| Command | Extra flags |
+| --- | --- |
+| `start` | `-d/--detach`, `--retries`, `--timeout` |
+| `restart` | `--retries`, `--timeout` |
+| `rm` | `-v/--volumes`, `--images [all|local|none]` (use `--verbose` for verbosity) |
+| `status` | `--format [table|text|json|yaml]` |
+| `logs` | `-F/--follow`, `--lines N`, `--format [plain|jsonl]` |
 
-```bash
-it ui run
+Use `--dry-run` to print the composed `docker compose` command without
+executing it. `--verbose` prints subprocess output, `--quiet` suppresses
+it.
 
-# Key bindings within the TUI:
-#   r refresh   u up   d down   s status   l logs   f follow logs
-# Die TUI ruft den internen Helper `show_logs` aus `infra` auf –
-# Typer-Commands selbst werden im UI nicht verwendet.
-```
-
-### Other examples
-
-```bash
-it search query "neo4j" --chart
-```
-
-### Ports
-
-| Service      | Port |
-| ------------ | ---- |
-| Prometheus   | 3412 |
-| Grafana      | 3413 |
-| Alertmanager | 3414 |
-| Loki         | 3415 |
-| Tempo        | 3416 |
-
-### Quickstart Observability
-
-```bash
-it status
-docker compose -f docker-compose.observability.yml --profile observability up -d
-open http://localhost:3413
-open http://localhost:3412
-```
+The `infra` namespace exposes the same commands for advanced use.
