@@ -7,7 +7,7 @@ except Exception:  # pragma: no cover - otel optional
 import os
 import time
 import logging
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 import numpy as np
 
@@ -45,7 +45,15 @@ from auth import user_from_token
 from opa import allow
 from .config import Settings
 from . import rerank as rr
-from . import health
+import pathlib, sys
+SERVICE_DIR = pathlib.Path(__file__).resolve().parent
+PARENT_DIR = SERVICE_DIR.parent
+GRAND_PARENT = PARENT_DIR.parent
+for p in (SERVICE_DIR, PARENT_DIR, GRAND_PARENT):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
+from _shared.health import make_healthz, make_readyz, probe_http
+from fastapi.responses import JSONResponse
 
 settings = Settings()
 logger = logging.getLogger(__name__)
@@ -69,7 +77,7 @@ if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1"
     app.add_route("/metrics", handle_metrics)
 
 app.state.service_name = "search-api"
-app.state.start_time = time.time()
+app.state.start_ts = time.monotonic()
 app.state.version = os.getenv("GIT_SHA", "dev")
 
 app.add_middleware(
@@ -81,7 +89,24 @@ app.add_middleware(
 )
 client = OpenSearch(settings.os_url)
 
-app.include_router(health.router)
+@app.get("/healthz")
+def healthz():
+    return make_healthz(app.state.service_name, app.state.version, app.state.start_ts)
+
+@app.get("/readyz")
+def readyz(verbose: int = 0):
+    checks: Dict[str, Dict[str, Any]] = {}
+    if os.getenv("IT_FORCE_READY") != "1":
+        os_url = os.getenv("OPENSEARCH_URL")
+        if os_url:
+            url = f"{os_url.rstrip("/")}/_cluster/health"
+            checks["opensearch"] = probe_http(url)
+        else:
+            checks["opensearch"] = {"status": "skipped", "latency_ms": None, "error": None, "reason": "missing config"}
+    payload, status = make_readyz(app.state.service_name, app.state.version, app.state.start_ts, checks)
+    return JSONResponse(payload, status_code=status)
+
+
 
 
 def oidc_user(authorization: Optional[str] = Header(None)):

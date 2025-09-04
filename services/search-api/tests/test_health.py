@@ -1,12 +1,9 @@
-import json
-import types
 import pytest
-from starlette.requests import Request
-import app.health as health
+import _shared.health as shared_health
 
 
 @pytest.mark.anyio
-async def test_health(client):
+async def test_healthz_shape(client):
     r = await client.get("/healthz")
     data = r.json()
     assert r.status_code == 200
@@ -15,71 +12,56 @@ async def test_health(client):
         assert key in data
 
 
-def _dummy_request():
-    app = types.SimpleNamespace(state=types.SimpleNamespace(service_name="s", start_time=0, version="dev"))
-    return Request({"type": "http", "app": app})
-
-
-def _json(resp):
-    return json.loads(resp.body)
-
-
-def test_ready_force(monkeypatch):
+@pytest.mark.anyio
+async def test_readyz_force_ready(client, monkeypatch):
     monkeypatch.setenv("IT_FORCE_READY", "1")
-    resp = health.readyz(_dummy_request())
-    data = _json(resp)
-    assert resp.status_code == 200
-    assert data["checks"]["opensearch"]["status"] == "skipped"
+    r = await client.get("/readyz")
+    data = r.json()
+    assert r.status_code == 200
+    assert data["status"] == "ok"
+    assert data["checks"] == {}
 
 
-def test_ready_opensearch_success(monkeypatch):
-    monkeypatch.setenv("OPENSEARCH_URL", "http://os")
-
+@pytest.mark.anyio
+async def test_readyz_ok_degraded_fail(client, monkeypatch):
     class Resp:
-        def __init__(self, code):
-            self.code = code
-
         def __enter__(self):
             return self
-
-        def __exit__(self, exc_type, exc, tb):
+        def __exit__(self, *a):
             pass
-
         def getcode(self):
-            return self.code
+            return 200
 
-    monkeypatch.setattr(health.urlrequest, "urlopen", lambda url, timeout=0: Resp(200))
-    resp = health.readyz(_dummy_request())
-    data = _json(resp)
-    assert resp.status_code == 200
-    assert data["checks"]["opensearch"]["status"] == "ok"
-
-
-def test_ready_opensearch_fail(monkeypatch):
+    # ok
     monkeypatch.setenv("OPENSEARCH_URL", "http://os")
+    monkeypatch.setattr(shared_health.urlrequest, "urlopen", lambda url, timeout=0.8: Resp())
+    r = await client.get("/readyz")
+    data = r.json()
+    check = data["checks"]["opensearch"]
+    assert r.status_code == 200
+    assert data["status"] == "ok"
+    assert check["status"] == "ok"
+    assert set(check) == {"status", "latency_ms", "error", "reason"}
 
-    class Resp:
-        def __init__(self, code):
-            self.code = code
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, tb):
-            pass
-
-        def getcode(self):
-            return self.code
-
-    monkeypatch.setattr(health.urlrequest, "urlopen", lambda url, timeout=0: Resp(500))
-    resp = health.readyz(_dummy_request())
-    data = _json(resp)
-    assert resp.status_code == 503
-    assert data["checks"]["opensearch"]["status"] == "fail"
-
-
-def test_ready_opensearch_missing(monkeypatch):
+    # degraded
     monkeypatch.delenv("OPENSEARCH_URL", raising=False)
-    resp = health.readyz(_dummy_request())
-    data = _json(resp)
-    assert data["checks"]["opensearch"]["status"] == "skipped"
+    r = await client.get("/readyz")
+    data = r.json()
+    check = data["checks"]["opensearch"]
+    assert r.status_code == 200
+    assert data["status"] == "degraded"
+    assert check["status"] == "skipped"
+    assert set(check) == {"status", "latency_ms", "error", "reason"}
+
+    # fail
+    monkeypatch.setenv("OPENSEARCH_URL", "http://os")
+    def raise_err(url, timeout=0.8):
+        raise RuntimeError("boom")
+    monkeypatch.setattr(shared_health.urlrequest, "urlopen", raise_err)
+    r = await client.get("/readyz")
+    data = r.json()
+    check = data["checks"]["opensearch"]
+    assert r.status_code == 503
+    assert data["status"] == "fail"
+    assert check["status"] == "fail"
+    assert set(check) == {"status", "latency_ms", "error", "reason"}

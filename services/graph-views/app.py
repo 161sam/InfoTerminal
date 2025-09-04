@@ -19,6 +19,8 @@ if str(PARENT_DIR) not in sys.path:
     sys.path.insert(0, str(PARENT_DIR))
 
 from _shared.cors import apply_cors, get_cors_settings_from_env
+from fastapi.responses import JSONResponse
+from _shared.health import make_healthz, make_readyz, probe_db
 
 # --- PG ENV Fallbacks (injected) ---
 import os as _os
@@ -97,12 +99,33 @@ if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1"
   app.add_middleware(PrometheusMiddleware)
   app.add_route("/metrics", handle_metrics)
 app.state.service_name = "graph-views"
-app.state.start_time = time.time()
+app.state.start_ts = time.monotonic()
 app.state.version = os.getenv("GIT_SHA", "dev")
+@app.get("/healthz")
+def healthz():
+  return make_healthz(app.state.service_name, app.state.version, app.state.start_ts)
 
-import health  # noqa: E402
+@app.get("/readyz")
+def readyz(verbose: int = 0):
+  checks: Dict[str, Dict[str, Any]] = {}
+  if os.getenv("IT_FORCE_READY") != "1":
+    pool = getattr(app.state, "pool", None)
+    if pool:
+      def _call():
+        conn = pool.getconn()
+        try:
+          with conn.cursor() as cur:
+            cur.execute("SELECT 1")
+        finally:
+          pool.putconn(conn)
+      checks["postgres"] = probe_db(_call)
+    else:
+      checks["postgres"] = {"status": "skipped", "latency_ms": None, "error": None, "reason": "missing config"}
+  payload, status = make_readyz(app.state.service_name, app.state.version, app.state.start_ts, checks)
+  return JSONResponse(payload, status_code=status)
 
-app.include_router(health.router)
+
+
 
 def user_from_header(x_user: Optional[str]):  # simple dev-mode
   return x_user or "dev"
