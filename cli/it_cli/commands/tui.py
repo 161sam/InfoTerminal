@@ -1,8 +1,6 @@
 """Minimal Textual TUI for infra management."""
 from __future__ import annotations
 
-import asyncio
-
 import typer
 from rich.console import Console
 
@@ -38,18 +36,23 @@ def run() -> None:
             yield Footer()
 
         async def on_mount(self) -> None:  # pragma: no cover - UI
-            await self.refresh()
-            self.set_interval(3, self.refresh)
+            await self.update_status()
+            self.set_interval(3, self.update_status)
 
-        async def refresh(self) -> None:  # pragma: no cover - UI
+        async def update_status(self) -> None:  # pragma: no cover - UI
             rows = await infra.gather_status()
             self.table.clear(columns=True)
             self.table.add_columns("Service", "Status", "Port", "Latency")
             for r in rows:
-                self.table.add_row(r["service"], r["status"], str(r.get("port", "")), r.get("latency", ""))
+                self.table.add_row(
+                    r["service"],
+                    r["status"],
+                    str(r.get("port", "")),
+                    r.get("latency", ""),
+                )
 
         async def action_refresh(self) -> None:  # pragma: no cover - UI
-            await self.refresh()
+            await self.update_status()
 
         def action_up(self) -> None:  # pragma: no cover - UI
             infra.up()
@@ -58,7 +61,7 @@ def run() -> None:
             infra.down()
 
         async def action_status(self) -> None:  # pragma: no cover - UI
-            await self.refresh()
+            await self.update_status()
 
         def action_logs(self) -> None:  # pragma: no cover - UI
             if not self.table.rows:
