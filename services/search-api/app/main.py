@@ -1,34 +1,27 @@
-try:
-    from obs.otel_boot import setup_otel  # type: ignore
-except Exception:  # pragma: no cover - otel optional
-    def setup_otel(app, service_name: str = "search-api"):
-        return app
-
 import os
 import time
 import logging
-from typing import Optional, List, Dict, Any
+import pathlib
+import sys
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
+SERVICE_DIR = pathlib.Path(__file__).resolve().parent
+PARENT_DIR = SERVICE_DIR.parent
+GRAND_PARENT = PARENT_DIR.parent
+for p in (SERVICE_DIR, PARENT_DIR, GRAND_PARENT):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
+
 from fastapi import FastAPI, Depends, HTTPException, Header, Query, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
 from .it_logging import setup_logging
-try:
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-except Exception:  # pragma: no cover - optional
-    class FastAPIInstrumentor:  # type: ignore
-        def instrument_app(self, app):
-            return app
-
-try:
-    from prometheus_fastapi_instrumentator import Instrumentator
-except Exception:  # pragma: no cover - optional
-    class Instrumentator:  # type: ignore
-        def instrument(self, app):
-            return self
-
-        def expose(self, app, include_in_schema=False, should_gzip=True):  # pragma: no cover - stub
-            return None
+from _shared.health import make_healthz, make_readyz, probe_http
+from _shared.obs.metrics_boot import enable_prometheus_metrics
+from _shared.obs.otel_boot import setup_otel
 
 from .metrics import (
     SEARCH_ERRORS,
@@ -38,47 +31,23 @@ from .metrics import (
     RERANK_REQS,
 )
 
-from fastapi.middleware.cors import CORSMiddleware
 from opensearchpy import OpenSearch
 
 from auth import user_from_token
 from opa import allow
 from .config import Settings
 from . import rerank as rr
-import pathlib, sys
-SERVICE_DIR = pathlib.Path(__file__).resolve().parent
-PARENT_DIR = SERVICE_DIR.parent
-GRAND_PARENT = PARENT_DIR.parent
-for p in (SERVICE_DIR, PARENT_DIR, GRAND_PARENT):
-    if str(p) not in sys.path:
-        sys.path.insert(0, str(p))
-from _shared.health import make_healthz, make_readyz, probe_http
-from fastapi.responses import JSONResponse
 
 settings = Settings()
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
 setup_logging(app, service_name="search-api")
-FastAPIInstrumentor().instrument_app(app)
-setup_otel(app)
-
-instrumentator = Instrumentator().instrument(app)
-
-
-@app.on_event("startup")
-async def _startup():
-    instrumentator.expose(app, include_in_schema=False, should_gzip=True)
-
-if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
-    from starlette_exporter import PrometheusMiddleware, handle_metrics
-
-    app.add_middleware(PrometheusMiddleware)
-    app.add_route("/metrics", handle_metrics)
-
 app.state.service_name = "search-api"
-app.state.start_ts = time.monotonic()
 app.state.version = os.getenv("GIT_SHA", "dev")
+app.state.start_ts = time.monotonic()
+setup_otel(app, service_name=app.state.service_name, version=app.state.version)
+enable_prometheus_metrics(app, path=os.getenv("IT_METRICS_PATH", "/metrics"))
 
 app.add_middleware(
     CORSMiddleware,

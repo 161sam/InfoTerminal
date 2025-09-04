@@ -3,9 +3,10 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import client from 'prom-client';
 import morgan from 'morgan';
 import crypto from 'crypto';
+import { enableMetrics } from './obs/metricsBoot';
+import { setupOtel } from './obs/otelBoot';
 
 const PORT = Number(process.env.PORT) || 8080;
 const USE_LOCAL_UPSTREAMS = process.env.USE_LOCAL_UPSTREAMS === '1';
@@ -30,30 +31,13 @@ app.use(cors({ origin: origins, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan('combined'));
 
+setupOtel(process.env.OTEL_SERVICE_NAME || 'gateway');
+enableMetrics(app, process.env.IT_METRICS_PATH || '/metrics');
+
 app.use((req, res, next) => {
   const rid = (req.headers['x-request-id'] as string) || crypto.randomUUID();
   (req as any).id = rid;
   res.setHeader('x-request-id', rid);
-  next();
-});
-
-const register = new client.Registry();
-client.collectDefaultMetrics({ register });
-const httpRequests = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'HTTP request duration',
-  labelNames: ['method', 'route', 'status'],
-  buckets: [0.05, 0.1, 0.3, 0.5, 1, 2, 5, 10],
-});
-register.registerMetric(httpRequests);
-app.use((req, res, next) => {
-  const start = process.hrtime.bigint();
-  res.on('finish', () => {
-    const dur = Number(process.hrtime.bigint() - start) / 1e9;
-    httpRequests
-      .labels(req.method, req.path.replace(/[0-9a-f-]{8,}/g, ':id'), String(res.statusCode))
-      .observe(dur);
-  });
   next();
 });
 
@@ -68,13 +52,6 @@ app.get('/healthz', (_req, res) => {
 });
 
 app.get('/readyz', (_req, res) => res.json({ status: 'ok' }));
-
-if (process.env.IT_ENABLE_METRICS === '1') {
-  app.get('/metrics', async (_req, res) => {
-    res.set('Content-Type', register.contentType);
-    res.end(await register.metrics());
-  });
-}
 
 app.use('/api', rateLimit({ windowMs: 60_000, max: 600 }));
 

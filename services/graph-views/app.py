@@ -1,9 +1,3 @@
-try:
-    from obs.otel_boot import setup_otel  # type: ignore
-except Exception:  # pragma: no cover
-    def setup_otel(app, service_name: str = "graph-views"):
-        return app
-
 import asyncio
 import logging
 import os
@@ -13,7 +7,6 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from it_logging import setup_logging
 
@@ -25,6 +18,8 @@ if str(PARENT_DIR) not in sys.path:
 
 from _shared.cors import apply_cors, get_cors_settings_from_env
 from _shared.health import make_healthz, make_readyz
+from _shared.obs.metrics_boot import enable_prometheus_metrics
+from _shared.obs.otel_boot import setup_otel
 
 from db import (
     build_database_url_from_env,
@@ -36,19 +31,12 @@ from db import (
 
 app = FastAPI(title="Graph Views API", version="0.1.0")
 setup_logging(app, service_name="graph-views")
-FastAPIInstrumentor().instrument_app(app)
-setup_otel(app)
 apply_cors(app, get_cors_settings_from_env())
-
-if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
-    from starlette_exporter import PrometheusMiddleware, handle_metrics
-
-    app.add_middleware(PrometheusMiddleware)
-    app.add_route("/metrics", handle_metrics)
-
 app.state.service_name = "graph-views"
 app.state.version = os.getenv("GIT_SHA", "dev")
 app.state.start_ts = time.monotonic()
+setup_otel(app, service_name=app.state.service_name, version=app.state.version)
+enable_prometheus_metrics(app, path=os.getenv("IT_METRICS_PATH", "/metrics"))
 app.state.db_pool = None
 app.state.db_init_task = None
 

@@ -115,7 +115,37 @@ docker compose --profile observability up -d
 | Loki         | 3415 |
 | Tempo        | 3416 |
 
-`IT_ENABLE_METRICS=1` aktiviert `/metrics`. Setze `IT_OTEL=1`, um Tracing zu aktivieren.
+### Metrics & Tracing
+
+| Variable | Default | Beschreibung |
+| --- | --- | --- |
+| `IT_ENABLE_METRICS` | `0` | `/metrics`-Endpoint aktivieren (auch bei `IT_OBSERVABILITY=1`) |
+| `IT_METRICS_PATH` | `/metrics` | Pfad für Prometheus-Scrapes |
+| `IT_OTEL` | `0` | OpenTelemetry Tracing aktivieren |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://tempo:4318` | OTLP-Endpoint |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` | OTLP-Protokoll |
+| `OTEL_SERVICE_NAME` | Dienstname | Service-Identifier |
+| `OTEL_RESOURCE_ATTRIBUTES` | – | zusätzliche Attribute (`k=v,k2=v2`) |
+| `OTEL_TRACES_SAMPLER` | `parentbased_traceidratio` | Sampling-Strategie |
+| `OTEL_TRACES_SAMPLER_ARG` | `0.1` | Sampling-Rate (z. B. 10 %) |
+
+#### Nur Prometheus-Metrics
+
+```bash
+IT_ENABLE_METRICS=1 \\
+docker compose -f docker-compose.observability.yml --profile observability up -d
+```
+
+#### Tracing aktivieren (Tempo)
+
+```bash
+IT_OTEL=1 \\
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:3416 \\
+OTEL_TRACES_SAMPLER_ARG=0.1 \\
+docker compose -f docker-compose.observability.yml --profile observability up -d
+```
+
+> Prometheus findet Targets nur, wenn `/metrics` existiert; Tempo erhält OTLP-Spans nur bei gesetztem `IT_OTEL=1`.
 
 ### Quickstart Observability
 
