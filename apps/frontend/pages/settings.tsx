@@ -5,6 +5,7 @@ import Button from "../components/ui/Button";
 import Field from "../components/ui/Field";
 import StatusPill, { Status } from "../components/ui/StatusPill";
 import config from "../lib/config";
+import safe from "../lib/safe";
 
 /** Ping an endpoint and return status. */
 async function ping(url?: string): Promise<Status> {
@@ -40,6 +41,7 @@ export default function SettingsPage() {
   ];
 
   const [status, setStatus] = useState<Record<string, Status>>({});
+  const runtime = typeof window === "undefined" ? "server" : "client";
 
   const handlePing = async (key: string, url?: string) => {
     setStatus((s) => ({ ...s, [key]: "loading" }));
@@ -72,9 +74,8 @@ export default function SettingsPage() {
         <Card>
           <h2 className="mb-2 text-lg font-semibold">Environment</h2>
           <ul className="text-sm text-gray-600">
-            <li>NODE_ENV: {process.env.NODE_ENV}</li>
-            <li>NEXT_RUNTIME: {process.env.NEXT_RUNTIME}</li>
-            <li>buildId: {process.env.BUILD_ID ?? "n/a"}</li>
+            <li>NODE_ENV: {safe(process.env.NODE_ENV, "development")}</li>
+            <li>Runtime: {runtime}</li>
           </ul>
         </Card>
 

@@ -3,12 +3,14 @@ try:
 except Exception:
     pass
 
-import os, json, secrets
+import os, json, secrets, socket
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header, Query
+from fastapi.responses import JSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from prometheus_client import make_asgi_app
-import psycopg2
+from contextlib import asynccontextmanager, contextmanager
+from psycopg2.pool import SimpleConnectionPool
 
 # --- PG ENV Fallbacks (injected) ---
 import os as _os
@@ -25,9 +27,18 @@ PG = {
   "user": _pg_env("PG_USER","PGUSER","POSTGRES_USER","DB_USER","DATABASE_USER", default="it_user"),
   "password": _pg_env("PG_PASS","PGPASSWORD","PG_PASSWORD","POSTGRES_PASSWORD","DB_PASS","DB_PASSWORD","DATABASE_PASSWORD", default="it_pass"),
 }
+# Connection pool initialised in lifespan
+pool: Optional[SimpleConnectionPool] = None
+
+@contextmanager
 def conn():
-  import psycopg2
-  return psycopg2.connect(**PG)
+  if pool is None:
+    raise RuntimeError("PG pool not ready")
+  c = pool.getconn()
+  try:
+    yield c
+  finally:
+    pool.putconn(c)
 
 def init():
   with conn() as c, c.cursor() as cur:
@@ -46,11 +57,23 @@ def init():
       );
       CREATE INDEX IF NOT EXISTS idx_graph_views_owner ON graph_views(owner);
     """)
-import os as _gv_os
-if _gv_os.getenv("INIT_DB_ON_STARTUP","1")=="1":
-    init()
+def setup_pool():
+  return SimpleConnectionPool(1, 5, **PG)
 
-app = FastAPI(title="Graph Views API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+  global pool
+  try:
+    pool = setup_pool()
+    if os.getenv("INIT_DB_ON_STARTUP","1") == "1":
+      init()
+  except Exception:
+    pool = None
+  yield
+  if pool:
+    pool.closeall()
+
+app = FastAPI(title="Graph Views API", version="0.1.0", lifespan=lifespan)
 FastAPIInstrumentor().instrument_app(app)
 app.mount("/metrics", make_asgi_app())
 
@@ -58,7 +81,15 @@ def user_from_header(x_user: Optional[str]):  # simple dev-mode
   return x_user or "dev"
 
 @app.get("/healthz")
-def health(): return {"ok": True}
+def health():
+  try:
+    with socket.create_connection((PG["host"], PG["port"]), timeout=1):
+      pass
+    with conn() as c, c.cursor() as cur:
+      cur.execute("SELECT 1")
+    return {"ok": True}
+  except Exception:
+    return JSONResponse({"ok": False}, status_code=503)
 
 @app.post("/views")
 def create_view(payload: Dict[str, Any], x_user: Optional[str]=Header(None)):
