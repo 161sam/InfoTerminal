@@ -1,0 +1,63 @@
+{
+  "uid": "dev-health",
+  "title": "InfoTerminal — Dev Health",
+  "schemaVersion": 38,
+  "version": 1,
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "constant",
+        "query": "search-api,graph-api,graph-views",
+        "label": "Service",
+        "current": { "text": "search-api", "value": "search-api" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Uptime",
+      "targets": [
+        {
+          "expr": "time() - process_start_time_seconds{app_name=\"$service\"}",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests / Errors",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{app_name=\"$service\"}[1m]))",
+          "datasource": "Prometheus"
+        },
+        {
+          "expr": "sum(rate(http_requests_total{app_name=\"$service\",status_code=~\"4..|5..\"}[1m]))",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Readyz Latency avg",
+      "targets": [
+        {
+          "expr": "rate(readyz_latency_seconds_sum{service=\"$service\"}[5m]) / rate(readyz_latency_seconds_count{service=\"$service\"}[5m])",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Target Up",
+      "targets": [
+        {
+          "expr": "up{job=\"$service\"}",
+          "datasource": "Prometheus"
+        }
+      ]
+    }
+  ]
+}

@@ -32,6 +32,7 @@ it restart -n -s neo4j
 it rm -n -v --images local
 it status -s graph-api,search-api
 it logs -s neo4j -F --lines 200
+it start -d --profile observability
 ```
 
 `infra` ist ein Power-User-Namespace und hält die traditionellen
@@ -85,3 +86,11 @@ it ui run
 ```bash
 it search query "neo4j" --chart
 ```
+
+### Ports
+
+| Service      | Port |
+| ------------ | ---- |
+| Prometheus   | 3412 |
+| Grafana      | 3413 |
+| Alertmanager | 3414 |

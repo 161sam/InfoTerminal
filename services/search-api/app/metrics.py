@@ -19,3 +19,9 @@ RERANK_LATENCY = Histogram(
     "Rerank latency",
     buckets=[0.05, 0.1, 0.25, 0.5, 1, 2],
 )
+
+READYZ_LATENCY = Histogram(
+    "readyz_latency_seconds",
+    "Latency of /readyz endpoint",
+    ["service"],
+)

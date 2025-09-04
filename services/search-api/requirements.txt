@@ -7,7 +7,7 @@ cachetools>=5.3
 numpy>=1.24
 sentence-transformers==2.2.2
 prometheus-client==0.20.*
-prometheus-fastapi-instrumentator==6.1.*
+starlette-exporter==0.15.*
 opentelemetry-sdk
 opentelemetry-instrumentation-fastapi
 opentelemetry-exporter-otlp

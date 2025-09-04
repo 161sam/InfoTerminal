@@ -1,67 +1,54 @@
 services:
-  otel-collector:
-    image: otel/opentelemetry-collector:0.106.1
-    command: ["--config=/etc/otel/config.yaml"]
-    volumes:
-      - ./infra/observability/otel-collector.yaml:/etc/otel/config.yaml:ro
-    # untypisch: 3416 (intern bleibt 4317)
-    ports: ["3416:4317"]
-    profiles: ["obs"]
-  loki:
-    image: grafana/loki:2.9.8
-    command: ["-config.file=/etc/loki/config.yaml"]
-    volumes:
-      - ./infra/observability/loki/values.yaml:/etc/loki/config.yaml:ro
-    # untypisch: 3413
-    ports: ["3413:3100"]
-    profiles: ["obs"]
-  promtail:
-    image: grafana/promtail:2.9.8
-    volumes:
-      - /var/log:/var/log:ro
-      - ./infra/observability/promtail/values.yaml:/etc/promtail/config.yaml:ro
-    command: ["--config.file=/etc/promtail/config.yaml"]
-    profiles: ["obs"]
-    depends_on:
-      loki:
-        condition: service_started
-  tempo:
-    image: grafana/tempo:2.5.0
-    volumes:
-      - ./infra/observability/tempo/values.yaml:/etc/tempo/config.yaml:ro
-    command: ["-config.file=/etc/tempo/config.yaml"]
-    # untypisch: 3414
-    ports: ["3414:3200"]
-    profiles: ["obs"]
+  search-api:
+    profiles: ["observability"]
+    environment:
+      - IT_ENABLE_METRICS=1
+
+  graph-api:
+    profiles: ["observability"]
+    environment:
+      - IT_ENABLE_METRICS=1
+
+  graph-views:
+    profiles: ["observability"]
+    environment:
+      - IT_ENABLE_METRICS=1
+
   prometheus:
     image: prom/prometheus:v2.53.0
     volumes:
-      - ./infra/observability/prometheus/values.yaml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    # untypisch: 3415
-    ports: ["3415:9090"]
-    profiles: ["obs"]
-    networks:
-      infoterminal_mesh: {}
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-3412}:9090"
+    profiles: ["observability"]
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    volumes:
+      - ./observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    ports:
+      - "127.0.0.1:${ALERTMANAGER_PORT:-3414}:9093"
+    profiles: ["observability"]
+
   grafana:
     image: grafana/grafana:10.4.5
     environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin}
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     volumes:
+      - grafana-data:/var/lib/grafana
       - ./deploy/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./deploy/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    # untypisch: 3412
-    ports: ["3412:3000"]
-    profiles: ["obs"]
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3413}:3000"
+    profiles: ["observability"]
     depends_on:
-      prometheus:
-        condition: service_started
-      loki:
-        condition: service_started
-      tempo:
-        condition: service_started
-networks:
-  infoterminal_mesh:
-    external: true
+      - prometheus
+
+volumes:
+  prometheus-data: {}
+  grafana-data: {}

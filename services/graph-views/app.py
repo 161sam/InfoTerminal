@@ -7,7 +7,6 @@ import os, json, secrets, time
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header, Query
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from prometheus_client import make_asgi_app
 from contextlib import asynccontextmanager, contextmanager
 from psycopg2.pool import SimpleConnectionPool
 
@@ -78,7 +77,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Graph Views API", version="0.1.0", lifespan=lifespan)
 FastAPIInstrumentor().instrument_app(app)
-app.mount("/metrics", make_asgi_app())
+
+if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
+  from starlette_exporter import PrometheusMiddleware, handle_metrics
+
+  app.add_middleware(PrometheusMiddleware)
+  app.add_route("/metrics", handle_metrics)
 app.state.service_name = "graph-views"
 app.state.start_time = time.time()
 app.state.version = os.getenv("GIT_SHA", "dev")

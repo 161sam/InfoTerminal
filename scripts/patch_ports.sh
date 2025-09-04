@@ -34,11 +34,11 @@ declare -A CONTAINER_PORTS=(
 )
 
 # Observability fixed
-OBS_GRAFANA=3412
-OBS_LOKI=3413
-OBS_TEMPO=3414
-OBS_PROM=3415
-OBS_OTEL=3416
+OBS_PROM=3412
+OBS_GRAFANA=3413
+OBS_ALERT=3414
+OBS_LOKI=3415
+OBS_TEMPO=3416
 AGENTS_FLOWISE=3417
 
 # -----------------------------
@@ -99,11 +99,7 @@ if [[ -f "$DC_OBS" ]]; then
   echo "🔧 Patch docker-compose.observability.yml"
   ensure_yq
   backup_file "$DC_OBS"
-  patch_port_yaml_simple "$DC_OBS" "grafana"        "$OBS_GRAFANA" "3000"
-  patch_port_yaml_simple "$DC_OBS" "loki"           "$OBS_LOKI"    "3100"
-  patch_port_yaml_simple "$DC_OBS" "tempo"          "$OBS_TEMPO"   "3200"
-  patch_port_yaml_simple "$DC_OBS" "prometheus"     "$OBS_PROM"    "9090"
-  patch_port_yaml_simple "$DC_OBS" "otel-collector" "$OBS_OTEL"    "4317"
+  # Ports are referenced via environment variables in compose file
 fi
 
 # -----------------------------
@@ -129,18 +125,37 @@ if [[ -f "$HELM_VALUES" ]]; then
     | (.graphApi.service.port) |= 8612
     | (.aleph.service.port) |= 8613
     | (.observability.ports) = {
-        grafana: $OBS_GRAFANA,
-        loki: $OBS_LOKI,
-        tempo: $OBS_TEMPO,
         prometheus: $OBS_PROM,
-        otelGrpc: $OBS_OTEL
+        grafana: $OBS_GRAFANA,
+        alertmanager: $OBS_ALERT,
+        loki: $OBS_LOKI,
+        tempo: $OBS_TEMPO
       }
     | (.agents.flowise.port) |= $AGENTS_FLOWISE
   " "$HELM_VALUES" 2>/dev/null || true
 fi
 
 # -----------------------------
-# 5) Frontend .env.local + package.json
+# 5) .env.dev.ports
+# -----------------------------
+ENV_PORTS="$ROOT/.env.dev.ports"
+echo "🔧 Patch .env.dev.ports"
+backup_file "$ENV_PORTS"
+{
+  echo "SEARCH_API_URL=http://127.0.0.1:8401"
+  echo "GRAPH_API_URL=http://127.0.0.1:8402"
+  echo "GRAPH_VIEWS_URL=http://127.0.0.1:8403"
+  echo "ENTITY_RESOLUTION_URL=http://127.0.0.1:8404"
+  echo "DOC_ENTITIES_URL=http://127.0.0.1:8406"
+  echo "PROMETHEUS_PORT=$OBS_PROM"
+  echo "GRAFANA_PORT=$OBS_GRAFANA"
+  echo "ALERTMANAGER_PORT=$OBS_ALERT"
+  echo "LOKI_PORT=$OBS_LOKI"
+  echo "TEMPO_PORT=$OBS_TEMPO"
+} > "$ENV_PORTS"
+
+# -----------------------------
+# 6) Frontend .env.local + package.json
 # -----------------------------
 echo "🔧 Patch Frontend .env.local & package.json"
 mkdir -p "$FRONTEND_DIR"
