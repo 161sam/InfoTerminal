@@ -15,9 +15,12 @@ from it_logging import setup_logging
 from neo4j import exceptions
 
 SERVICE_DIR = Path(__file__).resolve().parent
-if str(SERVICE_DIR) not in sys.path:
-    sys.path.insert(0, str(SERVICE_DIR))
+PARENT_DIR = SERVICE_DIR.parent
+for p in (SERVICE_DIR, PARENT_DIR):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
+from _shared.cors import apply_cors, get_cors_settings_from_env
 from utils.neo4j_client import get_driver, neo_session
 
 
@@ -41,6 +44,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="InfoTerminal Graph API", version="0.1.0", lifespan=lifespan)
 setup_logging(app, service_name="graph-api")
+apply_cors(app, get_cors_settings_from_env())
 app.state.service_name = "graph-api"
 app.state.start_time = time.time()
 app.state.version = os.getenv("GIT_SHA", "dev")

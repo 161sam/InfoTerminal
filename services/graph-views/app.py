@@ -4,13 +4,21 @@ except Exception:  # pragma: no cover
     def setup_otel(app, service_name: str = "graph-views"):
         return app
 
-import os, json, secrets, time
+import os, json, secrets, time, sys
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header, Query
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from it_logging import setup_logging
 from contextlib import asynccontextmanager, contextmanager
 from psycopg2.pool import SimpleConnectionPool
+from pathlib import Path
+
+SERVICE_DIR = Path(__file__).resolve().parent
+PARENT_DIR = SERVICE_DIR.parent
+if str(PARENT_DIR) not in sys.path:
+    sys.path.insert(0, str(PARENT_DIR))
+
+from _shared.cors import apply_cors, get_cors_settings_from_env
 
 # --- PG ENV Fallbacks (injected) ---
 import os as _os
@@ -81,6 +89,7 @@ app = FastAPI(title="Graph Views API", version="0.1.0", lifespan=lifespan)
 setup_logging(app, service_name="graph-views")
 FastAPIInstrumentor().instrument_app(app)
 setup_otel(app)
+apply_cors(app, get_cors_settings_from_env())
 
 if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
   from starlette_exporter import PrometheusMiddleware, handle_metrics

@@ -13,12 +13,14 @@ def setup_otel(app, service_name: str = "graph-views") -> None:
     if os.getenv("IT_OTEL") != "1":
         return
     try:
-        from opentelemetry import trace
+        from opentelemetry import trace, metrics
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.sampling import ParentBased, TraceIdRatioBased
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
+        from opentelemetry.sdk.metrics import MeterProvider
         from opentelemetry.instrumentation.requests import RequestsInstrumentor
     except Exception as e:  # pragma: no cover
         logger.warning("OTEL init skipped: %s", e)
@@ -33,13 +35,15 @@ def setup_otel(app, service_name: str = "graph-views") -> None:
     ratio = float(os.getenv("OTEL_TRACES_SAMPLER_ARG", "0.1"))
     sampler = ParentBased(TraceIdRatioBased(ratio))
     try:
-        exporter = OTLPSpanExporter(endpoint=endpoint)
+        span_exporter = OTLPSpanExporter(endpoint=endpoint)
+        OTLPMetricExporter(endpoint=endpoint, insecure=True)
     except Exception as e:  # pragma: no cover
         logger.warning("OTEL exporter disabled: %s", e)
         return
     provider = TracerProvider(resource=Resource.create(attrs))
-    provider.add_span_processor(BatchSpanProcessor(exporter))
+    provider.add_span_processor(BatchSpanProcessor(span_exporter))
     trace.set_tracer_provider(provider)
+    metrics.set_meter_provider(MeterProvider(resource=Resource.create(attrs)))
     RequestsInstrumentor().instrument()
 
     class RequestIdMiddleware(BaseHTTPMiddleware):
