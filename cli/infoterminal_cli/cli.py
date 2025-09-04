@@ -1,5 +1,5 @@
 from __future__ import annotations
-import os, sys, shlex, json, socket, time, subprocess
+import os, sys, shlex, subprocess, socket, time
 from pathlib import Path
 import typer
 from rich import print
@@ -7,8 +7,8 @@ from rich.table import Table
 from rich.console import Console
 
 app = typer.Typer(add_completion=False, help="InfoTerminal CLI (dev-local & docker orchestration)")
-
 console = Console()
+
 ROOT_MARKERS = ["docker-compose.yml", ".git"]
 
 # ---- Port-Policy (keine Standard-Host-Ports) ----
@@ -42,6 +42,7 @@ OBS_FILE  = "docker-compose.observability.yml"
 AG_FILE   = "docker-compose.agents.yml"
 GW_FILE   = "docker-compose.gateway.yml"
 OPA_FILE  = "docker-compose.opa.yml"
+OPA_HOST_FILE = "docker-compose.opa.host.yml"
 
 def repo_root() -> Path:
     p = Path.cwd()
@@ -71,13 +72,23 @@ def compose_services(compose_file:str, project:str|None=None) -> list[str]:
     out = run(args, capture=True)
     return [s.strip() for s in out.splitlines() if s.strip()]
 
-def compose_up(project:str, file:str, services:list[str]|None=None, profile:str|None=None, build=False, remove_orphans=True):
+def compose_up(project:str, file:str, services:list[str]|None=None, profile:str|None=None, build=False, remove_orphans=True, env:dict|None=None):
     args = ["docker","compose","-p",project,"-f",file,"up","-d"]
     if profile: args.insert(-1, "--profile"); args.insert(-1, profile)
     if remove_orphans: args.insert(-1,"--remove-orphans")
     if not build: args.insert(-1,"--no-build")
     if services: args += services
-    return run(args)
+    return run(args, env=env)
+
+def compose_up_multi(project:str, files:list[str], services:list[str]|None=None, profile:str|None=None, build=False, remove_orphans=True, env:dict|None=None):
+    args = ["docker","compose","-p",project]
+    for f in files: args += ["-f", f]
+    args += ["up","-d"]
+    if profile: args.insert(-1, "--profile"); args.insert(-1, profile)
+    if remove_orphans: args.insert(-1,"--remove-orphans")
+    if not build: args.insert(-1,"--no-build")
+    if services: args += services
+    return run(args, env=env)
 
 def compose_build(project:str, file:str, services:list[str]):
     args = ["docker","compose","-p",project,"-f",file,"build"] + services
@@ -86,10 +97,10 @@ def compose_build(project:str, file:str, services:list[str]):
 def compose_down(project:str, file:str, volumes=False):
     args = ["docker","compose","-p",project,"-f",file,"down","--remove-orphans"]
     if volumes: args.append("-v")
-    return run(args)
+    return run(args, check=False)
 
 def wait_port(host, port, tries=30, sleep=1.0, label=""):
-    for i in range(tries):
+    for _ in range(tries):
         if port_open(host, port): return True
         time.sleep(sleep)
     if label:
@@ -143,12 +154,13 @@ def up(
     agents: bool = typer.Option(False, help="Flowise-Connector starten"),
     gateway: bool = typer.Option(False, help="Gateway + OPA starten"),
     build_agents: bool = typer.Option(False, help="Agents-Images vor Start bauen"),
+    opa_host: bool = typer.Option(False, help="OPA am Host auf 8651 exposen"),
 ):
     """
     Startet InfoTerminal:
-    - dev_local=True: nutzt scripts/dev_up.sh (versteckt Orchestrierung)
+    - dev_local=True: nutzt scripts/dev_up.sh
     - dev_local=False: dockerisierte App-Services (setzt Dockerfiles voraus)
-    Extras: --obs, --agents, --gateway
+    Extras: --obs, --agents, --gateway, --opa-host
     """
     root = repo_root()
 
@@ -160,6 +172,8 @@ def up(
             "GW": "1" if gateway else "0",
             "DEV_LOCAL": "1",
         })
+        if gateway:
+            run(["docker","network","create","infoterminal_mesh"], check=False)
         script = root/"scripts"/"dev_up.sh"
         if not script.exists():
             raise SystemExit("❌ scripts/dev_up.sh nicht gefunden")
@@ -170,12 +184,15 @@ def up(
     # dockerized mode
     print("[bold]→ Dockerized Mode[/]")
 
+    if gateway:
+        run(["docker","network","create","infoterminal_mesh"], check=False)
+
     # Main infra/services (nur falls vorhanden)
     services = []
     if (root/MAIN_FILE).exists():
         svcs = compose_services(MAIN_FILE)
-        for s in ["opensearch","neo4j","postgres","search-api","graph-api","graph-views","entity-resolution","aleph"]:
-            if s in svcs: services.append(s)
+        for sname in ["opensearch","neo4j","postgres","search-api","graph-api","graph-views","entity-resolution","aleph"]:
+            if sname in svcs: services.append(sname)
         if services:
             run(["docker","compose","-p",MAIN_PROJ,"-f",MAIN_FILE,"up","-d","--remove-orphans"] + services)
 
@@ -191,11 +208,14 @@ def up(
     # Gateway + OPA
     if gateway:
         if (root/OPA_FILE).exists():
-            compose_up(OPA_PROJ, OPA_FILE, services=["opa"], build=False)
+            files = [OPA_FILE]
+            if opa_host and (root/OPA_HOST_FILE).exists():
+                files.append(OPA_HOST_FILE)
+            compose_up_multi(OPA_PROJ, files, services=["opa"], build=False)
         if (root/GW_FILE).exists():
             env = os.environ.copy()
-            env["USE_LOCAL_UPSTREAMS"] = "0"  # dockerized
-            run(["docker","compose","-p",GW_PROJ,"-f",GW_FILE,"up","-d","--remove-orphans","gateway"], env=env)
+            env["USE_LOCAL_UPSTREAMS"] = "0" if not dev_local else "1"
+            compose_up_multi(GW_PROJ, [GW_FILE], services=["gateway"], env=env)
 
 @app.command("down")
 def down(
@@ -235,6 +255,7 @@ def logs(
         if project != "auto":
             pmap = {"main":MAIN_PROJ,"obs":OBS_PROJ,"agents":AG_PROJ,"gateway":GW_PROJ,"opa":OPA_PROJ}
             return pmap.get(project, MAIN_PROJ), {"main":MAIN_FILE,"obs":OBS_FILE,"agents":AG_FILE,"gateway":GW_FILE,"opa":OPA_FILE}.get(project, MAIN_FILE)
+    # auto
         if name in ("grafana","loki","tempo","promtail","prometheus","otel-collector"):
             return OBS_PROJ, OBS_FILE
         if name in ("flowise-connector","opa-audit-sink"):
@@ -259,7 +280,7 @@ def health():
         ("Grafana",  f"http://localhost:{PORTS['grafana']}/login"),
         ("Prometheus",f"http://localhost:{PORTS['prom']}/-/ready"),
         ("Loki",     f"http://localhost:{PORTS['loki']}/loki/api/v1/status/buildinfo"),
-        ("Tempo",    f"http://localhost:{PORTS['tempo']}"),  # simple port probe
+        ("Tempo",    f"http://localhost:{PORTS['tempo']}"),
         ("Flowise",  f"http://localhost:{PORTS['flowise']}/healthz"),
         ("Gateway",  f"http://localhost:{PORTS['gateway']}/healthz"),
         ("Search",   f"http://localhost:{PORTS['search']}/healthz"),
@@ -279,20 +300,15 @@ def health():
 @app.command("neo4j-reset")
 def neo4j_reset(new_password: str = typer.Option("test123", help="Neues Passwort"),
                 current: str = typer.Option("neo4j", help="Aktuelles Passwort ('neo4j' nach Reset)")):
-    """
-    Setzt das Neo4j-Passwort im Container zurück (DEV-Only).
-    """
+    "Setzt das Neo4j-Passwort im Container zurück (DEV-Only)."
     root = repo_root()
     if not (root/MAIN_FILE).exists():
         raise SystemExit("❌ docker-compose.yml nicht gefunden")
-    # sicherstellen, dass neo4j läuft
     run(["docker","compose","-p",MAIN_PROJ,"-f",MAIN_FILE,"up","-d","neo4j"])
-    # alter auth ggf. entfernen (setzt login auf neo4j/neo4j zurück)
     try:
         run(["docker","compose","-p",MAIN_PROJ,"-f",MAIN_FILE,"exec","-u","root","neo4j","bash","-lc","rm -f /data/dbms/auth"], check=False)
     except Exception:
         pass
-    # restart + pass setzen
     run(["docker","compose","-p",MAIN_PROJ,"-f",MAIN_FILE,"restart","neo4j"])
     time.sleep(2)
     cmd = ['docker','compose','-p',MAIN_PROJ,'-f',MAIN_FILE,'exec','neo4j','cypher-shell','-u','neo4j','-p',current,
@@ -304,11 +320,7 @@ def neo4j_reset(new_password: str = typer.Option("test123", help="Neues Passwort
 def agents_call(agent_id: str = typer.Argument(..., help="Flowise Agent/Chat ID"),
                 payload: str = typer.Option(..., "--json", help="JSON-Payload (als String)"),
                 base: str = typer.Option(f"http://localhost:{PORTS['flowise']}", help="Connector Base URL")):
-    """
-    Ruft den Flowise-Connector auf: POST /chat/{agent_id} mit JSON-Payload.
-    Beispiel:
-      it agents-call abc123 --json '{"question":"Hello"}'
-    """
+    "Ruft den Flowise-Connector auf: POST /chat/{agent_id} mit JSON-Payload."
     import urllib.request
     url = f"{base}/chat/{agent_id}"
     req = urllib.request.Request(url, data=payload.encode("utf-8"), headers={"Content-Type":"application/json"}, method="POST")
@@ -318,4 +330,30 @@ def agents_call(agent_id: str = typer.Argument(..., help="Flowise Agent/Chat ID"
             print(data)
     except Exception as e:
         print(f"[red]✗ call failed:[/] {e}")
+
+@app.command("grafana-import")
+def grafana_import(
+    file: str = typer.Option(..., "--file", help="Pfad zur Dashboard-JSON"),
+    url: str = typer.Option("http://localhost:3412", "--url", help="Grafana Base URL"),
+    user: str = typer.Option("admin", "--user", help="Grafana Benutzer"),
+    password: str = typer.Option("admin", "--password", help="Grafana Passwort"),
+    folder_id: int = typer.Option(0, "--folder-id", help="Grafana Folder ID"),
+    overwrite: bool = typer.Option(True, "--overwrite/--no-overwrite", help="Dashboard überschreiben"),
+):
+    "Importiert ein Dashboard in Grafana per HTTP API."
+    import json, base64, urllib.request
+    p = Path(file)
+    if not p.exists():
+        raise SystemExit(f"❌ Datei nicht gefunden: {p}")
+    dash = json.loads(p.read_text())
+    payload = json.dumps({"dashboard": dash, "overwrite": overwrite, "folderId": folder_id}).encode("utf-8")
+    req = urllib.request.Request(f"{url.rstrip('/')}/api/dashboards/db", data=payload, method="POST")
+    basic = base64.b64encode(f"{user}:{password}".encode()).decode()
+    req.add_header("Authorization", f"Basic {basic}")
+    req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            print(r.read().decode())
+    except Exception as e:
+        raise SystemExit(f"❌ Import fehlgeschlagen: {e}")
 

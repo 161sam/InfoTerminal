@@ -37,9 +37,12 @@ services:
     image: prom/prometheus:v2.53.0
     volumes:
       - ./infra/observability/prometheus/values.yaml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     # untypisch: 3415
     ports: ["3415:9090"]
     profiles: ["obs"]
+    networks:
+      infoterminal_mesh: {}
   grafana:
     image: grafana/grafana:10.4.5
     environment:
@@ -59,3 +62,6 @@ services:
         condition: service_started
       tempo:
         condition: service_started
+networks:
+  infoterminal_mesh:
+    external: true
