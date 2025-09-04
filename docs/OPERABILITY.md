@@ -189,3 +189,38 @@ In Entwicklung sind Policies typischerweise permissiv. In Produktion sollten Ori
 - **CORS 403** – `CORS_ORIGINS` und Frontend-URL prüfen.
 - **Falsche Gateway-URL** – Setting im Frontend kontrollieren.
 - **Healthz ok, aber Proxies 502** – Ziel-Services (`8611/8612/8613`) prüfen.
+
+## Graph-Views / Postgres Robustheit
+
+Graph-Views initialisiert den Postgres Connection-Pool asynchron im Hintergrund. Die Anwendung startet auch, wenn die Datenbank noch nicht bereit ist. Der Endpunkt `/readyz` liefert solange `503` mit `status="fail"`, bis `SELECT 1` erfolgreich ausgeführt werden konnte.
+
+### ENV
+
+| Variable | Default | Beschreibung |
+| --- | --- | --- |
+| `GV_DATABASE_URL` | – | vollständige DSN; überschreibt Einzelwerte |
+| `GV_PG_HOST` | `127.0.0.1` | Postgres Host |
+| `GV_PG_PORT` | `5432` | Postgres Port |
+| `GV_PG_USER` | `it_user` | Benutzer |
+| `GV_PG_PASSWORD` | `it_pass` | Passwort |
+| `GV_PG_DB` | `it_graph` | Datenbankname |
+| `GV_PG_CONNECT_TIMEOUT_S` | `1.0` | Connect-Timeout pro Versuch |
+| `GV_PG_INIT_MAX_RETRIES` | `-1` | max. Versuche (`-1` = unendlich) |
+| `GV_PG_INIT_BACKOFF_BASE_MS` | `200` | Start-Backoff in ms |
+| `GV_PG_INIT_BACKOFF_MAX_MS` | `2000` | Obergrenze Backoff in ms |
+| `GV_PG_QUERY_TIMEOUT_S` | `0.8` | Timeout für `SELECT 1` in `/readyz` |
+| `GV_PG_POOL_MIN_SIZE` | `1` | Pool-Minimum |
+| `GV_PG_POOL_MAX_SIZE` | `5` | Pool-Maximum |
+
+### Retry/Backoff Logs
+```
+graph-views.db WARNING pg pool init failed: ConnectionRefusedError
+graph-views.db INFO retrying pg pool in 200ms
+graph-views.db INFO pg pool ready
+```
+
+### Troubleshooting
+- falsche Credentials oder Host → `pool_unavailable`
+- Firewall blockiert Port → Pool baut sich nicht auf
+- Backoff zu klein → mehrfacher Verbindungsaufbau belastet DB
+- `GV_PG_QUERY_TIMEOUT_S` zu klein → Readiness schlägt mit `timeout` fehl

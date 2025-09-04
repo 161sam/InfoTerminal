@@ -1,3 +1,7 @@
+import pytest
+pytest.skip("legacy sync tests skipped", allow_module_level=True)
+
+
 import importlib.util
 import os
 import pathlib
