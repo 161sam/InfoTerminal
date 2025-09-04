@@ -1,4 +1,4 @@
-import config from './config';
+import config, { DIRECT_ENDPOINTS, OTHER_ENDPOINTS, GATEWAY_URL, GATEWAY_ENABLED_DEFAULT } from './config';
 import { isBrowser } from './safe';
 
 export interface EndpointSettings {
@@ -10,20 +10,28 @@ export interface EndpointSettings {
   [key: string]: string | undefined;
 }
 
-const STORAGE_KEY = 'it.settings.endpoints';
+export interface GatewaySetting {
+  enabled: boolean;
+  url: string;
+}
+
+const STORAGE_KEY_ENDPOINTS = 'it.settings.endpoints';
+export const GATEWAY_STORAGE_KEY = 'it.settings.gateway';
 
 export const defaultEndpoints: EndpointSettings = {
-  SEARCH_API: config.SEARCH_API,
-  GRAPH_API: config.GRAPH_API,
-  VIEWS_API: config.VIEWS_API,
-  DOCENTITIES_API: config.DOCENTITIES_API,
-  NLP_API: config.NLP_API,
+  ...DIRECT_ENDPOINTS,
+  ...OTHER_ENDPOINTS,
+};
+
+export const defaultGateway: GatewaySetting = {
+  enabled: GATEWAY_ENABLED_DEFAULT,
+  url: GATEWAY_URL,
 };
 
 export function loadEndpoints(): EndpointSettings {
   if (!isBrowser()) return { ...defaultEndpoints };
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY_ENDPOINTS);
     return raw ? { ...defaultEndpoints, ...JSON.parse(raw) } : { ...defaultEndpoints };
   } catch {
     return { ...defaultEndpoints };
@@ -32,7 +40,23 @@ export function loadEndpoints(): EndpointSettings {
 
 export function saveEndpoints(values: EndpointSettings) {
   if (!isBrowser()) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+  localStorage.setItem(STORAGE_KEY_ENDPOINTS, JSON.stringify(values));
+}
+
+export function loadGateway(): GatewaySetting {
+  if (!isBrowser()) return { ...defaultGateway };
+  try {
+    const raw = localStorage.getItem(GATEWAY_STORAGE_KEY);
+    return raw ? { ...defaultGateway, ...JSON.parse(raw) } : { ...defaultGateway };
+  } catch {
+    return { ...defaultGateway };
+  }
+}
+
+export function saveGateway(setting: GatewaySetting) {
+  if (!isBrowser()) return;
+  localStorage.setItem(GATEWAY_STORAGE_KEY, JSON.stringify(setting));
+  window.dispatchEvent(new Event('it-gateway-change'));
 }
 
 export function sanitizeUrl(url: string): string {
@@ -48,4 +72,18 @@ export function validateUrl(url: string): boolean {
   }
 }
 
-export { STORAGE_KEY };
+export function getEndpoints(): EndpointSettings {
+  const gw = loadGateway();
+  if (gw.enabled) {
+    const base = sanitizeUrl(gw.url || GATEWAY_URL);
+    return {
+      SEARCH_API: `${base}/api/search`,
+      GRAPH_API: `${base}/api/graph`,
+      VIEWS_API: `${base}/api/views`,
+      ...OTHER_ENDPOINTS,
+    };
+  }
+  return { ...DIRECT_ENDPOINTS, ...OTHER_ENDPOINTS };
+}
+
+export { STORAGE_KEY_ENDPOINTS as STORAGE_KEY };

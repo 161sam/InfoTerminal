@@ -1,16 +1,14 @@
 {
   "name": "infoterminal-gateway",
   "private": true,
-  "main": "server.js",
+  "main": "index.ts",
   "engines": { "node": ">=20" },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "express-jwt": "^8.4.1",
     "express-rate-limit": "^7.3.1",
     "helmet": "^7.1.0",
     "http-proxy-middleware": "^3.0.2",
-    "jwks-rsa": "^3.1.0",
     "morgan": "^1.10.0",
     "prom-client": "^15.1.3"
   }
