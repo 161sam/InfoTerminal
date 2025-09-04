@@ -45,6 +45,19 @@ Both endpoints return JSON in the form:
 - `IT_FORCE_READY`: when set to `1`, `/readyz` skips external checks and reports ready.
 - Missing connection details for a dependency result in a `skipped` check with a reason.
 
+## CLI
+
+Die wichtigsten Workflows laufen über den `it`-Befehl:
+
+```bash
+it start -d                         # Stack im Hintergrund starten
+it status -s graph-api,search-api   # Ready-Checks für Kernservices
+it logs -s neo4j -F --lines 200     # Logs folgen
+it rm -v                            # Umgebung inkl. Volumes entfernen
+```
+
+Weitere Details und Optionen sind in [cli/README.md](../cli/README.md) dokumentiert.
+
 ## Troubleshooting
 - Ensure the Neo4j development password has at least 8 characters.
 - Restrict CORS in development to `http://localhost:3411`.

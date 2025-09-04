@@ -54,7 +54,7 @@ def test_dry_run_output(monkeypatch, tmp_path):
     monkeypatch.setattr(infra, "gather_status", fake_status)
     result = runner.invoke(
         infra.app,
-        ["up", "--dry-run", "-f", "one.yml", "-p", "proj"],
+        ["start", "--dry-run", "-f", "one.yml", "-p", "proj"],
     )
     assert result.exit_code == 0
     assert "DRY RUN" in result.stdout
