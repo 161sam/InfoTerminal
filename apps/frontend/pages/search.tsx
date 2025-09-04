@@ -50,7 +50,7 @@ export default function SearchPage() {
 
   return (
     <Layout>
-      <h1 className="mb-4 text-2xl font-semibold">Search</h1>
+      <h1 className="mb-4">Search</h1>
       <div className="mb-4 flex items-end gap-2">
         <Field
           label="Query"
@@ -78,7 +78,7 @@ export default function SearchPage() {
         {chips.map((c) => (
           <button
             key={c}
-            className="rounded-full bg-gray-200 px-3 py-1 text-xs"
+            className="rounded-full bg-gray-200 px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-primary-500"
             onClick={() => setQ(c)}
           >
             {c}

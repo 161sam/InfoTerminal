@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-it = "it_cli.__main__:app"
+it = "it_cli.__main__:main"
 
 [project.entry-points."info_terminal.plugins"]
 # external packages can register their Typer apps here

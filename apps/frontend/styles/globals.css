@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl font-semibold;
+  }
+  h2 {
+    @apply text-lg font-semibold;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500;
+  }
+}

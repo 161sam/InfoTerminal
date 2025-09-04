@@ -1,7 +1,7 @@
 import React from 'react';
 import ServiceHealthCard from './ServiceHealthCard';
 import type { HealthResponse } from '../../../pages/api/health';
-import { GRAFANA_URL } from '../../../lib/config';
+import config from '../../../lib/config';
 
 interface Props {
   data: HealthResponse | null;
@@ -23,8 +23,13 @@ export const HealthPopover: React.FC<Props> = ({ data, onRefresh }) => {
         )}
       </div>
       <div className="mt-4 flex justify-end gap-4 text-sm">
-        {GRAFANA_URL && (
-          <a href={GRAFANA_URL} target="_blank" rel="noreferrer" className="text-blue-600">
+        {config.GRAFANA_URL && (
+          <a
+            href={config.GRAFANA_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600"
+          >
             Open Grafana
           </a>
         )}

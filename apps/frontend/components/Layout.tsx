@@ -17,11 +17,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             InfoTerminal
           </Link>
           <nav className="flex items-center gap-4 text-sm">
+            <Link href="/search">Search</Link>
+            <Link href="/graphx">GraphX</Link>
             <Link href="/settings">Settings</Link>
           </nav>
         </div>
       </header>
       <main className="container mx-auto max-w-7xl flex-1 p-6">{children}</main>
+      <footer className="border-t">
+        <div className="container mx-auto max-w-7xl p-4 text-sm text-gray-500">
+          © {new Date().getFullYear()} InfoTerminal
+        </div>
+      </footer>
     </div>
   );
 };
