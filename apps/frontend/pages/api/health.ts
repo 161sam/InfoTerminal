@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { config } from '../../lib/config';
+import config from '../../lib/config';
 
 type ServiceState = 'ok' | 'degraded' | 'down' | 'unreachable';
 export type HealthResponse = {
