@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { SEARCH_API, GRAPH_API, DOCENTITIES_API, NLP_API } from '../../lib/config';
+import { config } from '../../lib/config';
 
 type ServiceState = 'ok' | 'degraded' | 'down' | 'unreachable';
 export type HealthResponse = {
@@ -36,10 +36,10 @@ async function ping(url: string): Promise<{ state: ServiceState; latencyMs: numb
 
 export async function getHealth(): Promise<HealthResponse> {
   const services = await Promise.all([
-    ping(SEARCH_API),
-    ping(GRAPH_API),
-    ping(DOCENTITIES_API),
-    ping(NLP_API),
+    ping(config.SEARCH_API),
+    ping(config.GRAPH_API),
+    ping(config.DOCENTITIES_API),
+    ping(config.NLP_API),
   ]);
   return {
     timestamp: new Date().toISOString(),

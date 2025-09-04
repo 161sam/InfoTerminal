@@ -101,19 +101,19 @@ body {
 }
 
 .heading-xl {
-  @apply text-3xl lg:text-4xl heading;
+  @apply text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100;
 }
 
 .heading-lg {
-  @apply text-2xl lg:text-3xl heading;
+  @apply text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100;
 }
 
 .heading-md {
-  @apply text-xl lg:text-2xl heading;
+  @apply text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100;
 }
 
 .heading-sm {
-  @apply text-lg heading;
+  @apply text-lg font-bold text-gray-900 dark:text-gray-100;
 }
 
 .text-muted {

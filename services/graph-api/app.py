@@ -16,22 +16,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 import importlib.util
 from pathlib import Path
+import sys
 
 SERVICE_DIR = Path(__file__).resolve().parent
+if str(SERVICE_DIR) not in sys.path:
+    sys.path.insert(0, str(SERVICE_DIR))
 _spec = importlib.util.spec_from_file_location("graph_metrics", SERVICE_DIR / "metrics.py")
 _metrics = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_metrics)  # type: ignore
 GRAPH_REQS = _metrics.GRAPH_REQS
-from neo4j import GraphDatabase
+from utils.neo4j_client import get_driver
 from auth import user_from_token
 from opa import allow
 
+# Env + Backoff
 NEO4J_URI = os.getenv("NEO4J_URI", "bolt://127.0.0.1:7687")
 NEO4J_USER = os.getenv("NEO4J_USER", os.getenv("NEO4J_USERNAME", "neo4j"))
 NEO4J_PASS = os.getenv("NEO4J_PASS") or os.getenv("NEO4J_PASSWORD", "neo4jpass")
 REQUIRE_AUTH = os.getenv("REQUIRE_AUTH", "0") == "1"
-
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASS))
+_attempts = 1 if os.getenv("ALLOW_TEST_MODE") == "1" else 10
+driver = get_driver(NEO4J_URI, NEO4J_USER, NEO4J_PASS, max_attempts=_attempts)
 
 app = FastAPI(title="InfoTerminal Graph API", version="0.1.0")
 FastAPIInstrumentor().instrument_app(app)

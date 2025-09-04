@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
-import config from '../lib/config'
+import { config } from '../lib/config'
 
 type Edge = { from: any; to: any; rel: string }
 type Elem = { data: any; position?: any; locked?: boolean }
@@ -12,6 +12,9 @@ const STORAGE_KEY = "infoterminal.graph.view"
 // Use configuration instead of hardcoded URLs
 const GRAPH_API = config.GRAPH_API
 const VIEWS_API = config.VIEWS_API
+if (!GRAPH_API) {
+  console.warn("GRAPH_API missing; falling back to http://localhost:8612")
+}
 
 // Mock data for when APIs are not available
 const MOCK_EDGES: Edge[] = [
