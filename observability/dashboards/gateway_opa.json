@@ -1,0 +1,57 @@
+{
+  "title": "InfoTerminal - Gateway & OPA Overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Gateway QPS (total)",
+      "gridPos": {"x":0,"y":0,"w":8,"h":6},
+      "targets": [
+        {
+          "expr": "sum(rate(http_request_duration_seconds_count[1m]))",
+          "legendFormat": "qps"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Gateway p95 Latency by route",
+      "gridPos": {"x":8,"y":0,"w":16,"h":6},
+      "lines": true,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le,route) (rate(http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "{{route}}"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Deny Rate (/api/*)",
+      "gridPos": {"x":0,"y":6,"w":12,"h":8},
+      "targets": [
+        {
+          "expr": "sum(rate(http_request_duration_seconds_count{route=~\"/api/.*\",status=\"403\"}[5m])) / sum(rate(http_request_duration_seconds_count{route=~\"/api/.*\"}[5m]))",
+          "legendFormat": "403 / total"
+        }
+      ],
+      "yaxes": [{"format":"percent"},{"format":"short"}]
+    },
+    {
+      "type": "graph",
+      "title": "OPA Decision Latency p95",
+      "gridPos": {"x":12,"y":6,"w":12,"h":8},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(opa_decision_latency_seconds_bucket[5m])))",
+          "legendFormat": "opa p95"
+        }
+      ]
+    }
+  ],
+  "templating": { "list": [] },
+  "annotations": { "list": [] }
+}

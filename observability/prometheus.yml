@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: "gateway"
+    static_configs:
+      - targets: ["gateway:8080"]   # gleiche Bridge wie OPA/ GW
+  - job_name: "opa"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["opa:8181"]
