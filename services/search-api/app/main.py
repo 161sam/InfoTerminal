@@ -3,6 +3,7 @@ try:
 except Exception:
     pass
 
+import os
 import time
 import logging
 from typing import Optional, List
@@ -33,6 +34,7 @@ from auth import user_from_token
 from opa import allow
 from .config import Settings
 from . import rerank as rr
+from . import health
 
 settings = Settings()
 logger = logging.getLogger(__name__)
@@ -40,6 +42,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
 FastAPIInstrumentor().instrument_app(app)
 instrumentator = Instrumentator().instrument(app)
+
+app.state.service_name = "search-api"
+app.state.start_time = time.time()
+app.state.version = os.getenv("GIT_SHA", "dev")
 
 @app.on_event("startup")
 async def _startup() -> None:
@@ -52,6 +58,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 client = OpenSearch(settings.os_url)
+
+app.include_router(health.router)
 
 
 def oidc_user(authorization: Optional[str] = Header(None)):
@@ -83,12 +91,6 @@ def _aggs():
             "aggs": {"types": {"terms": {"field": "entities.type", "size": 20}}},
         }
     }
-
-
-@app.get("/healthz")
-def health():
-    return {"status": "ok"}
-
 
 @app.get("/search")
 def search(
