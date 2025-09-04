@@ -13,7 +13,7 @@ services:
         condition: service_healthy
   graph-api:
     build: ./services/graph-api
-    ports: ['8612:8081', '8612:8080']
+    ports: ['8612:8080']
     env_file: .env
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8002/healthz"]
@@ -46,7 +46,7 @@ services:
         condition: service_healthy
   web:
     build: ./apps/frontend
-    ports: ["3000:3000"]
+    ports: ["3411:3000"]
     env_file: .env
     depends_on:
       search-api:

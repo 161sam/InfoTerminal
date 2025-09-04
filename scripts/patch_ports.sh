@@ -162,8 +162,9 @@ mkdir -p "$FRONTEND_DIR"
 backup_file "$ENV_LOCAL"
 {
   echo "PORT=3411"
-  echo "NEXT_PUBLIC_SEARCH_API_URL=http://localhost:8611"
-  echo "NEXT_PUBLIC_GRAPH_API_URL=http://localhost:8612"
+  echo "NEXT_PUBLIC_SEARCH_API=http://127.0.0.1:8401"
+  echo "NEXT_PUBLIC_GRAPH_API=http://127.0.0.1:8402"
+  echo "NEXT_PUBLIC_VIEWS_API=http://127.0.0.1:8403"
 } > "$ENV_LOCAL"
 
 if [[ -f "$PKG" ]]; then
