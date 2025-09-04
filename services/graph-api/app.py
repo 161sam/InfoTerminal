@@ -4,12 +4,12 @@ except Exception:
     pass
 
 import os
+import sys
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-import sys
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 from neo4j import exceptions
 
 SERVICE_DIR = Path(__file__).resolve().parent
@@ -30,26 +30,21 @@ driver = None
 async def lifespan(app: FastAPI):
     global driver
     driver = get_driver(NEO4J_URI, NEO4J_USER, NEO4J_PASS)
+    app.state.driver = driver
     yield
     if driver:
         driver.close()
+        app.state.driver = None
 
 
 app = FastAPI(title="InfoTerminal Graph API", version="0.1.0", lifespan=lifespan)
+app.state.service_name = "graph-api"
+app.state.start_time = time.time()
+app.state.version = os.getenv("GIT_SHA", "dev")
 
+import health  # noqa: E402
 
-@app.get("/healthz")
-def healthz():
-    if not driver:
-        return JSONResponse({"status": "degraded"}, status_code=503)
-    try:
-        with neo_session(driver) as s:
-            s.run("RETURN 1").consume()
-        return {"status": "ok"}
-    except exceptions.AuthError:
-        raise HTTPException(401, "check NEO4J_USER/NEO4J_PASSWORD")
-    except Exception:
-        return JSONResponse({"status": "degraded"}, status_code=503)
+app.include_router(health.router)
 
 
 @app.get("/neo4j/ping")
