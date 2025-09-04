@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { SearchResponse } from '../types/search';
+import useEndpoints from './useEndpoints';
+import { sanitizeUrl } from '../../lib/endpoints';
 
 export interface UseSearchInput {
   q?: string;
@@ -16,6 +18,7 @@ export function useSearch(params: UseSearchInput) {
   const [data, setData] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { SEARCH_API } = useEndpoints();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -36,7 +39,8 @@ export function useSearch(params: UseSearchInput) {
         if (params.filters && Object.keys(params.filters).length) {
           query.set('filters', JSON.stringify(params.filters));
         }
-        const res = await fetch(`/api/search?${query.toString()}`, { signal: controller.signal });
+        const base = sanitizeUrl(SEARCH_API);
+        const res = await fetch(`${base}/search?${query.toString()}`, { signal: controller.signal });
         if (!res.ok) throw new Error(await res.text());
         const json = (await res.json()) as SearchResponse;
         setData(json);
@@ -58,7 +62,8 @@ export function useSearch(params: UseSearchInput) {
     params.pageSize,
     JSON.stringify(params.filters),
     params.entity?.join(','),
-    params.value?.join(',')
+    params.value?.join(','),
+    SEARCH_API,
   ]);
 
   return { data, loading, error };

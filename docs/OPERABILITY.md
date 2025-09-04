@@ -148,3 +148,44 @@ via OTLP HTTP an `http://tempo:4318`. Die Sampling-Rate wird über
 
 - The frontend polls each configured service's `/readyz` endpoint roughly every 10 s and shows a badge per service (`ok`, `degraded`, `fail`, `unknown`). Clicking the matrix reveals latency and any `skipped` checks.
 - Endpoint URLs can be overridden via the Settings page. Values are stored in `localStorage` under `it.settings.endpoints` and can be verified with the "Test" button which calls `<base>/healthz`.
+
+## Security / Gateway & OPA-Audit
+
+Der optionale Gateway-Dienst (Port 8610) kann sämtlichen API-Verkehr unter `/api/*` bündeln. Im Frontend lässt sich dies über den Abschnitt **Gateway Proxy** aktivieren; Einstellungen werden in `localStorage.it.settings.gateway` persistiert. Bei aktivem Toggle leitet das Frontend Anfragen an `${GATEWAY_URL}/api/search`, `${GATEWAY_URL}/api/graph` und `${GATEWAY_URL}/api/views`.
+
+Start des Gateways:
+
+```bash
+docker compose up gateway
+```
+
+oder über das CLI.
+
+### Ports & ENV
+- `TARGET_SEARCH` – Standard `http://search-api:8080` bzw. `http://127.0.0.1:8611`
+- `TARGET_GRAPH` – Standard `http://graph-api:8080` bzw. `http://127.0.0.1:8612`
+- `TARGET_VIEWS` – Standard `http://graph-views:8000` bzw. `http://127.0.0.1:8613`
+- `CORS_ORIGINS` – erlaubt in Dev `http://localhost:3411,http://127.0.0.1:3411`
+- `IT_ENABLE_METRICS=1` – `/metrics` freischalten
+
+### OPA-Integration (Audit)
+Der Gateway kann Anfragen gegen eine OPA-Policy prüfen und optional an einen Audit-Sink weiterleiten. Beispiel-Regel:
+
+```rego
+package access
+
+default allow = false
+
+allow {
+  input.request.path = "/api/search"
+  input.request.method = "get"
+  input.user.roles[_] == "reader"
+}
+```
+
+In Entwicklung sind Policies typischerweise permissiv. In Produktion sollten Origins und Regeln strikt konfiguriert werden.
+
+### Troubleshooting
+- **CORS 403** – `CORS_ORIGINS` und Frontend-URL prüfen.
+- **Falsche Gateway-URL** – Setting im Frontend kontrollieren.
+- **Healthz ok, aber Proxies 502** – Ziel-Services (`8611/8612/8613`) prüfen.

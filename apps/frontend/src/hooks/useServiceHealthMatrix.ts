@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { loadEndpoints, sanitizeUrl } from '../../lib/endpoints';
+import { sanitizeUrl } from '../../lib/endpoints';
 import { safeLog, isBrowser } from '../../lib/safe';
 import toast from '../../lib/toast';
+import useEndpoints from './useEndpoints';
 
 export type ServiceStatus = 'ok' | 'degraded' | 'fail' | 'unknown';
 export interface ServiceEntry {
@@ -11,13 +12,13 @@ export interface ServiceEntry {
 
 export function useServiceHealthMatrix(pollMs = 10000) {
   const [matrix, setMatrix] = useState<Record<string, ServiceEntry>>({});
+  const endpoints = useEndpoints();
 
   useEffect(() => {
     if (!isBrowser()) return;
     let cancelled = false;
 
     const run = async () => {
-      const endpoints = loadEndpoints();
       const entries = await Promise.all(
         Object.entries(endpoints).map(async ([key, base]) => {
           if (!base) return [key, { status: 'unknown' }] as [string, ServiceEntry];
@@ -44,7 +45,7 @@ export function useServiceHealthMatrix(pollMs = 10000) {
       cancelled = true;
       clearInterval(id);
     };
-  }, [pollMs]);
+  }, [pollMs, JSON.stringify(endpoints)]);
 
   return matrix;
 }
