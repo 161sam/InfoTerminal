@@ -172,7 +172,7 @@ module.exports = {
 #### `pages/_app.tsx` updaten
 
 ```typescript
-import '../styles/globals.css'
+import '@/styles/globals.css'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from '../src/lib/theme-provider'
 import { NotificationProvider } from '../src/lib/notifications'
