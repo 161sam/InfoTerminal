@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from it_logging import setup_logging
 from neo4j import exceptions
 
 SERVICE_DIR = Path(__file__).resolve().parent
@@ -39,6 +40,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="InfoTerminal Graph API", version="0.1.0", lifespan=lifespan)
+setup_logging(app, service_name="graph-api")
 app.state.service_name = "graph-api"
 app.state.start_time = time.time()
 app.state.version = os.getenv("GIT_SHA", "dev")

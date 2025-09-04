@@ -8,6 +8,7 @@ import os, json, secrets, time
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header, Query
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from it_logging import setup_logging
 from contextlib import asynccontextmanager, contextmanager
 from psycopg2.pool import SimpleConnectionPool
 
@@ -77,6 +78,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Graph Views API", version="0.1.0", lifespan=lifespan)
+setup_logging(app, service_name="graph-views")
 FastAPIInstrumentor().instrument_app(app)
 setup_otel(app)
 

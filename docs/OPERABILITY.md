@@ -63,6 +63,17 @@ it rm -v                            # Umgebung inkl. Volumes entfernen
 
 Weitere Details und Optionen sind in [cli/README.md](../cli/README.md) dokumentiert.
 
+## Structured Logs & Correlation
+FastAPI services emit structured JSON logs when `IT_JSON_LOGS=1` (default in development).
+Each request returns an `X-Request-Id` header which is generated if missing and echoed back
+to callers. A typical access log looks like:
+
+```json
+{"ts":"2024-01-01T00:00:00.000Z","level":"info","service":"search-api","env":"dev","req_id":"abc","method":"GET","path":"/healthz","status":200,"dur_ms":1.2,"msg":"request"}
+```
+
+Set `IT_OTEL=1` to enrich logs with `trace_id` and `span_id` for correlation when tracing is enabled.
+
 ## Observability (Dev)
 
 Das optionale Profil `observability` startet Prometheus, Grafana und Alertmanager.
