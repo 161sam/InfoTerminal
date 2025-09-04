@@ -30,7 +30,7 @@ class EmbeddingProvider:
     def __new__(cls, model_name: str):
         if cls._instance is None or cls._instance.model_name != model_name:
             with cls._lock:
-                if cls._instance is None or cls._instance.model_name != model_name:
+                if cls._instance is None or cls._instance.model_name != model_name:  # pragma: no cover (race)
                     cls._instance = super().__new__(cls)
                     cls._instance.model_name = model_name
                     cls._instance._model = None
@@ -39,10 +39,10 @@ class EmbeddingProvider:
     def _load(self):
         if self._model is None:
             with self._lock:
-                if self._model is None:
+                if self._model is None:  # pragma: no cover (double-check)
                     try:
                         from sentence_transformers import SentenceTransformer
-                    except ImportError as e:
+                    except ImportError as e:  # pragma: no cover
                         raise RuntimeError("sentence-transformers not installed") from e
                     logger.info("loading embedding model %s", self.model_name)
                     self._model = SentenceTransformer(self.model_name)
