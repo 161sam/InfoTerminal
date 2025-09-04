@@ -31,3 +31,12 @@ def test_setup_otel_fail_open(monkeypatch):
     app = DummyApp()
     m.setup_otel(app, service_name="search-api")
     assert m.INSTRUMENTATION_ENABLED is True
+
+
+def test_setup_otel_ignores_bad_attr(monkeypatch):
+    monkeypatch.setenv("IT_OTEL", "1")
+    monkeypatch.setenv("OTEL_RESOURCE_ATTRIBUTES", "bad")
+    m = _load_module()
+    app = DummyApp()
+    m.setup_otel(app, service_name="search-api")
+    assert m.INSTRUMENTATION_ENABLED is True

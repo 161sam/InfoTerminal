@@ -35,6 +35,12 @@ it logs -s neo4j -F --lines 200
 it start -d --profile observability
 ```
 
+Structured logs can be streamed as NDJSON via:
+
+```bash
+it logs --format jsonl -s search-api
+```
+
 `infra` ist ein Power-User-Namespace und hält die traditionellen
 Subcommands bereit:
 
@@ -96,3 +102,12 @@ it search query "neo4j" --chart
 | Alertmanager | 3414 |
 | Loki         | 3415 |
 | Tempo        | 3416 |
+
+### Quickstart Observability
+
+```bash
+it status
+docker compose -f docker-compose.observability.yml --profile observability up -d
+open http://localhost:3413
+open http://localhost:3412
+```

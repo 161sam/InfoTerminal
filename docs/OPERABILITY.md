@@ -63,42 +63,59 @@ it rm -v                            # Umgebung inkl. Volumes entfernen
 
 Weitere Details und Optionen sind in [cli/README.md](../cli/README.md) dokumentiert.
 
-## Observability (Dev)
+## Structured Logs & Correlation
+FastAPI services emit structured JSON logs when `IT_JSON_LOGS=1` (default in development).
+Each request returns an `X-Request-Id` header which is generated if missing and echoed back
+to callers. A typical access log looks like:
 
-Das optionale Profil `observability` startet Prometheus, Grafana und Alertmanager.
+```json
+{"ts":"2024-01-01T00:00:00.000Z","level":"info","service":"search-api","env":"dev","req_id":"abc","method":"GET","path":"/healthz","status":200,"dur_ms":1.2,"msg":"request"}
+```
+
+Set `IT_OTEL=1` to enrich logs with `trace_id` and `span_id` for correlation when tracing is enabled.
+
+## Observability
+
+Start the monitoring stack separately:
 
 ```bash
+docker compose -f docker-compose.observability.yml --profile observability up -d
+# alternativ, wenn die Dienste im Haupt-Compose ein Profil besitzen
 docker compose --profile observability up -d
-# oder mit CLI
-it start -d --profile observability
 ```
 
-Standardmäßig sind die `/metrics`-Endpoints der Services deaktiviert. Setze
-`IT_ENABLE_METRICS=1` (oder aktiviere das Profil), um sie zu exponieren.
+| Service      | Port |
+| ------------ | ---- |
+| Prometheus   | 3412 |
+| Grafana      | 3413 |
+| Alertmanager | 3414 |
+| Loki         | 3415 |
+| Tempo        | 3416 |
 
-### Logs & Traces (Dev)
-Zusätzlich zu Prometheus/Grafana können Loki (Logs) und Tempo (Traces) im gleichen
-Profil gestartet werden. Die Host-Ports werden über `.env.dev.ports`
-und `scripts/patch_ports.sh` gesteuert.
+`IT_ENABLE_METRICS=1` aktiviert `/metrics`. Setze `IT_OTEL=1`, um Tracing zu aktivieren.
+
+### Quickstart Observability
 
 ```bash
-it start -d --profile observability
-IT_ENABLE_METRICS=1 IT_OTEL=1 uvicorn app.main:app
+it status
+docker compose -f docker-compose.observability.yml --profile observability up -d
+open http://localhost:3413
+open http://localhost:3412
 ```
 
-Services exportieren Traces via OTLP HTTP an `http://tempo:4318`. Die Sampling-Rate
-ist über `OTEL_TRACES_SAMPLER_ARG` einstellbar (Standard 0.1 = 10 %).
+### Logs & Traces
 
-Grafana ist unter `http://127.0.0.1:${GRAFANA_PORT}` erreichbar und enthält
-vorkonfigurierte Datasources für Prometheus, Loki und Tempo.
+Loki (Logs) und Tempo (Traces) starten im gleichen Stack. Services exportieren Traces
+via OTLP HTTP an `http://tempo:4318`. Die Sampling-Rate wird über
+`OTEL_TRACES_SAMPLER_ARG` gesteuert (Standard `0.1` = 10 %).
 
 ### Troubleshooting
-- Prometheus-Scrape-Fehler: Targets unter `Status → Targets` prüfen.
-- `404` an `/metrics`: `IT_ENABLE_METRICS` nicht gesetzt?
-- Port belegt: Werte in `.env.dev.ports` anpassen und `scripts/patch_ports.sh` ausführen.
-- Loki/Tempo nicht erreichbar: Container-Logs prüfen (`docker compose logs loki`).
-- Leere Logs: Promtail läuft? Pfade in `promtail-config.yml` stimmen?
-- Keine Traces: `IT_OTEL=1` gesetzt und Endpoint erreichbar?
+- Port-Konflikt? Andere Dienste beenden oder Ports anpassen.
+- Doppelte Scrapes in Prometheus? `Status → Targets` prüfen.
+- `404` an `/metrics`? `IT_ENABLE_METRICS=1` fehlt.
+- Loki/Tempo nicht erreichbar? Container-Logs prüfen (`docker compose logs loki`).
+- Leere Logs? Läuft Promtail und stimmen Pfade in `promtail-config.yml`?
+- Keine Traces? `IT_OTEL=1` gesetzt und Tempo erreichbar?
 
 ## Troubleshooting
 - Ensure the Neo4j development password has at least 8 characters.

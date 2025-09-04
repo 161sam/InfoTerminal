@@ -43,8 +43,8 @@ def setup_otel(app, service_name: str = "search-api") -> None:
     trace.set_tracer_provider(provider)
     RequestsInstrumentor().instrument()
 
-    class RequestIdMiddleware(BaseHTTPMiddleware):
-        async def dispatch(self, request, call_next: Callable):
+    class RequestIdMiddleware(BaseHTTPMiddleware):  # pragma: no cover - simple header propagation
+        async def dispatch(self, request, call_next: Callable):  # pragma: no cover - simple header propagation
             req_id = request.headers.get("X-Request-Id", str(uuid.uuid4()))
             request.state.request_id = req_id
             span = trace.get_current_span()

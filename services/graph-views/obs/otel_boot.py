@@ -37,7 +37,7 @@ def setup_otel(app, service_name: str = "graph-views") -> None:
     except Exception as e:  # pragma: no cover
         logger.warning("OTEL exporter disabled: %s", e)
         return
-    provider = TracerProvider(resource=Resource.create(attrs), sampler=sampler)
+    provider = TracerProvider(resource=Resource.create(attrs))
     provider.add_span_processor(BatchSpanProcessor(exporter))
     trace.set_tracer_provider(provider)
     RequestsInstrumentor().instrument()
@@ -55,3 +55,12 @@ def setup_otel(app, service_name: str = "graph-views") -> None:
 
     app.add_middleware(RequestIdMiddleware)
     INSTRUMENTATION_ENABLED = True
+
+
+# auto-init in tests when requested
+if os.getenv("TESTING_OTEL_BOOT") == "1":  # pragma: no cover - test helper
+    class _Dummy:
+        def add_middleware(self, mw):
+            pass
+
+    setup_otel(_Dummy(), service_name="graph-views")

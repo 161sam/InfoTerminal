@@ -12,12 +12,23 @@ from typing import Optional, List
 import numpy as np
 
 from fastapi import FastAPI, Depends, HTTPException, Header, Query, Response
+from .it_logging import setup_logging
 try:
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 except Exception:  # pragma: no cover - optional
     class FastAPIInstrumentor:  # type: ignore
         def instrument_app(self, app):
             return app
+
+try:
+    from prometheus_fastapi_instrumentator import Instrumentator
+except Exception:  # pragma: no cover - optional
+    class Instrumentator:  # type: ignore
+        def instrument(self, app):
+            return self
+
+        def expose(self, app, include_in_schema=False, should_gzip=True):  # pragma: no cover - stub
+            return None
 
 from .metrics import (
     SEARCH_ERRORS,
@@ -40,8 +51,16 @@ settings = Settings()
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
+setup_logging(app, service_name="search-api")
 FastAPIInstrumentor().instrument_app(app)
 setup_otel(app)
+
+instrumentator = Instrumentator().instrument(app)
+
+
+@app.on_event("startup")
+async def _startup():
+    instrumentator.expose(app, include_in_schema=False, should_gzip=True)
 
 if os.getenv("IT_ENABLE_METRICS") == "1" or os.getenv("IT_OBSERVABILITY") == "1":
     from starlette_exporter import PrometheusMiddleware, handle_metrics
