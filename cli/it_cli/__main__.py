@@ -1,19 +1,36 @@
 """Entry point for InfoTerminal CLI."""
+from __future__ import annotations
+
+import os
+import sys
+
 import typer
 from rich.console import Console
 
+from . import __version__
 from .banner import print_banner
-from .commands import infra, search, graph, views, analytics, settings, tui
+from .commands import analytics, graph, infra, search, settings, tui, views
 from .plugins import load_plugins
 
-app = typer.Typer(no_args_is_help=True, help="InfoTerminal CLI – modular & pretty")
 console = Console()
+app = typer.Typer(no_args_is_help=True, help="InfoTerminal CLI – modular & pretty")
 
 
 @app.callback(invoke_without_command=True)
-def _root(ctx: typer.Context):  # noqa: D401 - minimal docstring
-    """Root callback printing banner."""
-    print_banner(console)
+def _root(
+    ctx: typer.Context,
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-V",
+        is_eager=True,
+        help="Show version and exit",
+    ),
+):
+    """Handle root options like --version."""
+    if version:
+        console.print(f"it {__version__}")
+        raise typer.Exit()
 
 
 # register subcommands
@@ -29,5 +46,15 @@ app.add_typer(tui.app, name="ui", help="Textual TUI")
 load_plugins(app)
 
 
-if __name__ == "__main__":  # pragma: no cover - main entry
+def main() -> None:
+    """CLI entry point that prints banner before running Typer."""
+    if any(arg in ("-V", "--version") for arg in sys.argv[1:]):
+        console.print(f"it {__version__}")
+        raise SystemExit(0)
+    if os.environ.get("IT_NO_BANNER") != "1":
+        print_banner(console)
     app()
+
+
+if __name__ == "__main__":  # pragma: no cover - main entry
+    main()

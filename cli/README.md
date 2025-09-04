@@ -12,7 +12,13 @@ pip install -e .
 
 ```bash
 it --help
+
+# show version
+it -V
 ```
+
+The CLI prints a banner on each run. Set `IT_NO_BANNER=1` to disable it
+for scripting or CI environments.
 
 Each domain is available as a subcommand, e.g.:
 
