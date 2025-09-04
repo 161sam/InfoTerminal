@@ -35,6 +35,12 @@ it logs -s neo4j -F --lines 200
 it start -d --profile observability
 ```
 
+Structured logs can be streamed as NDJSON via:
+
+```bash
+it logs --format jsonl -s search-api
+```
+
 `infra` ist ein Power-User-Namespace und hält die traditionellen
 Subcommands bereit:
 

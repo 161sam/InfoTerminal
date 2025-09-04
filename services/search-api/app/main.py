@@ -12,6 +12,7 @@ from typing import Optional, List
 import numpy as np
 
 from fastapi import FastAPI, Depends, HTTPException, Header, Query, Response
+from .it_logging import setup_logging
 try:
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 except Exception:  # pragma: no cover - optional
@@ -50,6 +51,7 @@ settings = Settings()
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="InfoTerminal Search API", version="0.3.0")
+setup_logging(app, service_name="search-api")
 FastAPIInstrumentor().instrument_app(app)
 setup_otel(app)
 

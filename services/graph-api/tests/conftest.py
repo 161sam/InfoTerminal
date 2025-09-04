@@ -3,7 +3,12 @@ from httpx import AsyncClient, ASGITransport
 from prometheus_client import REGISTRY, PROCESS_COLLECTOR, PLATFORM_COLLECTOR
 
 os.environ.setdefault("OTEL_SDK_DISABLED", "true")
-MODULE_PATH = pathlib.Path(__file__).resolve().parents[1] / "app.py"
+os.environ.setdefault("IT_JSON_LOGS", "1")
+os.environ.setdefault("IT_ENV", "test")
+os.environ.setdefault("IT_LOG_SAMPLING", "")
+SERVICE_DIR = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SERVICE_DIR))
+MODULE_PATH = SERVICE_DIR / "app.py"
 for collector in list(REGISTRY._collector_to_names):
     try:
         REGISTRY.unregister(collector)
@@ -24,8 +29,12 @@ def anyio_backend():
 @pytest.fixture(scope="session")
 def test_settings():
     os.environ["ALLOW_TEST_MODE"] = "1"
+    os.environ["IT_JSON_LOGS"] = "1"
+    os.environ["IT_ENV"] = "test"
+    os.environ["IT_LOG_SAMPLING"] = ""
     yield
-    os.environ.pop("ALLOW_TEST_MODE", None)
+    for k in ("ALLOW_TEST_MODE", "IT_JSON_LOGS", "IT_ENV", "IT_LOG_SAMPLING", "IT_OTEL"):
+        os.environ.pop(k, None)
 
 @pytest.fixture
 async def client(test_settings):
