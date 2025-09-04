@@ -12,6 +12,8 @@ export const OTHER_ENDPOINTS = {
 export const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL ?? 'http://127.0.0.1:8610';
 export const GATEWAY_ENABLED_DEFAULT =
   (process.env.NEXT_PUBLIC_GATEWAY_ENABLED ?? '0') === '1';
+export const GRAPH_DEEPLINK_FALLBACK =
+  process.env.NEXT_PUBLIC_GRAPH_DEEPLINK_BASE ?? '/graphx?focus=';
 
 const config = {
   ...DIRECT_ENDPOINTS,
