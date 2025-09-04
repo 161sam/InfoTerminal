@@ -96,7 +96,7 @@ if [ "$DEV_LOCAL" = "1" ]; then
     log "Starting graph-views (local, PG env)"
     (
       cd services/graph-views
-      PG_HOST=127.0.0.1 PG_PORT=5432 PG_DB=it_graph PG_USER=it_user PG_PASSWORD=it_pass \
+      PG_HOST=127.0.0.1 PG_PORT=55432 PG_DB=it_graph PG_USER=it_user PG_PASSWORD=it_pass \
       bash dev_run.sh
     ) > /tmp/it_graph-views.log 2>&1 &
   fi
