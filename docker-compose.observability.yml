@@ -1,26 +1,14 @@
 services:
-  search-api:
-    profiles: ["observability"]
-    environment:
-      - IT_ENABLE_METRICS=1
-
-  graph-api:
-    profiles: ["observability"]
-    environment:
-      - IT_ENABLE_METRICS=1
-
-  graph-views:
-    profiles: ["observability"]
-    environment:
-      - IT_ENABLE_METRICS=1
-
   prometheus:
-    image: prom/prometheus:v2.53.0
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
     volumes:
       - prometheus-data:/prometheus
-      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
-      - "127.0.0.1:${PROMETHEUS_PORT:-3412}:9090"
+      - "3412:9090"
     profiles: ["observability"]
 
   alertmanager:
@@ -28,7 +16,7 @@ services:
     volumes:
       - ./observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
     ports:
-      - "127.0.0.1:${ALERTMANAGER_PORT:-3414}:9093"
+      - "3414:9093"
     profiles: ["observability"]
 
   grafana:
@@ -44,7 +32,7 @@ services:
       - ./deploy/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
-      - "127.0.0.1:${GRAFANA_PORT:-3413}:3000"
+      - "3413:3000"
     profiles: ["observability"]
     depends_on:
       - prometheus
@@ -55,7 +43,7 @@ services:
     volumes:
       - ./observability/loki-config.yml:/etc/loki/loki.yml:ro
     ports:
-      - "127.0.0.1:${LOKI_PORT:-3415}:3100"
+      - "3415:3100"
     profiles: ["observability"]
 
   tempo:
@@ -64,7 +52,7 @@ services:
     volumes:
       - ./observability/tempo-config.yml:/etc/tempo/tempo.yml:ro
     ports:
-      - "127.0.0.1:${TEMPO_PORT:-3416}:3200"
+      - "3416:3200"
     profiles: ["observability"]
 
   promtail:
