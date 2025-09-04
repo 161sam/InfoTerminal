@@ -2,7 +2,7 @@ import os
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict
-from urllib import request
+from urllib import request as urlrequest
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -42,7 +42,7 @@ def readyz(request: Request):
         if os_url:
             start = time.perf_counter()
             try:
-                with request.urlopen(os_url, timeout=0.8) as resp:
+                with urlrequest.urlopen(os_url, timeout=0.8) as resp:
                     code = resp.getcode()
                     latency = (time.perf_counter() - start) * 1000
                     if 200 <= code < 300 or code == 401:

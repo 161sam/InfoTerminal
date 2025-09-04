@@ -1,4 +1,6 @@
 import time
+import sys
+import types
 import numpy as np
 import pytest
 
@@ -111,3 +113,54 @@ async def test_rerank_timeout(rerank_env_timeout, client, monkeypatch):
     items = r.json()["results"]
     assert items[0]["id"] == "1"
     assert r.headers.get("X-Reranked") is None
+
+
+def _dummy_sentence_module(monkeypatch):
+    class DummyModel:
+        def __init__(self, name):
+            self.name = name
+
+        def encode(self, texts, **kwargs):
+            return np.zeros((len(texts), 2))
+
+    module = types.SimpleNamespace(SentenceTransformer=DummyModel)
+    monkeypatch.setitem(sys.modules, "sentence_transformers", module)
+
+
+def test_embedding_provider_load(monkeypatch):
+    _dummy_sentence_module(monkeypatch)
+    monkeypatch.setattr(rr.EmbeddingProvider, "_instance", None, raising=False)
+    p1 = rr.EmbeddingProvider("m1")
+    vecs = p1.embed(["a", "b"])
+    assert vecs.shape == (2, 2)
+    vecs2 = p1.embed(["c"])  # reuse loaded model
+    assert vecs2.shape == (1, 2)
+    p2 = rr.EmbeddingProvider("m2")
+    assert p2 is not p1
+    p3 = rr.EmbeddingProvider("m2")
+    assert p3 is p2
+
+
+def test_embedding_provider_import_error(monkeypatch):
+    monkeypatch.setattr(rr.EmbeddingProvider, "_instance", None, raising=False)
+    monkeypatch.delitem(sys.modules, "sentence_transformers", raising=False)
+    with pytest.raises(RuntimeError):
+        rr.EmbeddingProvider("m")._load()
+
+
+def test_embed_texts_and_doc_cache(monkeypatch):
+    provider = types.SimpleNamespace(embed=lambda texts: np.asarray([[1.0, 0.0] for _ in texts]))
+    rr.doc_cache.clear()
+    rr.cache_stats.update({"d_hits": 0, "d_miss": 0})
+    vec1 = rr.get_doc_embedding(provider, "1", "t")
+    vec2 = rr.get_doc_embedding(provider, "1", "t")
+    assert np.array_equal(vec1, vec2)
+    assert rr.cache_stats["d_hits"] == 1
+    out = rr.embed_texts(provider, ["x"])
+    assert out.shape == (1, 2)
+
+
+def test_cosine_rank_and_normalize():
+    assert rr.cosine_rank(np.array([1.0]), np.empty((0, 1))) == []
+    assert rr.normalize([]) == []
+    assert rr.normalize([1.0, 1.0]) == [0.0, 0.0]

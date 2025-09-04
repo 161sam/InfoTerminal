@@ -10,7 +10,8 @@ This repository targets **100% line and branch coverage** for all project code. 
 coverage drops below 100 %.
 
 ```bash
-pytest
+pytest                   # run all tests
+pytest services/search-api  # run only the search API suite
 ```
 
 ### Frontend
