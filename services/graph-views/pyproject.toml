@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "graph-views"
 version = "0.1.0"
@@ -7,6 +11,7 @@ dependencies = [
     "uvicorn>=0.30",
     "pydantic>=2.7",
     "psycopg2-binary>=2.9",
+    "asyncpg>=0.28",
     "python-dotenv>=1.0",
     "opentelemetry-sdk>=1.26.0",
     "opentelemetry-exporter-otlp>=1.26.0",
@@ -16,6 +21,9 @@ dependencies = [
     "prometheus-client>=0.20",
     "starlette-exporter>=0.15",
 ]
+
+[tool.setuptools]
+py-modules = ["app", "db", "it_logging", "metrics"]
 
 [tool.uv]
 index-url = "https://pypi.org/simple"
