@@ -9,7 +9,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "lib": [
       "dom",
@@ -20,13 +22,19 @@
     "noEmit": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "src",
     "pages",
     "lib",
-    "components"
+    "components",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

@@ -68,7 +68,7 @@ def readyz(verbose: int = 0):
     if os.getenv("IT_FORCE_READY") != "1":
         os_url = os.getenv("OPENSEARCH_URL")
         if os_url:
-            url = f"{os_url.rstrip("/")}/_cluster/health"
+            url = f"{os_url.rstrip('/')}/_cluster/health"
             checks["opensearch"] = probe_http(url)
         else:
             checks["opensearch"] = {"status": "skipped", "latency_ms": None, "error": None, "reason": "missing config"}
