@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
-import Layout from "../components/Layout";
-import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
-import Field from "../components/ui/Field";
-import StatusPill, { Status } from "../components/ui/StatusPill";
-import config from "../lib/config";
-import { loadEndpoints, saveEndpoints, sanitizeUrl, validateUrl } from "../lib/endpoints";
-import toast from "../lib/toast";
-import { safe, safeLog } from "../lib/safe";
+import { useState } from "react";
+import Layout from "@/components/Layout";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Field from "@/components/ui/Field";
+import StatusPill, { Status } from "@/components/ui/StatusPill";
+import { toast } from "@/components/ui/Toast";
+import {
+  loadEndpoints,
+  saveEndpoints,
+  sanitizeUrl,
+  validateUrl,
+  EndpointSettings,
+} from "@/lib/endpoints";
+import { safe, safeLog } from "@/lib/safe";
+import SettingsGateway from "@/components/settings/SettingsGateway";
+import SettingsGraphDeepLink from "@/components/settings/SettingsGraphDeepLink";
 
 export default function SettingsPage() {
   const endpoints = [
@@ -17,7 +24,7 @@ export default function SettingsPage() {
     { key: "VIEWS_API", label: "Views API" },
     { key: "NLP_API", label: "NLP API" },
   ];
-  const [values, setValues] = useState<Record<string, string>>(loadEndpoints());
+  const [values, setValues] = useState(loadEndpoints());
   const [status, setStatus] = useState<Record<string, Status>>({});
   const runtime = typeof window === "undefined" ? "server" : "client";
 
@@ -29,7 +36,7 @@ export default function SettingsPage() {
       const r = await fetch(target + "/healthz");
       const latency = Math.round(performance.now() - start);
       setStatus((s) => ({ ...s, [key]: r.ok ? "ok" : "fail" }));
-      if (r.ok) toast(`${key} ${latency}ms`);
+      if (r.ok) toast.success(`${key} ${latency}ms`);
     } catch (e) {
       safeLog("test connection failed", e);
       setStatus((s) => ({ ...s, [key]: "fail" }));
@@ -37,17 +44,17 @@ export default function SettingsPage() {
   };
 
   const handleSave = () => {
-    const sanitized: Record<string, string> = {};
+    const sanitized: EndpointSettings = {} as any;
     for (const [k, v] of Object.entries(values)) {
-      const s = sanitizeUrl(v);
+      const s = sanitizeUrl(v || '');
       if (s && !validateUrl(s)) {
-        toast(`Invalid URL for ${k}`);
+        toast.error(`Invalid URL for ${k}`);
         return;
       }
       sanitized[k] = s;
     }
     saveEndpoints(sanitized);
-    toast("Saved");
+    toast.success("Saved");
   };
 
   return (
@@ -70,7 +77,7 @@ export default function SettingsPage() {
                   onChange={(ev) =>
                     setValues((v) => ({ ...v, [e.key]: ev.target.value }))
                   }
-                  helper={!e.url ? "Not configured" : undefined}
+                  helper={!values[e.key] ? "Not configured" : undefined}
                   className="flex-1"
                 />
                 <Button onClick={() => handlePing(e.key, values[e.key])}>Test</Button>
@@ -81,6 +88,16 @@ export default function SettingsPage() {
               <Button onClick={handleSave}>Save</Button>
             </div>
           </div>
+        </Card>
+
+        <Card>
+          <h2 className="mb-4">Gateway</h2>
+          <SettingsGateway />
+        </Card>
+
+        <Card>
+          <h2 className="mb-4">Graph Deep-Link</h2>
+          <SettingsGraphDeepLink />
         </Card>
 
         <Card>

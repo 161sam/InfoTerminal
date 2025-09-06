@@ -8,13 +8,13 @@ export const config = { api: { bodyParser: false } };
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
   const form = formidable({ multiples: true });
-  form.parse(req, async (err, fields, files) => {
+  form.parse(req, async (err: any, fields: any, files: any) => {
     if (err) {
       res.status(500).json({ ok: false, error: 'parse error' });
       return;
     }
     const fileField = files.file;
-    const fileArr = Array.isArray(fileField) ? fileField : [fileField].filter(Boolean) as formidable.File[];
+    const fileArr = Array.isArray(fileField) ? fileField : [fileField].filter(Boolean) as any[];
     const results: any[] = [];
     for (const file of fileArr) {
       const title = (fields.title && (fields.title as string)) || file.originalFilename || 'Dokument';

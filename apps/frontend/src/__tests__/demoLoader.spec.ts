@@ -1,6 +1,6 @@
 import path from 'path';
 import { expect, test } from 'vitest';
-import { fileSha1, readLoaded, writeLoaded, paths } from '../../lib/demoLoader';
+import { fileSha1, readLoaded, writeLoaded, paths } from '@/lib/demoLoader';
 import fs from 'fs';
 
 const root = path.join(process.cwd(), '..', '..');

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SettingsPage from '../app/settings/page';
-import { ToastViewport } from '../components/ui/Toast';
+import SettingsGraphDeepLink from '@/components/settings/SettingsGraphDeepLink';
+import { ToastViewport } from '@/components/ui/Toast';
 
 const STORAGE_KEY = 'it.settings.graph.deeplinkBase';
 
@@ -13,7 +13,7 @@ describe('Settings Graph Deep-Link', () => {
     render(
       <>
         <ToastViewport />
-        <SettingsPage />
+        <SettingsGraphDeepLink />
       </>
     );
     const input = await screen.findByLabelText('Graph Deep-Link Base');
@@ -27,7 +27,7 @@ describe('Settings Graph Deep-Link', () => {
     render(
       <>
         <ToastViewport />
-        <SettingsPage />
+        <SettingsGraphDeepLink />
       </>
     );
     const input = await screen.findByLabelText('Graph Deep-Link Base');
@@ -41,13 +41,12 @@ describe('Settings Graph Deep-Link', () => {
     render(
       <>
         <ToastViewport />
-        <SettingsPage />
+        <SettingsGraphDeepLink />
       </>
     );
     const input = await screen.findByLabelText('Graph Deep-Link Base');
     fireEvent.change(input, { target: { value: '/graphx?focus=' } });
-    const btns = screen.getAllByText('Test');
-    fireEvent.click(btns[1]);
+    fireEvent.click(screen.getByText('Test'));
     await waitFor(() => screen.getByTestId('test-link'));
     expect(screen.getByTestId('test-link')).toHaveTextContent('/graphx?focus=demo');
   });

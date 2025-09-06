@@ -1,7 +1,7 @@
 import React from 'react';
 import ServiceHealthCard from './ServiceHealthCard';
 import type { HealthResponse } from '../../../pages/api/health';
-import config from '../../../lib/config';
+import config from '@/lib/config';
 
 interface Props {
   data: HealthResponse | null;

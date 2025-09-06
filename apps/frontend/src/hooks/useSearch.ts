@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { SearchResponse } from '../types/search';
 import useEndpoints from './useEndpoints';
-import { sanitizeUrl } from '../../lib/endpoints';
+import { sanitizeUrl } from '@/lib/endpoints';
 
 export interface UseSearchInput {
   q?: string;

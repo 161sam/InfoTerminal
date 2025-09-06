@@ -13,7 +13,7 @@ import {
   Bell,
   User
 } from 'lucide-react';
-import { useNotifications } from '../../lib/notifications';
+import { useNotifications } from '@/lib/notifications';
 
 interface MobileNavItem {
   name: string;
@@ -192,7 +192,7 @@ export function MobileNavigation() {
 }
 
 // Settings Panel Component
-import { useTheme } from '../../lib/theme-provider';
+import { useTheme } from '@/lib/theme-provider';
 
 interface SettingsSection {
   title: string;

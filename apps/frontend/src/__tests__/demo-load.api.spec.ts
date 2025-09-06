@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { beforeEach, expect, test, vi } from 'vitest';
 import { loadDemo } from '../../pages/api/demo/load';
-import * as loader from '../../lib/demoLoader';
+import * as loader from '@/lib/demoLoader';
 
 const loadedFile = loader.paths.LOADED_FILE;
 const root = path.join(process.cwd(), '..', '..');

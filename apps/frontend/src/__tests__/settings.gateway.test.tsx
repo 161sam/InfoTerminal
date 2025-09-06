@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SettingsGateway from '../app/settings/components/SettingsGateway';
+import SettingsGateway from '@/components/settings/SettingsGateway';
 
 const STORAGE_KEY = 'it.settings.gateway';
 

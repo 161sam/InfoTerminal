@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DocRecord } from '../../types/docs';
+import { DocRecord } from '@/types/docs';
 
 interface Props {
   doc: DocRecord;

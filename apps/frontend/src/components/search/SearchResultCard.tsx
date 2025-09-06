@@ -2,9 +2,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { Network, ExternalLink, FileText, Calendar, User } from 'lucide-react';
-import type { SearchHit } from '../../types/search';
+import type { SearchHit } from '@/types/search';
 import EntityBadge from '../entities/EntityBadge';
-import { normalizeLabel } from '../../lib/entities';
+import { normalizeLabel } from '@/lib/entities';
 
 interface SearchResultCardProps {
   item: SearchHit;

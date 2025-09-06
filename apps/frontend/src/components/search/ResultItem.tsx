@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import type { SearchHit } from '../../types/search';
+import type { SearchHit } from '@/types/search';
 import EntityBadge from '../entities/EntityBadge';
-import { displayValue, normalizeLabel } from '../../lib/entities';
-import { buildSearchUrl } from '../../lib/searchNav';
+import { displayValue, normalizeLabel } from '@/lib/entities';
+import { buildSearchUrl } from '@/lib/searchNav';
 
 interface Props {
   hit: SearchHit;

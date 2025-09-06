@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { loadGateway, saveGateway, getEndpoints } from '../../../../lib/endpoints';
+import { loadGateway, saveGateway, getEndpoints } from '@/lib/endpoints';
 
 export default function SettingsGateway() {
   const [state, setState] = useState(loadGateway());

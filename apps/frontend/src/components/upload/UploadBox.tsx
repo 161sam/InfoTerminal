@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload as UploadIcon, CheckCircle, XCircle, Clock, X, RotateCcw } from 'lucide-react';
-import useFileUpload from '../../hooks/useFileUpload';
+import useFileUpload from '@/hooks/useFileUpload';
 import UploadProgressBar from './UploadProgressBar';
 
 type Props = {

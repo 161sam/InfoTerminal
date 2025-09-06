@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import UploadBox from '../components/upload/UploadBox';
+import UploadBox from '@/components/upload/UploadBox';
 
 declare const global: any;
 

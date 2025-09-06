@@ -1,5 +1,5 @@
-import { loadEndpoints, saveEndpoints, sanitizeUrl, validateUrl } from '../../lib/endpoints';
-import { getEndpoints, defaultEndpoints } from '../../lib/endpoints';
+import { loadEndpoints, saveEndpoints, sanitizeUrl, validateUrl } from '@/lib/endpoints';
+import { getEndpoints, defaultEndpoints } from '@/lib/endpoints';
 
 test('persist and load endpoints', () => {
   const vals = { SEARCH_API: 'http://a', GRAPH_API: 'http://b', VIEWS_API: 'http://c' };

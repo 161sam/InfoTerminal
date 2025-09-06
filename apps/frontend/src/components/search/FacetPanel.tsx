@@ -1,7 +1,7 @@
 // apps/frontend/src/components/search/FacetPanel.tsx
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Search, X } from 'lucide-react';
-import type { Aggregations } from '../../types/search';
+import type { Aggregations } from '@/types/search';
 
 interface Props {
   aggregations?: Aggregations;

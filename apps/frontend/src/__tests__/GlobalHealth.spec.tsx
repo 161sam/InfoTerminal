@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import GlobalHealth from '../components/health/GlobalHealth';
+import GlobalHealth from '@/components/health/GlobalHealth';
 import { vi } from 'vitest';
 
 describe('GlobalHealth', () => {

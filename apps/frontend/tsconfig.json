@@ -7,11 +7,9 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["*"]
     },
     "lib": [
       "dom",
@@ -32,8 +30,6 @@
   "include": [
     "src",
     "pages",
-    "lib",
-    "components",
     ".next/types/**/*.ts"
   ],
   "exclude": [

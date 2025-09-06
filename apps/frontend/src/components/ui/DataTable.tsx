@@ -27,7 +27,7 @@ export interface Column<T> {
 
 export interface TableAction<T> {
   label: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   onClick: (row: T) => void;
   color?: 'primary' | 'secondary' | 'danger';
   hidden?: (row: T) => boolean;

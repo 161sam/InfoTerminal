@@ -101,7 +101,7 @@ export default function Dashboard() {
             
             {healthData && (
               <div className="space-y-3">
-                {Object.entries(healthData.services).map(([name, service]) => (
+                {Object.entries(healthData.services).map(([name, service]: [string, any]) => (
                   <div key={name} className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700 capitalize">{name}</span>
                     <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ export default function Dashboard() {
 function StatsCard({ title, value, icon: Icon, trend, color }: {
   title: string;
   value: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   trend?: number;
   color: 'blue' | 'purple' | 'green' | 'orange';
 }) {
@@ -285,7 +285,7 @@ function ActivityItem({ type, title, description, time, icon: Icon }: {
   title: string;
   description: string;
   time: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
 }) {
   return (
     <div className="flex items-start gap-3">
@@ -305,7 +305,7 @@ function QuickActionCard({ title, description, href, icon: Icon, color }: {
   title: string;
   description: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   color: 'blue' | 'purple' | 'green' | 'orange';
 }) {
   const colorClasses = {

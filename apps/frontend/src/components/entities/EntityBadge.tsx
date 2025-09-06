@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ENTITY_COLORS, EntityLabel } from '../../lib/entities';
+import { ENTITY_COLORS, EntityLabel } from '@/lib/entities';
 import {
   User,
   Building2,

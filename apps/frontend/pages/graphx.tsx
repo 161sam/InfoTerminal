@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Layout from "../components/Layout";
-import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
-import StatusPill, { Status } from "../components/ui/StatusPill";
-import config from "../lib/config";
+import Layout from "@/components/Layout";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import StatusPill, { Status } from "@/components/ui/StatusPill";
+import config from "@/lib/config";
 
 /** Ping a URL's /healthz endpoint. */
 async function ping(url?: string): Promise<Status> {
