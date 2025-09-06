@@ -1,6 +1,6 @@
 import types
 import pytest
-import auth
+import search_api.auth as auth
 
 
 def test_get_jwks_caches(monkeypatch):

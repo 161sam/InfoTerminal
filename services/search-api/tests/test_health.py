@@ -1,5 +1,5 @@
 import pytest
-import _shared.health as shared_health
+import search_api._shared.health as shared_health
 
 
 @pytest.mark.anyio

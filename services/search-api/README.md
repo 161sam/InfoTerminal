@@ -25,3 +25,21 @@ curl -H "X-Rerank: 1" "http://localhost:8001/search?q=acme&limit=20"
 
 Reranking blends cosine similarity with BM25 score and is best-effort; if the timeout is exceeded or an error occurs the original order is returned.
 
+
+## Development
+
+Editable install is supported:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -e .
+```
+
+Run the API via the legacy shim or the package name:
+
+```bash
+PYTHONPATH=. IT_FORCE_READY=1 uvicorn app.main:app --port 8401 --reload
+# or
+uvicorn search_api.app.main:app --port 8401 --reload
+```

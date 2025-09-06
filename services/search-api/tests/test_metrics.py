@@ -17,7 +17,7 @@ def _load_app(enable: bool):
     else:
         os.environ.pop("IT_ENABLE_METRICS", None)
         os.environ.pop("IT_OBSERVABILITY", None)
-    import app.main as main
+    import search_api.app.main as main
 
     importlib.reload(main)
     return main.app

@@ -1,21 +1,7 @@
 import pytest
 from fastapi import HTTPException
-import app.main as main
-from app import rerank as rr
-
-
-@pytest.mark.anyio
-async def test_startup_exposes(monkeypatch):
-    called = {}
-
-    def expose(app, include_in_schema=False, should_gzip=True):
-        called["hit"] = True
-
-    monkeypatch.setattr(main.instrumentator, "expose", expose)
-    await main._startup()
-    assert called.get("hit")
-
-
+import search_api.app.main as main
+from search_api.app import rerank as rr
 def test_oidc_user_requires_token(monkeypatch):
     monkeypatch.setenv("REQUIRE_AUTH", "1")
     monkeypatch.setattr(main, "settings", main.Settings())

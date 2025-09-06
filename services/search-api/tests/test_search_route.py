@@ -1,5 +1,5 @@
 import pytest
-import app.main as app
+import search_api.app.main as app
 
 @pytest.mark.anyio
 async def test_search_minimal(client, monkeypatch):

@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "search-api"
 version = "0.1.0"
@@ -30,6 +34,13 @@ dev = [
   "pytest-cov",
   "httpx",
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["search_api*"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=. --cov-report=xml:coverage.xml --cov-report=term-missing"
