@@ -4,9 +4,9 @@ import types
 import numpy as np
 import pytest
 
-import app.main as app
-from app.config import Settings as AppSettings
-from app import rerank as rr
+import search_api.app.main as app
+from search_api.app.config import Settings as AppSettings
+from search_api.app import rerank as rr
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 import httpx
-import opa
+import search_api.opa as opa
 
 
 def _client_factory(resp=None, exc=None):

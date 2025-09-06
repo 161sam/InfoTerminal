@@ -4,11 +4,11 @@ import pathlib
 import sys
 import types
 
-MODULE_PATH = pathlib.Path(__file__).resolve().parents[1] / "app/main.py"
+MODULE_PATH = pathlib.Path(__file__).resolve().parents[1] / "src/search_api/app/main.py"
 
 
 def _load_app(monkeypatch, enable: bool):
-    sys.modules.pop("_shared.obs.otel_boot", None)
+    sys.modules.pop("search_api._shared.obs.otel_boot", None)
     if enable:
         monkeypatch.setenv("IT_OTEL", "1")
     else:
@@ -102,7 +102,7 @@ def _load_app(monkeypatch, enable: bool):
         types.SimpleNamespace(HTTPXClientInstrumentor=DummyHTTPXClientInstrumentor),
     )
 
-    spec = importlib.util.spec_from_file_location("search_api", MODULE_PATH)
+    spec = importlib.util.spec_from_file_location("search_api.app.main", MODULE_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore
     return mod.app, calls
