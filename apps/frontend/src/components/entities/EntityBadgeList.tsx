@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import EntityBadge from './EntityBadge';
-import { EntityLabel } from '../../lib/entities';
+import { EntityLabel } from '@/lib/entities';
 
 export type BadgeItem = {
   label: EntityLabel;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import StatusDot from './StatusDot';
 import HealthPopover from './HealthPopover';
-import { useHealth } from '../../hooks/useHealth';
+import { useHealth } from '@/hooks/useHealth';
 
 export const GlobalHealth: React.FC<{ pollIntervalMs?: number }> = ({ pollIntervalMs = 15000 }) => {
   const { data, error, refresh, stateAggregate } = useHealth(pollIntervalMs);

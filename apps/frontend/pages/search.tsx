@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import Layout from "../components/Layout";
-import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
-import Field from "../components/ui/Field";
-import StatusPill from "../components/ui/StatusPill";
-import config from "../lib/config";
+import Layout from "@/components/Layout";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Field from "@/components/ui/Field";
+import StatusPill from "@/components/ui/StatusPill";
+import config from "@/lib/config";
 
 type SearchResult = {
   id: string;

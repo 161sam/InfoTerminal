@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import EntityHighlighter from '../components/docs/EntityHighlighter';
-import { Entity } from '../types/docs';
+import EntityHighlighter from '@/components/docs/EntityHighlighter';
+import { Entity } from '@/types/docs';
 
 test('renders marks and graph links', () => {
   process.env.NEXT_PUBLIC_GRAPH_DEEPLINK_BASE = '/graphx?focus=';

@@ -105,7 +105,7 @@ export function TimeSeriesChart({
   loading = false,
 }: TimeSeriesChartProps) {
   const Chart = showArea ? AreaChart : LineChart;
-  const DataComponent = showArea ? Area : Line;
+  const DataComponent: any = showArea ? Area : Line;
 
   if (loading) return <ChartSkeleton height={height} />;
 
@@ -322,7 +322,7 @@ interface MetricCardProps {
     dataKey: string;
     color?: string;
   };
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  icon?: React.ComponentType<{ size?: number | string; className?: string }>;
   className?: string;
 }
 

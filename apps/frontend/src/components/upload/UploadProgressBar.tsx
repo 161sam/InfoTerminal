@@ -1,5 +1,5 @@
 import React from 'react';
-import { UploadStatus } from '../../hooks/useFileUpload';
+import { UploadStatus } from '@/hooks/useFileUpload';
 
 type Props = {
   progress: number;

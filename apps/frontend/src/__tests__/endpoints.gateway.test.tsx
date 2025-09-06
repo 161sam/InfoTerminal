@@ -1,4 +1,4 @@
-import { getEndpoints, saveGateway, loadGateway } from '../../lib/endpoints';
+import { getEndpoints, saveGateway, loadGateway } from '@/lib/endpoints';
 
 describe('gateway endpoint resolver', () => {
   beforeEach(() => {

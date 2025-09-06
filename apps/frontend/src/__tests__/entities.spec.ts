@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeLabel, uniqueEntities } from '../lib/entities';
+import { normalizeLabel, uniqueEntities } from '@/lib/entities';
 
 describe('entities utils', () => {
   it('normalizes labels', () => {

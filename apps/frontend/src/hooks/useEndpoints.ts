@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getEndpoints } from '../../lib/endpoints';
+import { getEndpoints } from '@/lib/endpoints';
 
 export function useEndpoints() {
   const [eps, setEps] = useState(getEndpoints());

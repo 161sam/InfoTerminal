@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { GraphSnippet } from '../components/analytics/GraphSnippet';
+import { GraphSnippet } from '@/components/analytics/GraphSnippet';
 
 test('renders nodes and click callback', () => {
   const fn = vi.fn();

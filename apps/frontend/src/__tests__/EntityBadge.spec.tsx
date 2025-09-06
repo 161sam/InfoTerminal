@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react';
-import EntityBadge from '../components/entities/EntityBadge';
+import EntityBadge from '@/components/entities/EntityBadge';
 import { describe, it, expect, vi } from 'vitest';
 
 describe('EntityBadge', () => {

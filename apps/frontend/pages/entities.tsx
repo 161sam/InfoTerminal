@@ -175,7 +175,7 @@ export default function EntitiesPage() {
   const actions: TableAction<Entity>[] = [
     {
       label: 'View Details',
-      icon: Eye,
+      icon: Eye as any,
       onClick: (row) => {
         // Navigate to entity detail page
         console.log('View entity:', row.id);

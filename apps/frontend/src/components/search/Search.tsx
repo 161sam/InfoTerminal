@@ -1,10 +1,10 @@
 // apps/frontend/src/components/search/Search.tsx
 import React, { useState, useEffect } from 'react';
 import { Search as SearchIcon, Filter, SortDesc, Sparkles, X, Loader2 } from 'lucide-react';
-import { useSearch } from '../../hooks/useSearch';
-import { useSearchParams } from '../../hooks/useSearchParams';
+import { useSearch } from '@/hooks/useSearch';
+import { useSearchParams } from '@/hooks/useSearchParams';
 import EntityBadge from '../entities/EntityBadge';
-import { normalizeLabel } from '../../lib/entities';
+import { normalizeLabel } from '@/lib/entities';
 import SearchResultCard from './SearchResultCard';
 import FacetPanel from './FacetPanel';
 import FilterChips from './FilterChips';

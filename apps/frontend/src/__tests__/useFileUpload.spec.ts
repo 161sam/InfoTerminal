@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import useFileUpload from '../hooks/useFileUpload';
+import useFileUpload from '@/hooks/useFileUpload';
 import { vi } from 'vitest';
 
 declare const global: any;

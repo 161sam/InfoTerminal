@@ -16,9 +16,9 @@ export const GraphSnippet: React.FC<Props> = ({ data, onNodeClick, cyRef }) => (
     <CytoscapeComponent
       elements={[...data.nodes, ...data.edges]}
       style={{ width: '100%', height: '100%' }}
-      cy={(cy) => {
+      cy={(cy: any) => {
         cyRef && cyRef(cy);
-        cy.on('tap', 'node', (evt) => onNodeClick && onNodeClick(evt.target.id()));
+        cy.on('tap', 'node', (evt: any) => onNodeClick && onNodeClick(evt.target.id()));
       }}
     />
   </div>

@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import toast from '../../../components/ui/Toast';
+import { toast } from '@/components/ui/Toast';
 import {
   buildGraphDeepLink,
   getGraphDeeplinkBase,
   DEEPLINK_STORAGE_KEY,
-} from '../../../../lib/deeplink';
-import { GRAPH_DEEPLINK_FALLBACK } from '../../../../lib/config';
+} from '@/lib/deeplink';
+import { GRAPH_DEEPLINK_FALLBACK } from '@/lib/config';
 
 export default function SettingsGraphDeepLink() {
   const [value, setValue] = useState('');

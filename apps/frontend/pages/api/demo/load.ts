@@ -9,7 +9,7 @@ import {
   ingestToAleph,
   annotateText,
   loadSeeds,
-} from '../../../lib/demoLoader';
+} from '@/lib/demoLoader';
 
 type LoadOpts = {
   ingestAleph?: boolean;

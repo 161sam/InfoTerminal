@@ -18,7 +18,7 @@ vi.mock('recharts', () => {
   };
 });
 
-import { TimeSeriesChart } from '../components/analytics/TimeSeriesChart';
+import { TimeSeriesChart } from '@/components/analytics/TimeSeriesChart';
 
 test('renders and brush emits range', () => {
   const fn = vi.fn();

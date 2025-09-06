@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import SearchBox from '../components/search/SearchBox';
+import SearchBox from '@/components/search/SearchBox';
 
 it('renders and triggers onSubmit', async () => {
   const onSubmit = vi.fn();

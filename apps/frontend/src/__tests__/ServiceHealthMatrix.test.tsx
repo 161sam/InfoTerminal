@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import ServiceHealthMatrix from '../../components/ServiceHealthMatrix';
+import ServiceHealthMatrix from '@/components/ServiceHealthMatrix';
 
 vi.mock('@/hooks/useServiceHealthMatrix', () => ({
   __esModule: true,

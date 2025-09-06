@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
-import { paths } from '../../../lib/demoLoader';
+import { paths } from '@/lib/demoLoader';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEMO_LOADER !== '1') {

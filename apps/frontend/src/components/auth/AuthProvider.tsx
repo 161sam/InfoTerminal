@@ -1,7 +1,7 @@
 // apps/frontend/src/components/auth/AuthProvider.tsx
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useNotifications } from '../../lib/notifications';
+import { useNotifications } from '@/lib/notifications';
 
 export interface User {
   id: string;
@@ -205,7 +205,6 @@ export function useAuth() {
 }
 
 // Login Form Component
-import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Form, EmailInput, PasswordInput, useForm, validateField } from '../forms/FormComponents';
 
@@ -328,18 +327,20 @@ export function RegisterForm() {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   
-  const { values, errors, touched, setValue, setFieldTouched, validateAll } = useForm(
-    { name: '', email: '', password: '', confirmPassword: '' },
-    {
-      name: { required: true, minLength: 2 },
-      email: { required: true, email: true },
-      password: { required: true, minLength: 8 },
-      confirmPassword: { 
-        required: true, 
-        custom: (value) => value !== values.password ? 'Passwords do not match' : null 
+  const { values, errors, touched, setValue, setFieldTouched, validateAll } =
+    (useForm as any)(
+      { name: '', email: '', password: '', confirmPassword: '' },
+      {
+        name: { required: true, minLength: 2 },
+        email: { required: true, email: true },
+        password: { required: true, minLength: 8 },
+        confirmPassword: {
+          required: true,
+          custom: (value: string, fields: any) =>
+            value !== fields.password ? 'Passwords do not match' : null,
+        },
       }
-    }
-  );
+    );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

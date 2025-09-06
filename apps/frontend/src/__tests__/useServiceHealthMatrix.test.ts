@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useServiceHealthMatrix } from '../hooks/useServiceHealthMatrix';
+import { useServiceHealthMatrix } from '@/hooks/useServiceHealthMatrix';
 
 test('polls readyz endpoints', async () => {
   const mock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });

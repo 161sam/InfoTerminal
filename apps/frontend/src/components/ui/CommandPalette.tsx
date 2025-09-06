@@ -24,9 +24,9 @@ import {
   CheckCircle,
   Info
 } from 'lucide-react';
-import { useTheme } from '../../lib/theme-provider';
+import { useTheme } from '@/lib/theme-provider';
 import { useAuth } from '../auth/AuthProvider';
-import { useNotifications } from '../../lib/notifications';
+import { useNotifications } from '@/lib/notifications';
 
 // Command types
 export interface Command {

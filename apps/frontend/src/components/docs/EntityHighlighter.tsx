@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Entity } from '../../types/docs';
+import { Entity } from '@/types/docs';
 
 interface Props {
   text: string;

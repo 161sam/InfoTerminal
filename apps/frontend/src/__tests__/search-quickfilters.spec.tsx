@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSearchUrl } from '../lib/searchNav';
+import { buildSearchUrl } from '@/lib/searchNav';
 
 describe('buildSearchUrl', () => {
   it('adds entity and value params', () => {
