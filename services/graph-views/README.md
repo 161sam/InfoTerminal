@@ -12,7 +12,7 @@ python -m venv .venv
 pip install -e .
 ```
 
-The editable install includes the asynchronous PostgreSQL driver `asyncpg` used by `db.py`.
+Graph-Views initialisiert Postgres asynchron via `asyncpg`; die Abhängigkeit ist Bestandteil des Pakets.
 
 For running tests install the dev requirements:
 
