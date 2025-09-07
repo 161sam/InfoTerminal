@@ -1,5 +1,5 @@
 {
-  "name": "infoterminal-frontend",
+  "name": "@infoterminal/frontend",
   "private": true,
   "scripts": {
     "prebuild": "bash ../../scripts/tailwind_v4_guard.sh",
