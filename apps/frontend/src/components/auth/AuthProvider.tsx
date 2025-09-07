@@ -205,8 +205,8 @@ export function useAuth() {
 }
 
 // Login Form Component
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
-import { Form, EmailInput, PasswordInput, useForm, validateField } from '../forms/FormComponents';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import { Form, EmailInput, PasswordInput, useForm } from '@/components/forms/FormComponents';
 
 export function LoginForm() {
   const { login } = useAuth();
@@ -328,7 +328,7 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   
   const { values, errors, touched, setValue, setFieldTouched, validateAll } =
-    (useForm as any)(
+    useForm(
       { name: '', email: '', password: '', confirmPassword: '' },
       {
         name: { required: true, minLength: 2 },
@@ -336,8 +336,8 @@ export function RegisterForm() {
         password: { required: true, minLength: 8 },
         confirmPassword: {
           required: true,
-          custom: (value: string, fields: any) =>
-            value !== fields.password ? 'Passwords do not match' : null,
+          custom: (value, values) =>
+            value !== values.password ? 'Passwords do not match' : null,
         },
       }
     );
@@ -407,7 +407,7 @@ export function RegisterForm() {
             onBlur={() => setFieldTouched('password')}
             error={touched.password ? errors.password : undefined}
             placeholder="Create a password"
-            helperText="At least 8 characters"
+            helpText="At least 8 characters"
             required
           />
 

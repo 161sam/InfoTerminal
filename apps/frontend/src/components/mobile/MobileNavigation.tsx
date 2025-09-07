@@ -1,7 +1,7 @@
 // apps/frontend/src/components/mobile/MobileNavigation.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { 
+import {
   Home,
   Search,
   Network,
@@ -13,12 +13,13 @@ import {
   Bell,
   User
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useNotifications } from '@/lib/notifications';
 
 interface MobileNavItem {
   name: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   badge?: number;
 }
 

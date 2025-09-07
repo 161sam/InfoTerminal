@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { 
-  Search, 
-  BarChart3, 
-  Network, 
-  FileText, 
-  Settings, 
+import {
+  Search,
+  BarChart3,
+  Network,
+  FileText,
+  Settings,
   Bell,
   Menu,
   X,
@@ -17,12 +17,13 @@ import {
   Shield,
   Activity
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import GlobalHealth from '../health/GlobalHealth';
 
 interface NavigationItem {
   name: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   badge?: number;
 }
 
