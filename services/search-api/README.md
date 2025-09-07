@@ -36,6 +36,8 @@ python -m venv .venv
 pip install -e .
 ```
 
+> Editable install: `pip install -e .` funktioniert jetzt; nur `app` wird installiert.
+
 Run the API via the legacy shim or the package name:
 
 ```bash

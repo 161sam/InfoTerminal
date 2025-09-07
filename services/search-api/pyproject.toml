@@ -36,11 +36,8 @@ dev = [
 ]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["search_api*"]
+packages = ["app"]
+include-package-data = true
 
 [tool.pytest.ini_options]
 addopts = "--cov=. --cov-report=xml:coverage.xml --cov-report=term-missing"
