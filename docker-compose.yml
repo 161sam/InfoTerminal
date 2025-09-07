@@ -23,27 +23,6 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
-  nlp-service:
-    build: ./services/nlp-service
-    ports: ["8003:8003"]
-    env_file: .env
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8003/healthz"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
-  doc-entities:
-    build: ./services/doc-entities
-    ports: ["8006:8006"]
-    env_file: .env
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8006/healthz"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
-    depends_on:
-      nlp-service:
-        condition: service_healthy
   web:
     build: ./apps/frontend
     ports: ["3411:3000"]
@@ -52,10 +31,6 @@ services:
       search-api:
         condition: service_healthy
       graph-api:
-        condition: service_healthy
-      nlp-service:
-        condition: service_healthy
-      doc-entities:
         condition: service_healthy
   opensearch:
     image: opensearchproject/opensearch:2

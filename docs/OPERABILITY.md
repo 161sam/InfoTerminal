@@ -11,6 +11,17 @@ docker compose -f docker-compose.observability.yml --profile observability up -d
 
 Open http://localhost:3411 and verify the health matrix. The frontend includes a **Gateway Proxy** toggle in Settings to route API calls through `http://localhost:8610`.
 
+## Stacks bevorzugen
+
+Beispiele:
+
+- Infra: `docker compose -f docker-compose.neo.yml up -d`
+- Observability: `docker compose -f docker-compose.observability.yml --profile observability up -d`
+- NLP: `docker compose -f docker-compose.nlp.yml up -d`
+- Core (Apps): `docker compose up -d web search-api graph-api graph-views gateway`
+
+Hinweis: `--profile infra` NICHT auf dem Haupt-Compose verwenden; Services ohne `profiles` starten immer.
+
 Metrics and tracing can be enabled with `IT_ENABLE_METRICS=1` and `IT_OTEL=1`.
 
 ## Ports
