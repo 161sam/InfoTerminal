@@ -212,7 +212,7 @@ export function EmptyState({
   action,
   className = ''
 }: {
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  icon?: React.ComponentType<{ size?: number | string; className?: string }>;
   title: string;
   description?: string;
   action?: {

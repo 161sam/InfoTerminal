@@ -215,8 +215,24 @@ export function LoginForm() {
   const { values, errors, touched, setValue, setFieldTouched, validateAll } = useForm(
     { email: '', password: '' },
     {
-      email: { required: true, email: true },
-      password: { required: true, minLength: 8 }
+      email: [
+        { type: 'required' },
+        {
+          type: 'regex',
+          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          message: 'Invalid email address',
+        },
+      ],
+      password: [
+        { type: 'required' },
+        {
+          type: 'custom',
+          validate: (v) =>
+            typeof v === 'string' && v.length >= 8
+              ? true
+              : 'Minimum length is 8 characters',
+        },
+      ],
     }
   );
 
@@ -253,7 +269,7 @@ export function LoginForm() {
           value={values.email}
           onChange={(value) => setValue('email', value)}
           onBlur={() => setFieldTouched('email')}
-          error={touched.email ? errors.email : undefined}
+          error={touched.email ? errors.email : null}
           placeholder="Enter your email"
           required
         />
@@ -264,7 +280,7 @@ export function LoginForm() {
           value={values.password}
           onChange={(value) => setValue('password', value)}
           onBlur={() => setFieldTouched('password')}
-          error={touched.password ? errors.password : undefined}
+          error={touched.password ? errors.password : null}
           placeholder="Enter your password"
           required
         />
@@ -331,14 +347,42 @@ export function RegisterForm() {
     useForm(
       { name: '', email: '', password: '', confirmPassword: '' },
       {
-        name: { required: true, minLength: 2 },
-        email: { required: true, email: true },
-        password: { required: true, minLength: 8 },
-        confirmPassword: {
-          required: true,
-          custom: (value, values) =>
-            value !== values.password ? 'Passwords do not match' : null,
-        },
+        name: [
+          { type: 'required' },
+          {
+            type: 'custom',
+            validate: (v) =>
+              typeof v === 'string' && v.length >= 2
+                ? true
+                : 'Minimum length is 2 characters',
+          },
+        ],
+        email: [
+          { type: 'required' },
+          {
+            type: 'regex',
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Invalid email address',
+          },
+        ],
+        password: [
+          { type: 'required' },
+          {
+            type: 'custom',
+            validate: (v) =>
+              typeof v === 'string' && v.length >= 8
+                ? true
+                : 'Minimum length is 8 characters',
+          },
+        ],
+        confirmPassword: [
+          { type: 'required' },
+          {
+            type: 'custom',
+            validate: (v, form) =>
+              v === (form as any)?.password ? true : 'Passwords do not match',
+          },
+        ],
       }
     );
 
@@ -394,7 +438,7 @@ export function RegisterForm() {
             value={values.email}
             onChange={(value) => setValue('email', value)}
             onBlur={() => setFieldTouched('email')}
-            error={touched.email ? errors.email : undefined}
+            error={touched.email ? errors.email : null}
             placeholder="Enter your email"
             required
           />
@@ -405,7 +449,7 @@ export function RegisterForm() {
             value={values.password}
             onChange={(value) => setValue('password', value)}
             onBlur={() => setFieldTouched('password')}
-            error={touched.password ? errors.password : undefined}
+            error={touched.password ? errors.password : null}
             placeholder="Create a password"
             helpText="At least 8 characters"
             required
@@ -417,7 +461,7 @@ export function RegisterForm() {
             value={values.confirmPassword}
             onChange={(value) => setValue('confirmPassword', value)}
             onBlur={() => setFieldTouched('confirmPassword')}
-            error={touched.confirmPassword ? errors.confirmPassword : undefined}
+            error={touched.confirmPassword ? errors.confirmPassword : null}
             placeholder="Confirm your password"
             required
           />

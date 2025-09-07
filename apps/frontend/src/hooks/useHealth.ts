@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { HealthResponse } from '@/pages/api/health';
+import type { HealthResponse } from '../../pages/api/health';
 
 export function useHealth(pollIntervalMs = 15000) {
   const [data, setData] = useState<HealthResponse | null>(null);

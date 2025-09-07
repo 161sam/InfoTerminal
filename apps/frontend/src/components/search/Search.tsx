@@ -20,7 +20,7 @@ export default function Search() {
     pageSize: parseInt((params.pageSize as string) || '20', 10),
     sort: (params.sort as string) || 'relevance',
     rerank: params.rerank === '1',
-    filters: {},
+    filters: {} as Record<string, string[]>,
     entity: Array.isArray(params.entity) ? params.entity as string[] : params.entity ? [params.entity as string] : undefined,
     value: Array.isArray(params.value) ? params.value as string[] : params.value ? [params.value as string] : undefined
   };

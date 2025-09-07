@@ -55,7 +55,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => [notification, ...prev]);
 
     // Auto-remove non-persistent notifications
-    if (!notification.persistent && notification.duration > 0) {
+    if (!notification.persistent && (notification.duration ?? 0) > 0) {
       setTimeout(() => {
         removeNotification(id);
       }, notification.duration);

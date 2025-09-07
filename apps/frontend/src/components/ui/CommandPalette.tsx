@@ -1,11 +1,11 @@
 // apps/frontend/src/components/ui/CommandPalette.tsx
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { 
-  Search, 
-  Command, 
-  ArrowRight, 
-  Settings, 
+import {
+  Search,
+  Command,
+  ArrowRight,
+  Settings,
   Home,
   FileText,
   Network,
@@ -33,7 +33,7 @@ export interface Command {
   id: string;
   title: string;
   subtitle?: string;
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  icon?: React.ComponentType<{ size?: number | string; className?: string }>;
   shortcut?: string[];
   keywords?: string[];
   section?: string;

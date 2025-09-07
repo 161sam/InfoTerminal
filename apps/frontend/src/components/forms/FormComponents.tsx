@@ -2,59 +2,10 @@
 import React, { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
+import { validateField, type ValidatorMap, type ValidationRule } from '@/lib/validation';
 
-// Validation ---------------------------------------------------------------
-
-export interface ValidationRule {
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  pattern?: RegExp;
-  email?: boolean;
-  url?: boolean;
-  phone?: boolean;
-  custom?: (value: string, values: Record<string, string>) => string | null;
-}
-
-export function validateField(
-  value: string,
-  rules: ValidationRule,
-  values: Record<string, string> = {}
-): string | null {
-  if (rules.required && value.trim() === '') {
-    return 'This field is required';
-  }
-
-  if (rules.minLength && value.length < rules.minLength) {
-    return `Minimum length is ${rules.minLength} characters`;
-  }
-
-  if (rules.maxLength && value.length > rules.maxLength) {
-    return `Maximum length is ${rules.maxLength} characters`;
-  }
-
-  if (rules.pattern && !rules.pattern.test(value)) {
-    return 'Invalid format';
-  }
-
-  if (rules.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-    return 'Invalid email address';
-  }
-
-  if (rules.url && !/^https?:\/\/.+/.test(value)) {
-    return 'Invalid URL (must start with http:// or https://)';
-  }
-
-  if (rules.phone && !/^\+?[\d\s\-\(\)]+$/.test(value)) {
-    return 'Invalid phone number';
-  }
-
-  if (rules.custom) {
-    return rules.custom(value, values);
-  }
-
-  return null;
-}
+export { validateField } from '@/lib/validation';
+export type { ValidationRule, ValidatorMap };
 
 // Input -------------------------------------------------------------------
 
@@ -63,7 +14,7 @@ export type InputProps = Omit<React.ComponentProps<'input'>, 'value' | 'onChange
   value: string;
   onChange: (value: string) => void;
   helpText?: string;
-  error?: string;
+  error?: string | null;
   icon?: LucideIcon;
   rightElement?: React.ReactNode;
 };
@@ -178,16 +129,16 @@ export function Form({ children, ...rest }: FormProps) {
 
 export function useForm<T extends Record<string, string>>(
   initialValues: T,
-  rules: Partial<Record<keyof T, ValidationRule>> = {}
+  rules: ValidatorMap<T> = {},
 ) {
   const [values, setValues] = useState<T>(initialValues);
-  const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof T, string | null>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({});
 
   const setValue = (field: keyof T, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
@@ -197,9 +148,12 @@ export function useForm<T extends Record<string, string>>(
 
   const validateFieldValue = (field: keyof T) => {
     const rule = rules[field];
-    if (!rule) return null;
-    const error = validateField(values[field], rule, values as Record<string, string>);
-    setErrors((prev) => ({ ...prev, [field]: error || undefined }));
+    if (!rule) {
+      setErrors((prev) => ({ ...prev, [field]: null }));
+      return null;
+    }
+    const error = validateField(values[field], rule, values);
+    setErrors((prev) => ({ ...prev, [field]: error }));
     return error;
   };
 
@@ -230,4 +184,3 @@ export function useForm<T extends Record<string, string>>(
     reset,
   };
 }
-
