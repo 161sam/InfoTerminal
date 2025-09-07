@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { toast } from '@/components/ui/Toast';
+import { toast } from '@/components/ui/toast';
 import {
   buildGraphDeepLink,
   getGraphDeeplinkBase,
@@ -34,19 +34,19 @@ export default function SettingsGraphDeepLink() {
 
   const handleSave = () => {
     if (!validate(value)) {
-      toast.error('Invalid base');
+      toast('Invalid base', { variant: 'error' });
       return;
     }
     if (typeof window !== 'undefined') {
       localStorage.setItem(DEEPLINK_STORAGE_KEY, value);
     }
-    toast.success('Saved');
+    toast('Saved', { variant: 'success' });
   };
 
   const handleTest = () => {
     const link = buildGraphDeepLink({ id: 'demo', base: value });
     setTestLink(link);
-    toast.success('Generated');
+    toast('Generated', { variant: 'success' });
   };
 
   const handleReset = () => {
@@ -60,7 +60,7 @@ export default function SettingsGraphDeepLink() {
         ? 'abs'
         : 'rel'
     );
-    toast.success('Reset');
+    toast('Reset', { variant: 'success' });
   };
 
   return (

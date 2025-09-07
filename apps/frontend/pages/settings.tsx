@@ -4,7 +4,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Field from "@/components/ui/Field";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
-import { toast } from "@/components/ui/Toast";
+import { toast } from "@/components/ui/toast";
 import {
   loadEndpoints,
   saveEndpoints,
@@ -36,7 +36,7 @@ export default function SettingsPage() {
       const r = await fetch(target + "/healthz");
       const latency = Math.round(performance.now() - start);
       setStatus((s) => ({ ...s, [key]: r.ok ? "ok" : "fail" }));
-      if (r.ok) toast.success(`${key} ${latency}ms`);
+      if (r.ok) toast(`${key} ${latency}ms`, { variant: 'success' });
     } catch (e) {
       safeLog("test connection failed", e);
       setStatus((s) => ({ ...s, [key]: "fail" }));
@@ -48,13 +48,13 @@ export default function SettingsPage() {
     for (const [k, v] of Object.entries(values)) {
       const s = sanitizeUrl(v || '');
       if (s && !validateUrl(s)) {
-        toast.error(`Invalid URL for ${k}`);
+        toast(`Invalid URL for ${k}`, { variant: 'error' });
         return;
       }
       sanitized[k] = s;
     }
     saveEndpoints(sanitized);
-    toast.success("Saved");
+    toast("Saved", { variant: 'success' });
   };
 
   return (
