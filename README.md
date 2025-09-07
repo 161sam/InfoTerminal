@@ -69,6 +69,12 @@ it logs -s SERVICE --lines 50
 
 ---
 
+### NPM Workspaces
+
+Workspaces: im Repo-Root `npm i`, dann `npm -w apps/frontend test` oder `npm -w apps/frontend run build`.
+
+---
+
 ## ⚙️ Konfiguration
 
 Die wichtigsten Einstellungen findest du in der Datei **`.env`**:

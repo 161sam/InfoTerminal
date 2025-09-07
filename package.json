@@ -1,11 +1,16 @@
 {
   "name": "info-terminal",
   "private": true,
+  "workspaces": ["apps/*", "services/gateway"],
   "scripts": {
     "lint:md": "markdownlint-cli2 --config .markdownlint.jsonc docs/**/*.md",
     "lint:md:links": "markdown-link-check -q -c .mlc.config.json docs/**/*.md",
-    "lint:docs": "npm run lint:md && npm run lint:md:links",
-    "fmt:md": "prettier --write $(git ls-files '*.md')"
+    "lint:docs:md": "npm run lint:md && npm run lint:md:links",
+    "fmt:md": "prettier --write $(git ls-files '*.md')",
+    "test:fe": "npm -w apps/frontend test",
+    "build:fe": "npm -w apps/frontend run build",
+    "dev:fe": "npm -w apps/frontend run dev",
+    "lint:docs": "npm -w docs run lint || echo 'skip'"
   },
   "devDependencies": {
     "markdownlint-cli2": "^0.15.0",

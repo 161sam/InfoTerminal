@@ -1,5 +1,5 @@
 {
-  "name": "infoterminal-gateway",
+  "name": "@infoterminal/gateway",
   "private": true,
   "main": "index.ts",
   "engines": { "node": ">=20" },
