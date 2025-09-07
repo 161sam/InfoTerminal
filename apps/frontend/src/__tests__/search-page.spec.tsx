@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import type { NextRouter } from 'next/router';
 import SearchPage from '../../pages/search';
 
@@ -35,6 +35,10 @@ test('renders search results from API', async () => {
     json: async () => ({ items: [{ id: '1', title: 'Doc 1' }], total: 1 }),
   }) as any;
   render(<SearchPage />);
+  fireEvent.change(screen.getByLabelText('Query'), {
+    target: { value: 'acme' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
   await waitFor(() => expect(global.fetch).toHaveBeenCalled());
   await waitFor(() => expect(screen.getByText('Doc 1')).toBeInTheDocument());
 });

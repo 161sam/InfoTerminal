@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import StatusDot from './StatusDot';
+import StatusDot, { ServiceState } from './StatusDot';
 import HealthPopover from './HealthPopover';
 import { useHealth } from '@/hooks/useHealth';
 
@@ -7,7 +7,7 @@ export const GlobalHealth: React.FC<{ pollIntervalMs?: number }> = ({ pollInterv
   const { data, error, refresh, stateAggregate } = useHealth(pollIntervalMs);
   const [open, setOpen] = useState(false);
 
-  const aggState = error ? 'unreachable' : stateAggregate;
+  const aggState: ServiceState = error ? 'unreachable' : (stateAggregate as ServiceState);
   const tooltip =
     aggState === 'ok'
       ? 'All systems operational'

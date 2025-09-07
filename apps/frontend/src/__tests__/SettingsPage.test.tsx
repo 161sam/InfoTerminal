@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SettingsPage from '../../pages/settings';
+import { EmailInput, validateField } from '@/components/forms/FormComponents';
 
 beforeEach(() => {
   localStorage.clear();
@@ -19,4 +20,15 @@ test('saving persists endpoints', async () => {
   fireEvent.change(input, { target: { value: 'http://example.com' } });
   fireEvent.click(screen.getByText('Save'));
   expect(JSON.parse(localStorage.getItem('it.settings.endpoints')!)).toHaveProperty('SEARCH_API', 'http://example.com');
+});
+
+test('EmailInput passes value to onChange', () => {
+  const handle = vi.fn();
+  render(<EmailInput label="Email" value="" onChange={handle} />);
+  fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'user@example.com' } });
+  expect(handle).toHaveBeenCalledWith('user@example.com');
+});
+
+test('validateField returns required error', () => {
+  expect(validateField('', { required: true })).toBe('This field is required');
 });

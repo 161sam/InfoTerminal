@@ -23,9 +23,9 @@ export const HealthPopover: React.FC<Props> = ({ data, onRefresh }) => {
         )}
       </div>
       <div className="mt-4 flex justify-end gap-4 text-sm">
-        {config.GRAFANA_URL && (
+        {(config as any).GRAFANA_URL && (
           <a
-            href={config.GRAFANA_URL}
+            href={(config as any).GRAFANA_URL}
             target="_blank"
             rel="noreferrer"
             className="text-blue-600"

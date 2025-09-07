@@ -653,7 +653,7 @@ export default function GraphExplorer() {
                     onClick={() => toggleNodeLock(selectedNode)}
                     className="text-xs bg-gray-50 text-gray-700 px-2 py-1 rounded hover:bg-gray-100 flex items-center gap-1"
                   >
-                    {elements.find(el => el.data.id === selectedNode && 'locked' in el.data)?.data.locked ? (
+                    {((elements.find(el => el.data.id === selectedNode) as any)?.data.locked) ? (
                       <>
                         <Unlock size={12} />
                         Unlock
