@@ -1,12 +1,9 @@
 import asyncio
 import time
-import sys
-from pathlib import Path
 
-sys.path.append(Path(__file__).resolve().parents[1].as_posix())
-import db as db_module  # noqa: E402
-from app import app  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
+import db as db_module
+from app import app
+from fastapi.testclient import TestClient
 
 
 class DummyConn:

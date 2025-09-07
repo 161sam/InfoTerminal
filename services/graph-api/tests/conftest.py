@@ -1,4 +1,6 @@
-import os, pathlib, pytest, importlib.util, sys
+import os
+import sys
+import pytest
 from httpx import AsyncClient, ASGITransport
 from prometheus_client import REGISTRY, PROCESS_COLLECTOR, PLATFORM_COLLECTOR
 
@@ -6,9 +8,11 @@ os.environ.setdefault("OTEL_SDK_DISABLED", "true")
 os.environ.setdefault("IT_JSON_LOGS", "1")
 os.environ.setdefault("IT_ENV", "test")
 os.environ.setdefault("IT_LOG_SAMPLING", "")
-SERVICE_DIR = pathlib.Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SERVICE_DIR))
-MODULE_PATH = SERVICE_DIR / "app.py"
+
+import app as app_module  # type: ignore
+sys.modules.setdefault("app", app_module)
+app = app_module.app
+
 for collector in list(REGISTRY._collector_to_names):
     try:
         REGISTRY.unregister(collector)
@@ -16,11 +20,6 @@ for collector in list(REGISTRY._collector_to_names):
         pass
 REGISTRY.register(PROCESS_COLLECTOR)
 REGISTRY.register(PLATFORM_COLLECTOR)
-spec = importlib.util.spec_from_file_location("graph_api_app", MODULE_PATH)
-app_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(app_module)
-sys.modules.setdefault("app", app_module)
-app = app_module.app
 
 @pytest.fixture(scope="session")
 def anyio_backend():

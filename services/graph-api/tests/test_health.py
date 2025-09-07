@@ -1,6 +1,5 @@
 import pytest
 import app as app_module
-import _shared.health as shared_health
 
 
 @pytest.mark.anyio

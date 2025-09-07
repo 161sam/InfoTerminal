@@ -3,27 +3,20 @@ pytest.skip("legacy sync tests skipped", allow_module_level=True)
 
 
 import os, sys, json
-from pathlib import Path
 from datetime import datetime
 import types
-import pytest
 
 os.environ.setdefault("OTEL_SDK_DISABLED", "1")
 
-def _add_path():
-    sys.path.append(Path(__file__).resolve().parents[1].as_posix())
-    sys.modules.setdefault(
-        "opentelemetry.instrumentation.fastapi",
-        types.SimpleNamespace(
-            FastAPIInstrumentor=type("FastAPIInstrumentor", (), {"instrument_app": lambda self, app: app})
-        ),
-    )
-    import app as app_module  # noqa: E402
-    from app import app  # noqa: E402
-    return app_module, app
-
-app_module, app = _add_path()
-from fastapi.testclient import TestClient  # noqa: E402
+sys.modules.setdefault(
+    "opentelemetry.instrumentation.fastapi",
+    types.SimpleNamespace(
+        FastAPIInstrumentor=type("FastAPIInstrumentor", (), {"instrument_app": lambda self, app: app})
+    ),
+)
+import app as app_module  # type: ignore
+from app import app
+from fastapi.testclient import TestClient
 
 
 class MemoryDB:

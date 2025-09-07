@@ -1,6 +1,3 @@
-import sys
-from pathlib import Path
-sys.path.append(Path(__file__).resolve().parents[1].as_posix())
 from db import build_database_url_from_env
 
 

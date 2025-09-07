@@ -7,10 +7,6 @@ import logging
 import os
 import sys
 import types
-import pathlib
-
-import pytest
-sys.path.append(pathlib.Path(__file__).resolve().parents[1].as_posix())
 import app as app_module  # type: ignore
 from fastapi.testclient import TestClient
 
