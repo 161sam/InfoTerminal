@@ -3,9 +3,8 @@ pytest.skip("legacy sync tests skipped", allow_module_level=True)
 
 
 import os, sys, types
-from pathlib import Path
 
-sys.path.append(Path(__file__).resolve().parents[1].as_posix())
+# graph-views is on the pythonpath via pytest.ini
 sys.modules.setdefault(
     "opentelemetry.instrumentation.fastapi",
     types.SimpleNamespace(

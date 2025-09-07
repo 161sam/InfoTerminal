@@ -1,7 +1,5 @@
 import os
-import pathlib
 import sys
-import importlib
 import pytest
 from httpx import AsyncClient, ASGITransport
 
@@ -10,11 +8,7 @@ os.environ.setdefault("IT_JSON_LOGS", "1")
 os.environ.setdefault("IT_ENV", "test")
 os.environ.setdefault("IT_LOG_SAMPLING", "")
 
-SERVICE_DIR = pathlib.Path(__file__).resolve().parents[1]
-SRC_DIR = SERVICE_DIR / "src"
-sys.path.insert(0, str(SRC_DIR))
-sys.path.insert(0, str(SERVICE_DIR))
-
+# search-api uses a src layout; root conftest adds src to sys.path.
 import search_api.app.main as app_main  # type: ignore
 sys.modules.setdefault("app.main", app_main)
 app = app_main.app

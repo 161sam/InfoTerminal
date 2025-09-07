@@ -30,7 +30,7 @@ from pydantic import BaseModel
 ALLOW_TEST = os.getenv("ALLOW_TEST_MODE")
 SERVICE_DIR = Path(__file__).resolve().parent
 if str(SERVICE_DIR) not in sys.path:
-    sys.path.append(str(SERVICE_DIR))
+    sys.path.insert(0, str(SERVICE_DIR))
 
 from db import SessionLocal, engine  # type: ignore
 from models import Base, Document, Entity, EntityResolution  # type: ignore
