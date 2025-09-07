@@ -20,9 +20,9 @@ Centralized policies and auditability but requires learning Rego and maintaining
 
 ## Alternatives
 
-* Hardcoded roles in services
-* Custom policy engine
+- Hardcoded roles in services
+- Custom policy engine
 
 ## References
 
-* [www.openpolicyagent.org](https://www.openpolicyagent.org/)
+- [www.openpolicyagent.org](https://www.openpolicyagent.org/)

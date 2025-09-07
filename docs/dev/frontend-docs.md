@@ -30,8 +30,17 @@ If the badge turns red, use the "Force refresh" option or check the Docker compo
 {
   "ok": true,
   "results": [
-    { "file": "demo1.pdf", "status": "uploaded", "doc_id": "...", "aleph_id": "..." },
-    { "file": "demo2.txt", "status": "error", "message": "Filetype not supported" }
+    {
+      "file": "demo1.pdf",
+      "status": "uploaded",
+      "doc_id": "...",
+      "aleph_id": "..."
+    },
+    {
+      "file": "demo2.txt",
+      "status": "error",
+      "message": "Filetype not supported"
+    }
   ]
 }
 ```

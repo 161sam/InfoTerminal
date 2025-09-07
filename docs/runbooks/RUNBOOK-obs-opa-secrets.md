@@ -23,6 +23,6 @@ helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets -n kube-syst
 
 ## Verification
 
-* Grafana Dashboard sichtbar, Metriken vorhanden.
-* ClickHouse `SELECT * FROM logs.opa_decisions ORDER BY ts DESC LIMIT 5;` zeigt Einträge.
-* `ExternalSecret` Ressourcen zeigen Status **Synced** und Secrets werden erstellt.
+- Grafana Dashboard sichtbar, Metriken vorhanden.
+- ClickHouse `SELECT * FROM logs.opa_decisions ORDER BY ts DESC LIMIT 5;` zeigt Einträge.
+- `ExternalSecret` Ressourcen zeigen Status **Synced** und Secrets werden erstellt.

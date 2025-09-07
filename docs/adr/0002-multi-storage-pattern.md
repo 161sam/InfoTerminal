@@ -20,10 +20,10 @@ Best-of-breed storage for each workload but increases operational overhead and d
 
 ## Alternatives
 
-* Single relational database
-* Vendor-specific multi-model database
+- Single relational database
+- Vendor-specific multi-model database
 
 ## References
 
-* [opensearch.org](https://opensearch.org/)
-* [neo4j.com](https://neo4j.com/)
+- [opensearch.org](https://opensearch.org/)
+- [neo4j.com](https://neo4j.com/)

@@ -1,6 +1,9 @@
+// Markdownlint: pragmatische Defaults für docs-first Repos
 {
   "default": true,
-  "MD013": { "line_length": 120, "code_blocks": false, "tables": false },
-  "MD033": false, // HTML im Markdown zulassen (für Badges/iframes)
-  "MD041": false  // First line heading nicht erzwingen (für CHANGELOG etc.)
+  "MD013": false,                   // Zeilenlänge ignorieren
+  "MD024": { "siblings_only": true, "allow_different_nesting": true },
+  "MD025": false,                   // Mehrere H1 in langen Dokus erlauben
+  "MD036": false,                   // *Emphasis als Überschrift* tolerieren
+  "MD040": false                    // Fehlende Code-Fence-Sprache vorerst erlauben
 }

@@ -101,26 +101,26 @@ it logs -s neo4j --lines 200 -F      # logs erfordert --services
 
 Common flags are available across commands:
 
-| Flag | Description |
-| --- | --- |
-| `-f`, `--compose-file` | Additional compose file (repeatable) |
-| `-p`, `--project-name` | Compose project name |
-| `--env-file` | Env file passed to compose |
-| `--profile` | Compose profile (repeatable) |
-| `-s`, `--services` | Limit to given services (comma separated or repeat) |
-| `-n`, `--dry-run` | Print command without executing |
-| `--verbose` | Show subprocess output |
-| `-q`, `--quiet` | Minimal output |
+| Flag                   | Description                                         |
+| ---------------------- | --------------------------------------------------- |
+| `-f`, `--compose-file` | Additional compose file (repeatable)                |
+| `-p`, `--project-name` | Compose project name                                |
+| `--env-file`           | Env file passed to compose                          |
+| `--profile`            | Compose profile (repeatable)                        |
+| `-s`, `--services`     | Limit to given services (comma separated or repeat) |
+| `-n`, `--dry-run`      | Print command without executing                     |
+| `--verbose`            | Show subprocess output                              |
+| `-q`, `--quiet`        | Minimal output                                      |
 
 Specific flags:
 
-| Command | Extra flags |
-| --- | --- |
-| `start` | `-d/--detach`, `--retries`, `--timeout` |
-| `restart` | `--retries`, `--timeout` |
-| `rm` | `-v/--volumes`, `--images [all\|local\|none]` (use `--verbose` for verbosity) |
-| `status` | `--format [table\|text\|json\|yaml]` |
-| `logs` | `-F/--follow`, `--lines N`, `--format [plain\|jsonl]` |
+| Command   | Extra flags                                                                   |
+| --------- | ----------------------------------------------------------------------------- |
+| `start`   | `-d/--detach`, `--retries`, `--timeout`                                       |
+| `restart` | `--retries`, `--timeout`                                                      |
+| `rm`      | `-v/--volumes`, `--images [all\|local\|none]` (use `--verbose` for verbosity) |
+| `status`  | `--format [table\|text\|json\|yaml]`                                          |
+| `logs`    | `-F/--follow`, `--lines N`, `--format [plain\|jsonl]`                         |
 
 Use `--dry-run` to print the composed `docker compose` command without
 executing it. `--verbose` prints subprocess output, `--quiet` suppresses

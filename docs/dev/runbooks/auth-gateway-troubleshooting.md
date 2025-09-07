@@ -2,8 +2,8 @@
 
 ## Symptoms
 
-* 401 or 403 responses
-* Redirect loops
+- 401 or 403 responses
+- Redirect loops
 
 ### Checks
 
@@ -15,6 +15,6 @@ conftest test policy/
 
 ### Fix
 
-* Verify Keycloak realms and clients.
-* Ensure oauth2-proxy is configured.
-* Review OPA decisions and update policies if needed.
+- Verify Keycloak realms and clients.
+- Ensure oauth2-proxy is configured.
+- Review OPA decisions and update policies if needed.
