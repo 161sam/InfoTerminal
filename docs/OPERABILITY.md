@@ -22,6 +22,8 @@ Beispiele:
 
 Hinweis: `--profile infra` NICHT auf dem Haupt-Compose verwenden; Services ohne `profiles` starten immer.
 
+Siehe auch das [CLI Cheatsheet](../cli/README.md#cli-cheatsheet).
+
 Metrics and tracing can be enabled with `IT_ENABLE_METRICS=1` and `IT_OTEL=1`.
 
 ## Ports
