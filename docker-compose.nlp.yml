@@ -1,0 +1,23 @@
+services:
+  nlp-service:
+    build: ./services/nlp-service
+    ports: ["8003:8003"]
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8003/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+  # doc-entities:
+  #   # TODO: add Dockerfile and enable this service
+  #   build: ./services/doc-entities
+  #   ports: ["8006:8006"]
+  #   env_file: .env
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-fsS", "http://localhost:8006/healthz"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 10
+  #   depends_on:
+  #     nlp-service:
+  #       condition: service_healthy
