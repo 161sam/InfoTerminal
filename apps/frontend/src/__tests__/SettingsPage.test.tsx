@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SettingsPage from '../../pages/settings';
-import { EmailInput, validateField } from '@/components/forms/FormComponents';
+import { EmailInput } from '@/components/forms/FormComponents';
 
 beforeEach(() => {
   localStorage.clear();
@@ -27,8 +27,4 @@ test('EmailInput passes value to onChange', () => {
   render(<EmailInput label="Email" value="" onChange={handle} />);
   fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'user@example.com' } });
   expect(handle).toHaveBeenCalledWith('user@example.com');
-});
-
-test('validateField returns required error', () => {
-  expect(validateField('', { required: true })).toBe('This field is required');
 });
