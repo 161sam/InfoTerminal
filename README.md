@@ -26,6 +26,7 @@ Die Plattform kombiniert Volltextsuche, Graph-Analyse und Dokumentenmanagement â
 
 ```bash
 cp .env.example .env
+docker compose build
 docker compose up -d
 ````
 
