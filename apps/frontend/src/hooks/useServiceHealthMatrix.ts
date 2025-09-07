@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { sanitizeUrl } from '@/lib/endpoints';
 import { safeLog, isBrowser } from '@/lib/safe';
-import { toast } from '@/components/ui/Toast';
+import { toast } from '@/components/ui/toast';
 import useEndpoints from './useEndpoints';
 
 export type ServiceStatus = 'ok' | 'degraded' | 'fail' | 'unknown';

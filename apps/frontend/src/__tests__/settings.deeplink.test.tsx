@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SettingsGraphDeepLink from '@/components/settings/SettingsGraphDeepLink';
-import { ToastViewport } from '@/components/ui/Toast';
+import { ToastProvider, ToastViewport } from '@/components/ui/toast';
 
 const STORAGE_KEY = 'it.settings.graph.deeplinkBase';
 
@@ -11,10 +11,10 @@ describe('Settings Graph Deep-Link', () => {
 
   test('invalid value shows error and does not persist', async () => {
     render(
-      <>
+      <ToastProvider>
         <ToastViewport />
         <SettingsGraphDeepLink />
-      </>
+      </ToastProvider>
     );
     const input = await screen.findByLabelText('Graph Deep-Link Base');
     fireEvent.change(input, { target: { value: 'bad' } });
@@ -25,10 +25,10 @@ describe('Settings Graph Deep-Link', () => {
 
   test('valid value persists with success toast', async () => {
     render(
-      <>
+      <ToastProvider>
         <ToastViewport />
         <SettingsGraphDeepLink />
-      </>
+      </ToastProvider>
     );
     const input = await screen.findByLabelText('Graph Deep-Link Base');
     fireEvent.change(input, { target: { value: '/graphx?focus=' } });
@@ -39,10 +39,10 @@ describe('Settings Graph Deep-Link', () => {
 
   test('test button shows generated link', async () => {
     render(
-      <>
+      <ToastProvider>
         <ToastViewport />
         <SettingsGraphDeepLink />
-      </>
+      </ToastProvider>
     );
     const input = await screen.findByLabelText('Graph Deep-Link Base');
     fireEvent.change(input, { target: { value: '/graphx?focus=' } });
