@@ -1,0 +1,62 @@
+name: infoterminal
+
+services:
+  it-neo4j:
+    image: neo4j:5.24.2-community
+    container_name: infoterminal-neo4j-1
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-secret}
+      NEO4J_dbms_default__database: ${NEO4J_DATABASE:-neo4j}
+      NEO4J_server_config_strict__validation_enabled: "false"
+    # Web-UI + Bolt nach außen freigeben (optional)
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+    restart: unless-stopped
+
+  graph-views:
+    build:
+      context: .
+      dockerfile: services/graph-views/Dockerfile
+    image: infoterminal/graph-views:local
+    container_name: infoterminal-graph-views-1
+
+    environment:
+      # --- App Basics ---
+      GRAPH_VIEWS_PORT: ${GRAPH_VIEWS_PORT:-8403}
+      IT_ENV: ${IT_ENV:-dev}
+      IT_FORCE_READY: ${IT_FORCE_READY:-0}   # zum Überbrücken notfalls "1"
+
+      # --- CORS ---
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-*}
+
+      # --- Neo4j (zeigt auf Service-Namen aus diesem Compose) ---
+      NEO4J_URI: ${NEO4J_URI:-bolt://it-neo4j:7687}
+      NEO4J_USER: ${NEO4J_USER:-neo4j}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-secret}
+      NEO4J_DATABASE: ${NEO4J_DATABASE:-neo4j}
+      GV_ALLOW_WRITES: ${GV_ALLOW_WRITES:-0}
+
+      # --- Observability (optional) ---
+      OTEL_ENABLED: ${OTEL_ENABLED:-0}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+
+    ports:
+      - "${GRAPH_VIEWS_PORT:-8403}:8403"
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8403/readyz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  neo4j-data:
+  neo4j-logs:
+
