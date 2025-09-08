@@ -199,3 +199,13 @@ make smoke.gv.up
 # ENV optional:
 # export GV_ALLOW_WRITES=1 GV_BASIC_USER=dev GV_BASIC_PASS=devpass GV_RATE_LIMIT_WRITE=2/second GV_AUDIT_LOG=1
 ```
+
+### Robust Smoke (JSON-aware)
+Das Script prüft Content-Type und nutzt `jq` nur bei JSON. Ohne `jq` zeigt es die ersten 400 Zeichen des Bodys an.
+
+Start mit Auto-Boot:
+```bash
+make smoke.gv.up
+# oder manuell, wenn Service schon läuft:
+BASE=http://localhost:8403 scripts/smoke_graph_views.sh
+```
