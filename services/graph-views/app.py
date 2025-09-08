@@ -269,8 +269,13 @@ def _is_write_query(q: str) -> bool:
 # API Modelle
 # -----------------------
 class CypherRequest(BaseModel):
-    query: str
+    stmt: Optional[str] = None
+    query: Optional[str] = None
     params: Dict[str, Any] | None = None
+
+    @property
+    def text(self) -> str:
+        return self.stmt or self.query or ""
 
 
 class PersonRow(BaseModel):
@@ -357,13 +362,13 @@ async def _ego_view_data(label: str, key: str, value: str, depth: int, limit: in
 async def graphs_ping():
     """Liefert Info zum Neo4j-Backend (optional)."""
     if not HAVE_NEO4J:
-        return {"neo4j": "driver-not-installed", "configured": False}
+        return ok({"neo4j": "driver-not-installed", "configured": False})
     try:
         neo.get_driver()
     except Exception:
-        return {"neo4j": "not-configured", "configured": False}
-    ok = await _neo4j_ready()
-    return {"neo4j": "ok" if ok else "unreachable", "configured": True}
+        return ok({"neo4j": "not-configured", "configured": False})
+    ready = await _neo4j_ready()
+    return ok({"neo4j": "ok" if ready else "unreachable", "configured": True})
 
 
 @app.post("/graphs/cypher")
@@ -378,6 +383,10 @@ async def graphs_cypher(request: Request, req: CypherRequest = Body(...), write:
         body, status = err("server_error", "neo4j driver not installed", 503)
         return JSONResponse(content=body, status_code=status)
 
+    if write and not GV_ALLOW_WRITES:
+        body, status = err("writes_disabled", "write queries are disabled", 403)
+        return JSONResponse(content=body, status_code=status)
+
     if write:
         try:
             require_write_auth(request)
@@ -389,16 +398,21 @@ async def graphs_cypher(request: Request, req: CypherRequest = Body(...), write:
                     response.headers[k] = v
             return response
 
-    is_write_query = _is_write_query(req.query)
+    q = req.text
+    if not q:
+        body, status = err("bad_request", "query missing", 400)
+        return JSONResponse(content=body, status_code=status)
+
+    is_write_query = _is_write_query(q)
     if is_write_query and not (GV_ALLOW_WRITES and write):
         body, status = err("writes_disabled", "write queries are disabled", 403)
         return JSONResponse(content=body, status_code=status)
 
     try:
         if is_write_query:
-            records, counters = _run_write(req.query, req.params or {})
+            records, counters = _run_write(q, req.params or {})
             return ok({"records": records}, counts=safe_counts(counters))
-        records = _run_read(req.query, req.params or {})
+        records = _run_read(q, req.params or {})
         return ok({"records": records})
     except Exception as e:
         body, status = err("server_error", f"cypher error: {e}", 500)
@@ -432,13 +446,17 @@ async def load_csv_endpoint(request: Request, payload: CsvLoadRequest, write: bo
     if not rows:
         return ok({"rows": 0}, counts={"nodes": 0, "relationships": 0})
 
-    with neo.get_session() as session:
-        neo.run_with_retries(session, CONSTRAINT_CYPHER).consume()
-        res = neo.run_with_retries(session, MERGE_BATCH_CYPHER, {"rows": rows})
-        summary = res.consume()
-        counters = getattr(summary, "counters", None)
-        nodes_created = getattr(counters, "nodes_created", 0) if counters else 0
-        rels_created = getattr(counters, "relationships_created", 0) if counters else 0
+    try:
+        with neo.get_session() as session:
+            neo.run_with_retries(session, CONSTRAINT_CYPHER).consume()
+            res = neo.run_with_retries(session, MERGE_BATCH_CYPHER, {"rows": rows})
+            summary = res.consume()
+            counters = getattr(summary, "counters", None)
+            nodes_created = getattr(counters, "nodes_created", 0) if counters else 0
+            rels_created = getattr(counters, "relationships_created", 0) if counters else 0
+    except Exception as e:
+        body, status = err("server_error", f"csv load error: {e}", 500)
+        return JSONResponse(content=body, status_code=status)
 
     return ok({"rows": len(rows)}, counts={"nodes": nodes_created, "relationships": rels_created})
 
@@ -457,22 +475,22 @@ async def graph_view_ego(
     - Holt Pfade bis `depth` Kanten in beide Richtungen
     - Aggregiert Knoten und Kanten in Nodes/Edges-Listen
     """
-    data = await _ego_view_data(label, key, value, depth, limit)
+    from fastapi.responses import JSONResponse
+    try:
+        data = await _ego_view_data(label, key, value, depth, limit)
+    except HTTPException as e:
+        body, status = err("bad_request", e.detail, e.status_code)
+        return JSONResponse(content=body, status_code=status)
+    except Exception as e:
+        body, status = err("server_error", f"ego-view error: {e}", 500)
+        return JSONResponse(content=body, status_code=status)
     counts = {"nodes": len(data["nodes"]), "relationships": len(data["relationships"])}
     data["meta"] = {"label": label, "key": key, "value": value, "depth": int(depth)}
     return ok({"nodes": data["nodes"], "relationships": data["relationships"], "meta": data["meta"]}, counts=counts)
 
 
 @app.get("/graphs/view/shortest-path")
-async def graph_view_shortest_path(
-    src_label: str = Query(...),
-    src_key: str = Query(...),
-    src_value: str = Query(...),
-    dst_label: str = Query(...),
-    dst_key: str = Query(...),
-    dst_value: str = Query(...),
-    max_len: int = Query(6, ge=1, le=10),
-):
+async def graph_view_shortest_path(request: Request):
     """
     Kürzester Pfad zwischen zwei Knoten.
     Gibt einen Pfad zurück (falls vorhanden) inkl. serialisierter Nodes/Relationships.
@@ -482,12 +500,34 @@ async def graph_view_shortest_path(
         body, status = err("server_error", "neo4j driver not installed", 503)
         return JSONResponse(content=body, status_code=status)
 
-    _ensure_label(src_label)
-    _ensure_label(dst_label)
-    _ensure_prop(src_key)
-    _ensure_prop(dst_key)
+    qp = request.query_params
+    src_label = qp.get("srcLabel") or qp.get("src_label")
+    src_key = qp.get("srcKey") or qp.get("src_key")
+    src_value = qp.get("srcValue") or qp.get("src_value")
+    dst_label = qp.get("dstLabel") or qp.get("dst_label")
+    dst_key = qp.get("dstKey") or qp.get("dst_key")
+    dst_value = qp.get("dstValue") or qp.get("dst_value")
+    max_len = qp.get("maxLen") or qp.get("max_len")
+    if max_len is None:
+        ml = 6
+    else:
+        ml = int(max_len)
 
-    ml = int(max_len)
+    if not all([src_label, src_key, src_value, dst_label, dst_key, dst_value]):
+        from fastapi.responses import JSONResponse
+        body, status = err("bad_request", "missing parameters", 400)
+        return JSONResponse(content=body, status_code=status)
+
+    from fastapi.responses import JSONResponse
+    try:
+        _ensure_label(src_label)
+        _ensure_label(dst_label)
+        _ensure_prop(src_key)
+        _ensure_prop(dst_key)
+    except HTTPException as e:
+        body, status = err("bad_request", e.detail, e.status_code)
+        return JSONResponse(content=body, status_code=status)
+
     cypher = (
         f"MATCH (a:`{src_label}` {{{src_key}: $src_value}}), (b:`{dst_label}` {{{dst_key}: $dst_value}})\n"
         f"MATCH p = shortestPath((a)-[*..{ml}]-(b))\n"
@@ -532,6 +572,7 @@ async def graph_view_shortest_path(
 
 @app.get("/graphs/export/dossier")
 async def export_dossier(label: str, key: str, value: str, depth: int = 2, limit: int = 100):
+    from fastapi.responses import JSONResponse
     try:
         data = await _ego_view_data(label, key, value, depth, limit)
         raw_nodes = data.get("nodes", [])
@@ -549,8 +590,10 @@ async def export_dossier(label: str, key: str, value: str, depth: int = 2, limit
             "props": r.get("properties") or r
         } for r in raw_rels]
         return ok({"nodes": nodes, "edges": edges}, counts={"nodes": len(nodes), "relationships": len(edges)})
+    except HTTPException as e:
+        body, status = err("bad_request", e.detail, e.status_code)
+        return JSONResponse(content=body, status_code=status)
     except Exception as e:
-        from fastapi.responses import JSONResponse
         body, status = err("server_error", f"export failed: {e}", 500)
         return JSONResponse(content=body, status_code=status)
 

@@ -1,11 +1,15 @@
 export const VIEWS_API =
   process.env.NEXT_PUBLIC_VIEWS_API || "http://localhost:8403";
 
-async function handleEnvelope(res: Response) {
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+async function handleEnvelopeWithHeaders(res: Response) {
+  const requestId = res.headers.get("x-request-id") || undefined;
+  if (!res.ok) throw new Error(`HTTP ${res.status}${requestId ? ` (req ${requestId})` : ""}`);
   const j = await res.json();
-  if (!j || j.ok !== true) throw new Error(j?.error?.message || "Request failed");
-  return { data: j.data, counts: j.counts || {} };
+  if (!j || j.ok !== true) {
+    const msg = j?.error?.message || "Request failed";
+    throw new Error(requestId ? `${msg} (req ${requestId})` : msg);
+  }
+  return { data: j.data, counts: j.counts || {}, requestId };
 }
 
 export async function getEgo(opts: {label:string; key:string; value:string; depth?:number; limit?:number}) {
@@ -13,7 +17,7 @@ export async function getEgo(opts: {label:string; key:string; value:string; dept
   if (opts.depth != null) p.set("depth", String(opts.depth));
   if (opts.limit != null) p.set("limit", String(opts.limit));
   const res = await fetch(`${VIEWS_API}/graphs/view/ego?${p.toString()}`);
-  return handleEnvelope(res);
+  return handleEnvelopeWithHeaders(res);
 }
 
 export async function getShortestPath(opts: {srcLabel:string;srcKey:string;srcValue:string;dstLabel:string;dstKey:string;dstValue:string;maxLen?:number}) {
@@ -23,7 +27,7 @@ export async function getShortestPath(opts: {srcLabel:string;srcKey:string;srcVa
   });
   if (opts.maxLen != null) p.set("maxLen", String(opts.maxLen));
   const res = await fetch(`${VIEWS_API}/graphs/view/shortest-path?${p.toString()}`);
-  return handleEnvelope(res);
+  return handleEnvelopeWithHeaders(res);
 }
 
 export async function loadPeople(rows: Array<{id:string; name:string; knows_id?:string}>) {
@@ -32,7 +36,7 @@ export async function loadPeople(rows: Array<{id:string; name:string; knows_id?:
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ rows })
   });
-  return handleEnvelope(res);
+  return handleEnvelopeWithHeaders(res);
 }
 
 export async function exportDossier(opts: {label:string; key:string; value:string; depth?:number; limit?:number}) {
@@ -40,5 +44,5 @@ export async function exportDossier(opts: {label:string; key:string; value:strin
   if (opts.depth != null) p.set("depth", String(opts.depth));
   if (opts.limit != null) p.set("limit", String(opts.limit));
   const res = await fetch(`${VIEWS_API}/graphs/export/dossier?${p.toString()}`);
-  return handleEnvelope(res);
+  return handleEnvelopeWithHeaders(res);
 }
