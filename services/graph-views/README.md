@@ -68,7 +68,7 @@ curl -sS -X POST "http://localhost:8403/graphs/load/csv?write=1" \
 
 **Cypher testen:**
 
-```bash
+````bash
 # Constraint (write=1)
 curl -sS -X POST "http://localhost:8403/graphs/cypher?write=1" \
  -H "Content-Type: application/json" \
@@ -87,7 +87,7 @@ All endpoints return a common envelope:
 
 ```json
 { "ok": true, "data": {...}, "counts": {"nodes":0, "relationships":0}, "error": null }
-```
+````
 
 Example:
 
@@ -116,7 +116,8 @@ Set `GV_AUDIT_LOG=1` to emit JSON audit events for write requests on STDOUT:
 ```bash
 curl -sS "http://localhost:8403/graphs/export/dossier?label=Person&key=id&value=alice&depth=2"
 ```
-```
+
+````
 
 ## v0.2.0 Release Notes (API)
 - Unified envelope: `{ok,data,counts,error}` for all endpoints.
@@ -131,7 +132,7 @@ make smoke.gv.up
 
 ```bash
 curl -sS "http://localhost:8403/graphs/view/ego?label=Person&key=id&value=alice&depth=2&limit=50"
-```
+````
 
 ## Write-Auth (Basic)
 
@@ -197,6 +198,7 @@ git remote add origin <URL>
 ### Serve & Smoke (ohne Docker)
 
 Start (lokal, uvicorn):
+
 ```bash
 make gv.serve
 ```
@@ -210,11 +212,28 @@ make smoke.gv.up
 ```
 
 ### Robust Smoke (JSON-aware)
+
 Das Script prüft Content-Type und nutzt `jq` nur bei JSON. Ohne `jq` zeigt es die ersten 400 Zeichen des Bodys an.
 
 Start mit Auto-Boot:
+
 ```bash
 make smoke.gv.up
 # oder manuell, wenn Service schon läuft:
 BASE=http://localhost:8403 scripts/smoke_graph_views.sh
 ```
+
+### Dev Hygiene
+
+- Hooks aktivieren:
+  ```bash
+  pipx install pre-commit || python -m pip install pre-commit
+  pre-commit install
+  ```
+
+* Lints:
+
+  ```bash
+  make lint
+  make format
+  ```

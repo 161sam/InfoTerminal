@@ -49,3 +49,22 @@ tag.v0.2.0:
 	@git commit -m "release: v0.2.0" || true
 	@git tag -a v0.2.0 -m "InfoTerminal v0.2.0"
 	@git push && git push --tags
+
+.PHONY: lint lint.py lint.fe format
+
+lint.py:
+	@cd services/graph-views && \
+	.venv/bin/python -m pip install -q pre-commit || true && \
+	pre-commit run --files $$(git ls-files 'services/graph-views/**/*.py' 'services/graph-views/*.py') || true && \
+	.venv/bin/python -m ruff check services/graph-views
+
+lint.fe:
+	@npm -w apps/frontend run -s lint || echo "eslint not configured; skipping"
+	@npx -y prettier@3.3.3 -c "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" || true
+
+lint: lint.py lint.fe
+
+format:
+	@. ./.venv_dummy 2>/dev/null || true
+	@cd services/graph-views && .venv/bin/python -m ruff check --fix . && .venv/bin/python -m ruff format .
+	@npx -y prettier@3.3.3 -w "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" || true
