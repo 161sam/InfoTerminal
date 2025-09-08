@@ -23,6 +23,21 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
+  graph-views:
+    build: ./services/graph-views
+    ports: ['8613:8000']
+    env_file: .env
+    environment:
+      - IT_ENABLE_METRICS=${IT_ENABLE_METRICS:-0}
+      - IT_OTEL=${IT_OTEL:-0}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
   web:
     build: ./apps/frontend
     ports: ["3411:3000"]

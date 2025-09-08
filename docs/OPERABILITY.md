@@ -6,7 +6,9 @@
 pipx install ./cli
 it start -d
 it status
+docker compose -f docker-compose.neo.yml up -d
 docker compose -f docker-compose.observability.yml --profile observability up -d
+docker compose up -d web search-api graph-api graph-views gateway
 ```
 
 Open http://localhost:3411 and verify the health matrix. The frontend includes a **Gateway Proxy** toggle in Settings to route API calls through `http://localhost:8610`.
@@ -31,9 +33,9 @@ Metrics and tracing can be enabled with `IT_ENABLE_METRICS=1` and `IT_OTEL=1`.
 | Service      | Port |
 | ------------ | ---- |
 | Frontend     | 3411 |
-| search-api   | 8401 |
-| graph-api    | 8402 |
-| graph-views  | 8403 |
+| search-api   | 8611 |
+| graph-api    | 8612 |
+| graph-views  | 8613 |
 | Gateway      | 8610 |
 | Agents       | 3417 |
 | Prometheus   | 3412 |
