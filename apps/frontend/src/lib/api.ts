@@ -50,3 +50,14 @@ export async function loadPeople(rows: {id: string; name?: string; knows_id?: st
   if (!res.ok) throw new Error(`loadPeople failed: ${res.status}`);
   return res.json();
 }
+
+export async function exportDossier(opts: {label:string; key:string; value:string; depth?:number; limit?:number}) {
+  const params = new URLSearchParams({
+    label: opts.label, key: opts.key, value: String(opts.value)
+  });
+  if (opts.depth != null) params.set("depth", String(opts.depth));
+  if (opts.limit != null) params.set("limit", String(opts.limit));
+  const res = await fetch(`${VIEWS_API}/graphs/export/dossier?${params.toString()}`);
+  if (!res.ok) throw new Error(`export dossier failed: ${res.status}`);
+  return res.json();
+}

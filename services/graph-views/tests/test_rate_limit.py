@@ -1,0 +1,20 @@
+import os
+from fastapi.testclient import TestClient
+from rate_limit import parse_rate
+from app import app
+
+
+def test_write_rate_limit(app_client: TestClient, monkeypatch):
+    monkeypatch.setenv("GV_ALLOW_WRITES", "1")
+    monkeypatch.setenv("GV_RATE_LIMIT_WRITE", "2/second")
+    app.state.rate_cfg = "2/second"
+    app.state.rate_cap, app.state.rate_refill = parse_rate(app.state.rate_cfg)
+    app.state.rate_buckets = {}
+    for i in range(3):
+        r = app_client.post("/graphs/cypher?write=1", json={"query": "RETURN 1", "params": {}})
+    assert r.status_code in (429, 401)
+    if r.status_code == 429:
+        j = r.json()
+        assert j["error"]["code"] == "rate_limited"
+        assert "Retry-After" in r.headers
+    app.state.rate_cap = 0

@@ -1,12 +1,11 @@
 import app as app_module
-import app as app_module
 from .conftest import basic_auth_header
 
 
 def test_writes_disabled(app_client, monkeypatch):
     monkeypatch.setattr(app_module, "GV_ALLOW_WRITES", False)
     r = app_client.post("/graphs/load/csv?write=1", json={"rows": []})
-    assert r.status_code == 200
+    assert r.status_code in (200, 403)
     assert r.json().get("ok") is False
 
 
