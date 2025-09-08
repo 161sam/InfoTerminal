@@ -1,10 +1,15 @@
 import os
 import re
 import asyncio
+import time
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Body, Query, Request
 from pydantic import BaseModel
+
+from response import ok, err, bool_qp, safe_counts
+from rate_limit import TokenBucket, parse_rate
+from audit import log_event, new_request_id
 
 from _shared.cors import apply_cors
 from _shared.health import make_healthz, make_readyz
@@ -43,6 +48,10 @@ apply_cors(app)
 enable_prometheus_metrics(app, route="/metrics")
 setup_otel(app)
 
+app.state.rate_cfg = os.getenv("GV_RATE_LIMIT_WRITE", "")
+app.state.rate_cap, app.state.rate_refill = parse_rate(app.state.rate_cfg)
+app.state.rate_buckets = {}
+
 # -----------------------
 # App-Status
 # -----------------------
@@ -69,6 +78,53 @@ def require_write_auth(request: Request) -> None:
     username, _, pw = decoded.partition(":")
     if username != user or pw != password:
         raise HTTPException(status_code=401, detail="bad auth", headers={"WWW-Authenticate": 'Basic realm="InfoTerminal"'})
+
+
+@app.middleware("http")
+async def write_guard_and_rate(request, call_next):
+    rid = new_request_id()
+    start = time.time()
+    is_write = request.url.query.find("write=1") >= 0 or bool_qp(request.query_params.get("write"))
+    response = None
+    try:
+        if is_write and app.state.rate_cap > 0:
+            ip = request.headers.get("x-forwarded-for") or (request.client.host if request.client else None)
+            bucket = app.state.rate_buckets.get(ip)
+            if not bucket:
+                bucket = app.state.rate_buckets[ip] = TokenBucket(app.state.rate_cap, app.state.rate_refill)
+            ok_take, remaining, reset = bucket.take()
+            if not ok_take:
+                body, status = err("rate_limited", "Write rate limit exceeded", 429)
+                from fastapi.responses import JSONResponse
+                response = JSONResponse(content=body, status_code=status)
+                response.headers["Retry-After"] = str(int(reset))
+                response.headers["X-RateLimit-Limit"] = str(app.state.rate_cap)
+                response.headers["X-RateLimit-Remaining"] = str(max(0, remaining))
+                response.headers["X-RateLimit-Reset"] = str(int(reset))
+                response.headers["X-Request-ID"] = rid
+                return response
+
+        response = await call_next(request)
+        return response
+    finally:
+        if response is not None:
+            response.headers["X-Request-ID"] = rid
+        if is_write:
+            log_event(
+                {
+                    "ts": int(time.time() * 1000),
+                    "request_id": rid,
+                    "route": str(request.url.path),
+                    "ip": request.headers.get("x-forwarded-for")
+                    or (request.client.host if request.client else None),
+                    "user": request.headers.get("authorization", "").split()[1][:8] + "..."
+                    if request.headers.get("authorization")
+                    else None,
+                    "write": True,
+                    "status": response.status_code if response else None,
+                    "latency_ms": int((time.time() - start) * 1000),
+                }
+            )
 
 async def _neo4j_ready() -> bool:
     if not HAVE_NEO4J:
@@ -193,8 +249,13 @@ def _run_read(query: str, params: Dict[str, Any]) -> List[Dict[str, Any]]:
     return _run_cypher(query, params)
 
 
-def _run_write(query: str, params: Dict[str, Any]) -> List[Dict[str, Any]]:
-    return _run_cypher(query, params)
+def _run_write(query: str, params: Dict[str, Any]):
+    with neo.get_session() as session:
+        result = neo.run_with_retries(session, query, params)
+        records = [_serialize_neo4j(r.data()) for r in result]
+        summary = result.consume()
+        counters = getattr(summary, "counters", None)
+        return records, counters
 
 
 def _is_write_query(q: str) -> bool:
@@ -239,6 +300,52 @@ FOR (p:Person) REQUIRE p.id IS UNIQUE
 """
 
 
+# Helper for ego view
+async def ego_view_logic(label: str, key: str, value: str, depth: int, limit: int):
+    if not HAVE_NEO4J:
+        raise HTTPException(status_code=503, detail="neo4j driver not installed")
+
+    _ensure_label(label)
+    _ensure_prop(key)
+    d = int(depth)
+    cypher = (
+        f"MATCH (n:`{label}` {{{key}: $value}})\n"
+        f"OPTIONAL MATCH p = (n)-[r*1..{d}]-(m)\n"
+        f"RETURN n, collect(p) AS paths\n"
+        f"LIMIT $limit"
+    )
+    records = _run_read(cypher, {"value": value, "limit": int(limit)})
+
+    nodes: Dict[Any, Dict[str, Any]] = {}
+    rels: Dict[Any, Dict[str, Any]] = {}
+
+    def add_node(nd: Dict[str, Any]):
+        nid = nd.get("id")
+        if nid not in nodes:
+            nodes[nid] = nd
+
+    def add_rel(rr: Dict[str, Any]):
+        rid = rr.get("id")
+        if rid not in rels:
+            rels[rid] = rr
+
+    for rec in records:
+        n_ser = rec.get("n")
+        if isinstance(n_ser, dict) and n_ser.get("__type") == "node":
+            add_node(n_ser)
+        paths = rec.get("paths") or []
+        if isinstance(paths, list):
+            for p in paths:
+                if isinstance(p, dict) and p.get("__type") == "path":
+                    for nd in p.get("nodes", []):
+                        if isinstance(nd, dict) and nd.get("__type") == "node":
+                            add_node(nd)
+                    for rr in p.get("relationships", []):
+                        if isinstance(rr, dict) and rr.get("__type") == "relationship":
+                            add_rel(rr)
+
+    return {"nodes": list(nodes.values()), "relationships": list(rels.values())}
+
 # -----------------------
 # Graph-Views Routen
 # -----------------------
@@ -261,39 +368,65 @@ async def graphs_cypher(request: Request, req: CypherRequest = Body(...), write:
     Führt eine (standardmäßig read-only) Cypher-Query aus.
     Schreibende Queries benötigen `GV_ALLOW_WRITES=1` **und** `?write=1`.
     """
+    from fastapi.responses import JSONResponse
+
     if not HAVE_NEO4J:
-        raise HTTPException(status_code=503, detail="neo4j driver not installed")
+        body, status = err("server_error", "neo4j driver not installed", 503)
+        return JSONResponse(content=body, status_code=status)
 
     if write:
-        require_write_auth(request)
+        try:
+            require_write_auth(request)
+        except HTTPException as e:
+            body, status = err("unauthorized", e.detail, e.status_code)
+            response = JSONResponse(content=body, status_code=status)
+            if e.headers:
+                for k, v in e.headers.items():
+                    response.headers[k] = v
+            return response
 
-    if _is_write_query(req.query) and not (GV_ALLOW_WRITES and write):
-        raise HTTPException(status_code=403, detail="write queries are disabled")
+    is_write_query = _is_write_query(req.query)
+    if is_write_query and not (GV_ALLOW_WRITES and write):
+        body, status = err("writes_disabled", "write queries are disabled", 403)
+        return JSONResponse(content=body, status_code=status)
 
     try:
-        if _is_write_query(req.query):
-            data = _run_write(req.query, req.params or {})
-        else:
-            data = _run_read(req.query, req.params or {})
-        return {"data": data}
-    except HTTPException:
-        raise
+        if is_write_query:
+            records, counters = _run_write(req.query, req.params or {})
+            return ok({"records": records}, counts=safe_counts(counters))
+        records = _run_read(req.query, req.params or {})
+        return ok({"records": records})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"cypher error: {e!r}")
+        body, status = err("server_error", f"cypher error: {e}", 500)
+        return JSONResponse(content=body, status_code=status)
 
 
 @app.post("/graphs/load/csv")
 async def load_csv_endpoint(request: Request, payload: CsvLoadRequest, write: bool = Query(False)):
     """Dev-Endpoint für Bulk-UPSERT von Person-Rows."""
+    from fastapi.responses import JSONResponse
+
     if not (GV_ALLOW_WRITES and write):
-        return {"ok": False, "reason": "writes_disabled"}
-    require_write_auth(request)
+        body, status = err("writes_disabled", "writes disabled", 403)
+        return JSONResponse(content=body, status_code=status)
+
+    try:
+        require_write_auth(request)
+    except HTTPException as e:
+        body, status = err("unauthorized", e.detail, e.status_code)
+        response = JSONResponse(content=body, status_code=status)
+        if e.headers:
+            for k, v in e.headers.items():
+                response.headers[k] = v
+        return response
+
     if not HAVE_NEO4J:
-        raise HTTPException(status_code=503, detail="neo4j driver not installed")
+        body, status = err("server_error", "neo4j driver not installed", 503)
+        return JSONResponse(content=body, status_code=status)
 
     rows = [r.model_dump() for r in payload.rows if r.id]
     if not rows:
-        return {"ok": True, "nodesCreated": 0, "relsCreated": 0, "rows": 0}
+        return ok({"rows": 0}, counts={"nodes": 0, "relationships": 0})
 
     with neo.get_session() as session:
         neo.run_with_retries(session, CONSTRAINT_CYPHER).consume()
@@ -303,12 +436,7 @@ async def load_csv_endpoint(request: Request, payload: CsvLoadRequest, write: bo
         nodes_created = getattr(counters, "nodes_created", 0) if counters else 0
         rels_created = getattr(counters, "relationships_created", 0) if counters else 0
 
-    return {
-        "ok": True,
-        "nodesCreated": nodes_created,
-        "relsCreated": rels_created,
-        "rows": len(rows),
-    }
+    return ok({"rows": len(rows)}, counts={"nodes": nodes_created, "relationships": rels_created})
 
 
 @app.get("/graphs/view/ego")
@@ -325,63 +453,10 @@ async def graph_view_ego(
     - Holt Pfade bis `depth` Kanten in beide Richtungen
     - Aggregiert Knoten und Kanten in Nodes/Edges-Listen
     """
-    if not HAVE_NEO4J:
-        raise HTTPException(status_code=503, detail="neo4j driver not installed")
-
-    _ensure_label(label)
-    _ensure_prop(key)
-    d = int(depth)
-    # Hinweis: variable Längen im Pattern benötigen konstante Obergrenzen → per f-String einsetzen
-    cypher = (
-        f"MATCH (n:`{label}` {{{key}: $value}})\n"
-        f"OPTIONAL MATCH p = (n)-[r*1..{d}]-(m)\n"
-        f"RETURN n, collect(p) AS paths\n"
-        f"LIMIT $limit"
-    )
-
-    try:
-        records = _run_read(cypher, {"value": value, "limit": int(limit)})
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ego-view error: {e!r}")
-
-    # Aggregation der Paths zu Nodes/Relationships (einfache Serialisierung)
-    nodes: Dict[Any, Dict[str, Any]] = {}
-    rels: Dict[Any, Dict[str, Any]] = {}
-
-    def add_node(nd: Dict[str, Any]):
-        nid = nd.get("id")
-        if nid not in nodes:
-            nodes[nid] = nd
-
-    def add_rel(rr: Dict[str, Any]):
-        rid = rr.get("id")
-        if rid not in rels:
-            rels[rid] = rr
-
-    for rec in records:
-        # rec hat Struktur {"n": {...}, "paths": [path, path, ...]} – je nach Treiber/Serialisierung
-        n_ser = rec.get("n")
-        if isinstance(n_ser, dict) and n_ser.get("__type") == "node":
-            add_node(n_ser)
-        paths = rec.get("paths") or []
-        if isinstance(paths, list):
-            for p in paths:
-                if isinstance(p, dict) and p.get("__type") == "path":
-                    for nd in p.get("nodes", []):
-                        if isinstance(nd, dict) and nd.get("__type") == "node":
-                            add_node(nd)
-                    for rr in p.get("relationships", []):
-                        if isinstance(rr, dict) and rr.get("__type") == "relationship":
-                            add_rel(rr)
-
-    return {
-        "nodes": [v for v in nodes.values()],
-        "relationships": [v for v in rels.values()],
-        "count": {"nodes": len(nodes), "relationships": len(rels)},
-        "meta": {"label": label, "key": key, "value": value, "depth": d},
-    }
+    data = await ego_view_logic(label, key, value, depth, limit)
+    counts = {"nodes": len(data["nodes"]), "relationships": len(data["relationships"])}
+    data["meta"] = {"label": label, "key": key, "value": value, "depth": int(depth)}
+    return ok({"nodes": data["nodes"], "relationships": data["relationships"], "meta": data["meta"]}, counts=counts)
 
 
 @app.get("/graphs/view/shortest-path")
@@ -399,7 +474,9 @@ async def graph_view_shortest_path(
     Gibt einen Pfad zurück (falls vorhanden) inkl. serialisierter Nodes/Relationships.
     """
     if not HAVE_NEO4J:
-        raise HTTPException(status_code=503, detail="neo4j driver not installed")
+        from fastapi.responses import JSONResponse
+        body, status = err("server_error", "neo4j driver not installed", 503)
+        return JSONResponse(content=body, status_code=status)
 
     _ensure_label(src_label)
     _ensure_label(dst_label)
@@ -419,20 +496,18 @@ async def graph_view_shortest_path(
             "src_value": src_value,
             "dst_value": dst_value,
         })
-    except HTTPException:
-        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"path-view error: {e!r}")
+        from fastapi.responses import JSONResponse
+        body, status = err("server_error", f"path-view error: {e}", 500)
+        return JSONResponse(content=body, status_code=status)
 
     if not records:
-        return {"path": None, "found": False}
+        return ok({"path": None, "found": False, "nodes": [], "relationships": []}, counts={"nodes": 0, "relationships": 0})
 
-    # records[0] erwartet {"p": {...path...}}
     p = records[0].get("p")
     if not (isinstance(p, dict) and p.get("__type") == "path"):
-        return {"path": None, "found": False}
+        return ok({"path": None, "found": False, "nodes": [], "relationships": []}, counts={"nodes": 0, "relationships": 0})
 
-    # Dedup
     nodes: Dict[Any, Dict[str, Any]] = {}
     rels: Dict[Any, Dict[str, Any]] = {}
     for nd in p.get("nodes", []):
@@ -446,5 +521,36 @@ async def graph_view_shortest_path(
             if rid not in rels:
                 rels[rid] = rr
 
-    return {"path": p, "found": True, "nodes": list(nodes.values()), "relationships": list(rels.values())}
+    data = {"path": p, "found": True, "nodes": list(nodes.values()), "relationships": list(rels.values())}
+    counts = {"nodes": len(nodes), "relationships": len(rels)}
+    return ok(data, counts=counts)
+
+
+@app.get("/graphs/export/dossier")
+async def export_dossier(label: str, key: str, value: str, depth: int = 2, limit: int = 100):
+    try:
+        data = await ego_view_logic(label, key, value, depth, limit)
+        nodes = [
+            {
+                "id": n.get("id") or n.get("identity") or n.get("uid"),
+                "labels": n.get("labels") or n.get("label") or [],
+                "props": n.get("properties") or n,
+            }
+            for n in data["nodes"]
+        ]
+        edges = [
+            {
+                "id": r.get("id") or f"{r.get('start')}-{r.get('type')}-{r.get('end')}",
+                "source": r.get("start") or r.get("source"),
+                "target": r.get("end") or r.get("target"),
+                "type": r.get("type") or r.get("label") or "RELATIONSHIP",
+                "props": r.get("properties") or r,
+            }
+            for r in data["relationships"]
+        ]
+        return ok({"nodes": nodes, "edges": edges}, counts={"nodes": len(nodes), "relationships": len(edges)})
+    except Exception as e:
+        from fastapi.responses import JSONResponse
+        body, status = err("server_error", f"export failed: {e}", 500)
+        return JSONResponse(content=body, status_code=status)
 

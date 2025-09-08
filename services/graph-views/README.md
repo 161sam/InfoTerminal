@@ -78,6 +78,44 @@ curl -sS -X POST "http://localhost:8403/graphs/cypher?write=1" \
 curl -sS -X POST "http://localhost:8403/graphs/cypher" \
  -H "Content-Type: application/json" \
  -d '{"stmt":"MATCH (p:Person) RETURN p.id AS id, p.name AS name ORDER BY id LIMIT 10","params":{}}'
+
+## v0.2 Polish
+
+### Unified Responses
+
+All endpoints return a common envelope:
+
+```json
+{ "ok": true, "data": {...}, "counts": {"nodes":0, "relationships":0}, "error": null }
+```
+
+Example:
+
+```bash
+curl -sS "http://localhost:8403/graphs/view/ego?label=Person&key=id&value=alice"
+```
+
+### Write Rate-Limit
+
+Enable per-IP write limits with `GV_RATE_LIMIT_WRITE` (e.g. `20/minute`). On
+exceeding the limit the service responds with **429** and
+`error.code="rate_limited"` plus a `Retry-After` header.
+
+### Audit Log
+
+Set `GV_AUDIT_LOG=1` to emit JSON audit events for write requests on STDOUT:
+
+```json
+{"ts": 1690000000000, "route": "/graphs/cypher", "ip": "127.0.0.1", ...}
+```
+
+### Export Dossier
+
+`GET /graphs/export/dossier` builds an ego view and returns a JSON dossier:
+
+```bash
+curl -sS "http://localhost:8403/graphs/export/dossier?label=Person&key=id&value=alice&depth=2"
+```
 ```
 
 **Ego-View Beispiel:**

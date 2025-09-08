@@ -5,8 +5,9 @@ def test_ego_view(app_client, mock_driver):
     )
     assert r.status_code == 200
     data = r.json()
-    assert data["count"]["nodes"] >= 1
-    assert data["count"]["relationships"] >= 0
+    assert data["ok"] is True
+    assert data["counts"]["nodes"] >= 1
+    assert data["counts"]["relationships"] >= 0
 
 
 def test_shortest_path(app_client, mock_driver):
@@ -15,5 +16,6 @@ def test_shortest_path(app_client, mock_driver):
     )
     assert r.status_code == 200
     data = r.json()
-    assert data["found"] is True
-    assert data["path"]["length"] == 1
+    assert data["ok"] is True
+    assert data["data"]["found"] is True
+    assert data["data"]["path"]["length"] == 1

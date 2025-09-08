@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
 import GraphViewerCytoscape from "@/components/GraphViewerCytoscape";
 import config from "@/lib/config";
-import { getEgo, loadPeople, getShortestPath } from "@/lib/api";
+import { getEgo, loadPeople, getShortestPath, exportDossier } from "@/lib/api";
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
@@ -35,11 +35,41 @@ function DevPanel() {
     }
   };
 
+  const exportAlice = async () => {
+    try {
+      const r = await exportDossier({ label: "Person", key: "id", value: "alice", depth: 2 });
+      const blob = new Blob([JSON.stringify(r, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "dossier_person_alice.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e: any) {
+      alert(`Export failed: ${e?.message || e}`);
+    }
+  };
+
+  const exportEgo = async () => {
+    try {
+      const r = await getEgo({ label: "Person", key: "id", value: "alice", depth: 2, limit: 50 });
+      const blob = new Blob([JSON.stringify({ ok: true, data: r }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "ego_person_alice.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e: any) {
+      alert(`Export failed: ${e?.message || e}`);
+    }
+  };
+
   return (
     <div style={{ display: "grid", gap: 8, padding: 12, border: "1px dashed var(--border, #555)", borderRadius: 8, marginTop: 16 }}>
       <strong>Dev Tools (local)</strong>
       <button onClick={seed} style={{ padding: 8, borderRadius: 8 }}>Seed Demo People</button>
       <button onClick={ego} style={{ padding: 8, borderRadius: 8 }}>Test Ego(Alice)</button>
+      <button onClick={exportAlice} style={{ padding: 8, borderRadius: 8 }}>Export Dossier (Alice)</button>
+      <button onClick={exportEgo} style={{ padding: 8, borderRadius: 8 }}>Export Ego (Alice)</button>
     </div>
   );
 }
