@@ -13,8 +13,17 @@ gv.cov:
 	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q $(COVER)
 
 fe.test:
-	@npm -w apps/frontend run test --silent -- --reporter=dot
+	@CI=1 npm -w apps/frontend run test --silent -- --reporter=dot --threads=false
 
 test:
-	@$(MAKE) gv.test
-	@$(MAKE) fe.test
+	@set -e; \
+	$(MAKE) gv.test || gv=$$?; \
+	CI=1 npm -w apps/frontend run test --silent -- --reporter=dot --threads=false || fe=$$?; \
+	if [ -n "$$gv" ] || [ -n "$$fe" ]; then \
+	  echo "Summary: gv=$${gv:-0} fe=$${fe:-0}"; \
+	  exit $${gv:-$$fe}; \
+	fi
+
+.PHONY: smoke.gv
+smoke.gv:
+	@scripts/smoke_graph_views.sh

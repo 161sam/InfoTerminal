@@ -17,8 +17,8 @@ function DevPanel() {
       { id: "carol", name: "Carol", knows_id: null },
     ];
     try {
-      const r = await loadPeople(rows);
-      alert(`Seed OK: nodesCreated=${r.nodesCreated} relsCreated=${r.relsCreated}`);
+      const { counts } = await loadPeople(rows);
+      alert(`Seed OK: nodesCreated=${counts.nodes} relsCreated=${counts.relationships}`);
     } catch (e: any) {
       alert(`Seed failed: ${e?.message || e}`);
     }
@@ -26,7 +26,7 @@ function DevPanel() {
 
   const ego = async () => {
     try {
-      const data = await getEgo({ label: "Person", key: "id", value: "alice", depth: 2, limit: 50 });
+      const { data } = await getEgo({ label: "Person", key: "id", value: "alice", depth: 2, limit: 50 });
       const nodes = data?.nodes?.length ?? 0;
       const edges = data?.relationships?.length ?? 0;
       alert(`Ego(Person id=alice): nodes=${nodes} edges=${edges}`);
@@ -51,8 +51,8 @@ function DevPanel() {
 
   const exportEgo = async () => {
     try {
-      const r = await getEgo({ label: "Person", key: "id", value: "alice", depth: 2, limit: 50 });
-      const blob = new Blob([JSON.stringify({ ok: true, data: r }, null, 2)], { type: "application/json" });
+      const { data } = await getEgo({ label: "Person", key: "id", value: "alice", depth: 2, limit: 50 });
+      const blob = new Blob([JSON.stringify({ ok: true, data }, null, 2)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = "ego_person_alice.json";
@@ -140,7 +140,7 @@ export default function GraphXPage() {
   const findPath = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await getShortestPath({
+      const { data } = await getShortestPath({
         srcLabel,
         srcKey,
         srcValue,

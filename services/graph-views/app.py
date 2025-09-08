@@ -301,7 +301,11 @@ FOR (p:Person) REQUIRE p.id IS UNIQUE
 
 
 # Helper for ego view
-async def ego_view_logic(label: str, key: str, value: str, depth: int, limit: int):
+async def _ego_view_data(label: str, key: str, value: str, depth: int, limit: int):
+    """
+    Reuse the same cypher/session logic as /graphs/view/ego and
+    return a dict: {"nodes":[...], "relationships":[...]}
+    """
     if not HAVE_NEO4J:
         raise HTTPException(status_code=503, detail="neo4j driver not installed")
 
@@ -453,7 +457,7 @@ async def graph_view_ego(
     - Holt Pfade bis `depth` Kanten in beide Richtungen
     - Aggregiert Knoten und Kanten in Nodes/Edges-Listen
     """
-    data = await ego_view_logic(label, key, value, depth, limit)
+    data = await _ego_view_data(label, key, value, depth, limit)
     counts = {"nodes": len(data["nodes"]), "relationships": len(data["relationships"])}
     data["meta"] = {"label": label, "key": key, "value": value, "depth": int(depth)}
     return ok({"nodes": data["nodes"], "relationships": data["relationships"], "meta": data["meta"]}, counts=counts)
@@ -529,28 +533,22 @@ async def graph_view_shortest_path(
 @app.get("/graphs/export/dossier")
 async def export_dossier(label: str, key: str, value: str, depth: int = 2, limit: int = 100):
     try:
-        data = await ego_view_logic(label, key, value, depth, limit)
-        nodes = [
-            {
-                "id": n.get("id") or n.get("identity") or n.get("uid"),
-                "labels": n.get("labels") or n.get("label") or [],
-                "props": n.get("properties") or n,
-            }
-            for n in data["nodes"]
-        ]
-        edges = [
-            {
-                "id": r.get("id") or f"{r.get('start')}-{r.get('type')}-{r.get('end')}",
-                "source": r.get("start") or r.get("source"),
-                "target": r.get("end") or r.get("target"),
-                "type": r.get("type") or r.get("label") or "RELATIONSHIP",
-                "props": r.get("properties") or r,
-            }
-            for r in data["relationships"]
-        ]
+        data = await _ego_view_data(label, key, value, depth, limit)
+        raw_nodes = data.get("nodes", [])
+        raw_rels  = data.get("relationships", [])
+        nodes = [{
+            "id": n.get("id") or n.get("identity") or n.get("uid"),
+            "labels": n.get("labels") or n.get("label") or [],
+            "props": n.get("properties") or n
+        } for n in raw_nodes]
+        edges = [{
+            "id": r.get("id") or f"{r.get('start')}-{r.get('type')}-{r.get('end')}",
+            "source": r.get("start") or r.get("source"),
+            "target": r.get("end") or r.get("target"),
+            "type": r.get("type") or r.get("label") or "RELATIONSHIP",
+            "props": r.get("properties") or r
+        } for r in raw_rels]
         return ok({"nodes": nodes, "edges": edges}, counts={"nodes": len(nodes), "relationships": len(edges)})
     except Exception as e:
-        from fastapi.responses import JSONResponse
-        body, status = err("server_error", f"export failed: {e}", 500)
-        return JSONResponse(content=body, status_code=status)
+        return err("server_error", f"export failed: {e}", 500)
 
