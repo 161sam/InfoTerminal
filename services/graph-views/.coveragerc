@@ -1,0 +1,15 @@
+[run]
+branch = True
+source = .
+
+[report]
+omit =
+    _shared/health.py
+    _shared/obs/*
+    db.py
+    it_logging.py
+    metrics.py
+    samples/*
+exclude_lines =
+    if __name__ == "__main__":
+    pragma: no cover
