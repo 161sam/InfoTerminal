@@ -1,0 +1,14 @@
+.git
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.venv/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+node_modules/
+apps/frontend/.next/
+apps/frontend/.turbo/
+dist/
+build/
+.DS_Store
