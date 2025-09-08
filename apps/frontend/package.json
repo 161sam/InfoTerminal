@@ -7,7 +7,7 @@
     "dev": "next dev -p 3411",
     "build": "next build",
     "start": "next start -p 3411",
-    "test": "vitest run",
+    "test": "vitest run --reporter=dot",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",

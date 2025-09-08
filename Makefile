@@ -10,10 +10,10 @@ gv.cov:
 	@cd services/graph-views && \
 	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
 	PYTHONPATH="$(PWD)/services/graph-views" \
-	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q
+	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q $(COVER)
 
 fe.test:
-	@npm -w apps/frontend test
+	@npm -w apps/frontend run test --silent -- --reporter=dot
 
 test:
 	@$(MAKE) gv.test

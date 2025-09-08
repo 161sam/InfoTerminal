@@ -135,3 +135,5 @@ tools/installers/
 
 # uv Python lockfiles
 **/uv.lock
+
+services/graph-views/.coverage
