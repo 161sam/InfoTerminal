@@ -1,12 +1,20 @@
-.PHONY: gv.test gv.cov
+.PHONY: gv.test gv.cov fe.test test
 
 gv.test:
-@PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
-PYTHONPATH="$(PWD)/services/graph-views" \
-services/graph-views/.venv/bin/pytest -q -c services/graph-views/pytest.ini
+	@cd services/graph-views && \
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+	PYTHONPATH="$(PWD)/services/graph-views" \
+	.venv/bin/pytest -q -c pytest.ini
 
 gv.cov:
-@PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
-PYTHONPATH="$(PWD)/services/graph-views" \
-services/graph-views/.venv/bin/pytest -c services/graph-views/pytest.ini \
--p pytest_cov --cov="services/graph-views" --cov-report=term-missing -q
+	@cd services/graph-views && \
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+	PYTHONPATH="$(PWD)/services/graph-views" \
+	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q
+
+fe.test:
+	@npm -w apps/frontend test
+
+test:
+	@$(MAKE) gv.test
+	@$(MAKE) fe.test
