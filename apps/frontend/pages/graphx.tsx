@@ -1,9 +1,47 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
 import config from "@/lib/config";
+import { getEgo, loadPeople } from "@/lib/api";
+
+function DevPanel() {
+  if (process.env.NODE_ENV === "production") return null;
+
+  const seed = async () => {
+    const rows = [
+      { id: "alice", name: "Alice", knows_id: "bob" },
+      { id: "bob", name: "Bob", knows_id: "carol" },
+      { id: "carol", name: "Carol", knows_id: null },
+    ];
+    try {
+      const r = await loadPeople(rows);
+      alert(`Seed OK: nodesCreated=${r.nodesCreated} relsCreated=${r.relsCreated}`);
+    } catch (e: any) {
+      alert(`Seed failed: ${e?.message || e}`);
+    }
+  };
+
+  const ego = async () => {
+    try {
+      const data = await getEgo({ label: "Person", key: "id", value: "alice", depth: 2, limit: 50 });
+      const nodes = data?.nodes?.length ?? 0;
+      const edges = data?.relationships?.length ?? 0;
+      alert(`Ego(Person id=alice): nodes=${nodes} edges=${edges}`);
+    } catch (e: any) {
+      alert(`Ego failed: ${e?.message || e}`);
+    }
+  };
+
+  return (
+    <div style={{ display: "grid", gap: 8, padding: 12, border: "1px dashed var(--border, #555)", borderRadius: 8, marginTop: 16 }}>
+      <strong>Dev Tools (local)</strong>
+      <button onClick={seed} style={{ padding: 8, borderRadius: 8 }}>Seed Demo People</button>
+      <button onClick={ego} style={{ padding: 8, borderRadius: 8 }}>Test Ego(Alice)</button>
+    </div>
+  );
+}
 
 /** Ping a URL's /healthz endpoint. */
 async function ping(url?: string): Promise<Status> {
@@ -108,6 +146,7 @@ export default function GraphXPage() {
           )}
         </Card>
       </div>
+      <DevPanel />
     </Layout>
   );
 }

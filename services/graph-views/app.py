@@ -45,6 +45,9 @@ setup_otel(app)
 SERVICE_NAME = os.getenv("SERVICE_NAME", "graph-views")
 SERVICE_VERSION = os.getenv("SERVICE_VERSION", "0.1.0")
 
+# Schreibschutz-Flag
+GV_ALLOW_WRITES = str(os.getenv("GV_ALLOW_WRITES", "0")).lower() in ("1", "true", "yes", "on")
+
 # -----------------------
 # Neo4j Driver Setup
 # -----------------------
@@ -260,6 +263,33 @@ class CypherRequest(BaseModel):
     allow_write: Optional[bool] = None  # überschreibt ENV temporär
 
 
+class PersonRow(BaseModel):
+    id: str
+    name: Optional[str] = None
+    knows_id: Optional[str] = None
+
+
+class CsvLoadRequest(BaseModel):
+    rows: List[PersonRow]
+
+
+MERGE_BATCH_CYPHER = """
+UNWIND $rows AS r
+MERGE (p:Person {id: r.id})
+  ON CREATE SET p.name = r.name
+  ON MATCH  SET p.name = COALESCE(r.name, p.name)
+WITH r, p
+WHERE r.knows_id IS NOT NULL AND r.knows_id <> ''
+MERGE (q:Person {id: r.knows_id})
+MERGE (p)-[:KNOWS]->(q)
+"""
+
+CONSTRAINT_CYPHER = """
+CREATE CONSTRAINT person_id_unique IF NOT EXISTS
+FOR (p:Person) REQUIRE p.id IS UNIQUE
+"""
+
+
 # -----------------------
 # Graph-Views Routen
 # -----------------------
@@ -301,6 +331,34 @@ async def graphs_cypher(req: CypherRequest = Body(...)):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"cypher error: {e!r}")
+
+
+@app.post("/graphs/load/csv")
+async def load_csv_endpoint(payload: CsvLoadRequest, write: bool = Query(False)):
+    """Dev-Endpoint für Bulk-UPSERT von Person-Rows."""
+    if not (GV_ALLOW_WRITES and write):
+        return {"ok": False, "reason": "writes_disabled"}
+    if not HAVE_NEO4J:
+        raise HTTPException(status_code=503, detail="neo4j driver not installed")
+
+    rows = [r.model_dump() for r in payload.rows if r.id]
+    if not rows:
+        return {"ok": True, "nodesCreated": 0, "relsCreated": 0, "rows": 0}
+
+    with _neo4j_session() as session:
+        session.run(CONSTRAINT_CYPHER).consume()
+        res = session.run(MERGE_BATCH_CYPHER, rows=rows)
+        summary = res.consume()
+        counters = getattr(summary, "counters", None)
+        nodes_created = getattr(counters, "nodes_created", 0) if counters else 0
+        rels_created = getattr(counters, "relationships_created", 0) if counters else 0
+
+    return {
+        "ok": True,
+        "nodesCreated": nodes_created,
+        "relsCreated": rels_created,
+        "rows": len(rows),
+    }
 
 
 @app.get("/graphs/view/ego")
