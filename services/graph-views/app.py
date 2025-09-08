@@ -3,23 +3,24 @@ import re
 import asyncio
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Body, Query
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException, Body, Query, Request
+from pydantic import BaseModel
 
 from _shared.cors import apply_cors
 from _shared.health import make_healthz, make_readyz
 from _shared.obs.metrics_boot import enable_prometheus_metrics
 from _shared.obs.otel_boot import setup_otel
+from neo import get_session, run_with_retries, get_driver
 
 # -----------------------
 # Neo4j (optional)
 # -----------------------
 HAVE_NEO4J = False
 try:
-    from neo4j import GraphDatabase  # type: ignore
+    import neo4j  # type: ignore
     HAVE_NEO4J = True
 except Exception:
-    GraphDatabase = None  # type: ignore
+    neo4j = None  # type: ignore
 
 # Für Typerkennung bei Serialisierung (optional)
 Neo4jNode = None
@@ -48,84 +49,55 @@ SERVICE_VERSION = os.getenv("SERVICE_VERSION", "0.1.0")
 # Schreibschutz-Flag
 GV_ALLOW_WRITES = str(os.getenv("GV_ALLOW_WRITES", "0")).lower() in ("1", "true", "yes", "on")
 
-# -----------------------
-# Neo4j Driver Setup
-# -----------------------
-class Neo4jConfig(BaseModel):
-    uri: Optional[str] = Field(default=os.getenv("NEO4J_URI"))
-    user: Optional[str] = Field(default=os.getenv("NEO4J_USER"))
-    password: Optional[str] = Field(default=os.getenv("NEO4J_PASSWORD"))
-    database: Optional[str] = Field(default=os.getenv("NEO4J_DATABASE"))
-    # Standard-URI, falls Container-Name o.ä. genutzt wird
-    default_uri: str = "bolt://it-neo4j:7687"
 
-
-def _neo4j_config() -> Neo4jConfig:
-    cfg = Neo4jConfig()
-    if not cfg.uri:
-        # Falls nichts gesetzt wurde, versuchen wir es mit einer sinnvollen Default-URI
-        cfg.uri = cfg.default_uri
-    return cfg
-
+def require_write_auth(request: Request) -> None:
+    user = os.getenv("GV_BASIC_USER")
+    password = os.getenv("GV_BASIC_PASS")
+    if not (user and password):
+        return
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Basic "):
+        raise HTTPException(status_code=401, detail="auth required", headers={"WWW-Authenticate": 'Basic realm="InfoTerminal"'})
+    import base64
+    try:
+        decoded = base64.b64decode(auth.split(" ", 1)[1]).decode()
+    except Exception:
+        raise HTTPException(status_code=401, detail="bad auth", headers={"WWW-Authenticate": 'Basic realm="InfoTerminal"'})
+    username, _, pw = decoded.partition(":")
+    if username != user or pw != password:
+        raise HTTPException(status_code=401, detail="bad auth", headers={"WWW-Authenticate": 'Basic realm="InfoTerminal"'})
 
 async def _neo4j_ready() -> bool:
-    drv = getattr(app.state, "neo4j_driver", None)
-    if not drv:
-        # Wenn Neo4j nicht konfiguriert/instanziiert ist, sind wir trotzdem "ready"
-        # (der Dienst kann auch ohne Neo4j-Backend leben). Falls du "hard-required"
-        # möchtest, hier False zurückgeben.
+    if not HAVE_NEO4J:
         return True
     try:
+        drv = get_driver()
+    except Exception:
+        return False
+    try:
         loop = asyncio.get_running_loop()
-        # verify_connectivity ist sync → in Threadpool ausführen
         await loop.run_in_executor(None, drv.verify_connectivity)
         return True
     except Exception:
         return False
 
 
-def _neo4j_startup():
-    """Driver anlegen, wenn Neo4j und ENV konfiguriert sind. Fehler sind nicht fatal."""
-    if not HAVE_NEO4J:
-        app.state.neo4j_driver = None
-        return
-
-    cfg = _neo4j_config()
-    if not cfg.uri:
-        app.state.neo4j_driver = None
-        return
-
-    try:
-        auth = None
-        if cfg.user and cfg.password:
-            auth = (cfg.user, cfg.password)
-        # Driver erzeugen
-        drv = GraphDatabase.driver(cfg.uri, auth=auth)  # type: ignore
-        app.state.neo4j_driver = drv
-        app.state.neo4j_database = cfg.database
-    except Exception:
-        # Keine harten Fehler im Minimalbetrieb
-        app.state.neo4j_driver = None
-        app.state.neo4j_database = None
-
-
-def _neo4j_shutdown():
-    drv = getattr(app.state, "neo4j_driver", None)
-    if drv:
+@app.on_event("startup")
+async def on_startup():
+    if HAVE_NEO4J:
         try:
-            drv.close()
+            get_driver()
         except Exception:
             pass
 
 
-@app.on_event("startup")
-async def on_startup():
-    _neo4j_startup()
-
-
 @app.on_event("shutdown")
 async def on_shutdown():
-    _neo4j_shutdown()
+    if HAVE_NEO4J:
+        try:
+            get_driver().close()
+        except Exception:
+            pass
 
 
 # -----------------------
@@ -208,43 +180,18 @@ def _serialize_neo4j(value: Any) -> Any:
     return value
 
 
-def _neo4j_session():
-    drv = getattr(app.state, "neo4j_driver", None)
-    if not drv:
-        raise HTTPException(status_code=503, detail="neo4j not configured")
-    db = getattr(app.state, "neo4j_database", None)
-    # v4/v5: execute_read/execute_write vs. read_transaction/write_transaction
-    return drv.session(database=db) if db else drv.session()
+def _run_cypher(query: str, params: Dict[str, Any]) -> List[Dict[str, Any]]:
+    with get_session() as session:
+        result = run_with_retries(session, query, params)
+        return [_serialize_neo4j(r.data()) for r in result]
 
 
 def _run_read(query: str, params: Dict[str, Any]) -> List[Dict[str, Any]]:
-    with _neo4j_session() as session:
-        exec_read = getattr(session, "execute_read", None)
-        if exec_read:
-            def work(tx):
-                res = tx.run(query, **(params or {}))
-                return [_serialize_neo4j(r.data()) for r in res]
-            return exec_read(work)
-        # Fallback (älterer Treiber)
-        def work(tx):
-            res = tx.run(query, **(params or {}))
-            return [_serialize_neo4j(r.data()) for r in res]
-        return session.read_transaction(work)
+    return _run_cypher(query, params)
 
 
 def _run_write(query: str, params: Dict[str, Any]) -> List[Dict[str, Any]]:
-    with _neo4j_session() as session:
-        exec_write = getattr(session, "execute_write", None)
-        if exec_write:
-            def work(tx):
-                res = tx.run(query, **(params or {}))
-                return [_serialize_neo4j(r.data()) for r in res]
-            return exec_write(work)
-        # Fallback (älterer Treiber)
-        def work(tx):
-            res = tx.run(query, **(params or {}))
-            return [_serialize_neo4j(r.data()) for r in res]
-        return session.write_transaction(work)
+    return _run_cypher(query, params)
 
 
 def _is_write_query(q: str) -> bool:
@@ -260,7 +207,6 @@ def _is_write_query(q: str) -> bool:
 class CypherRequest(BaseModel):
     query: str
     params: Dict[str, Any] | None = None
-    allow_write: Optional[bool] = None  # überschreibt ENV temporär
 
 
 class PersonRow(BaseModel):
@@ -298,27 +244,27 @@ async def graphs_ping():
     """Liefert Info zum Neo4j-Backend (optional)."""
     if not HAVE_NEO4J:
         return {"neo4j": "driver-not-installed", "configured": False}
-    drv = getattr(app.state, "neo4j_driver", None)
-    if not drv:
+    try:
+        get_driver()
+    except Exception:
         return {"neo4j": "not-configured", "configured": False}
     ok = await _neo4j_ready()
     return {"neo4j": "ok" if ok else "unreachable", "configured": True}
 
 
 @app.post("/graphs/cypher")
-async def graphs_cypher(req: CypherRequest = Body(...)):
+async def graphs_cypher(request: Request, req: CypherRequest = Body(...), write: bool = Query(False)):
     """
     Führt eine (standardmäßig read-only) Cypher-Query aus.
-    - ENV: GV_ALLOW_WRITES=1 um Schreibabfragen zu erlauben.
-    - `allow_write=True` im Body übersteuert ggf. temporär.
+    Schreibende Queries benötigen `GV_ALLOW_WRITES=1` **und** `?write=1`.
     """
     if not HAVE_NEO4J:
         raise HTTPException(status_code=503, detail="neo4j driver not installed")
 
-    allow_writes_env = str(os.getenv("GV_ALLOW_WRITES", "0")).lower() in ("1", "true", "yes", "on")
-    allow_write = req.allow_write if req.allow_write is not None else allow_writes_env
+    if write:
+        require_write_auth(request)
 
-    if _is_write_query(req.query) and not allow_write:
+    if _is_write_query(req.query) and not (GV_ALLOW_WRITES and write):
         raise HTTPException(status_code=403, detail="write queries are disabled")
 
     try:
@@ -334,10 +280,11 @@ async def graphs_cypher(req: CypherRequest = Body(...)):
 
 
 @app.post("/graphs/load/csv")
-async def load_csv_endpoint(payload: CsvLoadRequest, write: bool = Query(False)):
+async def load_csv_endpoint(request: Request, payload: CsvLoadRequest, write: bool = Query(False)):
     """Dev-Endpoint für Bulk-UPSERT von Person-Rows."""
     if not (GV_ALLOW_WRITES and write):
         return {"ok": False, "reason": "writes_disabled"}
+    require_write_auth(request)
     if not HAVE_NEO4J:
         raise HTTPException(status_code=503, detail="neo4j driver not installed")
 
@@ -345,9 +292,9 @@ async def load_csv_endpoint(payload: CsvLoadRequest, write: bool = Query(False))
     if not rows:
         return {"ok": True, "nodesCreated": 0, "relsCreated": 0, "rows": 0}
 
-    with _neo4j_session() as session:
-        session.run(CONSTRAINT_CYPHER).consume()
-        res = session.run(MERGE_BATCH_CYPHER, rows=rows)
+    with get_session() as session:
+        run_with_retries(session, CONSTRAINT_CYPHER).consume()
+        res = run_with_retries(session, MERGE_BATCH_CYPHER, {"rows": rows})
         summary = res.consume()
         counters = getattr(summary, "counters", None)
         nodes_created = getattr(counters, "nodes_created", 0) if counters else 0

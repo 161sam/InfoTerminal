@@ -71,3 +71,53 @@ curl -sS -X POST "http://localhost:8403/graphs/cypher" \
 ```bash
 curl -sS "http://localhost:8403/graphs/view/ego?label=Person&key=id&value=alice&depth=2&limit=50"
 ```
+
+## Write-Auth (Basic)
+
+Optionaler Basic-Auth-Schutz für schreibende Endpunkte. Wenn `GV_BASIC_USER` und
+`GV_BASIC_PASS` gesetzt sind, müssen Anfragen mit `?write=1` entsprechende
+Credentials mitsenden:
+
+```bash
+curl -u user:pass -X POST "http://localhost:8403/graphs/cypher?write=1" \
+  -H "Content-Type: application/json" \
+  -d '{"query":"CREATE (:Person {id:\"x\"})"}'
+```
+
+## Neo4j-Verbindung & Retry
+
+Der Dienst nutzt eine zentrale Driver-Factory (`neo.py`) mit einfacher
+Retry-Logik bei transienten Verbindungsfehlern. Relevante ENV-Variablen:
+
+```
+NEO4J_URI
+NEO4J_USER
+NEO4J_PASSWORD
+NEO4J_DATABASE
+NEO4J_MAX_CONN_LIFETIME
+```
+
+## Troubleshooting: Neo4j connection refused
+
+Wenn `connection refused` auftritt:
+
+1. Stimmt URI/Host/Port? (`--uri` Parameter nutzen)
+2. Richtiger Datenbankname und Credentials?
+3. Service läuft und erreichbar?
+
+Beispiel für das CSV-Loader-Script mit Overrides:
+
+```bash
+python services/graph-views/samples/load_csv.py --uri bolt://localhost:7687 \
+  --csv my.csv
+```
+
+## Git Remote Hinweis
+
+Falls `git push origin main` fehlschlägt:
+
+```bash
+git remote -v
+# ggf.
+git remote add origin <URL>
+```
