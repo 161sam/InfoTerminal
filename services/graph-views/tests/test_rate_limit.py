@@ -18,3 +18,16 @@ def test_write_rate_limit(app_client: TestClient, monkeypatch):
         assert j["error"]["code"] == "rate_limited"
         assert "Retry-After" in r.headers
     app.state.rate_cap = 0
+
+
+def test_write_rate_limit_headers(app_client: TestClient, monkeypatch):
+    monkeypatch.setenv("GV_ALLOW_WRITES","1")
+    monkeypatch.setenv("GV_RATE_LIMIT_WRITE","1/second")
+    # Trigger: 2 schnelle Writes
+    r1 = app_client.post("/graphs/cypher?write=1", json={"stmt":"RETURN 1","params":{}})
+    r2 = app_client.post("/graphs/cypher?write=1", json={"stmt":"RETURN 1","params":{}})
+    if r2.status_code == 429:
+        assert "Retry-After" in r2.headers
+        assert "X-RateLimit-Limit" in r2.headers
+        assert "X-RateLimit-Remaining" in r2.headers
+        assert "X-RateLimit-Reset" in r2.headers

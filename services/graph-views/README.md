@@ -184,3 +184,18 @@ git remote -v
 # ggf.
 git remote add origin <URL>
 ```
+
+### Serve & Smoke (ohne Docker)
+
+Start (lokal, uvicorn):
+```bash
+make gv.serve
+```
+
+Smoke-Checks (auto-boot & wait):
+
+```bash
+make smoke.gv.up
+# ENV optional:
+# export GV_ALLOW_WRITES=1 GV_BASIC_USER=dev GV_BASIC_PASS=devpass GV_RATE_LIMIT_WRITE=2/second GV_AUDIT_LOG=1
+```
