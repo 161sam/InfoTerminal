@@ -164,6 +164,17 @@ python services/graph-views/samples/load_csv.py --uri bolt://localhost:7687 \
   --csv my.csv
 ```
 
+## Smoke-Checks
+
+```bash
+export GV_ALLOW_WRITES=1
+export GV_BASIC_USER=dev
+export GV_BASIC_PASS=devpass
+export GV_RATE_LIMIT_WRITE=2/second
+export GV_AUDIT_LOG=1
+make smoke.gv
+```
+
 ## Git Remote Hinweis
 
 Falls `git push origin main` fehlschlägt:
