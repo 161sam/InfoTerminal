@@ -1,0 +1,6 @@
+id,name,knows_id
+alice,Alice,bob
+bob,Bob,carol
+carol,Carol,
+dave,Dave,alice
+
