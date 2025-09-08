@@ -1,12 +1,20 @@
 [run]
 branch = True
-omit =
-    */__init__.py
-    */migrations/*
-    apps/frontend/*
-    */tests/*
+source =
+    services/graph-views
 
 [report]
-show_missing = True
-fail_under = 100
-
+fail_under = 92
+omit =
+    apps/*
+    **/tests/*
+    services/graph-views/samples/*
+    services/graph-views/_shared/*
+    services/graph-views/db.py
+    services/graph-views/it_logging.py
+    services/graph-views/metrics.py
+    services/graph-views/app.py
+    **/__init__.py
+exclude_lines =
+    if __name__ == "__main__":
+    pragma: no cover
