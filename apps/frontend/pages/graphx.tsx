@@ -3,8 +3,9 @@ import Layout from "@/components/Layout";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
+import GraphViewerCytoscape from "@/components/GraphViewerCytoscape";
 import config from "@/lib/config";
-import { getEgo, loadPeople } from "@/lib/api";
+import { getEgo, loadPeople, getShortestPath } from "@/lib/api";
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
@@ -60,6 +61,15 @@ export default function GraphXPage() {
   const [query, setQuery] = useState("MATCH (n) RETURN n LIMIT 5");
   const [output, setOutput] = useState<any>(null);
   const [runStatus, setRunStatus] = useState<Status>();
+  const [srcLabel, setSrcLabel] = useState("Person");
+  const [srcKey, setSrcKey] = useState("id");
+  const [srcValue, setSrcValue] = useState("");
+  const [dstLabel, setDstLabel] = useState("Person");
+  const [dstKey, setDstKey] = useState("id");
+  const [dstValue, setDstValue] = useState("");
+  const [maxLen, setMaxLen] = useState(4);
+  const [directed, setDirected] = useState(false);
+  const [elements, setElements] = useState<any[]>([]);
 
   const pingGraph = async () => {
     setGraphStatus("loading");
@@ -94,6 +104,35 @@ export default function GraphXPage() {
     } catch (e: any) {
       setRunStatus("fail");
       setOutput({ error: e.message || "query failed" });
+    }
+  };
+
+  const findPath = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await getShortestPath({
+        srcLabel,
+        srcKey,
+        srcValue,
+        dstLabel,
+        dstKey,
+        dstValue,
+        maxLen,
+      });
+      const nodes = (data.nodes || []).map((n: any) => ({
+        data: { id: String(n.id), label: n.properties?.name || String(n.id) },
+      }));
+      const edges = (data.relationships || []).map((r: any) => ({
+        data: {
+          id: String(r.id),
+          source: String(r.start),
+          target: String(r.end),
+          label: r.type,
+        },
+      }));
+      setElements([...nodes, ...edges]);
+    } catch (e: any) {
+      alert(e?.message || "path failed");
     }
   };
 
@@ -143,6 +182,69 @@ export default function GraphXPage() {
             <p className="text-sm text-gray-600">
               Run a query to see results
             </p>
+          )}
+        </Card>
+
+        <Card>
+          <h2 className="mb-2">Shortest Path</h2>
+          <form onSubmit={findPath} className="grid gap-2 md:grid-cols-3">
+            <input
+              placeholder="srcLabel"
+              value={srcLabel}
+              onChange={(e) => setSrcLabel(e.target.value)}
+              className="rounded border p-1"
+            />
+            <input
+              placeholder="srcKey"
+              value={srcKey}
+              onChange={(e) => setSrcKey(e.target.value)}
+              className="rounded border p-1"
+            />
+            <input
+              placeholder="srcValue"
+              value={srcValue}
+              onChange={(e) => setSrcValue(e.target.value)}
+              className="rounded border p-1"
+            />
+            <input
+              placeholder="dstLabel"
+              value={dstLabel}
+              onChange={(e) => setDstLabel(e.target.value)}
+              className="rounded border p-1"
+            />
+            <input
+              placeholder="dstKey"
+              value={dstKey}
+              onChange={(e) => setDstKey(e.target.value)}
+              className="rounded border p-1"
+            />
+            <input
+              placeholder="dstValue"
+              value={dstValue}
+              onChange={(e) => setDstValue(e.target.value)}
+              className="rounded border p-1"
+            />
+            <input
+              type="number"
+              placeholder="maxLen"
+              value={maxLen}
+              onChange={(e) => setMaxLen(parseInt(e.target.value, 10))}
+              className="rounded border p-1"
+            />
+            <label className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={directed}
+                onChange={(e) => setDirected(e.target.checked)}
+              />
+              Directed
+            </label>
+            <Button type="submit">Find</Button>
+          </form>
+          {elements.length > 0 && (
+            <div className="mt-4">
+              <GraphViewerCytoscape elements={elements} directed={directed} />
+            </div>
           )}
         </Card>
       </div>
