@@ -118,6 +118,15 @@ curl -sS "http://localhost:8403/graphs/export/dossier?label=Person&key=id&value=
 ```
 ```
 
+## v0.2.0 Release Notes (API)
+- Unified envelope: `{ok,data,counts,error}` for all endpoints.
+- Errors use codes: `bad_request`, `writes_disabled`, `unauthorized`, `rate_limited`, `server_error`.
+- `X-Request-ID` on every response; 429 includes `Retry-After`, `X-RateLimit-*`.
+
+### Quick Test
+make test
+make smoke.gv.up
+
 **Ego-View Beispiel:**
 
 ```bash

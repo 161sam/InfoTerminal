@@ -6,6 +6,7 @@ import StatusPill, { Status } from "@/components/ui/StatusPill";
 import GraphViewerCytoscape from "@/components/GraphViewerCytoscape";
 import config from "@/lib/config";
 import { getEgo, loadPeople, getShortestPath, exportDossier } from "@/lib/api";
+import { toast } from "@/components/ui/toast";
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
@@ -91,6 +92,7 @@ export default function GraphXPage() {
   const [query, setQuery] = useState("MATCH (n) RETURN n LIMIT 5");
   const [output, setOutput] = useState<any>(null);
   const [runStatus, setRunStatus] = useState<Status>();
+  const [egoInfo, setEgoInfo] = useState("");
   const [srcLabel, setSrcLabel] = useState("Person");
   const [srcKey, setSrcKey] = useState("id");
   const [srcValue, setSrcValue] = useState("");
@@ -108,6 +110,15 @@ export default function GraphXPage() {
   const pingViews = async () => {
     setViewsStatus("loading");
     setViewsStatus(await ping(config?.VIEWS_API));
+  };
+
+  const runEgo = async () => {
+    try {
+      const { data, counts } = await getEgo({ label:"Person", key:"id", value:"alice", depth:2, limit:50 });
+      setEgoInfo(`nodes=${counts.nodes ?? data.nodes?.length ?? 0}, rels=${counts.relationships ?? data.relationships?.length ?? 0}`);
+    } catch (e: any) {
+      toast(e?.message || "Ego failed", { variant: 'error' });
+    }
   };
 
   const runQuery = async () => {
@@ -162,7 +173,7 @@ export default function GraphXPage() {
       }));
       setElements([...nodes, ...edges]);
     } catch (e: any) {
-      alert(e?.message || "path failed");
+      toast(e?.message || "path failed", { variant: 'error' });
     }
   };
 
@@ -213,6 +224,12 @@ export default function GraphXPage() {
               Run a query to see results
             </p>
           )}
+        </Card>
+
+        <Card>
+          <h2 className="mb-2">Ego Sample</h2>
+          <Button onClick={runEgo}>Run Ego(Person id=alice)</Button>
+          {egoInfo && <p className="mt-2 text-sm">{egoInfo}</p>}
         </Card>
 
         <Card>

@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - fix: add PyYAML dependency to CLI to prevent ModuleNotFoundError for 'yaml'
 
+## [0.2.0] - 2025-09-08
+### Added
+- Unified API envelope `{ok,data,counts,error}` across graph-views endpoints.
+- Write rate-limiter (token bucket), 429 with `Retry-After` & `X-RateLimit-*`.
+- Optional audit logging with `X-Request-ID` on every response.
+- JSON dossier export and frontend download buttons.
+### Changed
+- Frontend API helpers normalize envelopes and expose `requestId`.
+### Fixed
+- Stable root test targets, JSON-aware smoke script.
+
 ## [0.1.9.1]
 - Documented port policy and hardened `patch_ports.sh`
 - Enforced 92% coverage gate via `pytest`
