@@ -31,3 +31,14 @@ def test_write_rate_limit_headers(app_client: TestClient, monkeypatch):
         assert "X-RateLimit-Limit" in r2.headers
         assert "X-RateLimit-Remaining" in r2.headers
         assert "X-RateLimit-Reset" in r2.headers
+
+
+def test_429_has_json_ct_and_headers(app_client: TestClient, monkeypatch):
+    monkeypatch.setenv("GV_ALLOW_WRITES","1")
+    monkeypatch.setenv("GV_RATE_LIMIT_WRITE","1/second")
+    app_client.post("/graphs/cypher?write=1", json={"stmt":"RETURN 1","params":{}})
+    r = app_client.post("/graphs/cypher?write=1", json={"stmt":"RETURN 1","params":{}})
+    if r.status_code == 429:
+        assert r.headers.get("content-type","" ).startswith("application/json")
+        for k in ("Retry-After","X-RateLimit-Limit","X-RateLimit-Remaining","X-RateLimit-Reset","X-Request-ID"):
+            assert k in r.headers

@@ -550,5 +550,7 @@ async def export_dossier(label: str, key: str, value: str, depth: int = 2, limit
         } for r in raw_rels]
         return ok({"nodes": nodes, "edges": edges}, counts={"nodes": len(nodes), "relationships": len(edges)})
     except Exception as e:
-        return err("server_error", f"export failed: {e}", 500)
+        from fastapi.responses import JSONResponse
+        body, status = err("server_error", f"export failed: {e}", 500)
+        return JSONResponse(content=body, status_code=status)
 

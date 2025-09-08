@@ -25,3 +25,8 @@ def test_write_disabled_returns_error(app_client: TestClient, monkeypatch):
     assert r.status_code in (200, 403)
     assert j["ok"] is False
     assert j["error"]["code"] in ("writes_disabled", "unauthorized", "bad_request")
+
+
+def test_ego_returns_json_ct(app_client: TestClient):
+    r = app_client.get("/graphs/view/ego", params=dict(label="Person", key="id", value="alice", depth=1, limit=5))
+    assert r.headers.get("content-type","" ).startswith("application/json")
