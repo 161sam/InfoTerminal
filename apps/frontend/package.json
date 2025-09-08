@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "e2e:install": "npx playwright install --with-deps",
     "e2e": "playwright test",
-    "lint": "next lint || true",
+    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
     "test:ui": "vitest --ui",
     "prepare": "husky"
   },
@@ -53,7 +53,8 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.4.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "prettier": "^3.3.3"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "prettier --write"

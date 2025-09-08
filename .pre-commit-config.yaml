@@ -23,5 +23,7 @@ repos:
       - id: prettier
         name: prettier (npx)
         language: system
-        entry: bash -lc 'npx -y prettier@3.3.3 --write'
+        entry: npx
+        args: ["-y", "prettier@3.3.3", "--log-level", "warn", "--write"]
+        pass_filenames: true
         files: "\\.(js|jsx|ts|tsx|json|md|yaml|yml)$"
