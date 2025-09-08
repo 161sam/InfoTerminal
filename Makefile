@@ -50,9 +50,15 @@ tag.v0.2.0:
 	@git tag -a v0.2.0 -m "InfoTerminal v0.2.0"
 	@git push && git push --tags
 
-.PHONY: lint lint.py lint.fe format
+.PHONY: lint lint.py lint.fe format gv.venv
 
-lint.py:
+gv.venv:
+	@cd services/graph-views && \
+	python -m venv .venv >/dev/null 2>&1 || true && \
+	.venv/bin/python -m pip install -q --upgrade pip && \
+	.venv/bin/python -m pip install -q -r requirements-dev.txt
+
+lint.py: gv.venv
 	@cd services/graph-views && \
 	.venv/bin/python -m pip install -q pre-commit || true && \
 	pre-commit run --files $$(git ls-files 'services/graph-views/**/*.py' 'services/graph-views/*.py') || true && \
@@ -64,7 +70,8 @@ lint.fe:
 
 lint: lint.py lint.fe
 
-format:
-	@. ./.venv_dummy 2>/dev/null || true
-	@cd services/graph-views && .venv/bin/python -m ruff check --fix . && .venv/bin/python -m ruff format .
+format: gv.venv
+	@cd services/graph-views && \
+	.venv/bin/python -m ruff format . && \
+	.venv/bin/python -m ruff check --fix . || true
 	@npx -y prettier@3.3.3 -w "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" || true
