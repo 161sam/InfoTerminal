@@ -190,11 +190,17 @@ http://localhost:3411
 ## 🧹 Dev Hygiene
 
 **Lint & Format**
+
 ```bash
 make gv.venv    # einmalig
 make lint       # strikt (CI-ähnlich)
 make format     # auto-fix, tolerant
 ```
+
+**Tipps**
+
+- Pre-commit installiert/aktualisiert sich automatisch bei `make lint`. Einmalige manuelle Installation ist nicht nötig.
+- Falls `make lint` scheitert: `make format` ausführen und erneut `make lint` starten.
 
 ---
 
