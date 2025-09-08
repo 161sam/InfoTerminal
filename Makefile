@@ -56,24 +56,25 @@ gv.venv:
 	@cd services/graph-views && \
 	python -m venv .venv >/dev/null 2>&1 || true && \
 	.venv/bin/python -m pip install -q --upgrade pip && \
-	.venv/bin/python -m pip install -q -r requirements-dev.txt
+	.venv/bin/python -m pip install -q -r requirements-dev.txt && \
+	.venv/bin/python -m pip install -q pre-commit
 
 lint.py: gv.venv
 	@cd services/graph-views && \
-	.venv/bin/python -m pip install -q pre-commit || true && \
-	pre-commit install -f --install-hooks >/dev/null 2>&1 || true && \
-	pre-commit run --all-files
-	@cd services/graph-views && .venv/bin/python -m ruff check services/graph-views
+	.venv/bin/pre-commit install -f --install-hooks >/dev/null 2>&1 || true && \
+	.venv/bin/pre-commit run --all-files && \
+	.venv/bin/python -m ruff check services/graph-views
 
 lint.fe:
 	@npm -w apps/frontend run -s lint || echo "eslint/prettier not configured; skipping npm lint"
-	# Zusätzlich: Prettier-Check für Repo-Root/Workflows
-	@npx -y prettier@3.3.3 -c "**/*.{md,yaml,yml,json}" || true
+	# Repo-Root/CI-Dateien: Prettier Check mit Ignore-Pfad, tolerant bei leeren Globs
+	@npx -y prettier@3.3.3 -c "**/*.{md,yaml,yml,json}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
 
 lint: lint.py lint.fe
 
 format: gv.venv
 	@cd services/graph-views && .venv/bin/python -m ruff format . || true
 	@cd services/graph-views && .venv/bin/python -m ruff check --fix . || true
-	@npx -y prettier@3.3.3 -w "**/*.{md,yaml,yml,json}" || true
-	@npx -y prettier@3.3.3 -w "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" || true
+	# Repo-Root + Frontend: Format mit Ignore-Pfad, tolerant
+	@npx -y prettier@3.3.3 -w "**/*.{md,yaml,yml,json}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
+	@npx -y prettier@3.3.3 -w "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true

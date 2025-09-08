@@ -3,7 +3,7 @@
 [![CI](https://github.com/161sam/InfoTerminal/actions/workflows/ci.yml/badge.svg)](https://github.com/161sam/InfoTerminal/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/161sam/InfoTerminal/actions/workflows/codeql.yml/badge.svg)](https://github.com/161sam/InfoTerminal/actions/workflows/codeql.yml)
 
-> **Open-Source Intelligence Plattform – modular, sicher, erweiterbar.**  
+> **Open-Source Intelligence Plattform – modular, sicher, erweiterbar.**
 > Ziel: Mehr können als Palantir Gotham – mit offenen Technologien, AI/ML und Ethical Design.
 
 [![Status](https://img.shields.io/badge/status-v0.2--dev-blue)](#)
@@ -201,6 +201,17 @@ make format     # auto-fix, tolerant
 
 - Pre-commit installiert/aktualisiert sich automatisch bei `make lint`. Einmalige manuelle Installation ist nicht nötig.
 - Falls `make lint` scheitert: `make format` ausführen und erneut `make lint` starten.
+
+**Helm/Templated YAML**
+Prettier überspringt Helm-Templates via `.prettierignore` und Hook-`exclude`. Falls neue Charts/Templates hinzukommen, bitte Pfade in `.prettierignore` ergänzen.
+
+**Lint/Format**
+
+```bash
+make gv.venv   # einmalig
+make format    # auto-fix (tolerant)
+make lint      # strikt
+```
 
 ---
 

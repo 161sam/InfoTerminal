@@ -27,3 +27,10 @@ repos:
         args: ["-y", "prettier@3.3.3", "--log-level", "warn", "--write"]
         pass_filenames: true
         files: "\\.(js|jsx|ts|tsx|json|md|yaml|yml)$"
+        exclude: |
+          (?x)^(
+            charts/.*/templates/.*|
+            .*\.tpl$|
+            .*_helpers\.tpl$|
+            observability/.*/templates/.*
+          )$

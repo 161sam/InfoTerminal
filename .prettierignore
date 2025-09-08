@@ -1,0 +1,14 @@
+# Node/Build
+node_modules/
+dist/
+build/
+coverage/
+*.sarif
+
+# Helm / templated YAML (do not parse with Prettier)
+charts/**/templates/**
+**/*.tpl
+**/_helpers.tpl
+
+# Vendored / generated
+observability/**/templates/**
