@@ -13,7 +13,7 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   tls:
-    - hosts: [ "infoterminal.example.com" ]
+    - hosts: ["infoterminal.example.com"]
       secretName: infoterminal-tls
 ```
 

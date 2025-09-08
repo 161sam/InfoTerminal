@@ -7,7 +7,7 @@ nodes in the Neo4j knowledge graph.
 2. The background resolver looks up candidates in Neo4j and updates the
    `entity_resolutions` table.
 3. Resolved entities can optionally create `MENTIONS` relations in the
-graph.
+   graph.
 
 For development, ensure the following indexes exist in Neo4j:
 

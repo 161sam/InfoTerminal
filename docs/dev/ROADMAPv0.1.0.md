@@ -3,13 +3,13 @@
 # 📍 InfoTerminal Roadmap
 
 Diese Roadmap beschreibt den Entwicklungsweg von **v0.1.0 (MVP)** bis zur ersten stabilen **v1.0.0 (Production Ready)**.  
-Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.  
+Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 
 ---
 
 ## 🎯 Langfristige Ziele
 
-- **Framework-Charakter** wie *Palantir Gotham*, aber Open Source (Open-Core mit optionalen Enterprise-Features).
+- **Framework-Charakter** wie _Palantir Gotham_, aber Open Source (Open-Core mit optionalen Enterprise-Features).
 - **High Autonomous AI-Layer** mit Agents und Workflows.
 - **Plugin-System** zur einfachen Erweiterung (z. B. Kali Linux Tools, externe Datenquellen).
 - **Monetarisierbarkeit ab v0.5.0** (Early Adopters & Enterprise Add-ons).
@@ -163,9 +163,9 @@ Sie ist als lebendes Dokument gedacht und wird regelmäßig angepasst.
 
 ## 📆 Hinweis
 
-- Zeitrahmen flexibel – Meilensteine sind *feature-driven*, nicht kalendarisch fix.
+- Zeitrahmen flexibel – Meilensteine sind _feature-driven_, nicht kalendarisch fix.
 - Priorität: **Funktionalität → Usability → Stabilität → Security → Monetarisierung**.
 
 ---
 
-✍️ *Letzte Aktualisierung: September 2025*
+✍️ _Letzte Aktualisierung: September 2025_

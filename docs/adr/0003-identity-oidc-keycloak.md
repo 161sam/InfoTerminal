@@ -20,9 +20,9 @@ Provides federation and user self-service but adds an additional service to oper
 
 ## Alternatives
 
-* Auth0 SaaS
-* DIY identity service
+- Auth0 SaaS
+- DIY identity service
 
 ## References
 
-* [www.keycloak.org](https://www.keycloak.org/)
+- [www.keycloak.org](https://www.keycloak.org/)

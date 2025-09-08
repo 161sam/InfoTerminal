@@ -30,4 +30,3 @@ CI executes separate jobs for Python and frontend. Each job fails if coverage dr
 ## Offline requirement
 
 Unit tests must run without network or container dependencies. Mock all external systems such as Neo4j, Postgres, and HTTP APIs.
-

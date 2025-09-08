@@ -15,14 +15,18 @@ Datei: `apps/frontend/lib/superset.ts`
 ```ts
 // Compose Superset dashboard URL with native filters (hash fragment)
 export type NativeFilter = {
-  id: string;                  // stable filter id (or auto)
-  column: string;              // column name in dataset
-  datasetId: number;           // Superset dataset id
-  values?: (string|number)[];  // for select/filter_box
-  timeRange?: string;          // e.g. "Last 30 days", "No filter"
+  id: string; // stable filter id (or auto)
+  column: string; // column name in dataset
+  datasetId: number; // Superset dataset id
+  values?: (string | number)[]; // for select/filter_box
+  timeRange?: string; // e.g. "Last 30 days", "No filter"
 };
 
-export function supersetDashboardUrl(base: string, slug: string, filters: NativeFilter[]) {
+export function supersetDashboardUrl(
+  base: string,
+  slug: string,
+  filters: NativeFilter[],
+) {
   // Superset accepts native_filters_key or full state via # or ?native_filters=...
   // We inline state via hash for portability.
   const filterState = {
@@ -32,13 +36,15 @@ export function supersetDashboardUrl(base: string, slug: string, filters: Native
         value: f.values ?? null,
         validateMessage: null,
       },
-      targets: [{
-        column: f.column,
-        datasetId: f.datasetId,
-      }],
+      targets: [
+        {
+          column: f.column,
+          datasetId: f.datasetId,
+        },
+      ],
       type: "select",
     })),
-    time_range: filters.find(f => f.timeRange)?.timeRange || "No filter",
+    time_range: filters.find((f) => f.timeRange)?.timeRange || "No filter",
   };
   const encoded = encodeURIComponent(JSON.stringify(filterState));
   // Example final URL:
@@ -57,8 +63,13 @@ const url = supersetDashboardUrl(
   "openbb-overview-dbt-sync",
   [
     { column: "symbol", datasetId: 42, values: ["SAP.DE"] },
-    { id: "time", column: "as_of_date", datasetId: 42, timeRange: "Last 30 days" }
-  ]
+    {
+      id: "time",
+      column: "as_of_date",
+      datasetId: 42,
+      timeRange: "Last 30 days",
+    },
+  ],
 );
 ```
 
@@ -94,9 +105,9 @@ Wir verwenden Variante **A** (Multipart Upload `ingest`).
 1. **ListenFile** – Input Directory: `/data/watch`, Keep Source File: `true`
 2. **UpdateAttribute** – setzt u. a. `filename_original`, `aleph_title`, `aleph_meta`, `aleph_coll`, `aleph_token`
 3. **InvokeHTTP** – `POST http://aleph.docs.svc.cluster.local:8080/api/2/collections/${aleph_coll}/ingest?sync=1`
-   * Content-Type `multipart/form-data`
-   * Header `Authorization: ApiKey ${aleph_token}`
-   * Multipart: FlowFile als `file`, zusätzliche Teile `meta` (JSON) und `title`
+   - Content-Type `multipart/form-data`
+   - Header `Authorization: ApiKey ${aleph_token}`
+   - Multipart: FlowFile als `file`, zusätzliche Teile `meta` (JSON) und `title`
 4. **LogAttribute** – loggt `filename_original, aleph_response`
 
 #### Quick-cURL zum Abgleich
@@ -141,11 +152,11 @@ Output format:
 
 ### 3.3 Flowise Setup (High-level)
 
-* **LLM Node**: Ollama Llama‑3 (oder OpenAI-kompatibel), Max Tokens 512‑800, Temp 0.2
-* **Agent Node**: Function-Calling, Tool-Limit 3, Tools wie oben
-* **Memory**: ConversationBuffer (max. 5 Messages)
-* **Output Parser**: passt durch
-* Optionaler Pre-Tool Hook begrenzt `graph_neighbors.limit` auf 100
+- **LLM Node**: Ollama Llama‑3 (oder OpenAI-kompatibel), Max Tokens 512‑800, Temp 0.2
+- **Agent Node**: Function-Calling, Tool-Limit 3, Tools wie oben
+- **Memory**: ConversationBuffer (max. 5 Messages)
+- **Output Parser**: passt durch
+- Optionaler Pre-Tool Hook begrenzt `graph_neighbors.limit` auf 100
 
 ### 3.4 Beispiel-User-Prompt
 
@@ -170,9 +181,9 @@ Antwortformat:
 
 ## Mini-Checkliste
 
-* [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern
-* [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
-* [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
-* [ ] **Smoke Tests**:
-  * `POST /annotate` → `/docs/{id}/html` zeigt Entities → GraphX
-  * Flowise Prompt ausführen → Tool-Aufrufe im Log sichtbar
+- [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern
+- [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
+- [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
+- [ ] **Smoke Tests**:
+  - `POST /annotate` → `/docs/{id}/html` zeigt Entities → GraphX
+  - Flowise Prompt ausführen → Tool-Aufrufe im Log sichtbar

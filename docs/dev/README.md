@@ -1,5 +1,7 @@
 # InfoTerminal — Open, Modular Intelligence Platform (Gotham-style, OSS)
+
 <!-- markdownlint-disable MD013 -->
+
 ```text
   +--------------------------------------------------------+
   |                      Benutzer                         |
@@ -45,21 +47,21 @@
             |     Dokumentenmanagement    |
             |          Aleph              |
             +----------------------------+
-  ```
+```
 
 ## 0) TL;DR (MVP in 90 Tagen)
 
-* **Woche 1–2:** Monorepo, IaC, CI/CD, Dev-Cluster (Kind), Keycloak + Gateway, basic ETL (NiFi/Airflow),
+- **Woche 1–2:** Monorepo, IaC, CI/CD, Dev-Cluster (Kind), Keycloak + Gateway, basic ETL (NiFi/Airflow),
   Postgres + Elastic online.
-* **Woche 3–4:** Schema + Ontologie (LinkML/JSON Schema), Entity Resolution (basic),
+- **Woche 3–4:** Schema + Ontologie (LinkML/JSON Schema), Entity Resolution (basic),
   Aleph für Doku-Intake, erste Dashboards (Superset).
-* **Woche 5–6:** Graph-Layer (Neo4j), Relationship Explorer UI,
+- **Woche 5–6:** Graph-Layer (Neo4j), Relationship Explorer UI,
   Volltextsuche mit Cross-Linking zu Graph/Docs.
-* **Woche 7–8:** KI-Services (NER, Linking), n8n/Flowise Agents,
+- **Woche 7–8:** KI-Services (NER, Linking), n8n/Flowise Agents,
   OpenBB-Integration (Finanzdaten).
-* **Woche 9–10:** Security & Governance (OPA Policies, Audit),
+- **Woche 9–10:** Security & Governance (OPA Policies, Audit),
   Lineage/Metadata (DataHub/Amundsen).
-* **Woche 11–12:** Hardening, E2E-Tests,
+- **Woche 11–12:** Hardening, E2E-Tests,
   Demo Datasets & Playbooks, Release v0.1.
 
 ---
@@ -68,14 +70,14 @@
 
 ### Ziele
 
-* Heterogene Datenquellen integrieren (Batch/Stream), **durchsuchbar**, **verknüpfbar** und **visuell analysierbar** machen.
-* Graph- & Dokumenten-Ermittlungsworkflows, Dashboards, KI-unterstützte Mustererkennung.
-* **Transparenz, Reproduzierbarkeit, Data Lineage, Governance** by default.
+- Heterogene Datenquellen integrieren (Batch/Stream), **durchsuchbar**, **verknüpfbar** und **visuell analysierbar** machen.
+- Graph- & Dokumenten-Ermittlungsworkflows, Dashboards, KI-unterstützte Mustererkennung.
+- **Transparenz, Reproduzierbarkeit, Data Lineage, Governance** by default.
 
 ### Nicht-Ziele (v0.1)
 
-* Keine mission-kritischen Realtime-Command-&-Control Workflows.
-* Kein proprietärer Datentransport; alles standardisiert (APIs, connectors, open formats).
+- Keine mission-kritischen Realtime-Command-&-Control Workflows.
+- Kein proprietärer Datentransport; alles standardisiert (APIs, connectors, open formats).
 
 ---
 
@@ -136,10 +138,10 @@ flowchart LR
 
 ### Kerneigenschaften
 
-* **API-first**: Jede Funktion als Service mit OpenAPI.
-* **Storage-Spezialisierung**: Relational (PG/CH), Suchindex (ES), Graph (Neo4j), Doks (Aleph + S3).
-* **Governance**: OIDC (Keycloak), Policies (OPA), Lineage/Glossar (DataHub/Amundsen).
-* **Observability**: OpenTelemetry → Grafana/Prometheus/Loki/Tempo.
+- **API-first**: Jede Funktion als Service mit OpenAPI.
+- **Storage-Spezialisierung**: Relational (PG/CH), Suchindex (ES), Graph (Neo4j), Doks (Aleph + S3).
+- **Governance**: OIDC (Keycloak), Policies (OPA), Lineage/Glossar (DataHub/Amundsen).
+- **Observability**: OpenTelemetry → Grafana/Prometheus/Loki/Tempo.
 
 ---
 
@@ -187,38 +189,38 @@ info-terminal/
 
 ## 4) Datenmodell & Ontologie
 
-* **Basis:** Entity-Relationship für Kernobjekte (Person, Organisation, Asset, Ort, Ereignis, Dokument, Transaktion).
-* **Erweiterbar:** LinkML/JSON Schema, versioniert, im Repo unter `etl/schemas/`.
-* **Identität & Auflösung:** deterministische Keys + probabilistische Matching-Pipelines (blocking keys, fuzzy match, embeddings, clerical review queue).
-* **Lineage:** dbt + OpenLineage & DataHub; jede Transformation dokumentiert und nachvollziehbar.
+- **Basis:** Entity-Relationship für Kernobjekte (Person, Organisation, Asset, Ort, Ereignis, Dokument, Transaktion).
+- **Erweiterbar:** LinkML/JSON Schema, versioniert, im Repo unter `etl/schemas/`.
+- **Identität & Auflösung:** deterministische Keys + probabilistische Matching-Pipelines (blocking keys, fuzzy match, embeddings, clerical review queue).
+- **Lineage:** dbt + OpenLineage & DataHub; jede Transformation dokumentiert und nachvollziehbar.
 
 ---
 
 ## 5) Security, Privacy, Compliance
 
-* **AuthN:** Keycloak (OIDC/OAuth2), Clients: frontend, superset, apis.
-* **AuthZ:** OPA (Rego) + „attribute-based access control“ (ABAC): Rollen, Mandanten, Datenklassifizierung.
-* **Audit:** Gateway & Service Logs, immutable in Loki; Data-Access Events → CH/PG.
-* **PII/GDPR:** Datenminimierung, Pseudonymisierungspfade, DPIA-Templates, Retention per Policy.
-* **Secrets:** External Secrets Operator, Vault/Sealed Secrets.
+- **AuthN:** Keycloak (OIDC/OAuth2), Clients: frontend, superset, apis.
+- **AuthZ:** OPA (Rego) + „attribute-based access control“ (ABAC): Rollen, Mandanten, Datenklassifizierung.
+- **Audit:** Gateway & Service Logs, immutable in Loki; Data-Access Events → CH/PG.
+- **PII/GDPR:** Datenminimierung, Pseudonymisierungspfade, DPIA-Templates, Retention per Policy.
+- **Secrets:** External Secrets Operator, Vault/Sealed Secrets.
 
 ---
 
 ## 6) Observability
 
-* **Tracing:** OpenTelemetry SDKs in allen Python/Node Services → Tempo.
-* **Metrics:** Prometheus (service & db exporters).
-* **Logs:** Loki; Correlation-IDs propagieren via Gateway.
-* **SLOs:** Such-API p95, Graph-Query p95, Pipeline-Latenz, Freshness (dbt tests).
+- **Tracing:** OpenTelemetry SDKs in allen Python/Node Services → Tempo.
+- **Metrics:** Prometheus (service & db exporters).
+- **Logs:** Loki; Correlation-IDs propagieren via Gateway.
+- **SLOs:** Such-API p95, Graph-Query p95, Pipeline-Latenz, Freshness (dbt tests).
 
 ---
 
 ## 7) CI/CD & Qualität
 
-* **CI:** Ruff/Flake8 + pytest + mypy; ESLint + Vitest/Playwright. Trivy/Grype für Images.
-* **CD:** Helmfile/Kustomize nach dev → staging → prod, manuell approvable.
-* **Data Tests:** dbt tests + Great Expectations optional.
-* **Testdaten:** `datasets/demo` (synthetisch, DSGVO-sicher).
+- **CI:** Ruff/Flake8 + pytest + mypy; ESLint + Vitest/Playwright. Trivy/Grype für Images.
+- **CD:** Helmfile/Kustomize nach dev → staging → prod, manuell approvable.
+- **Data Tests:** dbt tests + Great Expectations optional.
+- **Testdaten:** `datasets/demo` (synthetisch, DSGVO-sicher).
 
 ---
 
@@ -226,32 +228,30 @@ info-terminal/
 
 ### 8.1 Ziele
 
-* Finanz-/Marktdaten als optionale Quelle in Ermittlungs-/Risikomodellen.
-* Kombinierbar mit anderen Spuren: Firmenregister, Sanktionslisten, OSINT, Aleph-Dokumente, Graphpfade.
+- Finanz-/Marktdaten als optionale Quelle in Ermittlungs-/Risikomodellen.
+- Kombinierbar mit anderen Spuren: Firmenregister, Sanktionslisten, OSINT, Aleph-Dokumente, Graphpfade.
 
 ### 8.2 Architektur
 
-* **OpenBB Connector Service** (`services/openbb-connector`):
+- **OpenBB Connector Service** (`services/openbb-connector`):
+  - Periodische Pulls (Airflow DAG) & on-demand API.
+  - Caching (Redis/CH), Rate-Limit & Backoff.
+  - **Schema-Mapping**: Rohdaten → Staging (CH/PG) → dbt Models → Gold (Analytics + ES index).
 
-  * Periodische Pulls (Airflow DAG) & on-demand API.
-  * Caching (Redis/CH), Rate-Limit & Backoff.
-  * **Schema-Mapping**: Rohdaten → Staging (CH/PG) → dbt Models → Gold (Analytics + ES index).
-* **Pipelines**
-
-  * **Airflow**: `openbb_equities_daily.py`, `openbb_macro_weekly.py`, `openbb_news_intraday.py`.
-  * **dbt**: Normalisierung, Dimensionstabellen (assets, issuers, prices, events), Snapshots (SCD2).
-  * **Elasticsearch**: Indexe für News/Filings mit Entity-Tags & Cross-refs zu Graph (isin, lei, org\_id).
+- **Pipelines**
+  - **Airflow**: `openbb_equities_daily.py`, `openbb_macro_weekly.py`, `openbb_news_intraday.py`.
+  - **dbt**: Normalisierung, Dimensionstabellen (assets, issuers, prices, events), Snapshots (SCD2).
+  - **Elasticsearch**: Indexe für News/Filings mit Entity-Tags & Cross-refs zu Graph (isin, lei, org_id).
 
 ### 8.3 Datenvertrag (vereinfachtes Beispiel)
 
-* **Staging** (`stg_openbb_prices` / CH)
+- **Staging** (`stg_openbb_prices` / CH)
+  - `as_of_date` (Date), `symbol` (String), `isin` (String, nullable), `open`,`high`,`low`,`close` (Float64), `volume` (UInt64), `vendor_ts` (DateTime).
 
-  * `as_of_date` (Date), `symbol` (String), `isin` (String, nullable), `open`,`high`,`low`,`close` (Float64), `volume` (UInt64), `vendor_ts` (DateTime).
-* **Dim** (`dim_asset`, `dim_issuer`) – gemappt via ISIN/LEI, optional Name-Match.
-* **Fact** (`fct_eod_prices`) – Surrogate Keys auf `asset_id`, Partition by `as_of_date`.
-* **Search** (`idx_openbb_news` / ES)
-
-  * `title`, `body`, `published_at`, `symbols`, `entities` (NER), `doc_url`, `source`, `confidence`.
+- **Dim** (`dim_asset`, `dim_issuer`) – gemappt via ISIN/LEI, optional Name-Match.
+- **Fact** (`fct_eod_prices`) – Surrogate Keys auf `asset_id`, Partition by `as_of_date`.
+- **Search** (`idx_openbb_news` / ES)
+  - `title`, `body`, `published_at`, `symbols`, `entities` (NER), `doc_url`, `source`, `confidence`.
 
 ### 8.4 Airflow DAG (Snippet, Python)
 
@@ -283,61 +283,61 @@ with DAG(
 
 ### 8.5 NiFi Alternative (Low-Code)
 
-* Processor chain: `InvokeHTTP (OpenBB API)` → `EvaluateJsonPath` → `PutDatabaseRecord (ClickHouse JDBC)` → `PutElasticsearchJson`.
-* FlowFiles mit `symbol`, `window`, `as_of=now()` als dynamic props.
+- Processor chain: `InvokeHTTP (OpenBB API)` → `EvaluateJsonPath` → `PutDatabaseRecord (ClickHouse JDBC)` → `PutElasticsearchJson`.
+- FlowFiles mit `symbol`, `window`, `as_of=now()` als dynamic props.
 
 ### 8.6 Graph-Verknüpfung
 
-* **Neo4j**: `(:Asset {isin})-[:ISSUED_BY]->(:Organization {lei})`
-* Nachrichten/Filings als `(:Document)-[:MENTIONS]->(:Asset|:Organization)`.
-* Kürzester Pfad-Abfragen im **Graph Explorer** der UI, kombiniert mit Datum/Region/Quelle.
+- **Neo4j**: `(:Asset {isin})-[:ISSUED_BY]->(:Organization {lei})`
+- Nachrichten/Filings als `(:Document)-[:MENTIONS]->(:Asset|:Organization)`.
+- Kürzester Pfad-Abfragen im **Graph Explorer** der UI, kombiniert mit Datum/Region/Quelle.
 
 ### 8.7 Frontend / Analytics
 
-* **Superset**: Price-Volatility, Event-Impact, Cross-Filter mit Ermittlungsmerkmalen.
-* **Frontend**: Asset-Detailseite: Kursverlauf (EOD), News-Timeline, Graph-Snippets (betroffene Entitäten).
+- **Superset**: Price-Volatility, Event-Impact, Cross-Filter mit Ermittlungsmerkmalen.
+- **Frontend**: Asset-Detailseite: Kursverlauf (EOD), News-Timeline, Graph-Snippets (betroffene Entitäten).
 
 ### 8.8 Governance
 
-* Lizenz/ToS der jeweiligen OpenBB-Datenquellen respektieren.
-* Mandantentrennung (project\_id) & Tagging (public/commercial/internal) für Data Access Policies.
+- Lizenz/ToS der jeweiligen OpenBB-Datenquellen respektieren.
+- Mandantentrennung (project_id) & Tagging (public/commercial/internal) für Data Access Policies.
 
 ---
 
 ## 9) AI Layer & Agents (n8n / Flowise / lokale LLMs)
 
-* **NLP Services** (`services/nlp`): NER (Person/Org/Ort), Relation Extraction (Org↔Asset), Summarization (docs/news), Embeddings (search rerank).
-* **Agents** (`apps/agents`):
+- **NLP Services** (`services/nlp`): NER (Person/Org/Ort), Relation Extraction (Org↔Asset), Summarization (docs/news), Embeddings (search rerank).
+- **Agents** (`apps/agents`):
+  - „Investigation Assistant“: nimmt Fälle (IDs), erstellt Abfragepläne, ruft Search/Graph APIs, fertigt Notizen/Reports.
+  - „Financial Risk Assistant“: joint OpenBB Daten mit Firmenregistern/Sanktionslisten, markiert Red Flags.
 
-  * „Investigation Assistant“: nimmt Fälle (IDs), erstellt Abfragepläne, ruft Search/Graph APIs, fertigt Notizen/Reports.
-  * „Financial Risk Assistant“: joint OpenBB Daten mit Firmenregistern/Sanktionslisten, markiert Red Flags.
-* **Pipelines**: n8n flows triggern Airflow DAGs, speichern Ergebnisse, erzeugen Superset Links.
+- **Pipelines**: n8n flows triggern Airflow DAGs, speichern Ergebnisse, erzeugen Superset Links.
 
 ---
 
 ## 10) Dokumentenmanagement (Aleph)
 
-* Ingest: Uploads, Web Crawler, Watch-Folders (NiFi ListenFile + PutAleph).
-* Pipeline: OCR (Tesseract), Language ID, NER, Fingerprinting (shingling), ES-Index.
-* Cross-Links: NER Entities → Graph IDs (resolver), Anzeige in Doc-Viewer inkl. „open in Graph“.
+- Ingest: Uploads, Web Crawler, Watch-Folders (NiFi ListenFile + PutAleph).
+- Pipeline: OCR (Tesseract), Language ID, NER, Fingerprinting (shingling), ES-Index.
+- Cross-Links: NER Entities → Graph IDs (resolver), Anzeige in Doc-Viewer inkl. „open in Graph“.
 
 ---
 
 ## 11) Deployment (lokal → k8s)
 
-* **Dev**: Kind Cluster, Tilt/Skaffold für Hot-Reload der Services.
-* **Stateful**: Postgres (operator), ClickHouse, Elastic, Neo4j, MinIO via Helm charts.
-* **Bootstrap**: `make dev-up` – startet stack, seedet Demo-Daten, erstellt Keycloak Realm/Clients.
-* **Config**: alles als code (values.yaml, kustomize overlays), Secrets per ExternalSecrets/Vault.
+- **Dev**: Kind Cluster, Tilt/Skaffold für Hot-Reload der Services.
+- **Stateful**: Postgres (operator), ClickHouse, Elastic, Neo4j, MinIO via Helm charts.
+- **Bootstrap**: `make dev-up` – startet stack, seedet Demo-Daten, erstellt Keycloak Realm/Clients.
+- **Config**: alles als code (values.yaml, kustomize overlays), Secrets per ExternalSecrets/Vault.
 
 ---
 
 ## 12) Risiken & Gegenmaßnahmen
 
-* **Datenlizenzen**: klare Klassifizierung & Policy Enforcement → OPA.
-* **PII/DSGVO**: Pseudonymisierungspfade, DPIA, rollenbasierte Sichtbarkeit.
-* **Komplexität**: modulare Services, ADRs, klare SLOs, On-call Runbooks.
-* **Kosten**: ClickHouse statt Big Spark-Cluster; elastic optimiert; kalte Daten in S3/MinIO.
+- **Datenlizenzen**: klare Klassifizierung & Policy Enforcement → OPA.
+- **PII/DSGVO**: Pseudonymisierungspfade, DPIA, rollenbasierte Sichtbarkeit.
+- **Komplexität**: modulare Services, ADRs, klare SLOs, On-call Runbooks.
+- **Kosten**: ClickHouse statt Big Spark-Cluster; elastic optimiert; kalte Daten in S3/MinIO.
 
 ---
 
@@ -345,34 +345,34 @@ with DAG(
 
 ### W1–2 (Foundation)
 
-* Monorepo scaffold, Coding-Standards, pre-commit, Ruff/ESLint, GitHub Actions.
-* Helmfile/Kustomize, Kind Dev-Cluster; Keycloak + Gateway + OPA „allow-by-default in dev“.
-* Elastic + Postgres + MinIO up; NiFi oder Airflow wählbar.
+- Monorepo scaffold, Coding-Standards, pre-commit, Ruff/ESLint, GitHub Actions.
+- Helmfile/Kustomize, Kind Dev-Cluster; Keycloak + Gateway + OPA „allow-by-default in dev“.
+- Elastic + Postgres + MinIO up; NiFi oder Airflow wählbar.
 
 ### W3–4 (Data Basics)
 
-* LinkML/JSON Schemas für Kernobjekte; dbt Setup; erste Seeds.
-* Search-API (FastAPI) mit Basic Queries; Frontend OIDC Login + simple search UI.
-* Aleph deployment + minimaler File Intake Pfad.
+- LinkML/JSON Schemas für Kernobjekte; dbt Setup; erste Seeds.
+- Search-API (FastAPI) mit Basic Queries; Frontend OIDC Login + simple search UI.
+- Aleph deployment + minimaler File Intake Pfad.
 
 ### W5–6 (Graph & Relations)
 
-* Neo4j online, Graph-API Endpunkte (neighbors, shortest\_path, ego-net).
-* Entity Resolution v0 (deterministisch + fuzzy), Clerical Review UI in Frontend.
+- Neo4j online, Graph-API Endpunkte (neighbors, shortest_path, ego-net).
+- Entity Resolution v0 (deterministisch + fuzzy), Clerical Review UI in Frontend.
 
 ### W7–8 (AI & OpenBB)
 
-* NER + Linking pipeline; embeddings für rerank.
-* OpenBB Connector + DAGs; Superset Dashboards; Cross-refs zu Graph/Aleph.
+- NER + Linking pipeline; embeddings für rerank.
+- OpenBB Connector + DAGs; Superset Dashboards; Cross-refs zu Graph/Aleph.
 
 ### W9–10 (Governance & Metadata)
 
-* OPA Policies (ABAC), Audit Trails; DataHub (sources, lineage, glossary).
-* dbt tests & Great Expectations (optional) für gold layer.
+- OPA Policies (ABAC), Audit Trails; DataHub (sources, lineage, glossary).
+- dbt tests & Great Expectations (optional) für gold layer.
 
 ### W11–12 (Hardening & Release)
 
-* E2E-Tests, Load Tests, Security Review; Demo-Walkthrough + Tutorials; v0.1 tag.
+- E2E-Tests, Load Tests, Security Review; Demo-Walkthrough + Tutorials; v0.1 tag.
 
 ---
 
@@ -383,7 +383,7 @@ with DAG(
 3. **Auth**: Keycloak realm `infoterminal`, clients `frontend`, `superset`, `apis`, roles `analyst`, `investigator`, `admin`.
 4. **Search-API** Skelett (FastAPI) + OpenAPI + ES client; endpoint `/search?q=...`.
 5. **Frontend**: Next.js + OIDC; simple search page & result list.
-6. **Airflow**: basic DAG „hello\_etl“ + dbt bootstrap.
+6. **Airflow**: basic DAG „hello_etl“ + dbt bootstrap.
 7. **Aleph**: deploy; seed 20 PDFs; verknüpfe `doc_id` → ES index.
 8. **Observability**: otel-collector + basic tracing im Search-API.
 9. **Policies**: OPA sample policy (analyst read, admin write).
@@ -434,11 +434,12 @@ def search(q: str, user=Depends(oidc_user)):
 
 ## 17) Dokus & Playbooks (erste Kapitel)
 
-* **Tutorial 01**: „In 15 Minuten zu Search+Docs“ (Kind, Helmfile, Aleph seed, Search UI).
-* **Tutorial 02**: „Graph abfragen: Who-is-connected-to-whom?“
-* **Tutorial 03**: „OpenBB Daten laden & visualisieren“ (Airflow DAG + Superset).
+- **Tutorial 01**: „In 15 Minuten zu Search+Docs“ (Kind, Helmfile, Aleph seed, Search UI).
+- **Tutorial 02**: „Graph abfragen: Who-is-connected-to-whom?“
+- **Tutorial 03**: „OpenBB Daten laden & visualisieren“ (Airflow DAG + Superset).
 
 ---
 
 Sag einfach „**bootstrap**“, dann generiere ich die Dateien als Copy-Paste-Blöcke.
+
 <!-- markdownlint-enable MD013 -->

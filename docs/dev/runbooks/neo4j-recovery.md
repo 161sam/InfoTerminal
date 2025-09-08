@@ -21,4 +21,4 @@ kubectl exec -it svc/neo4j -n default -- cypher-shell "CALL db.index.fulltext.cr
 
 ## Notes
 
-* Ensure leader election completed before writes.
+- Ensure leader election completed before writes.

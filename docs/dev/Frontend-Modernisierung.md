@@ -134,38 +134,38 @@ mkdir -p src/components/upload
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          900: '#0c4a6e'
-        }
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          500: "#0ea5e9",
+          600: "#0284c7",
+          700: "#0369a1",
+          900: "#0c4a6e",
+        },
         // ... weitere Farben
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-      }
+        "fade-in": "fadeIn 0.5s ease-in-out",
+        "slide-up": "slideUp 0.3s ease-out",
+      },
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/line-clamp'),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/line-clamp"),
   ],
-}
+};
 ```
 
 ### 6. App-Level Integration
@@ -308,13 +308,13 @@ module.exports = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ["image/webp", "image/avif"],
   },
   experimental: {
     optimizeCss: true,
     gzipSize: true,
-  }
-}
+  },
+};
 ```
 
 ### Performance Checklist
@@ -332,10 +332,10 @@ module.exports = {
 ```typescript
 // In production, enable monitoring
 const performanceConfig = {
-  enablePerformanceMonitor: process.env.NODE_ENV === 'production',
+  enablePerformanceMonitor: process.env.NODE_ENV === "production",
   enableAnalytics: true,
-  enableErrorTracking: true
-}
+  enableErrorTracking: true,
+};
 ```
 
 ### Key Metrics zu verfolgen
@@ -362,11 +362,11 @@ export const theme = {
   colors: {
     primary: {
       // Corporate Colors hier ändern
-      500: '#0ea5e9', // Hauptfarbe
-      600: '#0284c7', // Hover States
-    }
-  }
-}
+      500: "#0ea5e9", // Hauptfarbe
+      600: "#0284c7", // Hover States
+    },
+  },
+};
 ```
 
 ### Component Overrides
@@ -375,10 +375,10 @@ export const theme = {
 // Globale Component Styles
 // src/components/ui/Button.tsx
 export const buttonVariants = {
-  primary: 'bg-primary-600 hover:bg-primary-700',
-  secondary: 'bg-gray-600 hover:bg-gray-700',
+  primary: "bg-primary-600 hover:bg-primary-700",
+  secondary: "bg-gray-600 hover:bg-gray-700",
   // Weitere Varianten
-}
+};
 ```
 
 ## 🔧 Troubleshooting
@@ -473,7 +473,7 @@ Nach der vollständigen Implementierung haben Sie InfoTerminal in eine **moderne
 ### Was Sie erreicht haben
 
 - 🚀 **10x bessere User Experience**
-- 📱 **Mobile-First Design**  
+- 📱 **Mobile-First Design**
 - ⚡ **Performance Optimiert**
 - 🎨 **Professional Design System**
 - 🔧 **Wartbarer Code**

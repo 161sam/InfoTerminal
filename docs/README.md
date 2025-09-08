@@ -17,37 +17,37 @@
 
 ## Quickstart
 
-* [Root Quickstart](../README.md)
+- [Root Quickstart](../README.md)
 
 ## Architecture
 
-* [Overview](architecture)
-* [ADRs](adr)
+- [Overview](architecture)
+- [ADRs](adr)
 
 ## Runbooks
 
-* [Operational Runbooks](dev/runbooks)
+- [Operational Runbooks](dev/runbooks)
 
 ## Data
 
-* [ETL & dbt](dev/etl_automation.md)
+- [ETL & dbt](dev/etl_automation.md)
 
 ## Security
 
-* [Hardening](dev/security-hardening.md)
+- [Hardening](dev/security-hardening.md)
 
 ## Observability
 
-* [Observability Guide](dev/observability.md)
+- [Observability Guide](dev/observability.md)
 
 ## Pipelines
 
-* [Airflow & Automation](dev/analytics_links.md)
+- [Airflow & Automation](dev/analytics_links.md)
 
 ## Analytics
 
-* [Superset & Dashboards](dev/analytics_frontend.md)
+- [Superset & Dashboards](dev/analytics_frontend.md)
 
 ## Testing
 
-* [Testing and Coverage](testing.md)
+- [Testing and Coverage](testing.md)
