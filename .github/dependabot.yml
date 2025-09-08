@@ -1,11 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule: { interval: "weekly" }
   - package-ecosystem: "npm"
-    directory: "/apps/frontend"
-    schedule: { interval: "weekly" }
-  - package-ecosystem: "github-actions"
     directory: "/"
-    schedule: { interval: "weekly" }
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["deps", "npm"]
+  - package-ecosystem: "pip"
+    directory: "/services/graph-views"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["deps", "python"]
+    allow:
+      - dependency-type: "direct"
+    ignore:
+      - dependency-name: "fastapi"
