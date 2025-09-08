@@ -10,7 +10,10 @@ from _shared.cors import apply_cors
 from _shared.health import make_healthz, make_readyz
 from _shared.obs.metrics_boot import enable_prometheus_metrics
 from _shared.obs.otel_boot import setup_otel
-from neo import get_session, run_with_retries, get_driver
+try:  # pragma: no cover - import fallback for tests
+    from . import neo  # type: ignore
+except ImportError:  # pragma: no cover
+    import neo  # type: ignore
 
 # -----------------------
 # Neo4j (optional)
@@ -71,7 +74,7 @@ async def _neo4j_ready() -> bool:
     if not HAVE_NEO4J:
         return True
     try:
-        drv = get_driver()
+        drv = neo.get_driver()
     except Exception:
         return False
     try:
@@ -86,7 +89,7 @@ async def _neo4j_ready() -> bool:
 async def on_startup():
     if HAVE_NEO4J:
         try:
-            get_driver()
+            neo.get_driver()
         except Exception:
             pass
 
@@ -95,7 +98,7 @@ async def on_startup():
 async def on_shutdown():
     if HAVE_NEO4J:
         try:
-            get_driver().close()
+            neo.get_driver().close()
         except Exception:
             pass
 
@@ -181,8 +184,8 @@ def _serialize_neo4j(value: Any) -> Any:
 
 
 def _run_cypher(query: str, params: Dict[str, Any]) -> List[Dict[str, Any]]:
-    with get_session() as session:
-        result = run_with_retries(session, query, params)
+    with neo.get_session() as session:
+        result = neo.run_with_retries(session, query, params)
         return [_serialize_neo4j(r.data()) for r in result]
 
 
@@ -245,7 +248,7 @@ async def graphs_ping():
     if not HAVE_NEO4J:
         return {"neo4j": "driver-not-installed", "configured": False}
     try:
-        get_driver()
+        neo.get_driver()
     except Exception:
         return {"neo4j": "not-configured", "configured": False}
     ok = await _neo4j_ready()
@@ -292,9 +295,9 @@ async def load_csv_endpoint(request: Request, payload: CsvLoadRequest, write: bo
     if not rows:
         return {"ok": True, "nodesCreated": 0, "relsCreated": 0, "rows": 0}
 
-    with get_session() as session:
-        run_with_retries(session, CONSTRAINT_CYPHER).consume()
-        res = run_with_retries(session, MERGE_BATCH_CYPHER, {"rows": rows})
+    with neo.get_session() as session:
+        neo.run_with_retries(session, CONSTRAINT_CYPHER).consume()
+        res = neo.run_with_retries(session, MERGE_BATCH_CYPHER, {"rows": rows})
         summary = res.consume()
         counters = getattr(summary, "counters", None)
         nodes_created = getattr(counters, "nodes_created", 0) if counters else 0

@@ -20,6 +20,20 @@ For running tests install the dev requirements:
 pip install -r requirements-dev.txt
 ```
 
+## Tests & Coverage
+
+Run the test suite locally without Docker:
+
+```bash
+pytest -q
+```
+
+Coverage configuration lives in `.coveragerc`. Test files, samples and other
+non-service code are excluded so the reported percentage focuses on the
+service implementation. All database interactions are mocked; tests should run
+without a Neo4j instance. If coverage is slightly below the threshold, add
+targeted tests for edge cases such as write guards or `401` responses.
+
 Start the service during development with:
 
 ```bash
