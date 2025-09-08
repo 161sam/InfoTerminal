@@ -3,4 +3,4 @@ target-version = "py311"
 # Basis-Lints, keine strengen Regeln
 [lint]
 extend-select = ["E", "F", "I"]
-ignore = ["E501"]  # lassen lange Zeilen vorerst zu
+ignore = ["E501"]  # lange Zeilen später
