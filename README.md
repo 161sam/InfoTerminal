@@ -187,6 +187,15 @@ docker compose --profile infra up -d
 http://localhost:3411
 ```
 
+## 🧹 Dev Hygiene
+
+**Lint & Format**
+```bash
+make gv.venv    # einmalig
+make lint       # strikt (CI-ähnlich)
+make format     # auto-fix, tolerant
+```
+
 ---
 
 ## 📜 License
