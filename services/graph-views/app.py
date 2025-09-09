@@ -3,6 +3,7 @@ import re
 import asyncio
 import time
 from typing import Any, Dict, List, Optional
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Body, Query, Request
 from pydantic import BaseModel
@@ -40,10 +41,25 @@ if HAVE_NEO4J:
     except Exception:
         pass
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if HAVE_NEO4J:
+        try:
+            neo.get_driver()
+        except Exception:
+            pass
+    yield
+    if HAVE_NEO4J:
+        try:
+            neo.get_driver().close()
+        except Exception:
+            pass
+
+
 # -----------------------
 # FastAPI-App
 # -----------------------
-app = FastAPI(title="graph-views")
+app = FastAPI(title="graph-views", lifespan=lifespan)
 apply_cors(app)
 enable_prometheus_metrics(app, route="/metrics")
 setup_otel(app)
@@ -139,24 +155,6 @@ async def _neo4j_ready() -> bool:
         return True
     except Exception:
         return False
-
-
-@app.on_event("startup")
-async def on_startup():
-    if HAVE_NEO4J:
-        try:
-            neo.get_driver()
-        except Exception:
-            pass
-
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    if HAVE_NEO4J:
-        try:
-            neo.get_driver().close()
-        except Exception:
-            pass
 
 
 # -----------------------

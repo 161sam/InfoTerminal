@@ -7,6 +7,7 @@ import typer
 from rich.console import Console
 
 from . import __version__, infra, root as root_cmds
+from .commands import fe
 from .plugins import load_plugins
 from .utils import NaturalOrderGroup
 from .utils.compose import print_banner_once
@@ -35,6 +36,7 @@ app.command("logs", help="Show logs")(root_cmds.logs)
 
 # infra namespace
 app.add_typer(infra.app, name="infra", help="Infra: compose wrapper")
+app.add_typer(fe.app, name="fe")
 
 # load plugins if available
 load_plugins(app)

@@ -50,6 +50,13 @@ Die CLI bietet:
 - **Plugin-Runner:** Integration externer Tools (z. B. Kali Linux, nmap, exiftool)
 - **Presets:** Profilbasierte Startkonfigurationen (`--preset journalism`, `--preset compliance`)
 
+### Frontend via CLI
+```bash
+it fe dev     # Next.js dev
+it fe build   # Production build
+it fe test    # Vitest (dot reporter)
+```
+
 ---
 
 ## 🔄 Flows & Pipelines
