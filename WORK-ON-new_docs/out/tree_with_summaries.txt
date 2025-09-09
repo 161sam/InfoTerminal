@@ -6,9 +6,48 @@ docs/
   STYLE_GUIDE.md :: # Documentation Style Guide
   TODO-Index.md :: # TODO-Index
   release-checklist-v0.1.md :: # 🚀 Release-Checkliste v0.1 – InfoTerminal
-  img/
-  diagrams/
-    ARCHITECTURE.md :: # Architecture
+  presets/
+    Presets(Profile).md :: ➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
+    README.md :: # Preset Profiles
+    waveterm/
+  api/
+    agent-gateway.md :: # Agent Gateway API
+    jobs.md :: # Jobs API
+  n8n/
+    flowise_n8n.md :: # n8n: Flowise Agent Node
+    waveterm_run.md :: # n8n: WaveTerm Run Node
+  nifi/
+    WaveTermInvoker.md :: # NiFi: WaveTermInvoker
+    flowise_nifi.md :: # NiFi: InvokeFlowiseAgent
+  runbooks/
+    obs-opa-secrets.md :: ---
+    stack.md :: ---
+  export/
+    AFFINE.md :: ### `docs/export/AFFINE.md`
+    APPFLOWY.md :: ### `docs/export/APPFLOWY.md`
+    BUNDLE-SPEC.md :: # Bundle Spec
+  blueprints/
+    AIETHICS-INTELLIGENCE-BLUEPRINT.md :: # AIETHICS-INTELLIGENCE-BLUEPRINT.md
+    CLIMATE-INTELLIGENCE-BLUEPRINT.md :: # CLIMATE-INTELLIGENCE-BLUEPRINT.md
+    CULTURAL-INTELLIGENCE-BLUEPRINT.md :: # CULTURAL-INTELLIGENCE-BLUEPRINT.md
+    DISINFO-INTELLIGENCE-BLUEPRINT.md :: # 🛰️ DISINFORMATION-INTELLIGENCE-BLUEPRINT.md
+    ECONOMIC-INTELLIGENCE-BLUEPRINT.md :: # ECONOMIC-INTELLIGENCE-BLUEPRINT.md
+    FINANCIAL-INTELLIGENCE-BLUEPRINT.md :: # 💰 FINANCIAL-INTELLIGENCE-BLUEPRINT.md
+    FLOWISE-AGENTS-BLUEPRINT.md :: ➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-blueprints-flowise-agents-blueprint-md
+    GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md :: # 🌍 GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md
+    HEALTH-INTELLIGENCE-BLUEPRINT.md :: # HEALTH-INTELLIGENCE-BLUEPRINT.md
+    HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md :: # 🕊️ HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md
+    LEGAL-INTELLIGENCE-BLUEPRINT.md :: # ⚖️ LEGAL-INTELLIGENCE-BLUEPRINT.md
+    MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md :: # MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md
+    README.md :: # Blueprints
+    SECURITY-BLUEPRINT.md :: # 🔐 InfoTerminal Security Blueprint
+    SUPPLYCHAIN-INTELLIGENCE-BLUEPRINT.md :: # 🏭 SUPPLY-CHAIN-INTELLIGENCE-BLUEPRINT.md
+    TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md :: # TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
+    TERRORISM-INTELLIGENCE-BLUEPRINT.md :: # TERRORISM-INTELLIGENCE-BLUEPRINT.md
+    VERIFICATION-BLUEPRINT.md :: # 🧭 Ziele
+  cli/
+    README.md :: # InfoTerminal CLI
+    waveterm-demo.md :: # WaveTerm Demo (planned)
   dev/
     Architektur-für-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
     Checkliste.md :: # Status auf einen Blick
@@ -34,24 +73,13 @@ docs/
     superset-nifi-flowise.md :: # Superset-Filter-Composer, NiFi → Aleph Upload & Flowise Agent
     testing.md :: # Testing Strategy
     tls.md :: # TLS
+    research/
     roadmap/
       README.md :: # Roadmap
       v0.1-overview.md :: ---
       v0.2-overview.md :: ---
       v0.3-plus/
         master-todo.md :: # Master Todo
-    research/
-    guides/
-      flowise-agents.md :: # Flowise Agents
-      frontend-modernization-setup-guide.md :: ---
-      frontend-modernization.md :: ---
-      preset-profiles.md :: # Preset Profiles
-      rag-systems.md :: ---
-      testing.md :: ---
-    dev-prompts/
-      DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
-      DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
-      Test.md :: # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
     runbooks/
       auth-gateway-troubleshooting.md :: # Auth Gateway Troubleshooting
       incident-template.md :: # Incident Report
@@ -80,35 +108,36 @@ docs/
         Roadmap_Gotham-Gaps_Beyond-Gotham.md :: # 🚀 InfoTerminal Roadmap (erweitert mit Beyond Gotham Blueprints)
         TODO-Index-cli-ergänzung.md :: ## 30. CLI – WaveTerm Features (planned)
         beyond-gotham.md :: # 🌟 InfoTerminal Ausbau ab v0.2
+    guides/
+      flowise-agents.md :: # Flowise Agents
+      frontend-modernization-setup-guide.md :: ---
+      frontend-modernization.md :: ---
+      preset-profiles.md :: # Preset Profiles
+      rag-systems.md :: ---
+      testing.md :: ---
+    dev-prompts/
+      DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
+      DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
+      Test.md :: # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
+  screenshots/
+  architecture/
+    ADR-000-stack.md :: # ADR-000: Baseline Stack
+    diagrams/
+  integrations/
+    README.md :: # Integrations
   adr/
     0000-template.md :: # ADR {NNNN}: {Title}
     0001-choose-opa-for-abac.md :: # ADR 0001: Choose OPA for ABAC
     0002-multi-storage-pattern.md :: ➡ Consolidated at: ../dev/guides/rag-systems.md#adr-0002-multi-storage-pattern
     0003-identity-oidc-keycloak.md :: # ADR 0003: Identity via OIDC with Keycloak
     0004-policy-gateway-opa-forwardauth.md :: # ADR 0004: Policy Gateway via OPA ForwardAuth
-  export/
-    AFFINE.md :: ### `docs/export/AFFINE.md`
-    APPFLOWY.md :: ### `docs/export/APPFLOWY.md`
-    BUNDLE-SPEC.md :: # Bundle Spec
-  api/
-    agent-gateway.md :: # Agent Gateway API
-    jobs.md :: # Jobs API
-  nifi/
-    WaveTermInvoker.md :: # NiFi: WaveTermInvoker
-    flowise_nifi.md :: # NiFi: InvokeFlowiseAgent
-  n8n/
-    flowise_n8n.md :: # n8n: Flowise Agent Node
-    waveterm_run.md :: # n8n: WaveTerm Run Node
-  screenshots/
-  integrations/
-    README.md :: # Integrations
-  presets/
-    Presets(Profile).md :: ➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
-    README.md :: # Preset Profiles
-    waveterm/
-  architecture/
-    ADR-000-stack.md :: # ADR-000: Baseline Stack
-    diagrams/
+  diagrams/
+    ARCHITECTURE.md :: # Architecture
+  waveterm/
+    README.md :: # WaveTerm Integration
+    policies/
+    presets/
+  img/
   user/
     1.Einführung.md :: # 1. Einführung
     10.Anwendungsfälle.md :: # 10. Anwendungsfälle
@@ -127,34 +156,5 @@ docs/
     8.Integrationen&Erweiterbarkeit.md :: # 8. Integrationen & Erweiterbarkeit
     9.Sicherheit&Compliance.md :: # 9. Sicherheit & Compliance
     index.md :: # 📘 InfoTerminal – Benutzerhandbuch
-  runbooks/
-    obs-opa-secrets.md :: ---
-    stack.md :: ---
   dossiers/
     README.md :: Dossier templates overview.
-  waveterm/
-    README.md :: # WaveTerm Integration
-    policies/
-    presets/
-  cli/
-    README.md :: # InfoTerminal CLI
-    waveterm-demo.md :: # WaveTerm Demo (planned)
-  blueprints/
-    AIETHICS-INTELLIGENCE-BLUEPRINT.md :: # AIETHICS-INTELLIGENCE-BLUEPRINT.md
-    CLIMATE-INTELLIGENCE-BLUEPRINT.md :: # CLIMATE-INTELLIGENCE-BLUEPRINT.md
-    CULTURAL-INTELLIGENCE-BLUEPRINT.md :: # CULTURAL-INTELLIGENCE-BLUEPRINT.md
-    DISINFO-INTELLIGENCE-BLUEPRINT.md :: # 🛰️ DISINFORMATION-INTELLIGENCE-BLUEPRINT.md
-    ECONOMIC-INTELLIGENCE-BLUEPRINT.md :: # ECONOMIC-INTELLIGENCE-BLUEPRINT.md
-    FINANCIAL-INTELLIGENCE-BLUEPRINT.md :: # 💰 FINANCIAL-INTELLIGENCE-BLUEPRINT.md
-    FLOWISE-AGENTS-BLUEPRINT.md :: ➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-blueprints-flowise-agents-blueprint-md
-    GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md :: # 🌍 GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md
-    HEALTH-INTELLIGENCE-BLUEPRINT.md :: # HEALTH-INTELLIGENCE-BLUEPRINT.md
-    HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md :: # 🕊️ HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md
-    LEGAL-INTELLIGENCE-BLUEPRINT.md :: # ⚖️ LEGAL-INTELLIGENCE-BLUEPRINT.md
-    MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md :: # MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md
-    README.md :: # Blueprints
-    SECURITY-BLUEPRINT.md :: # 🔐 InfoTerminal Security Blueprint
-    SUPPLYCHAIN-INTELLIGENCE-BLUEPRINT.md :: # 🏭 SUPPLY-CHAIN-INTELLIGENCE-BLUEPRINT.md
-    TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md :: # TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
-    TERRORISM-INTELLIGENCE-BLUEPRINT.md :: # TERRORISM-INTELLIGENCE-BLUEPRINT.md
-    VERIFICATION-BLUEPRINT.md :: # 🧭 Ziele

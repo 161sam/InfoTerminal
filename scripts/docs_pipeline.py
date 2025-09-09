@@ -497,10 +497,17 @@ def slugify(text: str) -> str:
 
 
 def canonical_target(path: Path) -> Path | None:
+    """Return canonical target file for a given path.
+
+    The heuristic mirrors the rules from the consolidation spec and remains
+    intentionally small so the step is idempotent.  Paths that do not match any
+    rule are skipped and left untouched by the dedupe step.
+    """
+
     p = path.as_posix().lower()
     if "rag" in p:
         return DOCS_DIR / "dev/guides/rag-systems.md"
-    if "frontend" in p and "modern" in p:
+    if "frontend-modernisierung" in p or ("frontend" in p and "modern" in p):
         return DOCS_DIR / "dev/guides/frontend-modernization.md"
     if "preset" in p and "profile" in p:
         return DOCS_DIR / "dev/guides/preset-profiles.md"
