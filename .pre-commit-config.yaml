@@ -21,16 +21,18 @@ repos:
   - repo: local
     hooks:
       - id: prettier
-        name: prettier (npx)
+        name: prettier (npx, safe paths)
         language: system
         entry: npx
         args: ["-y", "prettier@3.3.3", "--log-level", "warn", "--write"]
         pass_filenames: true
-        files: "\\.(js|jsx|ts|tsx|json|md|yaml|yml)$"
-        exclude: |
+        # Nur noch diese Patterns (entspricht scripts/prettier_safe.list)
+        files: |
           (?x)^(
-            charts/.*/templates/.*|
-            .*\.tpl$|
-            .*_helpers\.tpl$|
-            observability/.*/templates/.*
+            README\.md|
+            docs/.*\.md|
+            \.github/.*\.(yml|yaml|json)|
+            apps/frontend/.*\.(ts|tsx|js|jsx|json|md|yml|yaml)|
+            services/graph-views/.*\.(md|json)
           )$
+        exclude: ""

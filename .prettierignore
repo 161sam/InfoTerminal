@@ -12,3 +12,14 @@ charts/**/templates/**
 
 # Vendored / generated
 observability/**/templates/**
+# Infra / Charts / Ops / Templates (hart ausschließen)
+charts/
+infra/
+deploy/
+observability/
+grafana/
+etl/
+tools/
+**/*.tpl
+**/*.tmpl
+**/_helpers.tpl

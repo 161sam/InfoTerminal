@@ -78,3 +78,12 @@ format: gv.venv
 	# Repo-Root + Frontend: Format mit Ignore-Pfad, tolerant
 	@npx -y prettier@3.3.3 -w "**/*.{md,yaml,yml,json}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
 	@npx -y prettier@3.3.3 -w "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
+
+.PHONY: fmt.safe lint.safe
+
+fmt.safe:
+	@chmod +x scripts/format_safe.sh
+	@./scripts/format_safe.sh || true
+
+lint.safe:
+	@npx -y prettier@3.3.3 -c $(shell tr '\n' ' ' < scripts/prettier_safe.list) --ignore-path .prettierignore --log-level warn || true

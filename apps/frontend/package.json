@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "e2e:install": "npx playwright install --with-deps",
     "e2e": "playwright test",
-    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "test:ui": "vitest --ui",
     "prepare": "husky"
   },
