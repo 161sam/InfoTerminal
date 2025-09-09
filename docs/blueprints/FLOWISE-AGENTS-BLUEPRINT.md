@@ -82,7 +82,6 @@ Canary-Rollout 10 % → Auto-Rollback bei SLO-Bruch.
 
 FLOWISE-1 Deploy • FLOWISE-2 Gateway • FLOWISE-3 Adapter v1 • FLOWISE-4 Registry • FLOWISE-5 Starter-Agents • FLOWISE-6 n8n-Node • FLOWISE-7 NiFi-Processor • FLOWISE-8 Adapter v2 • FLOWISE-9 OPA/Sandbox • FLOWISE-10 Preset Wiring • FLOWISE-11 Eval • FLOWISE-12 Meta-Planner • FLOWISE-13 Cost Guards • FLOWISE-14 Canary/Rollback
 
-````
 
 ---
 
@@ -150,7 +149,7 @@ curl -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" \
 * OPA Policies (Rego) erzwingen Param-Limits & Quellen-Whitelists.
 * Secrets via Vault (per-tenant, short-lived).
 
-````
+
 
 ---
 
@@ -199,7 +198,7 @@ Flowise-Agent aus n8n Workflows anstoßen (Alerts, Dossiers, Batch-Analysen).
 * Compliance-Watchlist → Auto-Check + Report
 * Crisis-Signals → Risk-Dossier
 
-````
+
 
 ---
 
