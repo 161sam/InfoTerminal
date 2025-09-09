@@ -4,7 +4,7 @@
 [![CodeQL](https://github.com/161sam/InfoTerminal/actions/workflows/codeql.yml/badge.svg)](https://github.com/161sam/InfoTerminal/actions/workflows/codeql.yml)
 
 > **Open-Source Intelligence Plattform – modular, sicher, erweiterbar.**
-> Ziel: Mehr können als Palantir Gotham – mit offenen Technologien, AI/ML und Ethical Design.
+> – Beyond Gotham – mit offenen Technologien, AI/ML und Ethical Design.
 
 [![Status](https://img.shields.io/badge/status-v0.2--dev-blue)](#)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](#)
