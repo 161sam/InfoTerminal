@@ -23,6 +23,7 @@ import argparse
 import hashlib
 import os
 import re
+from difflib import SequenceMatcher
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -52,6 +53,11 @@ def write_file(path: Path, content: str) -> None:
 
 def append_journal(entry: str) -> None:
     JOURNAL_FILE.parent.mkdir(parents=True, exist_ok=True)
+    existing = ""
+    if JOURNAL_FILE.exists():
+        existing = JOURNAL_FILE.read_text(encoding="utf-8")
+    if entry in existing:
+        return
     with JOURNAL_FILE.open("a", encoding="utf-8") as fh:
         fh.write(entry + "\n")
 
@@ -129,20 +135,23 @@ def analyze() -> None:
     todo_lines = ["| ID | File | Line | Text |", "|---|---|---|---|"]
     for i, (path, text, line_no, digest) in enumerate(todo_rows, 1):
         tid = f"T{i:04d}-{digest[:4]}"
-        todo_lines.append(f"| {tid} | {path} | {line_no} | {text.replace('|', '\|')} |")
+        todo_lines.append(f"| {tid} | {path} | {line_no} | {text.replace('|', '\\\\|')} |")
     write_file(OUT_DIR / "todo_index.md", "\n".join(todo_lines) + "\n")
 
-    seen: Dict[str, Tuple[str, str, int, int]] = {}
     dup_lines = ["# Potential duplicate sections\n"]
+    seen: Dict[str, Tuple[str, str, int, int]] = {}
     for norm, path, title, start, end in sections:
         if not norm.strip():
             continue
-        h = hash_text(norm)
-        if h in seen:
-            a = seen[h]
-            dup_lines.append(f"- {a[0]}#L{a[2]}-L{a[3]} <-> {path}#L{start}-L{end} ({title})")
-        else:
-            seen[h] = (path, title, start, end)
+        key = norm[:100]
+        if key in seen:
+            norm2, path2, title2, start2, end2 = seen[key]
+            if SequenceMatcher(None, norm, norm2).ratio() >= 0.88:
+                dup_lines.append(
+                    f"- {path2}#L{start2}-L{end2} ({title2}) <-> {path}#L{start}-L{end} ({title})"
+                )
+                continue
+        seen[key] = (norm, path, title, start, end)
     write_file(OUT_DIR / "duplicates_report.md", "\n".join(dup_lines) + "\n")
 
     check_broken_links()

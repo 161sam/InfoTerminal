@@ -6,7 +6,7 @@
 | T0004-0877 | docs/TODO-Index.md | 1 | # TODO-Index |
 | T0005-eebd | docs/release-checklist-v0.1.md | 10 | - [ ] Alle **PRs gemergt** (Security, Tests, dbt, Pipelines, Observability, Docs). |
 | T0006-6c05 | docs/release-checklist-v0.1.md | 11 | - [ ] **Conftest/OPA Policies** laufen sauber (`make ci-policy`). |
-| T0007-7b3c | docs/release-checklist-v0.1.md | 12 | - [ ] **Secrets entfernt** aus Manifests/Code (`grep -R "password" infra/ services/ \| grep -v example` → leer). |
+| T0007-7b3c | docs/release-checklist-v0.1.md | 12 | - [ ] **Secrets entfernt** aus Manifests/Code (`grep -R "password" infra/ services/ \\| grep -v example` → leer). |
 | T0008-1054 | docs/release-checklist-v0.1.md | 13 | - [ ] **ExternalSecrets** konfiguriert für DBs, Keycloak, OAuth-Proxy. |
 | T0009-eca0 | docs/release-checklist-v0.1.md | 14 | - [ ] **Ingress TLS** aktiv (cert-manager, staging Issuer OK). |
 | T0010-32fc | docs/release-checklist-v0.1.md | 15 | - [ ] Optional: **mTLS Overlay** dokumentiert (falls Mesh aktiv). |
@@ -51,61 +51,61 @@
 | T0049-b6c0 | docs/release-checklist-v0.1.md | 105 | - [ ] **Release Notes** erstellt (Features, Breaking Changes, Known Issues). |
 | T0050-bac8 | docs/release-checklist-v0.1.md | 106 | - [ ] **Tag v0.1.0** gesetzt und Release publiziert. |
 | T0051-3445 | docs/release-checklist-v0.1.md | 107 | - [ ] Dokumentation zur Installation/Exploration angehängt. |
-| T0052-974f | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 443 | ### **TODO-Index Ergänzung (neuer Abschnitt)** |
-| T0053-5eb5 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 445 | > füge ans Ende von `docs/TODO-Index.md` hinzu: |
-| T0054-b2e9 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 449 | - [ ] **[FLOWISE-1]** Flowise Deployment (Container, OIDC via Agent-Gateway) |
-| T0055-8199 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 450 | - [ ] **[FLOWISE-2]** Agent-Gateway (Auth, RBAC, Rate-Limit, Audit, Vault) |
-| T0056-d7da | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 451 | - [ ] **[FLOWISE-3]** Tool-Adapter v1 (search, graph, rag) |
-| T0057-4c75 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 452 | - [ ] **[FLOWISE-4]** Agent-Registry (PG + YAML Sign + API) |
-| T0058-c3ee | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 453 | - [ ] **[FLOWISE-5]** Starter-Agents (Research, Graph, Dossier) |
-| T0059-3482 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 454 | - [ ] **[FLOWISE-6]** n8n Node `Run Flowise Agent` |
-| T0060-a491 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 455 | - [ ] **[FLOWISE-7]** NiFi Processor `InvokeFlowiseAgent` |
-| T0061-2479 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 456 | - [ ] **[FLOWISE-8]** Tool-Adapter v2 (verify, geo, forensics) |
-| T0062-9c7e | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 457 | - [ ] **[FLOWISE-9]** Security Policies (OPA Rego + Sandbox Profiles) |
-| T0063-ed8f | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 458 | - [ ] **[FLOWISE-10]** Preset Wiring (default_agents) |
-| T0064-5f86 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 459 | - [ ] **[FLOWISE-11]** Eval Suites + CI Scorer |
-| T0065-be8b | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 460 | - [ ] **[FLOWISE-12]** Meta-Planner Agent (v1.0) |
-| T0066-350c | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 461 | - [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts |
-| T0067-6bfd | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 462 | - [ ] **[FLOWISE-14]** Canary & Rollback Mechanik |
-| T0068-e8f4 | docs/blueprints/SECURITY-BLUEPRINT.md | 120 | ## ✅ Tickets (Erweiterung zum TODO-Index) |
-| T0069-d4ba | docs/blueprints/VERIFICATION-BLUEPRINT.md | 171 | # 🧩 Tickets (zum Ergänzen deines TODO-Index) |
-| T0070-a03b | docs/blueprints/VERIFICATION-BLUEPRINT.md | 504 | ## ✅ Tickets (zum TODO-Index ergänzen) |
-| T0071-071f | docs/presets/Presets(Profile).md | 303 | # Umsetzung: Tickets (zum Master TODO-Index ergänzen) |
-| T0072-65cf | docs/export/AFFINE.md | 189 | ### **TODO-Index – Ergänzungen** |
-| T0073-23b5 | docs/export/AFFINE.md | 191 | > Hänge diesen Block an `docs/TODO-Index.md` an. |
-| T0074-d4c0 | docs/export/AFFINE.md | 195 | - [ ] **[EXPORT-1]** Bundle-Builder (md + assets + meta/export.json) |
-| T0075-1551 | docs/export/AFFINE.md | 196 | - [ ] **[EXPORT-2]** Graph-Exporter (mermaid.mmd, dot, svg) |
-| T0076-66f7 | docs/export/AFFINE.md | 197 | - [ ] **[EXPORT-3]** Canvas-Exporter (excalidraw.json) |
-| T0077-35bc | docs/export/AFFINE.md | 198 | - [ ] **[EXPORT-4]** Geo-Exporter (geojson + map.png/svg) |
-| T0078-f628 | docs/export/AFFINE.md | 199 | - [ ] **[APPFLOWY-1]** AppFlowy Adapter – Watched Folder |
-| T0079-dafa | docs/export/AFFINE.md | 200 | - [ ] **[APPFLOWY-2]** AppFlowy Adapter – API Mode (optional) |
-| T0080-52af | docs/export/AFFINE.md | 201 | - [ ] **[AFFINE-1]** AFFiNE Adapter – Watched Folder + Edgeless Import |
-| T0081-33b2 | docs/export/AFFINE.md | 202 | - [ ] **[AFFINE-2]** AFFiNE Adapter – API Mode (optional) |
-| T0082-5e0d | docs/export/AFFINE.md | 203 | - [ ] **[FE-EXPORT-1]** Frontend Export-Dialog (Targets + Formate) |
-| T0083-bb2c | docs/export/AFFINE.md | 204 | - [ ] **[CLI-EXP-1]** CLI `it export dossier/graph/canvas` |
-| T0084-678e | docs/export/AFFINE.md | 205 | - [ ] **[N8N-EXP-1]** n8n Nodes `export_to_appflowy` / `export_to_affine` |
-| T0085-414d | docs/export/AFFINE.md | 206 | - [ ] **[POLICY-EXP-1]** OPA-Regeln (classification gates) |
-| T0086-6936 | docs/export/AFFINE.md | 207 | - [ ] **[VAULT-EXP-1]** Secrets Handling für Adapter-APIs |
-| T0087-f262 | docs/export/AFFINE.md | 208 | - [ ] **[QA-EXP-1]** Golden Bundle Tests |
-| T0088-63db | docs/export/AFFINE.md | 209 | - [ ] **[QA-EXP-2]** Roundtrip Import Tests |
-| T0089-9923 | docs/dev/Checkliste.md | 10 | Weitere Details siehe `TODO-Index.md`. |
-| T0090-a178 | docs/dev/README.md | 429 | # TODO: filter by OPA decision (resource tags vs user attributes) |
-| T0091-9add | docs/dev/SECURITY-BLUEPRINT.md | 120 | ## ✅ Tickets (Erweiterung zum TODO-Index) |
-| T0092-a02a | docs/dev/VERIFICATION-BLUEPRINT.md | 360 | ## ✅ Tickets (zum TODO-Index ergänzen) |
-| T0093-38a5 | docs/dev/frontend_modernization_guide.md | 205 | - [ ] Design System implementiert |
-| T0094-8f4a | docs/dev/frontend_modernization_guide.md | 206 | - [ ] Layout System eingerichtet |
-| T0095-064f | docs/dev/frontend_modernization_guide.md | 207 | - [ ] Komponenten modernisiert |
-| T0096-f94f | docs/dev/frontend_modernization_guide.md | 208 | - [ ] Responsive Design getestet |
-| T0097-0d03 | docs/dev/frontend_modernization_guide.md | 209 | - [ ] Performance optimiert |
-| T0098-599d | docs/dev/frontend_modernization_guide.md | 210 | - [ ] Tests aktualisiert |
-| T0099-df6d | docs/dev/frontend_modernization_guide.md | 211 | - [ ] Accessibility geprüft |
-| T0100-e4bc | docs/dev/frontend_modernization_guide.md | 212 | - [ ] Cross-Browser Tests |
-| T0101-eb76 | docs/dev/frontend_modernization_guide.md | 213 | - [ ] Mobile Experience validiert |
-| T0102-8937 | docs/dev/frontend_modernization_guide.md | 214 | - [ ] Documentation aktualisiert |
-| T0103-f92e | docs/dev/superset-nifi-flowise.md | 184 | - [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern |
-| T0104-bf72 | docs/dev/superset-nifi-flowise.md | 185 | - [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar |
-| T0105-0b79 | docs/dev/superset-nifi-flowise.md | 186 | - [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv |
-| T0106-c015 | docs/dev/superset-nifi-flowise.md | 187 | - [ ] **Smoke Tests**: |
+| T0052-65cf | docs/export/AFFINE.md | 189 | ### **TODO-Index – Ergänzungen** |
+| T0053-23b5 | docs/export/AFFINE.md | 191 | > Hänge diesen Block an `docs/TODO-Index.md` an. |
+| T0054-d4c0 | docs/export/AFFINE.md | 195 | - [ ] **[EXPORT-1]** Bundle-Builder (md + assets + meta/export.json) |
+| T0055-1551 | docs/export/AFFINE.md | 196 | - [ ] **[EXPORT-2]** Graph-Exporter (mermaid.mmd, dot, svg) |
+| T0056-66f7 | docs/export/AFFINE.md | 197 | - [ ] **[EXPORT-3]** Canvas-Exporter (excalidraw.json) |
+| T0057-35bc | docs/export/AFFINE.md | 198 | - [ ] **[EXPORT-4]** Geo-Exporter (geojson + map.png/svg) |
+| T0058-f628 | docs/export/AFFINE.md | 199 | - [ ] **[APPFLOWY-1]** AppFlowy Adapter – Watched Folder |
+| T0059-dafa | docs/export/AFFINE.md | 200 | - [ ] **[APPFLOWY-2]** AppFlowy Adapter – API Mode (optional) |
+| T0060-52af | docs/export/AFFINE.md | 201 | - [ ] **[AFFINE-1]** AFFiNE Adapter – Watched Folder + Edgeless Import |
+| T0061-33b2 | docs/export/AFFINE.md | 202 | - [ ] **[AFFINE-2]** AFFiNE Adapter – API Mode (optional) |
+| T0062-5e0d | docs/export/AFFINE.md | 203 | - [ ] **[FE-EXPORT-1]** Frontend Export-Dialog (Targets + Formate) |
+| T0063-bb2c | docs/export/AFFINE.md | 204 | - [ ] **[CLI-EXP-1]** CLI `it export dossier/graph/canvas` |
+| T0064-678e | docs/export/AFFINE.md | 205 | - [ ] **[N8N-EXP-1]** n8n Nodes `export_to_appflowy` / `export_to_affine` |
+| T0065-414d | docs/export/AFFINE.md | 206 | - [ ] **[POLICY-EXP-1]** OPA-Regeln (classification gates) |
+| T0066-6936 | docs/export/AFFINE.md | 207 | - [ ] **[VAULT-EXP-1]** Secrets Handling für Adapter-APIs |
+| T0067-f262 | docs/export/AFFINE.md | 208 | - [ ] **[QA-EXP-1]** Golden Bundle Tests |
+| T0068-63db | docs/export/AFFINE.md | 209 | - [ ] **[QA-EXP-2]** Roundtrip Import Tests |
+| T0069-d5d2 | docs/waveterm/README.md | 388 | ### **TODO-Index – Ergänzung** |
+| T0070-4704 | docs/waveterm/README.md | 390 | > Hänge an `docs/TODO-Index.md` an: |
+| T0071-5f70 | docs/waveterm/README.md | 394 | - [ ] **[WT-EMBED-1]** Webview Tab `/terminal` + SSO (OIDC) |
+| T0072-9759 | docs/waveterm/README.md | 395 | - [ ] **[WT-EMBED-2]** Profiles Loader (journalism/compliance/crisis/…) |
+| T0073-929c | docs/waveterm/README.md | 396 | - [ ] **[WT-EMBED-3]** “Send to WaveTerm” Actions (+context payload) |
+| T0074-b9f3 | docs/waveterm/README.md | 397 | - [ ] **[WT-EMBED-4]** Session Recording → Dossier Appendix |
+| T0075-6730 | docs/waveterm/README.md | 398 | - [ ] **[WT-PLUGIN-1]** WaveTerm Plugin Manifest (`it` commands, panels) |
+| T0076-4a48 | docs/waveterm/README.md | 399 | - [ ] **[WT-PLUGIN-2]** Dossier/Graph Previews (MD/SVG) |
+| T0077-e18e | docs/waveterm/README.md | 400 | - [ ] **[WT-PLUGIN-3]** Command Palettes & Snippets |
+| T0078-6f2a | docs/waveterm/README.md | 401 | - [ ] **[WT-JOBS-1]** `/api/jobs` (queue, artifacts) |
+| T0079-3758 | docs/waveterm/README.md | 402 | - [ ] **[WT-JOBS-2]** n8n Node `waveterm.run` |
+| T0080-6246 | docs/waveterm/README.md | 403 | - [ ] **[WT-JOBS-3]** NiFi Processor `WaveTermInvoker` |
+| T0081-179c | docs/waveterm/README.md | 404 | - [ ] **[WT-SEC-1]** gVisor/Kata runtime + default no-net |
+| T0082-b2c8 | docs/waveterm/README.md | 405 | - [ ] **[WT-SEC-2]** OPA policies (tool allowlist, export gates) |
+| T0083-f4c5 | docs/waveterm/README.md | 406 | - [ ] **[WT-SEC-3]** Vault tokens (short-lived) for CLI/API |
+| T0084-bbf5 | docs/waveterm/README.md | 407 | - [ ] **[WT-DOC-1]** `docs/waveterm/README.md` (Setup, Profiles, Safety) |
+| T0085-b6f6 | docs/waveterm/README.md | 408 | - [ ] **[WT-DOC-2]** `docs/waveterm/presets/*.yaml` Beispiele |
+| T0086-3430 | docs/waveterm/README.md | 409 | - [ ] **[WT-DOC-3]** `docs/api/jobs.md` Spezifikation |
+| T0087-9923 | docs/dev/Checkliste.md | 10 | Weitere Details siehe `TODO-Index.md`. |
+| T0088-a178 | docs/dev/README.md | 429 | # TODO: filter by OPA decision (resource tags vs user attributes) |
+| T0089-9add | docs/dev/SECURITY-BLUEPRINT.md | 120 | ## ✅ Tickets (Erweiterung zum TODO-Index) |
+| T0090-a02a | docs/dev/VERIFICATION-BLUEPRINT.md | 360 | ## ✅ Tickets (zum TODO-Index ergänzen) |
+| T0091-38a5 | docs/dev/frontend_modernization_guide.md | 205 | - [ ] Design System implementiert |
+| T0092-8f4a | docs/dev/frontend_modernization_guide.md | 206 | - [ ] Layout System eingerichtet |
+| T0093-064f | docs/dev/frontend_modernization_guide.md | 207 | - [ ] Komponenten modernisiert |
+| T0094-f94f | docs/dev/frontend_modernization_guide.md | 208 | - [ ] Responsive Design getestet |
+| T0095-0d03 | docs/dev/frontend_modernization_guide.md | 209 | - [ ] Performance optimiert |
+| T0096-599d | docs/dev/frontend_modernization_guide.md | 210 | - [ ] Tests aktualisiert |
+| T0097-df6d | docs/dev/frontend_modernization_guide.md | 211 | - [ ] Accessibility geprüft |
+| T0098-e4bc | docs/dev/frontend_modernization_guide.md | 212 | - [ ] Cross-Browser Tests |
+| T0099-eb76 | docs/dev/frontend_modernization_guide.md | 213 | - [ ] Mobile Experience validiert |
+| T0100-8937 | docs/dev/frontend_modernization_guide.md | 214 | - [ ] Documentation aktualisiert |
+| T0101-f92e | docs/dev/superset-nifi-flowise.md | 184 | - [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern |
+| T0102-bf72 | docs/dev/superset-nifi-flowise.md | 185 | - [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar |
+| T0103-0b79 | docs/dev/superset-nifi-flowise.md | 186 | - [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv |
+| T0104-c015 | docs/dev/superset-nifi-flowise.md | 187 | - [ ] **Smoke Tests**: |
+| T0105-6588 | docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md | 73 | * `WORK-ON-new_docs/out/todo_index.md` (alle Checkboxen `- [ ]`/`- [x]`/nummerierte, plus `TODO:`/`FIXME:`/`NOTE:`; **mit IDs T####-hash, Datei, Zeile, Text**) |
+| T0106-e28e | docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md | 256 | * **Alle** TODOs (Checkboxen + TODO/FIXME/NOTE) in `todo_index.md` mit **IDs + Quelle+Zeile**. |
 | T0107-49f1 | docs/dev/v0.2/Datenquellen-Cluster.md | 89 | TODO: **Feature-Pakete** schnüren (z. B. „Media Sources Pack“, „Threat Intel Pack“), die direkt in die Roadmap (0.3/0.5) integriert werden können! |
 | T0108-32c8 | docs/dev/v0.2/FlowiseAI-Agents-integration.md | 186 | ## 📋 Tickets (zum TODO-Index hinzufügen) |
 | T0109-b2f3 | docs/dev/v0.2/FlowiseAI-Agents-integration.md | 233 | ## TODO: |
@@ -161,7 +161,7 @@
 | T0159-6703 | docs/dev/v0.2/TODO-Index.md | 68 | - [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate) |
 | T0160-83fe | docs/dev/v0.2/TODO-Index.md | 69 | - [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review) |
 | T0161-2296 | docs/dev/v0.2/TODO-Index.md | 72 | - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs) |
-| T0162-0711 | docs/dev/v0.2/TODO-Index.md | 73 | - [ ] **[CLI-2]** Export Command (`it export [graph\|search\|dossier]`) |
+| T0162-0711 | docs/dev/v0.2/TODO-Index.md | 73 | - [ ] **[CLI-2]** Export Command (`it export [graph\\|search\\|dossier]`) |
 | T0163-bb75 | docs/dev/v0.2/TODO-Index.md | 74 | - [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`) |
 | T0164-b21c | docs/dev/v0.2/TODO-Index.md | 75 | - [ ] **[CLI-4]** Auth Command (`it login --oidc`) |
 | T0165-858d | docs/dev/v0.2/TODO-Index.md | 76 | - [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table) |
@@ -240,7 +240,7 @@
 | T0238-7ca5 | docs/dev/v0.2/Ticket-Checkliste.md | 63 | - [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot) |
 | T0239-0356 | docs/dev/v0.2/Ticket-Checkliste.md | 64 | - [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph) |
 | T0240-212d | docs/dev/v0.2/Ticket-Checkliste.md | 67 | - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs) |
-| T0241-31f1 | docs/dev/v0.2/Ticket-Checkliste.md | 68 | - [ ] **[CLI-2]** Export Command (`it export [graph\|search\|dossier]`) |
+| T0241-31f1 | docs/dev/v0.2/Ticket-Checkliste.md | 68 | - [ ] **[CLI-2]** Export Command (`it export [graph\\|search\\|dossier]`) |
 | T0242-4657 | docs/dev/v0.2/Ticket-Checkliste.md | 69 | - [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`) |
 | T0243-cddb | docs/dev/v0.2/Ticket-Checkliste.md | 70 | - [ ] **[CLI-4]** Auth Command (`it login --oidc`) |
 | T0244-f7bd | docs/dev/v0.2/Ticket-Checkliste.md | 71 | - [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table) |
@@ -298,7 +298,7 @@
 | T0296-7ca1 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 68 | - [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate) |
 | T0297-1981 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 69 | - [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review) |
 | T0298-1576 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 72 | - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs) |
-| T0299-68c4 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 73 | - [ ] **[CLI-2]** Export Command (`it export [graph\|search\|dossier]`) |
+| T0299-68c4 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 73 | - [ ] **[CLI-2]** Export Command (`it export [graph\\|search\\|dossier]`) |
 | T0300-8604 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 74 | - [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`) |
 | T0301-c399 | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 75 | - [ ] **[CLI-4]** Auth Command (`it login --oidc`) |
 | T0302-106b | docs/dev/v0.2/v0.3+/Master-TODO-Index.md | 76 | - [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table) |
@@ -427,75 +427,75 @@
 | T0425-abac | docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md | 7 | - [ ] **[CLI-WT-5]** Vault-/Token-Handling für WaveTerm-Kommandos |
 | T0426-b3ad | docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md | 8 | - [ ] **[CLI-WT-6]** OPA-Policies für WaveTerm-CLI-Befehle |
 | T0427-829b | docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md | 9 | - [ ] **[CLI-WT-7]** Roundtrip-Tests (CLI → WaveTerm → Artefakte → Dossier) |
-| T0428-6588 | docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md | 73 | * `WORK-ON-new_docs/out/todo_index.md` (alle Checkboxen `- [ ]`/`- [x]`/nummerierte, plus `TODO:`/`FIXME:`/`NOTE:`; **mit IDs T####-hash, Datei, Zeile, Text**) |
-| T0429-e28e | docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md | 256 | * **Alle** TODOs (Checkboxen + TODO/FIXME/NOTE) in `todo_index.md` mit **IDs + Quelle+Zeile**. |
-| T0430-f3b4 | docs/dev/guides/frontend-modernization-setup-guide.md | 282 | - [ ] **Desktop Navigation** - Sidebar funktioniert |
-| T0431-c2f8 | docs/dev/guides/frontend-modernization-setup-guide.md | 283 | - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs |
-| T0432-0b66 | docs/dev/guides/frontend-modernization-setup-guide.md | 284 | - [ ] **Dark/Light Mode** - Toggle funktioniert |
-| T0433-4c7a | docs/dev/guides/frontend-modernization-setup-guide.md | 285 | - [ ] **Command Palette** - Cmd+K öffnet Palette |
-| T0434-f285 | docs/dev/guides/frontend-modernization-setup-guide.md | 286 | - [ ] **Search Functionality** - Faceted Search + Results |
-| T0435-a6b7 | docs/dev/guides/frontend-modernization-setup-guide.md | 287 | - [ ] **Form Validation** - Error States + Success |
-| T0436-1f4d | docs/dev/guides/frontend-modernization-setup-guide.md | 288 | - [ ] **Real-time Updates** - WebSocket Connection |
-| T0437-799d | docs/dev/guides/frontend-modernization-setup-guide.md | 289 | - [ ] **Notifications** - Toast Messages |
-| T0438-5cbe | docs/dev/guides/frontend-modernization-setup-guide.md | 290 | - [ ] **Charts** - Interactive Visualizations |
-| T0439-ea16 | docs/dev/guides/frontend-modernization-setup-guide.md | 291 | - [ ] **Data Tables** - Sorting + Filtering + Pagination |
-| T0440-8209 | docs/dev/guides/frontend-modernization-setup-guide.md | 292 | - [ ] **Authentication** - Login/Logout Flow |
-| T0441-c63d | docs/dev/guides/frontend-modernization-setup-guide.md | 316 | - [ ] **Bundle Size** < 500KB gzipped |
-| T0442-a237 | docs/dev/guides/frontend-modernization-setup-guide.md | 317 | - [ ] **First Contentful Paint** < 1.8s |
-| T0443-ca4c | docs/dev/guides/frontend-modernization-setup-guide.md | 318 | - [ ] **Largest Contentful Paint** < 2.5s |
-| T0444-ef27 | docs/dev/guides/frontend-modernization-setup-guide.md | 319 | - [ ] **Cumulative Layout Shift** < 0.1 |
-| T0445-7b81 | docs/dev/guides/frontend-modernization-setup-guide.md | 320 | - [ ] **First Input Delay** < 100ms |
-| T0446-873d | docs/dev/guides/frontend-modernization-setup-guide.md | 450 | - [ ] **Alle Tests bestanden** |
-| T0447-ecba | docs/dev/guides/frontend-modernization-setup-guide.md | 451 | - [ ] **Performance Benchmarks erreicht** |
-| T0448-ef04 | docs/dev/guides/frontend-modernization-setup-guide.md | 452 | - [ ] **Mobile Testing abgeschlossen** |
-| T0449-1f29 | docs/dev/guides/frontend-modernization-setup-guide.md | 453 | - [ ] **Accessibility validiert** (WCAG 2.1) |
-| T0450-9db3 | docs/dev/guides/frontend-modernization-setup-guide.md | 454 | - [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge) |
-| T0451-ef3a | docs/dev/guides/frontend-modernization-setup-guide.md | 455 | - [ ] **User Acceptance Testing** abgeschlossen |
-| T0452-840b | docs/dev/guides/frontend-modernization-setup-guide.md | 456 | - [ ] **Documentation aktualisiert** |
-| T0453-b72a | docs/dev/guides/frontend-modernization-setup-guide.md | 457 | - [ ] **Deployment Pipeline getestet** |
-| T0454-a573 | docs/dev/guides/frontend-modernization-setup-guide.md | 458 | - [ ] **Monitoring Setup** aktiv |
-| T0455-6e20 | docs/dev/guides/frontend-modernization-setup-guide.md | 459 | - [ ] **Rollback Plan** definiert |
-| T0456-077a | docs/dev/guides/frontend-modernization.md | 293 | - [ ] **Desktop Navigation** - Sidebar funktioniert |
-| T0457-efe0 | docs/dev/guides/frontend-modernization.md | 294 | - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs |
-| T0458-062c | docs/dev/guides/frontend-modernization.md | 295 | - [ ] **Dark/Light Mode** - Toggle funktioniert |
-| T0459-6d5f | docs/dev/guides/frontend-modernization.md | 296 | - [ ] **Command Palette** - Cmd+K öffnet Palette |
-| T0460-7013 | docs/dev/guides/frontend-modernization.md | 297 | - [ ] **Search Functionality** - Faceted Search + Results |
-| T0461-d006 | docs/dev/guides/frontend-modernization.md | 298 | - [ ] **Form Validation** - Error States + Success |
-| T0462-4533 | docs/dev/guides/frontend-modernization.md | 299 | - [ ] **Real-time Updates** - WebSocket Connection |
-| T0463-fc4b | docs/dev/guides/frontend-modernization.md | 300 | - [ ] **Notifications** - Toast Messages |
-| T0464-799e | docs/dev/guides/frontend-modernization.md | 301 | - [ ] **Charts** - Interactive Visualizations |
-| T0465-2225 | docs/dev/guides/frontend-modernization.md | 302 | - [ ] **Data Tables** - Sorting + Filtering + Pagination |
-| T0466-56b4 | docs/dev/guides/frontend-modernization.md | 303 | - [ ] **Authentication** - Login/Logout Flow |
-| T0467-8bcb | docs/dev/guides/frontend-modernization.md | 327 | - [ ] **Bundle Size** < 500KB gzipped |
-| T0468-78a4 | docs/dev/guides/frontend-modernization.md | 328 | - [ ] **First Contentful Paint** < 1.8s |
-| T0469-5b5b | docs/dev/guides/frontend-modernization.md | 329 | - [ ] **Largest Contentful Paint** < 2.5s |
-| T0470-aa01 | docs/dev/guides/frontend-modernization.md | 330 | - [ ] **Cumulative Layout Shift** < 0.1 |
-| T0471-dddb | docs/dev/guides/frontend-modernization.md | 331 | - [ ] **First Input Delay** < 100ms |
-| T0472-5cea | docs/dev/guides/frontend-modernization.md | 461 | - [ ] **Alle Tests bestanden** |
-| T0473-ddcd | docs/dev/guides/frontend-modernization.md | 462 | - [ ] **Performance Benchmarks erreicht** |
-| T0474-9ff6 | docs/dev/guides/frontend-modernization.md | 463 | - [ ] **Mobile Testing abgeschlossen** |
-| T0475-98f3 | docs/dev/guides/frontend-modernization.md | 464 | - [ ] **Accessibility validiert** (WCAG 2.1) |
-| T0476-7f72 | docs/dev/guides/frontend-modernization.md | 465 | - [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge) |
-| T0477-019f | docs/dev/guides/frontend-modernization.md | 466 | - [ ] **User Acceptance Testing** abgeschlossen |
-| T0478-62f0 | docs/dev/guides/frontend-modernization.md | 467 | - [ ] **Documentation aktualisiert** |
-| T0479-34a3 | docs/dev/guides/frontend-modernization.md | 468 | - [ ] **Deployment Pipeline getestet** |
-| T0480-591e | docs/dev/guides/frontend-modernization.md | 469 | - [ ] **Monitoring Setup** aktiv |
-| T0481-4872 | docs/dev/guides/frontend-modernization.md | 470 | - [ ] **Rollback Plan** definiert |
-| T0482-d5d2 | docs/waveterm/README.md | 388 | ### **TODO-Index – Ergänzung** |
-| T0483-4704 | docs/waveterm/README.md | 390 | > Hänge an `docs/TODO-Index.md` an: |
-| T0484-5f70 | docs/waveterm/README.md | 394 | - [ ] **[WT-EMBED-1]** Webview Tab `/terminal` + SSO (OIDC) |
-| T0485-9759 | docs/waveterm/README.md | 395 | - [ ] **[WT-EMBED-2]** Profiles Loader (journalism/compliance/crisis/…) |
-| T0486-929c | docs/waveterm/README.md | 396 | - [ ] **[WT-EMBED-3]** “Send to WaveTerm” Actions (+context payload) |
-| T0487-b9f3 | docs/waveterm/README.md | 397 | - [ ] **[WT-EMBED-4]** Session Recording → Dossier Appendix |
-| T0488-6730 | docs/waveterm/README.md | 398 | - [ ] **[WT-PLUGIN-1]** WaveTerm Plugin Manifest (`it` commands, panels) |
-| T0489-4a48 | docs/waveterm/README.md | 399 | - [ ] **[WT-PLUGIN-2]** Dossier/Graph Previews (MD/SVG) |
-| T0490-e18e | docs/waveterm/README.md | 400 | - [ ] **[WT-PLUGIN-3]** Command Palettes & Snippets |
-| T0491-6f2a | docs/waveterm/README.md | 401 | - [ ] **[WT-JOBS-1]** `/api/jobs` (queue, artifacts) |
-| T0492-3758 | docs/waveterm/README.md | 402 | - [ ] **[WT-JOBS-2]** n8n Node `waveterm.run` |
-| T0493-6246 | docs/waveterm/README.md | 403 | - [ ] **[WT-JOBS-3]** NiFi Processor `WaveTermInvoker` |
-| T0494-179c | docs/waveterm/README.md | 404 | - [ ] **[WT-SEC-1]** gVisor/Kata runtime + default no-net |
-| T0495-b2c8 | docs/waveterm/README.md | 405 | - [ ] **[WT-SEC-2]** OPA policies (tool allowlist, export gates) |
-| T0496-f4c5 | docs/waveterm/README.md | 406 | - [ ] **[WT-SEC-3]** Vault tokens (short-lived) for CLI/API |
-| T0497-bbf5 | docs/waveterm/README.md | 407 | - [ ] **[WT-DOC-1]** `docs/waveterm/README.md` (Setup, Profiles, Safety) |
-| T0498-b6f6 | docs/waveterm/README.md | 408 | - [ ] **[WT-DOC-2]** `docs/waveterm/presets/*.yaml` Beispiele |
-| T0499-3430 | docs/waveterm/README.md | 409 | - [ ] **[WT-DOC-3]** `docs/api/jobs.md` Spezifikation |
+| T0428-f3b4 | docs/dev/guides/frontend-modernization-setup-guide.md | 282 | - [ ] **Desktop Navigation** - Sidebar funktioniert |
+| T0429-c2f8 | docs/dev/guides/frontend-modernization-setup-guide.md | 283 | - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs |
+| T0430-0b66 | docs/dev/guides/frontend-modernization-setup-guide.md | 284 | - [ ] **Dark/Light Mode** - Toggle funktioniert |
+| T0431-4c7a | docs/dev/guides/frontend-modernization-setup-guide.md | 285 | - [ ] **Command Palette** - Cmd+K öffnet Palette |
+| T0432-f285 | docs/dev/guides/frontend-modernization-setup-guide.md | 286 | - [ ] **Search Functionality** - Faceted Search + Results |
+| T0433-a6b7 | docs/dev/guides/frontend-modernization-setup-guide.md | 287 | - [ ] **Form Validation** - Error States + Success |
+| T0434-1f4d | docs/dev/guides/frontend-modernization-setup-guide.md | 288 | - [ ] **Real-time Updates** - WebSocket Connection |
+| T0435-799d | docs/dev/guides/frontend-modernization-setup-guide.md | 289 | - [ ] **Notifications** - Toast Messages |
+| T0436-5cbe | docs/dev/guides/frontend-modernization-setup-guide.md | 290 | - [ ] **Charts** - Interactive Visualizations |
+| T0437-ea16 | docs/dev/guides/frontend-modernization-setup-guide.md | 291 | - [ ] **Data Tables** - Sorting + Filtering + Pagination |
+| T0438-8209 | docs/dev/guides/frontend-modernization-setup-guide.md | 292 | - [ ] **Authentication** - Login/Logout Flow |
+| T0439-c63d | docs/dev/guides/frontend-modernization-setup-guide.md | 316 | - [ ] **Bundle Size** < 500KB gzipped |
+| T0440-a237 | docs/dev/guides/frontend-modernization-setup-guide.md | 317 | - [ ] **First Contentful Paint** < 1.8s |
+| T0441-ca4c | docs/dev/guides/frontend-modernization-setup-guide.md | 318 | - [ ] **Largest Contentful Paint** < 2.5s |
+| T0442-ef27 | docs/dev/guides/frontend-modernization-setup-guide.md | 319 | - [ ] **Cumulative Layout Shift** < 0.1 |
+| T0443-7b81 | docs/dev/guides/frontend-modernization-setup-guide.md | 320 | - [ ] **First Input Delay** < 100ms |
+| T0444-873d | docs/dev/guides/frontend-modernization-setup-guide.md | 450 | - [ ] **Alle Tests bestanden** |
+| T0445-ecba | docs/dev/guides/frontend-modernization-setup-guide.md | 451 | - [ ] **Performance Benchmarks erreicht** |
+| T0446-ef04 | docs/dev/guides/frontend-modernization-setup-guide.md | 452 | - [ ] **Mobile Testing abgeschlossen** |
+| T0447-1f29 | docs/dev/guides/frontend-modernization-setup-guide.md | 453 | - [ ] **Accessibility validiert** (WCAG 2.1) |
+| T0448-9db3 | docs/dev/guides/frontend-modernization-setup-guide.md | 454 | - [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge) |
+| T0449-ef3a | docs/dev/guides/frontend-modernization-setup-guide.md | 455 | - [ ] **User Acceptance Testing** abgeschlossen |
+| T0450-840b | docs/dev/guides/frontend-modernization-setup-guide.md | 456 | - [ ] **Documentation aktualisiert** |
+| T0451-b72a | docs/dev/guides/frontend-modernization-setup-guide.md | 457 | - [ ] **Deployment Pipeline getestet** |
+| T0452-a573 | docs/dev/guides/frontend-modernization-setup-guide.md | 458 | - [ ] **Monitoring Setup** aktiv |
+| T0453-6e20 | docs/dev/guides/frontend-modernization-setup-guide.md | 459 | - [ ] **Rollback Plan** definiert |
+| T0454-077a | docs/dev/guides/frontend-modernization.md | 293 | - [ ] **Desktop Navigation** - Sidebar funktioniert |
+| T0455-efe0 | docs/dev/guides/frontend-modernization.md | 294 | - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs |
+| T0456-062c | docs/dev/guides/frontend-modernization.md | 295 | - [ ] **Dark/Light Mode** - Toggle funktioniert |
+| T0457-6d5f | docs/dev/guides/frontend-modernization.md | 296 | - [ ] **Command Palette** - Cmd+K öffnet Palette |
+| T0458-7013 | docs/dev/guides/frontend-modernization.md | 297 | - [ ] **Search Functionality** - Faceted Search + Results |
+| T0459-d006 | docs/dev/guides/frontend-modernization.md | 298 | - [ ] **Form Validation** - Error States + Success |
+| T0460-4533 | docs/dev/guides/frontend-modernization.md | 299 | - [ ] **Real-time Updates** - WebSocket Connection |
+| T0461-fc4b | docs/dev/guides/frontend-modernization.md | 300 | - [ ] **Notifications** - Toast Messages |
+| T0462-799e | docs/dev/guides/frontend-modernization.md | 301 | - [ ] **Charts** - Interactive Visualizations |
+| T0463-2225 | docs/dev/guides/frontend-modernization.md | 302 | - [ ] **Data Tables** - Sorting + Filtering + Pagination |
+| T0464-56b4 | docs/dev/guides/frontend-modernization.md | 303 | - [ ] **Authentication** - Login/Logout Flow |
+| T0465-8bcb | docs/dev/guides/frontend-modernization.md | 327 | - [ ] **Bundle Size** < 500KB gzipped |
+| T0466-78a4 | docs/dev/guides/frontend-modernization.md | 328 | - [ ] **First Contentful Paint** < 1.8s |
+| T0467-5b5b | docs/dev/guides/frontend-modernization.md | 329 | - [ ] **Largest Contentful Paint** < 2.5s |
+| T0468-aa01 | docs/dev/guides/frontend-modernization.md | 330 | - [ ] **Cumulative Layout Shift** < 0.1 |
+| T0469-dddb | docs/dev/guides/frontend-modernization.md | 331 | - [ ] **First Input Delay** < 100ms |
+| T0470-5cea | docs/dev/guides/frontend-modernization.md | 461 | - [ ] **Alle Tests bestanden** |
+| T0471-ddcd | docs/dev/guides/frontend-modernization.md | 462 | - [ ] **Performance Benchmarks erreicht** |
+| T0472-9ff6 | docs/dev/guides/frontend-modernization.md | 463 | - [ ] **Mobile Testing abgeschlossen** |
+| T0473-98f3 | docs/dev/guides/frontend-modernization.md | 464 | - [ ] **Accessibility validiert** (WCAG 2.1) |
+| T0474-7f72 | docs/dev/guides/frontend-modernization.md | 465 | - [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge) |
+| T0475-019f | docs/dev/guides/frontend-modernization.md | 466 | - [ ] **User Acceptance Testing** abgeschlossen |
+| T0476-62f0 | docs/dev/guides/frontend-modernization.md | 467 | - [ ] **Documentation aktualisiert** |
+| T0477-34a3 | docs/dev/guides/frontend-modernization.md | 468 | - [ ] **Deployment Pipeline getestet** |
+| T0478-591e | docs/dev/guides/frontend-modernization.md | 469 | - [ ] **Monitoring Setup** aktiv |
+| T0479-4872 | docs/dev/guides/frontend-modernization.md | 470 | - [ ] **Rollback Plan** definiert |
+| T0480-974f | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 443 | ### **TODO-Index Ergänzung (neuer Abschnitt)** |
+| T0481-5eb5 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 445 | > füge ans Ende von `docs/TODO-Index.md` hinzu: |
+| T0482-b2e9 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 449 | - [ ] **[FLOWISE-1]** Flowise Deployment (Container, OIDC via Agent-Gateway) |
+| T0483-8199 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 450 | - [ ] **[FLOWISE-2]** Agent-Gateway (Auth, RBAC, Rate-Limit, Audit, Vault) |
+| T0484-d7da | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 451 | - [ ] **[FLOWISE-3]** Tool-Adapter v1 (search, graph, rag) |
+| T0485-4c75 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 452 | - [ ] **[FLOWISE-4]** Agent-Registry (PG + YAML Sign + API) |
+| T0486-c3ee | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 453 | - [ ] **[FLOWISE-5]** Starter-Agents (Research, Graph, Dossier) |
+| T0487-3482 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 454 | - [ ] **[FLOWISE-6]** n8n Node `Run Flowise Agent` |
+| T0488-a491 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 455 | - [ ] **[FLOWISE-7]** NiFi Processor `InvokeFlowiseAgent` |
+| T0489-2479 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 456 | - [ ] **[FLOWISE-8]** Tool-Adapter v2 (verify, geo, forensics) |
+| T0490-9c7e | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 457 | - [ ] **[FLOWISE-9]** Security Policies (OPA Rego + Sandbox Profiles) |
+| T0491-ed8f | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 458 | - [ ] **[FLOWISE-10]** Preset Wiring (default_agents) |
+| T0492-5f86 | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 459 | - [ ] **[FLOWISE-11]** Eval Suites + CI Scorer |
+| T0493-be8b | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 460 | - [ ] **[FLOWISE-12]** Meta-Planner Agent (v1.0) |
+| T0494-350c | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 461 | - [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts |
+| T0495-6bfd | docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md | 462 | - [ ] **[FLOWISE-14]** Canary & Rollback Mechanik |
+| T0496-e8f4 | docs/blueprints/SECURITY-BLUEPRINT.md | 120 | ## ✅ Tickets (Erweiterung zum TODO-Index) |
+| T0497-d4ba | docs/blueprints/VERIFICATION-BLUEPRINT.md | 171 | # 🧩 Tickets (zum Ergänzen deines TODO-Index) |
+| T0498-a03b | docs/blueprints/VERIFICATION-BLUEPRINT.md | 504 | ## ✅ Tickets (zum TODO-Index ergänzen) |
+| T0499-071f | docs/presets/Presets(Profile).md | 303 | # Umsetzung: Tickets (zum Master TODO-Index ergänzen) |
