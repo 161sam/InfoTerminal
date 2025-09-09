@@ -70,26 +70,24 @@
 - Tbbf5f486 docs/waveterm/README.md#L407: - [ ] **[WT-DOC-1]** `docs/waveterm/README.md` (Setup, Profiles, Safety)
 - Tb6f6d90d docs/waveterm/README.md#L408: - [ ] **[WT-DOC-2]** `docs/waveterm/presets/*.yaml` Beispiele
 - T34306263 docs/waveterm/README.md#L409: - [ ] **[WT-DOC-3]** `docs/api/jobs.md` Spezifikation
-- T974f7e75 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L443: ### **TODO-Index Ergänzung (neuer Abschnitt)**
-- T5eb5852d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L445: > füge ans Ende von `docs/TODO-Index.md` hinzu:
-- Tb2e9a387 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L449: - [ ] **[FLOWISE-1]** Flowise Deployment (Container, OIDC via Agent-Gateway)
-- T81994d8d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L450: - [ ] **[FLOWISE-2]** Agent-Gateway (Auth, RBAC, Rate-Limit, Audit, Vault)
-- Td7da51db docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L451: - [ ] **[FLOWISE-3]** Tool-Adapter v1 (search, graph, rag)
-- T4c758e03 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L452: - [ ] **[FLOWISE-4]** Agent-Registry (PG + YAML Sign + API)
-- Tc3eedc8d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L453: - [ ] **[FLOWISE-5]** Starter-Agents (Research, Graph, Dossier)
-- T3482a3d0 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L454: - [ ] **[FLOWISE-6]** n8n Node `Run Flowise Agent`
-- Ta491a9b3 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L455: - [ ] **[FLOWISE-7]** NiFi Processor `InvokeFlowiseAgent`
-- T2479b33a docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L456: - [ ] **[FLOWISE-8]** Tool-Adapter v2 (verify, geo, forensics)
-- T9c7ee596 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L457: - [ ] **[FLOWISE-9]** Security Policies (OPA Rego + Sandbox Profiles)
-- Ted8fd21c docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L458: - [ ] **[FLOWISE-10]** Preset Wiring (default_agents)
-- T5f8607a9 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L459: - [ ] **[FLOWISE-11]** Eval Suites + CI Scorer
-- Tbe8b0da0 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L460: - [ ] **[FLOWISE-12]** Meta-Planner Agent (v1.0)
-- T350cd138 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L461: - [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts
-- T6bfd2fc8 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L462: - [ ] **[FLOWISE-14]** Canary & Rollback Mechanik
-- Te8f46288 docs/blueprints/SECURITY-BLUEPRINT.md#L120: ## ✅ Tickets (Erweiterung zum TODO-Index)
-- Td4ba2caa docs/blueprints/VERIFICATION-BLUEPRINT.md#L171: # 🧩 Tickets (zum Ergänzen deines TODO-Index)
-- Ta03b5205 docs/blueprints/VERIFICATION-BLUEPRINT.md#L504: ## ✅ Tickets (zum TODO-Index ergänzen)
 - T071f5ecb docs/presets/Presets(Profile).md#L303: # Umsetzung: Tickets (zum Master TODO-Index ergänzen)
+- T65cf57fc docs/export/AFFINE.md#L189: ### **TODO-Index – Ergänzungen**
+- T23b56cb5 docs/export/AFFINE.md#L191: > Hänge diesen Block an `docs/TODO-Index.md` an.
+- Td4c05623 docs/export/AFFINE.md#L195: - [ ] **[EXPORT-1]** Bundle-Builder (md + assets + meta/export.json)
+- T1551263f docs/export/AFFINE.md#L196: - [ ] **[EXPORT-2]** Graph-Exporter (mermaid.mmd, dot, svg)
+- T66f7054e docs/export/AFFINE.md#L197: - [ ] **[EXPORT-3]** Canvas-Exporter (excalidraw.json)
+- T35bcacfc docs/export/AFFINE.md#L198: - [ ] **[EXPORT-4]** Geo-Exporter (geojson + map.png/svg)
+- Tf6289b76 docs/export/AFFINE.md#L199: - [ ] **[APPFLOWY-1]** AppFlowy Adapter – Watched Folder
+- Tdafa68d5 docs/export/AFFINE.md#L200: - [ ] **[APPFLOWY-2]** AppFlowy Adapter – API Mode (optional)
+- T52af8638 docs/export/AFFINE.md#L201: - [ ] **[AFFINE-1]** AFFiNE Adapter – Watched Folder + Edgeless Import
+- T33b2eddd docs/export/AFFINE.md#L202: - [ ] **[AFFINE-2]** AFFiNE Adapter – API Mode (optional)
+- T5e0d0572 docs/export/AFFINE.md#L203: - [ ] **[FE-EXPORT-1]** Frontend Export-Dialog (Targets + Formate)
+- Tbb2cc692 docs/export/AFFINE.md#L204: - [ ] **[CLI-EXP-1]** CLI `it export dossier/graph/canvas`
+- T678e914c docs/export/AFFINE.md#L205: - [ ] **[N8N-EXP-1]** n8n Nodes `export_to_appflowy` / `export_to_affine`
+- T414d2db2 docs/export/AFFINE.md#L206: - [ ] **[POLICY-EXP-1]** OPA-Regeln (classification gates)
+- T6936730f docs/export/AFFINE.md#L207: - [ ] **[VAULT-EXP-1]** Secrets Handling für Adapter-APIs
+- Tf262bbe0 docs/export/AFFINE.md#L208: - [ ] **[QA-EXP-1]** Golden Bundle Tests
+- T63db88d6 docs/export/AFFINE.md#L209: - [ ] **[QA-EXP-2]** Roundtrip Import Tests
 - T9923a9b4 docs/dev/Checkliste.md#L10: Weitere Details siehe `TODO-Index.md`.
 - T33138fb0 docs/dev/Frontend-Modernisierung.md#L288: - [ ] **Desktop Navigation** - Sidebar funktioniert
 - Te928e303 docs/dev/Frontend-Modernisierung.md#L289: - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
@@ -160,11 +158,6 @@
 - Tbf72ef17 docs/dev/superset-nifi-flowise.md#L185: - [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
 - T0b791bfe docs/dev/superset-nifi-flowise.md#L186: - [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
 - Tc01505d6 docs/dev/superset-nifi-flowise.md#L187: - [ ] **Smoke Tests**:
-- T65885270 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L73: * `WORK-ON-new_docs/out/todo_index.md` (alle Checkboxen `- [ ]`/`- [x]`/nummerierte, plus `TODO:`/`FIXME:`/`NOTE:`; **mit IDs T####-hash, Datei, Zeile, Text**)
-- Ta858e2aa docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L103: master-todo.md
-- Tc23e93c9 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L132: * `docs/dev/roadmap/v0.3-plus/master-todo.md`: **alle offenen & erledigten** Tasks (Master-Register) mit Links zur Provenance.
-- Tb565f1f1 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L243: > **docs: consolidation, indices, dedup, roadmap & todo provenance (idempotent)**
-- Te28e7e42 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L256: * **Alle** TODOs (Checkboxen + TODO/FIXME/NOTE) in `todo_index.md` mit **IDs + Quelle+Zeile**.
 - T49f1ca8b docs/dev/v0.2/Datenquellen-Cluster.md#L89: TODO: **Feature-Pakete** schnüren (z. B. „Media Sources Pack“, „Threat Intel Pack“), die direkt in die Roadmap (0.3/0.5) integriert werden können!
 - T32c849c4 docs/dev/v0.2/FlowiseAI-Agents-integration.md#L186: ## 📋 Tickets (zum TODO-Index hinzufügen)
 - Tb2f30ee7 docs/dev/v0.2/FlowiseAI-Agents-integration.md#L233: ## TODO:
@@ -486,20 +479,27 @@
 - Tabac2b40 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L7: - [ ] **[CLI-WT-5]** Vault-/Token-Handling für WaveTerm-Kommandos
 - Tb3adb79e docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L8: - [ ] **[CLI-WT-6]** OPA-Policies für WaveTerm-CLI-Befehle
 - T829b8481 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L9: - [ ] **[CLI-WT-7]** Roundtrip-Tests (CLI → WaveTerm → Artefakte → Dossier)
-- T65cf57fc docs/export/AFFINE.md#L189: ### **TODO-Index – Ergänzungen**
-- T23b56cb5 docs/export/AFFINE.md#L191: > Hänge diesen Block an `docs/TODO-Index.md` an.
-- Td4c05623 docs/export/AFFINE.md#L195: - [ ] **[EXPORT-1]** Bundle-Builder (md + assets + meta/export.json)
-- T1551263f docs/export/AFFINE.md#L196: - [ ] **[EXPORT-2]** Graph-Exporter (mermaid.mmd, dot, svg)
-- T66f7054e docs/export/AFFINE.md#L197: - [ ] **[EXPORT-3]** Canvas-Exporter (excalidraw.json)
-- T35bcacfc docs/export/AFFINE.md#L198: - [ ] **[EXPORT-4]** Geo-Exporter (geojson + map.png/svg)
-- Tf6289b76 docs/export/AFFINE.md#L199: - [ ] **[APPFLOWY-1]** AppFlowy Adapter – Watched Folder
-- Tdafa68d5 docs/export/AFFINE.md#L200: - [ ] **[APPFLOWY-2]** AppFlowy Adapter – API Mode (optional)
-- T52af8638 docs/export/AFFINE.md#L201: - [ ] **[AFFINE-1]** AFFiNE Adapter – Watched Folder + Edgeless Import
-- T33b2eddd docs/export/AFFINE.md#L202: - [ ] **[AFFINE-2]** AFFiNE Adapter – API Mode (optional)
-- T5e0d0572 docs/export/AFFINE.md#L203: - [ ] **[FE-EXPORT-1]** Frontend Export-Dialog (Targets + Formate)
-- Tbb2cc692 docs/export/AFFINE.md#L204: - [ ] **[CLI-EXP-1]** CLI `it export dossier/graph/canvas`
-- T678e914c docs/export/AFFINE.md#L205: - [ ] **[N8N-EXP-1]** n8n Nodes `export_to_appflowy` / `export_to_affine`
-- T414d2db2 docs/export/AFFINE.md#L206: - [ ] **[POLICY-EXP-1]** OPA-Regeln (classification gates)
-- T6936730f docs/export/AFFINE.md#L207: - [ ] **[VAULT-EXP-1]** Secrets Handling für Adapter-APIs
-- Tf262bbe0 docs/export/AFFINE.md#L208: - [ ] **[QA-EXP-1]** Golden Bundle Tests
-- T63db88d6 docs/export/AFFINE.md#L209: - [ ] **[QA-EXP-2]** Roundtrip Import Tests
+- T65885270 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L73: * `WORK-ON-new_docs/out/todo_index.md` (alle Checkboxen `- [ ]`/`- [x]`/nummerierte, plus `TODO:`/`FIXME:`/`NOTE:`; **mit IDs T####-hash, Datei, Zeile, Text**)
+- Ta858e2aa docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L103: master-todo.md
+- Tc23e93c9 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L132: * `docs/dev/roadmap/v0.3-plus/master-todo.md`: **alle offenen & erledigten** Tasks (Master-Register) mit Links zur Provenance.
+- Tb565f1f1 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L243: > **docs: consolidation, indices, dedup, roadmap & todo provenance (idempotent)**
+- Te28e7e42 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L256: * **Alle** TODOs (Checkboxen + TODO/FIXME/NOTE) in `todo_index.md` mit **IDs + Quelle+Zeile**.
+- T974f7e75 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L443: ### **TODO-Index Ergänzung (neuer Abschnitt)**
+- T5eb5852d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L445: > füge ans Ende von `docs/TODO-Index.md` hinzu:
+- Tb2e9a387 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L449: - [ ] **[FLOWISE-1]** Flowise Deployment (Container, OIDC via Agent-Gateway)
+- T81994d8d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L450: - [ ] **[FLOWISE-2]** Agent-Gateway (Auth, RBAC, Rate-Limit, Audit, Vault)
+- Td7da51db docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L451: - [ ] **[FLOWISE-3]** Tool-Adapter v1 (search, graph, rag)
+- T4c758e03 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L452: - [ ] **[FLOWISE-4]** Agent-Registry (PG + YAML Sign + API)
+- Tc3eedc8d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L453: - [ ] **[FLOWISE-5]** Starter-Agents (Research, Graph, Dossier)
+- T3482a3d0 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L454: - [ ] **[FLOWISE-6]** n8n Node `Run Flowise Agent`
+- Ta491a9b3 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L455: - [ ] **[FLOWISE-7]** NiFi Processor `InvokeFlowiseAgent`
+- T2479b33a docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L456: - [ ] **[FLOWISE-8]** Tool-Adapter v2 (verify, geo, forensics)
+- T9c7ee596 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L457: - [ ] **[FLOWISE-9]** Security Policies (OPA Rego + Sandbox Profiles)
+- Ted8fd21c docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L458: - [ ] **[FLOWISE-10]** Preset Wiring (default_agents)
+- T5f8607a9 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L459: - [ ] **[FLOWISE-11]** Eval Suites + CI Scorer
+- Tbe8b0da0 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L460: - [ ] **[FLOWISE-12]** Meta-Planner Agent (v1.0)
+- T350cd138 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L461: - [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts
+- T6bfd2fc8 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L462: - [ ] **[FLOWISE-14]** Canary & Rollback Mechanik
+- Te8f46288 docs/blueprints/SECURITY-BLUEPRINT.md#L120: ## ✅ Tickets (Erweiterung zum TODO-Index)
+- Td4ba2caa docs/blueprints/VERIFICATION-BLUEPRINT.md#L171: # 🧩 Tickets (zum Ergänzen deines TODO-Index)
+- Ta03b5205 docs/blueprints/VERIFICATION-BLUEPRINT.md#L504: ## ✅ Tickets (zum TODO-Index ergänzen)
