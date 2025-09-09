@@ -213,6 +213,15 @@ make format    # auto-fix (tolerant)
 make lint      # strikt
 ```
 
+**Safe Prettier**
+Für schnelle, stabile Formatierung ohne Templating-/Ops-Dateien:
+```bash
+make fmt.safe      # schreibt nur kuratierte Pfade
+make lint.safe     # checkt nur kuratierte Pfade
+```
+
+Die kuratierten Pfade liegen in `scripts/prettier_safe.list`. Bei Bedarf erweitern.
+
 ---
 
 ## 📜 License

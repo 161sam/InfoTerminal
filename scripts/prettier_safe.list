@@ -1,0 +1,8 @@
+README.md
+docs/**/*.md
+.github/**/*.yml
+.github/**/*.yaml
+.github/**/*.json
+apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yml,yaml}
+services/graph-views/**/*.md
+services/graph-views/**/*.json
