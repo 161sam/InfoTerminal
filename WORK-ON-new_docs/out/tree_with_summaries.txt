@@ -1,0 +1,329 @@
+  docs/
+    docs/DEPRECATIONS.md
+      > # Deprecated German Docs
+    docs/OPERABILITY.md
+      > # Operability
+    docs/README.md
+      > # Documentation
+    docs/README.md.bak.1756857746
+    docs/ROADMAP-INTELLIGENCE.md
+      > # Roadmap Intelligence
+    docs/SECURITY_SWEEP.md
+      > # Security Sweep (Dev)
+    docs/STYLE_GUIDE.md
+      > # Documentation Style Guide
+    docs/STYLE_GUIDE.md.bak.20250903000934
+    docs/TODO-Index.md
+      > # TODO-Index
+    docs/release-checklist-v0.1.md
+      > # 🚀 Release-Checkliste v0.1 – InfoTerminal
+    docs/testing.md
+      > # Testing and Coverage
+    docs/dossiers/
+      docs/dossiers/Export-Schema.json
+      docs/dossiers/Front-Matter_snake_case.yml
+      docs/dossiers/README.md
+        > Dossier templates overview.
+      docs/dossiers/climate_risk_report.md.tmpl
+      docs/dossiers/compliance_risk_report.md.tmpl
+      docs/dossiers/disinfo_campaign_report.md.tmpl
+      docs/dossiers/economic_intelligence_report.md.tmpl
+      docs/dossiers/financial_red_flags.md.tmpl
+      docs/dossiers/geopolitical_conflict_report.md.tmpl
+      docs/dossiers/humanitarian_crisis_report.md.tmpl
+      docs/dossiers/journalism_short.md.tmpl
+      docs/dossiers/media_authenticity_report.md.tmpl
+      docs/dossiers/supply_chain_risk_report.md.tmpl
+    docs/diagrams/
+      docs/diagrams/ARCHITECTURE.md
+        > # Architecture
+      docs/diagrams/final_architecture_onepager.pdf
+      docs/diagrams/final_architecture_twopager.pdf
+      docs/diagrams/final_architecture_v1.png
+      docs/diagrams/final_architecture_v1.svg
+    docs/img/
+      docs/img/health-badge.svg
+    docs/runbooks/
+      docs/runbooks/RUNBOOK-obs-opa-secrets.md
+        > # Observability, OPA Audit and Secrets
+      docs/runbooks/RUNBOOK-obs-opa-secrets.md.bak.1756857746
+      docs/runbooks/RUNBOOK-stack.md
+        > # Health-Checks
+      docs/runbooks/RUNBOOK-stack.md.bak.1756857746
+    docs/screenshots/
+      docs/screenshots/01-home.svg
+      docs/screenshots/02-search.svg
+      docs/screenshots/03-doc-detail.svg
+      docs/screenshots/04-graph.svg
+      docs/screenshots/05-grafana.svg
+    docs/api/
+      docs/api/agent-gateway.md
+        > # Agent Gateway API
+      docs/api/jobs.md
+        > # Jobs API
+    docs/waveterm/
+      docs/waveterm/README.md
+        > # WaveTerm Integration
+      docs/waveterm/embed.yaml
+      docs/waveterm/it-plugin.json
+      docs/waveterm/policies/
+        docs/waveterm/policies/waveterm.rego
+      docs/waveterm/presets/
+        docs/waveterm/presets/compliance.yaml
+        docs/waveterm/presets/crisis.yaml
+        docs/waveterm/presets/journalism.yaml
+    docs/user/
+      docs/user/1.Einführung.md
+        > # 1. Einführung
+      docs/user/10.Anwendungsfälle.md
+        > # 10. Anwendungsfälle
+      docs/user/11.Tipps&Best-Practices.md
+        > # 11. Tipps & Best Practices
+      docs/user/12.Roadmap&Weiterentwicklung.md
+        > # 12. Roadmap & Weiterentwicklung
+      docs/user/13.Dokumentenmanagement-mit-Aleph.md
+        > # 13. Dokumentenmanagement mit Aleph
+      docs/user/14.Datenintegration-mit-NiFi.md
+        > # 14. Datenintegration mit NiFi
+      docs/user/15.Dashboards-mit-Superset.md
+        > # 15. Dashboards mit Superset
+      docs/user/16.Anhang.md
+        > # 16. Anhang
+      docs/user/2.Installation&Setup.md
+        > # 2. Installation & Setup
+      docs/user/3.Erste-Schritte.md
+        > # 3. Erste Schritte
+      docs/user/4.Kernfunktionen.md
+        > # 4. Kernfunktionen
+      docs/user/5.Erweiterte-Funktionen.md
+        > # 5. Erweiterte Funktionen
+      docs/user/6.Observability&Monitoring.md
+        > # 6. Observability & Monitoring
+      docs/user/7.CLI-Handbuch.md
+        > # 7. CLI-Handbuch
+      docs/user/8.Integrationen&Erweiterbarkeit.md
+        > # 8. Integrationen & Erweiterbarkeit
+      docs/user/9.Sicherheit&Compliance.md
+        > # 9. Sicherheit & Compliance
+      docs/user/index.md
+        > # 📘 InfoTerminal – Benutzerhandbuch
+    docs/blueprints/
+      docs/blueprints/AIETHICS-INTELLIGENCE-BLUEPRINT.md
+        > # AIETHICS-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/CLIMATE-INTELLIGENCE-BLUEPRINT.md
+        > # CLIMATE-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/CULTURAL-INTELLIGENCE-BLUEPRINT.md
+        > # CULTURAL-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/DISINFO-INTELLIGENCE-BLUEPRINT.md
+        > # 🛰️ DISINFORMATION-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/ECONOMIC-INTELLIGENCE-BLUEPRINT.md
+        > # ECONOMIC-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/FINANCIAL-INTELLIGENCE-BLUEPRINT.md
+        > # 💰 FINANCIAL-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md
+        > ### `docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md`
+      docs/blueprints/GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md
+        > # 🌍 GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/HEALTH-INTELLIGENCE-BLUEPRINT.md
+        > # HEALTH-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md
+        > # 🕊️ HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/LEGAL-INTELLIGENCE-BLUEPRINT.md
+        > # ⚖️ LEGAL-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md
+        > # MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/SECURITY-BLUEPRINT.md
+        > # 🔐 InfoTerminal Security Blueprint
+      docs/blueprints/SUPPLYCHAIN-INTELLIGENCE-BLUEPRINT.md
+        > # 🏭 SUPPLY-CHAIN-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
+        > # TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/TERRORISM-INTELLIGENCE-BLUEPRINT.md
+        > # TERRORISM-INTELLIGENCE-BLUEPRINT.md
+      docs/blueprints/VERIFICATION-BLUEPRINT.md
+        > # 🧭 Ziele
+    docs/presets/
+      docs/presets/Presets(Profile).md
+        > # Presets (Profile) – Überblick
+      docs/presets/agency.yaml
+      docs/presets/climate_researcher.yaml
+      docs/presets/compliance_officer.yaml
+      docs/presets/crisis_analyst.yaml
+      docs/presets/disinfo_watchdog.yaml
+      docs/presets/economic_analyst.yaml
+      docs/presets/journalism.yaml
+      docs/presets/research.yaml
+    docs/dev/
+      docs/dev/Architektur-für-Live-Datenquellen.md
+        > # Architektur für Live-Datenquellen
+      docs/dev/Checkliste.md
+        > # Status auf einen Blick
+      docs/dev/Checkliste.md.bak.1756857746
+      docs/dev/Datenquellen-Cluster.md
+        > # 🌐 Datenquellen-Cluster für InfoTerminal
+      docs/dev/Frontend-Modernisierung.md
+        > <!-- markdownlint-disable MD013 -->
+      docs/dev/Frontend-Modernisierung_Setup-Guide.md
+        > <!-- markdownlint-disable MD013 -->
+      docs/dev/Palantir-Gotham_technische-Recherche.md
+        > # Palantir Gotham – technische Recherche (Stand: 5. Sept 2025)
+      docs/dev/RAG-Systeme.md
+        > # ⚖️ RAG-Systeme für Gesetzestexte & Compliance-Analysen
+      docs/dev/README.md
+        > # InfoTerminal — Open, Modular Intelligence Platform (Gotham-style, OSS)
+      docs/dev/README.md.bak.1756857746
+      docs/dev/ROADMAPv0.1.0.md
+        > <!-- markdownlint-disable MD013 -->
+      docs/dev/Release-Planv0.2-v1.0.md
+        > # 🚀 Release-Plan InfoTerminal (v0.2 → v1.0)
+      docs/dev/SECURITY-BLUEPRINT.md
+        > # 🔐 InfoTerminal Security Blueprint
+      docs/dev/VERIFICATION-BLUEPRINT.md
+        > # 🛡️ VERIFICATION-BLUEPRINT.md
+      docs/dev/analytics_frontend.md
+        > # Analytics frontend & Superset
+      docs/dev/analytics_links.md
+        > # Deep link schema
+      docs/dev/analytics_links.md.bak.1756857746
+      docs/dev/backups.md
+        > # Backups
+      docs/dev/demo-loader.md
+        > # Demo Loader
+      docs/dev/etl_automation.md
+        > # ETL Automation Runbook
+      docs/dev/etl_automation.md.bak.1756857746
+      docs/dev/frontend-docs.md
+        > # Frontend Health Monitoring
+      docs/dev/frontend_modernization_guide.md
+        > <!-- markdownlint-disable MD013 -->
+      docs/dev/graph-linking.md
+        > # Graph Linking
+      docs/dev/nifi-aleph.md
+        > # NiFi → Aleph Dokumenten-Pipeline
+      docs/dev/nifi-ingest-demo.xml
+      docs/dev/observability.md
+        > # Observability
+      docs/dev/observability.md.bak.1756857746
+      docs/dev/perf.md
+        > # Performance Smoke Tests
+      docs/dev/search-ui.md
+        > # Search UI
+      docs/dev/security-hardening.md
+        > # Security Hardening
+      docs/dev/storage.md
+        > # Storage
+      docs/dev/superset-nifi-flowise.md
+        > # Superset-Filter-Composer, NiFi → Aleph Upload & Flowise Agent
+      docs/dev/superset-nifi-flowise.md.bak.1756857746
+      docs/dev/testing.md
+        > # Testing Strategy
+      docs/dev/testing.md.bak.20250903001130
+      docs/dev/tls.md
+        > # TLS
+      docs/dev/runbooks/
+        docs/dev/runbooks/auth-gateway-troubleshooting.md
+          > # Auth Gateway Troubleshooting
+        docs/dev/runbooks/auth-gateway-troubleshooting.md.bak.1756857746
+        docs/dev/runbooks/auth-gateway-troubleshooting.md.bak.20250902233500
+        docs/dev/runbooks/incident-template.md
+          > # Incident Report
+        docs/dev/runbooks/incident-template.md.bak.1756857746
+        docs/dev/runbooks/neo4j-recovery.md
+          > # Neo4j Recovery
+        docs/dev/runbooks/neo4j-recovery.md.bak.1756857746
+        docs/dev/runbooks/restore.md
+          > # Restore Runbook
+        docs/dev/runbooks/restore.md.bak.1756857746
+        docs/dev/runbooks/search-index-ops.md
+          > # Search Index Operations
+        docs/dev/runbooks/search-index-ops.md.bak.1756857746
+        docs/dev/runbooks/superset-admin.md
+          > # Superset Administration
+        docs/dev/runbooks/superset-admin.md.bak.1756857746
+      docs/dev/dev-prompts/
+        docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md
+          > # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
+        docs/dev/dev-prompts/Test.md
+          > # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
+      docs/dev/v0.2/
+        docs/dev/v0.2/Architektur-Live-Datenquellen.md
+          > # Architektur für Live-Datenquellen
+        docs/dev/v0.2/DEVELOPMENT-PLAN.md
+          > # 🚀 Detaillierter Entwicklungsplan InfoTerminal
+        docs/dev/v0.2/Datenquellen-Cluster.md
+          > # 🌐 Datenquellen-Cluster für InfoTerminal
+        docs/dev/v0.2/Feature-Mapping.md
+          > # 📊 Feature-Mapping: Palantir Gotham vs. InfoTerminal
+        docs/dev/v0.2/Feature-Priorisierung.md
+          > # 📊 Feature-Priorisierung InfoTerminal (ab v0.2)
+        docs/dev/v0.2/FlowiseAI-Agents-integration.md
+          > alles klar — ich ergänze den Entwicklungsplan um die **FlowiseAI Agents** (so wie wir’s zuvor angedacht hatten) und mache es direkt **repo-tauglich**: Ziele, Architektur, Phasen-Roadmap, Integrationspunkte (NiFi/n8n), Security/Governance, Presets, Tickets, Beispiel-Configs.
+        docs/dev/v0.2/Preset-Profile.md
+          > # Presets (Profile) – Überblick
+        docs/dev/v0.2/Roadmap.md
+          > # 🌍 Erweiterte Roadmap InfoTerminal
+        docs/dev/v0.2/TODO-Index.md
+          > # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
+        docs/dev/v0.2/Ticket-Checkliste.md
+          > # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
+        docs/dev/v0.2/To-Build-Liste_v0.1.9.1-v0.2.md
+          > # 📌 To-Build-Liste InfoTerminal v0.1.9.1 → v0.2
+        docs/dev/v0.2/v0.3+/
+          docs/dev/v0.2/v0.3+/Blueprint-Ideen.md
+            > # 🌐 Beyond Gotham – Weitere Blueprint-Ideen
+          docs/dev/v0.2/v0.3+/Master-TODO-Index.md
+            > # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v1.0)
+          docs/dev/v0.2/v0.3+/Preset-Profile_ideen.md
+            > # 📑 Neue Preset-Profile
+          docs/dev/v0.2/v0.3+/RAG-Systeme.md
+            > # ⚖️ RAG-Systeme für Gesetzestexte & Compliance-Analysen
+          docs/dev/v0.2/v0.3+/Release-Plan.md
+            > # 🚀 Release-Plan InfoTerminal (v0.2 → v1.0)
+          docs/dev/v0.2/v0.3+/Roadmap_Gotham-Gaps_Beyond-Gotham.md
+            > # 🚀 InfoTerminal Roadmap (erweitert mit Beyond Gotham Blueprints)
+          docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md
+            > ## 30. CLI – WaveTerm Features (planned)
+          docs/dev/v0.2/v0.3+/beyond-gotham.md
+            > # 🌟 InfoTerminal Ausbau ab v0.2
+    docs/architecture/
+      docs/architecture/ADR-000-stack.md
+        > # ADR-000: Baseline Stack
+      docs/architecture/ADR-000-stack.md.bak.1756857746
+    docs/n8n/
+      docs/n8n/flowise_n8n.md
+        > # n8n: Flowise Agent Node
+      docs/n8n/waveterm_run.md
+        > # n8n: WaveTerm Run Node
+    docs/cli/
+      docs/cli/README.md
+        > # InfoTerminal CLI
+      docs/cli/waveterm-demo.md
+        > # WaveTerm Demo (planned)
+    docs/adr/
+      docs/adr/0000-template.md
+        > # ADR {NNNN}: {Title}
+      docs/adr/0000-template.md.bak.1756857746
+      docs/adr/0001-choose-opa-for-abac.md
+        > # ADR 0001: Choose OPA for ABAC
+      docs/adr/0001-choose-opa-for-abac.md.bak.1756857746
+      docs/adr/0002-multi-storage-pattern.md
+        > # ADR 0002: Multi-Storage Pattern
+      docs/adr/0002-multi-storage-pattern.md.bak.1756857746
+      docs/adr/0003-identity-oidc-keycloak.md
+        > # ADR 0003: Identity via OIDC with Keycloak
+      docs/adr/0003-identity-oidc-keycloak.md.bak.1756857746
+      docs/adr/0004-policy-gateway-opa-forwardauth.md
+        > # ADR 0004: Policy Gateway via OPA ForwardAuth
+      docs/adr/0004-policy-gateway-opa-forwardauth.md.bak.1756857746
+    docs/export/
+      docs/export/AFFINE.md
+        > ### `docs/export/AFFINE.md`
+      docs/export/APPFLOWY.md
+        > 
+      docs/export/BUNDLE-SPEC.md
+        > # Bundle Spec
+    docs/nifi/
+      docs/nifi/WaveTermInvoker.md
+        > # NiFi: WaveTermInvoker
+      docs/nifi/flowise_nifi.md
+        > # NiFi: InvokeFlowiseAgent

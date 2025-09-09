@@ -93,3 +93,17 @@ fmt.safe:
 
 lint.safe:
 	@npx -y prettier@3.3.3 -c $(shell tr '\n' ' ' < scripts/prettier_safe.list) --ignore-path .prettierignore --log-level warn || true
+
+.PHONY: docs.analyze docs.consolidate docs.dedupe docs.all
+
+docs.analyze:
+	python3 scripts/docs_pipeline.py analyze
+
+docs.consolidate:
+	python3 scripts/docs_pipeline.py consolidate
+
+docs.dedupe:
+	python3 scripts/docs_pipeline.py dedupe
+
+docs.all:
+	python3 scripts/docs_pipeline.py analyze consolidate dedupe
