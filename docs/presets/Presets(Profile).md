@@ -47,15 +47,7 @@ JournalismContext:
   require_human_review_for_publish: true
 ```
 
-## Frontend Defaults
-
-- **/search**: Quelle=„trusted press“, Zeitraum=letzte 24–72h, Badge-Filter `veracity≥likely_true`
-- **/graphx**: Entity-Fokus (People/Orgs), Geo-Heatmap aus
-- **Dossier**: Kurzvorlage (Claim + 2–3 Pro/Contra Quellen, Hash/Zeitstempel)
-➡ Consolidated at: ../dev/guides/preset-profiles.md#review-ui-review-before-share-erzwungen
-
----
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#frontend-defaults
 # 2) Behörden/Firmen-Preset (Forensics+)
 
 ## Ziele
@@ -103,12 +95,7 @@ IT_CHAIN_OF_CUSTODY=1
 ➡ Consolidated at: ../dev/guides/preset-profiles.md#
 ## Security/Runtime
 
-```bash
-IT_MODE=standard
-IT_EGRESS=proxy
-IT_NO_LOG_PERSIST=0
-➡ Consolidated at: ../dev/guides/preset-profiles.md#it-ephemeral-fs-0
-➡ Consolidated at: ../dev/guides/preset-profiles.md#geo-enrich-standard-cache-aggressiver
+➡ Consolidated at: ../dev/guides/preset-profiles.md#bash
   RATE_LIMIT_RPS: "1.0"
   EVIDENCE_TOPK: "8"
   RETRIEVAL_TIMEOUT_S: "8"

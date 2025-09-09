@@ -144,9 +144,7 @@ export default function App({ Component, pageProps }: any) {
 ➡ Consolidated at: frontend-modernization.md#bash
 
 ➡ Consolidated at: frontend-modernization.md#type-check
-# Unit Tests
-npm run test
-
+➡ Consolidated at: frontend-modernization.md#unit-tests
 # E2E Tests
 ➡ Consolidated at: frontend-modernization.md#npm-run-e2e
 - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
@@ -191,17 +189,13 @@ export const buttonVariants = {
 ➡ Consolidated at: frontend-modernization.md#
 
 ```bash
-# TypeScript Errors
-npm run typecheck
-
+➡ Consolidated at: frontend-modernization.md#typescript-errors
 # Dependencies
 ➡ Consolidated at: frontend-modernization.md#rm-rf-node-modules-package-lock-json
 rm -rf .next
 ```
 
-#### 3. Performance Issues
-
-```bash
+➡ Consolidated at: frontend-modernization.md#3-performance-issues
 # Bundle Analyzer
 ➡ Consolidated at: frontend-modernization.md#npm-install-save-dev-next-bundle-analyzer
 ➡ Consolidated at: frontend-modernization.md#4-mobile-issues
@@ -224,16 +218,10 @@ rm -rf .next
 - [ ] **Monitoring Setup** aktiv
 - [ ] **Rollback Plan** definiert
 ➡ Consolidated at: frontend-modernization.md#section
-## 🎉 Herzlichen Glückwunsch
-
-Nach der vollständigen Implementierung haben Sie InfoTerminal in eine **moderne, professionelle und benutzerfreundliche Anwendung** verwandelt, die mit aktuellen Enterprise-Standards mithalten kann.
-
+➡ Consolidated at: frontend-modernization.md#herzlichen-gl-ckwunsch
 ### Was Sie erreicht haben
 
-- 🚀 **10x bessere User Experience**
-- 📱 **Mobile-First Design**
-- ⚡ **Performance Optimiert**
-- 🎨 **Professional Design System**
+➡ Consolidated at: frontend-modernization.md#10x-bessere-user-experience
 - 🔧 **Wartbarer Code**
 - 🛡️ **Enterprise Security**
 - 📊 **Advanced Features**

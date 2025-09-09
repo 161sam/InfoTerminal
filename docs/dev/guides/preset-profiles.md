@@ -506,3 +506,56 @@ IT_EPHEMERAL_FS=0
 - `ingest_rss_social_web_balanced`
 - `ingest_api_generic` (öffentliche APIs + Key-Scoped)
 - Verifikation komplett, aber **schneller eingestellt** (weniger tiefe Evidenzsuche)
+---
+merged_from:
+  - docs/presets/Presets(Profile).md#L50-L58
+merged_at: 2025-09-09T14:22:18.818564Z
+---
+
+## Frontend Defaults
+
+- **/search**: Quelle=„trusted press“, Zeitraum=letzte 24–72h, Badge-Filter `veracity≥likely_true`
+- **/graphx**: Entity-Fokus (People/Orgs), Geo-Heatmap aus
+- **Dossier**: Kurzvorlage (Claim + 2–3 Pro/Contra Quellen, Hash/Zeitstempel)
+➡ Consolidated at: ../dev/guides/preset-profiles.md#review-ui-review-before-share-erzwungen
+
+---
+
+---
+merged_from:
+  - docs/dev/v0.2/Preset-Profile.md#L41-L47
+merged_at: 2025-09-09T14:22:18.819817Z
+---
+
+## Frontend Defaults
+
+* **/search**: Quelle=„trusted press“, Zeitraum=letzte 24–72h, Badge-Filter `veracity≥likely_true`
+* **/graphx**: Entity-Fokus (People/Orgs), Geo-Heatmap aus
+* **Dossier**: Kurzvorlage (Claim + 2–3 Pro/Contra Quellen, Hash/Zeitstempel)
+* **Review-UI**: „Review before share“ erzwungen
+
+---
+merged_from:
+  - docs/presets/Presets(Profile).md#L98-L103
+merged_at: 2025-09-09T14:22:18.821066Z
+---
+
+```bash
+IT_MODE=standard
+IT_EGRESS=proxy
+IT_NO_LOG_PERSIST=0
+➡ Consolidated at: ../dev/guides/preset-profiles.md#it-ephemeral-fs-0
+➡ Consolidated at: ../dev/guides/preset-profiles.md#geo-enrich-standard-cache-aggressiver
+---
+merged_from:
+  - docs/dev/v0.2/Preset-Profile.md#L80-L86
+merged_at: 2025-09-09T14:22:18.822275Z
+---
+
+
+# 3) Forschung-Preset (Balanced)
+
+## Ziele
+
+Schnelle Exploration, gute Reproduzierbarkeit, moderate OPSEC, nachvollziehbare Ergebnisse.
+➡ Consolidated at: ../guides/preset-profiles.md#section
