@@ -6,13 +6,6 @@ docs/
   STYLE_GUIDE.md :: # Documentation Style Guide
   TODO-Index.md :: # TODO-Index
   release-checklist-v0.1.md :: # 🚀 Release-Checkliste v0.1 – InfoTerminal
-  presets/
-    Presets(Profile).md :: ➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
-    README.md :: # Preset Profiles
-    waveterm/
-  cli/
-    README.md :: # InfoTerminal CLI
-    waveterm-demo.md :: # WaveTerm Demo (planned)
   user/
     1.Einführung.md :: # 1. Einführung
     10.Anwendungsfälle.md :: # 10. Anwendungsfälle
@@ -31,25 +24,12 @@ docs/
     8.Integrationen&Erweiterbarkeit.md :: # 8. Integrationen & Erweiterbarkeit
     9.Sicherheit&Compliance.md :: # 9. Sicherheit & Compliance
     index.md :: # 📘 InfoTerminal – Benutzerhandbuch
-  dossiers/
-    README.md :: Dossier templates overview.
+  integrations/
+    README.md :: # Integrations
   export/
     AFFINE.md :: ### `docs/export/AFFINE.md`
     APPFLOWY.md :: ### `docs/export/APPFLOWY.md`
     BUNDLE-SPEC.md :: # Bundle Spec
-  adr/
-    0000-template.md :: # ADR {NNNN}: {Title}
-    0001-choose-opa-for-abac.md :: # ADR 0001: Choose OPA for ABAC
-    0002-multi-storage-pattern.md :: ➡ Consolidated at: ../dev/guides/rag-systems.md#adr-0002-multi-storage-pattern
-    0003-identity-oidc-keycloak.md :: # ADR 0003: Identity via OIDC with Keycloak
-    0004-policy-gateway-opa-forwardauth.md :: # ADR 0004: Policy Gateway via OPA ForwardAuth
-  img/
-  architecture/
-    ADR-000-stack.md :: # ADR-000: Baseline Stack
-    diagrams/
-  n8n/
-    flowise_n8n.md :: # n8n: Flowise Agent Node
-    waveterm_run.md :: # n8n: WaveTerm Run Node
   blueprints/
     AIETHICS-INTELLIGENCE-BLUEPRINT.md :: # AIETHICS-INTELLIGENCE-BLUEPRINT.md
     CLIMATE-INTELLIGENCE-BLUEPRINT.md :: # CLIMATE-INTELLIGENCE-BLUEPRINT.md
@@ -69,21 +49,6 @@ docs/
     TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md :: # TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
     TERRORISM-INTELLIGENCE-BLUEPRINT.md :: # TERRORISM-INTELLIGENCE-BLUEPRINT.md
     VERIFICATION-BLUEPRINT.md :: # 🧭 Ziele
-  screenshots/
-  api/
-    agent-gateway.md :: # Agent Gateway API
-    jobs.md :: # Jobs API
-  diagrams/
-    ARCHITECTURE.md :: # Architecture
-  integrations/
-    README.md :: # Integrations
-  waveterm/
-    README.md :: # WaveTerm Integration
-    presets/
-    policies/
-  nifi/
-    WaveTermInvoker.md :: # NiFi: WaveTermInvoker
-    flowise_nifi.md :: # NiFi: InvokeFlowiseAgent
   dev/
     Architektur-für-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
     Checkliste.md :: # Status auf einen Blick
@@ -115,14 +80,6 @@ docs/
       v0.2-overview.md :: ---
       v0.3-plus/
         master-todo.md :: # Master Todo
-    research/
-    guides/
-      flowise-agents.md :: # Flowise Agents
-      frontend-modernization-setup-guide.md :: ---
-      frontend-modernization.md :: ---
-      preset-profiles.md :: # Preset Profiles
-      rag-systems.md :: ---
-      testing.md :: ---
     v0.2/
       Architektur-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
       DEVELOPMENT-PLAN.md :: # 🚀 Detaillierter Entwicklungsplan InfoTerminal
@@ -144,6 +101,7 @@ docs/
         Roadmap_Gotham-Gaps_Beyond-Gotham.md :: # 🚀 InfoTerminal Roadmap (erweitert mit Beyond Gotham Blueprints)
         TODO-Index-cli-ergänzung.md :: ## 30. CLI – WaveTerm Features (planned)
         beyond-gotham.md :: # 🌟 InfoTerminal Ausbau ab v0.2
+    research/
     dev-prompts/
       DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
       DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
@@ -155,6 +113,48 @@ docs/
       restore.md :: # Restore Runbook
       search-index-ops.md :: # Search Index Operations
       superset-admin.md :: # Superset Administration
+    guides/
+      flowise-agents.md :: # Flowise Agents
+      frontend-modernization-setup-guide.md :: ---
+      frontend-modernization.md :: ---
+      preset-profiles.md :: # Preset Profiles
+      rag-systems.md :: ---
+      testing.md :: ---
+  screenshots/
+  presets/
+    Presets(Profile).md :: ➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
+    README.md :: # Preset Profiles
+    waveterm/
+  img/
+  architecture/
+    ADR-000-stack.md :: # ADR-000: Baseline Stack
+    diagrams/
+  dossiers/
+    README.md :: Dossier templates overview.
+  adr/
+    0000-template.md :: # ADR {NNNN}: {Title}
+    0001-choose-opa-for-abac.md :: # ADR 0001: Choose OPA for ABAC
+    0002-multi-storage-pattern.md :: ➡ Consolidated at: ../dev/guides/rag-systems.md#adr-0002-multi-storage-pattern
+    0003-identity-oidc-keycloak.md :: # ADR 0003: Identity via OIDC with Keycloak
+    0004-policy-gateway-opa-forwardauth.md :: # ADR 0004: Policy Gateway via OPA ForwardAuth
+  diagrams/
+    ARCHITECTURE.md :: # Architecture
   runbooks/
     obs-opa-secrets.md :: ---
     stack.md :: ---
+  n8n/
+    flowise_n8n.md :: # n8n: Flowise Agent Node
+    waveterm_run.md :: # n8n: WaveTerm Run Node
+  cli/
+    README.md :: # InfoTerminal CLI
+    waveterm-demo.md :: # WaveTerm Demo (planned)
+  api/
+    agent-gateway.md :: # Agent Gateway API
+    jobs.md :: # Jobs API
+  nifi/
+    WaveTermInvoker.md :: # NiFi: WaveTermInvoker
+    flowise_nifi.md :: # NiFi: InvokeFlowiseAgent
+  waveterm/
+    README.md :: # WaveTerm Integration
+    policies/
+    presets/
