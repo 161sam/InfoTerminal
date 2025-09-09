@@ -1,1 +1,39 @@
 profile: crisis_analyst
+description: "Preset für Humanitarian & Geopolitical Intelligence."
+security:
+  mode: incognito
+  egress: tor+vpn
+  doh: true
+  block_dns: true
+  ephemeral_fs: true
+  logging_persist: false
+verification:
+  # Balance zwischen NGO/News/Social; Geo/Temporal stärker gewichtet
+  weights: {source:0.20, content:0.10, corro:0.20, rte:0.20, temporal:0.15, geo:0.15, media:0.00}
+  thresholds:
+    verified: {score: 0.82, conf: 0.70}
+    likely_true: {score: 0.68, conf: 0.58}
+nifi_context: CrisisContext
+nifi_enable:
+  - ingest_health_weather_data
+  - ingest_adsb
+  - ingest_ais
+  - merge_geo_social
+  - detect_geo_anomalies
+  - aggregate_upsert
+n8n_enable:
+  - crisis_risk_alerts
+  - conflict_reports
+  - humanitarian_weekly_digest
+frontend:
+  dashboards:
+    default: crisis
+  views:
+    geo_map: true
+    timeline: true
+  search_defaults:
+    time_range: "30d"
+    badges_min: "likely_true"
+  dossier_template: "humanitarian_crisis_report.md"
+plugins:
+  whitelist: [exiftool, imagehash, whois]
