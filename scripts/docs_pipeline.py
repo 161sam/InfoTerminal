@@ -346,11 +346,12 @@ def integrate_todo_tasks() -> int:
     for task_id, fpath, line_no, text, done in tasks:
         rel = fpath.as_posix()
         bullet = f"- [{'x' if done else ' '}] {task_id} {text} ({rel}:{line_no})"
-        if "v0.1" in rel and done:
+        lower_rel = rel.lower()
+        if "v0.1" in lower_rel and done:
             v01.append(bullet)
-        if "v0.2" in rel and not done:
+        if "v0.2" in lower_rel and not done:
             v02.append(bullet)
-        if any(v in rel for v in ("v0.1", "v0.2", "v0.3")):
+        if any(v in lower_rel for v in ("v0.1", "v0.2", "v0.3", "v0.3-plus")):
             master.append(bullet)
 
     added_ids: set[str] = set()
@@ -499,22 +500,25 @@ def slugify(text: str) -> str:
 def canonical_target(path: Path) -> Path | None:
     """Return canonical target file for a given path.
 
-    The heuristic mirrors the rules from the consolidation spec and remains
-    intentionally small so the step is idempotent.  Paths that do not match any
-    rule are skipped and left untouched by the dedupe step.
+    The mapping is deliberately small to keep the operation idempotent.  Only
+    known topics are consolidated; everything else is left in place.
     """
 
     p = path.as_posix().lower()
-    if "rag" in p:
-        return DOCS_DIR / "dev/guides/rag-systems.md"
-    if "frontend-modernisierung" in p or ("frontend" in p and "modern" in p):
-        return DOCS_DIR / "dev/guides/frontend-modernization.md"
-    if "preset" in p and "profile" in p:
-        return DOCS_DIR / "dev/guides/preset-profiles.md"
-    if "flowise" in p and "agent" in p:
-        return DOCS_DIR / "dev/guides/flowise-agents.md"
-    if "operability" in p:
-        return DOCS_DIR / "runbooks/stack.md"
+    rules: List[Tuple[Tuple[str, ...], Path]] = [
+        (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
+        (
+            ("frontend-modernisierung",),
+            DOCS_DIR / "dev/guides/frontend-modernization.md",
+        ),
+        (("frontend", "modern"), DOCS_DIR / "dev/guides/frontend-modernization.md"),
+        (("preset", "profile"), DOCS_DIR / "dev/guides/preset-profiles.md"),
+        (("flowise", "agent"), DOCS_DIR / "dev/guides/flowise-agents.md"),
+        (("operability",), DOCS_DIR / "runbooks/stack.md"),
+    ]
+    for keywords, target in rules:
+        if all(k in p for k in keywords):
+            return target
     return None
 
 
