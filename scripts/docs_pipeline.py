@@ -10,9 +10,11 @@ python3 scripts/docs_pipeline.py analyze consolidate dedupe
 * ``analyze`` – generate inventories, TODO index, duplicate report and
   a tree view of ``docs/``. Results are written to ``WORK-ON-new_docs/out``.
 * ``consolidate`` – ensure the target folder structure, move a couple of
-  legacy files to their canonical location and update index files.
-* ``dedupe`` – placeholder; currently only runs link and naming checks
-  again so the reports reflect the consolidated state.
+  legacy files to their canonical location and update index files. It also
+  integrates tasks from ``todo_index.md`` into roadmap overviews.
+* ``dedupe`` – merge duplicate sections into canonical targets while
+  inserting provenance front‑matter and rewriting the source location with a
+  pointer.
 
 The implementation favours idempotency: running the same command multiple
  times yields the same output.
@@ -282,7 +284,10 @@ def load_todo_tasks() -> List[Tuple[str, Path, int, str, bool]]:
             continue
         task_id, file_path, line_no, text = parts
         if file_path.startswith("docs/dev/roadmap/"):
-            continue
+            name = Path(file_path).name
+            if name in {"v0.1-overview.md", "v0.2-overview.md", "master-todo.md"}:
+                # skip overview/master files to avoid self-references
+                continue
         done = "[x]" in text.lower()
         text = re.sub(r"^- \[[xX ]\]\s*", "", text)
         tasks.append((task_id, Path(file_path), int(line_no), text.strip(), done))
@@ -309,14 +314,24 @@ def update_section(path: Path, heading: str, items: List[str]) -> int:
             insert_at += 1
     while insert_at < len(lines) and lines[insert_at].startswith("-"):
         insert_at += 1
-    existing = set(l for l in lines[idx + 1 : insert_at] if l.startswith("-"))
+    id_re = re.compile(r"^- \[[xX ]\]\s*(T\d{4}-[0-9a-f]{8})")
+    existing_ids = set()
+    for l in lines[idx + 1 : insert_at]:
+        m = id_re.match(l)
+        if m:
+            existing_ids.add(m.group(1))
     added = 0
     for item in items:
-        if item not in existing:
-            lines.insert(insert_at, item)
-            existing.add(item)
-            insert_at += 1
-            added += 1
+        m = id_re.match(item)
+        if not m:
+            continue
+        tid = m.group(1)
+        if tid in existing_ids:
+            continue
+        lines.insert(insert_at, item)
+        existing_ids.add(tid)
+        insert_at += 1
+        added += 1
     write_file(path, "\n".join(lines) + "\n")
     return added
 
@@ -493,8 +508,20 @@ def canonical_target(path: Path) -> Path | None:
     return None
 
 
-def find_existing_anchor(target: Path, hashval: str) -> str | None:
-    """Return existing anchor for a section hash at target if present in journal."""
+def find_existing_anchor(
+    target: Path,
+    src_rel: str,
+    start: int,
+    end: int,
+    hashval: str,
+    section: List[str],
+) -> str | None:
+    """Return anchor if the section was previously merged."""
+    ref = f"{src_rel}#L{start}-L{end}"
+    if target.exists():
+        content = target.read_text(encoding="utf-8")
+        if ref in content:
+            return slugify(HEADING_RE.sub(r"\2", section[0]) if section else "section")
     if not JOURNAL_FILE.exists():
         return None
     target_rel = str(target.relative_to(REPO_ROOT))
@@ -585,13 +612,12 @@ def dedupe() -> None:
             if not section or section[0].startswith("➡ Consolidated at:"):
                 continue
             hashval = hash_text("\n".join(section))
-            existing = find_existing_anchor(target, hashval)
+            src_rel = str(src.relative_to(REPO_ROOT))
+            existing = find_existing_anchor(target, src_rel, start, end, hashval, section)
             if existing:
                 anchor = existing
             else:
-                anchor = append_section(
-                    target, str(src.relative_to(REPO_ROOT)), start, end, section
-                )
+                anchor = append_section(target, src_rel, start, end, section)
             replace_with_pointer(src, start, end, target, anchor)
             merged.append(
                 f"- {src.relative_to(REPO_ROOT)} -> {target.relative_to(REPO_ROOT)}"
