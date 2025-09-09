@@ -596,13 +596,14 @@ def dedupe() -> None:
             merged.append(
                 f"- {src.relative_to(REPO_ROOT)} -> {target.relative_to(REPO_ROOT)}"
             )
-            append_journal(
+            journal_entry = (
                 "- ACTION: merge+link\n"
                 f"  SRC: {src.relative_to(REPO_ROOT)}#L{start}-L{end}\n"
                 f"  DST: {target.relative_to(REPO_ROOT)}#{anchor}\n"
                 "  WHY: deduplicate\n"
                 f"  HASH: {hashval}"
             )
+            append_journal(journal_entry)
     if merged:
         print(f"Deduplicated {len(merged)} sections")
     else:

@@ -38,13 +38,7 @@ JournalismContext:
   require_human_review_for_publish: true
 ```
 
-## Frontend Defaults
-
-* **/search**: Quelle=„trusted press“, Zeitraum=letzte 24–72h, Badge-Filter `veracity≥likely_true`
-* **/graphx**: Entity-Fokus (People/Orgs), Geo-Heatmap aus
-* **Dossier**: Kurzvorlage (Claim + 2–3 Pro/Contra Quellen, Hash/Zeitstempel)
-* **Review-UI**: „Review before share“ erzwungen
-
+➡ Consolidated at: ../guides/preset-profiles.md#frontend-defaults
 ## Plugin-Whitelist (Kali/Tools)
 
 * **Allowed**: `whois`, `theHarvester` (nur passive Quellen), `exiftool`, `imagehash`, `yara` (offline), `nmap -sL` (Listing only)
@@ -83,12 +77,6 @@ IT_CHAIN_OF_CUSTODY=1
 * **Blocked**: Exploits ohne Mandat; Standard „default no-net“ Sandbox
 
 ---
-
-# 3) Forschung-Preset (Balanced)
-
-## Ziele
-
-Schnelle Exploration, gute Reproduzierbarkeit, moderate OPSEC, nachvollziehbare Ergebnisse.
 ➡ Consolidated at: ../guides/preset-profiles.md#section
 * `ingest_rss_social_web_balanced`
 * `ingest_api_generic` (öffentliche APIs + Key-Scoped)
