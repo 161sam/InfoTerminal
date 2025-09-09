@@ -598,6 +598,16 @@ def append_section(
 
 
 def dedupe() -> int:
+    """Merge duplicate sections into canonical files and rewrite sources.
+
+    The dedupe step reads ``duplicates_report.md`` and for each section pair
+    determines a canonical target based on filename heuristics. Non-empty
+    sections that have not yet been consolidated are appended to the target with
+    provenance front-matter and a UTC timestamp. The original location is
+    replaced by a short pointer linking to the merged section. The operation is
+    idempotent: hashes and existing pointers are checked so running the command
+    repeatedly does not create duplicates.
+    """
     ensure_out_dir()
     dup_file = OUT_DIR / "duplicates_report.md"
     if not dup_file.exists():
