@@ -1,0 +1,3 @@
+# TERRORISM-INTELLIGENCE-BLUEPRINT.md
+
+Summary placeholder.

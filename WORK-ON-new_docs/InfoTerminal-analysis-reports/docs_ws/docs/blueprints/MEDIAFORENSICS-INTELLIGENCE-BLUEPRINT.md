@@ -1,0 +1,3 @@
+# MEDIAFORENSICS-INTELLIGENCE-BLUEPRINT.md
+
+Summary placeholder.

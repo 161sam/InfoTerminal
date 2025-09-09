@@ -1,0 +1,498 @@
+
+## Konsolidierte Detail-Tasks (offen)
+
+- [ ] Alle **PRs gemergt** (Security, Tests, dbt, Pipelines, Observability, Docs).
+- [ ] **Conftest/OPA Policies** laufen sauber (`make ci-policy`).
+- [ ] **Secrets entfernt** aus Manifests/Code (`grep -R "password" infra/ services/ | grep -v example` → leer).
+- [ ] **ExternalSecrets** konfiguriert für DBs, Keycloak, OAuth-Proxy.
+- [ ] **Ingress TLS** aktiv (cert-manager, staging Issuer OK).
+- [ ] Optional: **mTLS Overlay** dokumentiert (falls Mesh aktiv).
+- [ ] **Pytest** für Search-API & Graph-API grün (inkl. Coverage-Report).
+- [ ] **Vitest** Frontend-Tests laufen (mind. SearchBox/Detail-Page).
+- [ ] **Playwright E2E Smoke**: Dummy-Login → Suche → Graph → Asset-Detail funktioniert.
+- [ ] **CI-Pipeline** (lint, typecheck, tests, e2e, security-scan, perf-smoke) grün.
+- [ ] **Dependabot** aktiviert (pip, npm, GitHub Actions).
+- [ ] **Trivy Scan** ohne kritische Findings.
+- [ ] **dbt build/test** grün (Seeds, Models, Tests).
+- [ ] **dbt docs generate** erzeugt Artefakt (Docs erreichbar).
+- [ ] **Snapshots** (dim_asset SCD2) laufen (`dbt snapshot`).
+- [ ] **Exposures** definiert (Superset Dashboards verlinkt).
+- [ ] **Freshness Checks** für Sources ohne Errors.
+- [ ] **Superset Dashboard** „analytics_prices“ importiert:
+- [ ] **Deep-Link** von Superset zu Frontend `/asset/[id]` funktioniert.
+- [ ] Frontend-Detailseiten für **Asset** & **Person** verfügbar (Charts, Graph-Snippet, News).
+- [ ] **Vitest/Playwright Tests** decken Detailseiten ab.
+- [ ] **NiFi Flow** aktiv: Watch-Folder → Aleph Upload → Erfolg/Fehlerpfade sichtbar.
+- [ ] **Airflow DAG** `openbb_dbt_superset` läuft: OpenBB → dbt run/test → Superset Refresh.
+- [ ] **CronJobs** für Backups aktiv (Postgres, OpenSearch, Neo4j).
+- [ ] Restore-Runbook einmal **trocken getestet**.
+- [ ] **OTel Collector** deployed (4317/4318/9464 erreichbar).
+- [ ] **Python Services** exportieren Traces + `/metrics`.
+- [ ] **Node Services** exportieren Traces + `/metrics`.
+- [ ] **Prometheus** scrapt Services; Grafana Panels gefüllt.
+- [ ] **Tempo** zeigt Traces End-to-End (Frontend → Gateway → APIs → DB).
+- [ ] **Loki** enthält Logs aller Services (Promtail shipping OK).
+- [ ] **Grafana Dashboards**:
+- [ ] **README** Quickstart aktualisiert (Makefile Targets, Health-Checks).
+- [ ] **ADRs** (mind. OPA/ABAC, Multi-Storage, OIDC, Policy Gateway) im Repo.
+- [ ] **Runbooks** vorhanden: Auth/Gateway, Neo4j Recovery, Search Reindex, Superset Admin.
+- [ ] **Language Policy**: Docs in EN, DE als Appendix.
+- [ ] **CONTRIBUTING.md**, **CODEOWNERS**, Issue/PR-Templates im Repo.
+- [ ] **CI Docs-Checks** grün (markdownlint, link check, doctoc).
+- [ ] **Secrets** in Staging (Vault/ExternalSecrets) gesetzt.
+- [ ] **Ingress Hosts** & TLS validiert.
+- [ ] **Demo-Data Seed** erfolgreich (`make seed-demo`).
+- [ ] **Smoke-Test** im Staging:
+- [ ] `main` eingefroren, `release/v0.1` Branch erstellt.
+- [ ] **Changelog** generiert (`git log --oneline v0.0.0..HEAD`).
+- [ ] **Release Notes** erstellt (Features, Breaking Changes, Known Issues).
+- [ ] **Tag v0.1.0** gesetzt und Release publiziert.
+- [ ] Dokumentation zur Installation/Exploration angehängt.
+- [ ] Secrets rotieren (Keycloak admin, oauth2-proxy cookie, DB-Passwörter).
+- [ ] TLS/Ingress für Prod (Cert-Manager).
+- [ ] Backups für PG/OpenSearch/Neo4j.
+- [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern
+- [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
+- [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
+- [ ] **Smoke Tests**:
+- [ ] Design System implementiert
+- [ ] Layout System eingerichtet
+- [ ] Komponenten modernisiert
+- [ ] Responsive Design getestet
+- [ ] Performance optimiert
+- [ ] Tests aktualisiert
+- [ ] Accessibility geprüft
+- [ ] Cross-Browser Tests
+- [ ] Mobile Experience validiert
+- [ ] Documentation aktualisiert
+- [ ] **Desktop Navigation** - Sidebar funktioniert
+- [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
+- [ ] **Dark/Light Mode** - Toggle funktioniert
+- [ ] **Command Palette** - Cmd+K öffnet Palette
+- [ ] **Search Functionality** - Faceted Search + Results
+- [ ] **Form Validation** - Error States + Success
+- [ ] **Real-time Updates** - WebSocket Connection
+- [ ] **Notifications** - Toast Messages
+- [ ] **Charts** - Interactive Visualizations
+- [ ] **Data Tables** - Sorting + Filtering + Pagination
+- [ ] **Authentication** - Login/Logout Flow
+- [ ] **Bundle Size** < 500KB gzipped
+- [ ] **First Contentful Paint** < 1.8s
+- [ ] **Largest Contentful Paint** < 2.5s
+- [ ] **Cumulative Layout Shift** < 0.1
+- [ ] **First Input Delay** < 100ms
+- [ ] **Alle Tests bestanden**
+- [ ] **Performance Benchmarks erreicht**
+- [ ] **Mobile Testing abgeschlossen**
+- [ ] **Accessibility validiert** (WCAG 2.1)
+- [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge)
+- [ ] **User Acceptance Testing** abgeschlossen
+- [ ] **Documentation aktualisiert**
+- [ ] **Deployment Pipeline getestet**
+- [ ] **Monitoring Setup** aktiv
+- [ ] **Rollback Plan** definiert
+- [ ] **Desktop Navigation** - Sidebar funktioniert
+- [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
+- [ ] **Dark/Light Mode** - Toggle funktioniert
+- [ ] **Command Palette** - Cmd+K öffnet Palette
+- [ ] **Search Functionality** - Faceted Search + Results
+- [ ] **Form Validation** - Error States + Success
+- [ ] **Real-time Updates** - WebSocket Connection
+- [ ] **Notifications** - Toast Messages
+- [ ] **Charts** - Interactive Visualizations
+- [ ] **Data Tables** - Sorting + Filtering + Pagination
+- [ ] **Authentication** - Login/Logout Flow
+- [ ] **Bundle Size** < 500KB gzipped
+- [ ] **First Contentful Paint** < 1.8s
+- [ ] **Largest Contentful Paint** < 2.5s
+- [ ] **Cumulative Layout Shift** < 0.1
+- [ ] **First Input Delay** < 100ms
+- [ ] **Alle Tests bestanden**
+- [ ] **Performance Benchmarks erreicht**
+- [ ] **Mobile Testing abgeschlossen**
+- [ ] **Accessibility validiert** (WCAG 2.1)
+- [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge)
+- [ ] **User Acceptance Testing** abgeschlossen
+- [ ] **Documentation aktualisiert**
+- [ ] **Deployment Pipeline getestet**
+- [ ] **Monitoring Setup** aktiv
+- [ ] **Rollback Plan** definiert
+- [ ] **REST-API konsolidieren**
+- [ ] **OAuth2 / OIDC** (Basis-Auth)
+- [ ] **Ontologie-Layer**
+- [ ] **Graph-Algorithmen v1**
+- [ ] **NLP Service v1**
+- [ ] **NiFi Ingest Pipelines**
+- [ ] **n8n Playbooks**
+- [ ] **/search**
+- [ ] **/graphx**
+- [ ] **/settings**
+- [ ] **Dossier-Lite (Gap zu Gotham)**
+- [ ] **Observability Profile**
+- [ ] **Backups**
+- [ ] **CI/CD Stabilisierung**
+- [ ] **Geospatial-Layer (Gap)**
+- [ ] **Audit/Compliance (Gap)**
+- [ ] **Collaboration (Gap)**
+- [ ] **Video-Pipeline (Gap, optional)**
+- [ ] **Export/Offboarding (Gap)**
+- [ ] **[CORE-API-1]** Vereinheitliche `/healthz` und `/readyz` Endpoints
+- [ ] **[CORE-API-2]** Einheitliches Error-Schema (RFC 7807 JSON Problem Detail)
+- [ ] **[CORE-API-3]** Swagger/OpenAPI Doku für alle Services
+- [ ] **[CORE-API-4]** OAuth2 JWT Auth im Gateway + OIDC Integration
+- [ ] **[CORE-API-5]** Audit-Logging Middleware (structured JSON mit X-Request-ID)
+- [ ] **[GRAPH-1]** Ontologie-Layer (Entities, Events, Relations, Properties)
+- [ ] **[GRAPH-2]** Graph-Algorithmen v1 (Degree Centrality, Betweenness, Louvain, Dijkstra)
+- [ ] **[GRAPH-3]** Robustere Cypher-Queries (Retry/Backoff)
+- [ ] **[GRAPH-4]** Graph-Export (GraphML, JSON)
+- [ ] **[GRAPH-5]** Audit: Query-Logs + Query-Metrics
+- [ ] **[SEARCH-1]** NLP v1 Integration (NER, RE, Summarization)
+- [ ] **[SEARCH-2]** Embedding Reranking Pipeline (Flag-gesteuert)
+- [ ] **[SEARCH-3]** Index-Policy für „news“, „docs“ und „plugins“
+- [ ] **[SEARCH-4]** Export: JSON/CSV Dumps pro Index
+- [ ] **[SEARCH-5]** Observability: Search-Latency + Query Errors in Prometheus
+- [ ] **[VIEWS-1]** Healthcheck (SELECT 1 + DB latency)
+- [ ] **[VIEWS-2]** Views für Ontologie-Entities (JOIN Neo4j + Postgres)
+- [ ] **[VIEWS-3]** Integration mit Superset (Cross-Filter Views)
+- [ ] **[VIEWS-4]** Ready-Metrics (Connections, Idle, Errors)
+- [ ] **[FE-1]** Einheitliches Theme (globals.css konsolidieren)
+- [ ] **[FE-2]** /search: Facettenfilter + Ranking-Regler
+- [ ] **[FE-3]** /graphx: Ontologie-Visualisierung + Algorithmen-Ergebnisse
+- [ ] **[FE-4]** /graphx: Geospatial Layer (Leaflet/MapLibre)
+- [ ] **[FE-5]** /settings: Endpoints + OAuth2/OIDC Config sichtbar
+- [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
+- [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
+- [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
+- [ ] **[GATE-2]** Policy-Dateien für Role-Based-Access erweitern
+- [ ] **[GATE-3]** Attribute-Level Security vorbereiten
+- [ ] **[GATE-4]** Audit-Logs in Loki weiterleiten
+- [ ] **[NIFI-1]** RSS/Atom Ingest Flow
+- [ ] **[NIFI-2]** API Ingest Flow
+- [ ] **[NIFI-3]** File Watch/Upload Flow (OCR + NLP)
+- [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
+- [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
+- [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
+- [ ] **[N8N-2]** Alerts Flow (keyword watchlists → Slack/Email)
+- [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
+- [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
+- [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
+- [ ] **[CLI-2]** Export Command (`it export [graph|search|dossier]`)
+- [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`)
+- [ ] **[CLI-4]** Auth Command (`it login --oidc`)
+- [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table)
+- [ ] **[OBS-1]** Observability Profile (Prometheus, Grafana, Loki, Tempo, Alertmanager)
+- [ ] **[OBS-2]** Structured JSON Logs (X-Request-ID)
+- [ ] **[OBS-3]** Backup-Scripts (Neo4j, Postgres, OpenSearch)
+- [ ] **[OBS-4]** Coverage Gate fixen + CI stabilisieren
+- [ ] **[OBS-5]** Frontend Build Konflikt (settings page) lösen
+- [ ] **[CORE-API-1]** Vereinheitliche `/healthz` und `/readyz` Endpoints
+- [ ] **[CORE-API-2]** Einheitliches Error-Schema (RFC 7807 JSON Problem Detail)
+- [ ] **[CORE-API-3]** Swagger/OpenAPI Doku für alle Services
+- [ ] **[CORE-API-4]** OAuth2 JWT Auth im Gateway + OIDC Integration
+- [ ] **[CORE-API-5]** Audit-Logging Middleware (structured JSON mit X-Request-ID)
+- [ ] **[GRAPH-1]** Ontologie-Layer (Entities, Events, Relations, Properties)
+- [ ] **[GRAPH-2]** Graph-Algorithmen v1 (Degree Centrality, Betweenness, Louvain, Dijkstra)
+- [ ] **[GRAPH-3]** Robustere Cypher-Queries (Retry/Backoff)
+- [ ] **[GRAPH-4]** Graph-Export (GraphML, JSON)
+- [ ] **[GRAPH-5]** Audit: Query-Logs + Query-Metrics
+- [ ] **[SEARCH-1]** NLP v1 Integration (NER, RE, Summarization)
+- [ ] **[SEARCH-2]** Embedding Reranking Pipeline (Flag-gesteuert)
+- [ ] **[SEARCH-3]** Index-Policy für „news“, „docs“ und „plugins“
+- [ ] **[SEARCH-4]** Export: JSON/CSV Dumps pro Index
+- [ ] **[SEARCH-5]** Observability: Search-Latency + Query Errors in Prometheus
+- [ ] **[VIEWS-1]** Healthcheck (SELECT 1 + DB latency)
+- [ ] **[VIEWS-2]** Views für Ontologie-Entities (JOIN Neo4j + Postgres)
+- [ ] **[VIEWS-3]** Integration mit Superset (Cross-Filter Views)
+- [ ] **[VIEWS-4]** Ready-Metrics (Connections, Idle, Errors)
+- [ ] **[FE-1]** Einheitliches Theme (globals.css konsolidieren)
+- [ ] **[FE-2]** /search: Facettenfilter + Ranking-Regler
+- [ ] **[FE-3]** /graphx: Ontologie-Visualisierung + Algorithmen-Ergebnisse
+- [ ] **[FE-4]** /graphx: Geospatial Layer (Leaflet/MapLibre)
+- [ ] **[FE-5]** /settings: Endpoints + OAuth2/OIDC Config sichtbar
+- [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
+- [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
+- [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- [ ] **[FE-9]** Verification-Badges & Evidence-Panel (Veracity Scores)
+- [ ] **[FE-10]** Review-UI für Claims/Evidence (Overrides, History)
+- [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
+- [ ] **[GATE-2]** Policy-Dateien für Role-Based-Access erweitern
+- [ ] **[GATE-3]** Attribute-Level Security vorbereiten
+- [ ] **[GATE-4]** Audit-Logs in Loki weiterleiten
+- [ ] **[NIFI-1]** RSS/Atom Ingest Flow
+- [ ] **[NIFI-2]** API Ingest Flow
+- [ ] **[NIFI-3]** File Watch/Upload Flow (OCR + NLP)
+- [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
+- [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
+- [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- [ ] **[NIFI-7]** Verification-Pipeline: Claim Extract, Retrieval, RTE, Geo/Time/Media Checks, Aggregation
+- [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
+- [ ] **[N8N-2]** Alerts Flow (keyword watchlists → Slack/Email)
+- [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
+- [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
+- [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate)
+- [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review)
+- [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
+- [ ] **[CLI-2]** Export Command (`it export [graph|search|dossier]`)
+- [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`)
+- [ ] **[CLI-4]** Auth Command (`it login --oidc`)
+- [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table)
+- [ ] **[OBS-1]** Observability Profile (Prometheus, Grafana, Loki, Tempo, Alertmanager)
+- [ ] **[OBS-2]** Structured JSON Logs (X-Request-ID)
+- [ ] **[OBS-3]** Backup-Scripts (Neo4j, Postgres, OpenSearch)
+- [ ] **[OBS-4]** Coverage Gate fixen + CI stabilisieren
+- [ ] **[OBS-5]** Frontend Build Konflikt (settings page) lösen
+- [ ] **[SEC-EGRESS-1]** Egress-Gateway (Tor+VPN+Proxy-Chain, Kill-Switch, DNS-Sinkhole)
+- [ ] **[SEC-EGRESS-2]** NetworkPolicy: Services nur via Egress-Gateway
+- [ ] **[SEC-EGRESS-3]** UI-Schalter `IT_MODE/IT_EGRESS`, Proxy-Injektion
+- [ ] **[SEC-EGRESS-4]** DNS-Hardening: DoH/Tor-DNS, blockiere Port 53
+- [ ] **[SEC-STORE-1]** Ephemeral FS (Incognito Sessions, Auto-Wipe)
+- [ ] **[SEC-STORE-2]** Vault-Integration + per-Tenant Keys
+- [ ] **[SEC-STORE-3]** Hash+Sign-Pipeline für Forensics-Exporte
+- [ ] **[SEC-BROWSER-1]** Remote Browser Pool (Profile, WebRTC-Off, Cookie-Jar per Case)
+- [ ] **[SEC-BROWSER-2]** Identity Profiles (UA/Locale/Timezone)
+- [ ] **[SEC-BROWSER-3]** robots.txt-Enforcer + Quell-Whitelist
+- [ ] **[SEC-AUDIT-1]** Dual-Plane Logging (persistent vs. in-memory)
+- [ ] **[SEC-AUDIT-2]** UI-Warnungen (Export enthält Metadaten)
+- [ ] **[SEC-SBX-1]** Plugin-Sandbox (gVisor/Kata/Firecracker, default no-net)
+- [ ] **[SEC-SBX-2]** OPA-Validierung `plugin.yaml` (CAPs/Secrets)
+- [ ] **[SEC-SBX-3]** SBOM/Cosign/Trivy-Scans in CI
+- [ ] **[VERIF-1]** Source Reputation & Bot-Likelihood Modul
+- [ ] **[VERIF-2]** Claim-Extractor + MinHash Cluster + Claim IDs
+- [ ] **[VERIF-3]** Evidence Retrieval (Hybrid BM25+Dense)
+- [ ] **[VERIF-4]** RTE/Stance Classifier + Aggregation
+- [ ] **[VERIF-5]** Temporal/Geo Checks (Mordecai + Heuristiken)
+- [ ] **[VERIF-6]** Media Forensics (pHash, EXIF, Reverse Search, ELA)
+- [ ] **[VERIF-7]** Schema/Mappings/Constraints für Verification (OpenSearch + Neo4j)
+- [ ] **[VERIF-8]** Review-UI (Evidence Panel, Overrides, History)
+- [ ] **[VERIF-9]** Active Learning Loop (Label-Store, Re-Training)
+- [ ] **[VERIF-10]** n8n Alerts/Escalations (Watchlists, kontrovers)
+- [ ] **[VERIF-11]** Dossier-Integration (Claim-basierte Reports mit Evidenz-Anhang)
+- [ ] **[CORE-API-1]** Vereinheitliche `/healthz` und `/readyz` Endpoints
+- [ ] **[CORE-API-2]** Einheitliches Error-Schema (RFC 7807 JSON Problem Detail)
+- [ ] **[CORE-API-3]** Swagger/OpenAPI Doku für alle Services
+- [ ] **[CORE-API-4]** OAuth2 JWT Auth im Gateway + OIDC Integration
+- [ ] **[CORE-API-5]** Audit-Logging Middleware (structured JSON mit X-Request-ID)
+- [ ] **[GRAPH-1]** Ontologie-Layer (Entities, Events, Relations, Properties)
+- [ ] **[GRAPH-2]** Graph-Algorithmen v1 (Degree Centrality, Betweenness, Louvain, Dijkstra)
+- [ ] **[GRAPH-3]** Robustere Cypher-Queries (Retry/Backoff)
+- [ ] **[GRAPH-4]** Graph-Export (GraphML, JSON)
+- [ ] **[GRAPH-5]** Audit: Query-Logs + Query-Metrics
+- [ ] **[SEARCH-1]** NLP v1 Integration (NER, RE, Summarization)
+- [ ] **[SEARCH-2]** Embedding Reranking Pipeline (Flag-gesteuert)
+- [ ] **[SEARCH-3]** Index-Policy für „news“, „docs“ und „plugins“
+- [ ] **[SEARCH-4]** Export: JSON/CSV Dumps pro Index
+- [ ] **[SEARCH-5]** Observability: Search-Latency + Query Errors in Prometheus
+- [ ] **[VIEWS-1]** Healthcheck (SELECT 1 + DB latency)
+- [ ] **[VIEWS-2]** Views für Ontologie-Entities (JOIN Neo4j + Postgres)
+- [ ] **[VIEWS-3]** Integration mit Superset (Cross-Filter Views)
+- [ ] **[VIEWS-4]** Ready-Metrics (Connections, Idle, Errors)
+- [ ] **[FE-1]** Einheitliches Theme (globals.css konsolidieren)
+- [ ] **[FE-2]** /search: Facettenfilter + Ranking-Regler
+- [ ] **[FE-3]** /graphx: Ontologie-Visualisierung + Algorithmen-Ergebnisse
+- [ ] **[FE-4]** /graphx: Geospatial Layer (Leaflet/MapLibre)
+- [ ] **[FE-5]** /settings: Endpoints + OAuth2/OIDC Config sichtbar
+- [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
+- [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
+- [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- [ ] **[FE-9]** Verification-Badges & Evidence-Panel (Veracity Scores)
+- [ ] **[FE-10]** Review-UI für Claims/Evidence (Overrides, History)
+- [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
+- [ ] **[GATE-2]** Policy-Dateien für Role-Based-Access erweitern
+- [ ] **[GATE-3]** Attribute-Level Security vorbereiten
+- [ ] **[GATE-4]** Audit-Logs in Loki weiterleiten
+- [ ] **[NIFI-1]** RSS/Atom Ingest Flow
+- [ ] **[NIFI-2]** API Ingest Flow
+- [ ] **[NIFI-3]** File Watch/Upload Flow (OCR + NLP)
+- [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
+- [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
+- [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- [ ] **[NIFI-7]** Verification-Pipeline (Claims, Retrieval, RTE, Geo/Media, Aggregation)
+- [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
+- [ ] **[N8N-2]** Alerts Flow (keyword watchlists → Slack/Email)
+- [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
+- [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
+- [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate)
+- [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review)
+- [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
+- [ ] **[CLI-2]** Export Command (`it export [graph|search|dossier]`)
+- [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`)
+- [ ] **[CLI-4]** Auth Command (`it login --oidc`)
+- [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table)
+- [ ] **[OBS-1]** Observability Profile (Prometheus, Grafana, Loki, Tempo, Alertmanager)
+- [ ] **[OBS-2]** Structured JSON Logs (X-Request-ID)
+- [ ] **[OBS-3]** Backup-Scripts (Neo4j, Postgres, OpenSearch)
+- [ ] **[OBS-4]** Coverage Gate fixen + CI stabilisieren
+- [ ] **[OBS-5]** Frontend Build Konflikt (settings page) lösen
+- [ ] **[SEC-EGRESS-1]** Egress-Gateway (Tor+VPN+Proxy-Chain, Kill-Switch, DNS-Sinkhole)
+- [ ] **[SEC-EGRESS-2]** NetworkPolicy: Services nur via Egress-Gateway
+- [ ] **[SEC-EGRESS-3]** UI-Schalter `IT_MODE/IT_EGRESS`, Proxy-Injektion
+- [ ] **[SEC-EGRESS-4]** DNS-Hardening: DoH/Tor-DNS, blockiere Port 53
+- [ ] **[SEC-STORE-1]** Ephemeral FS (Incognito Sessions, Auto-Wipe)
+- [ ] **[SEC-STORE-2]** Vault-Integration + per-Tenant Keys
+- [ ] **[SEC-STORE-3]** Hash+Sign-Pipeline für Forensics-Exporte
+- [ ] **[SEC-BROWSER-1]** Remote Browser Pool (Profile, WebRTC-Off, Cookie-Jar per Case)
+- [ ] **[SEC-BROWSER-2]** Identity Profiles (UA/Locale/Timezone)
+- [ ] **[SEC-BROWSER-3]** robots.txt-Enforcer + Quell-Whitelist
+- [ ] **[SEC-AUDIT-1]** Dual-Plane Logging (persistent vs. in-memory)
+- [ ] **[SEC-AUDIT-2]** UI-Warnungen (Export enthält Metadaten)
+- [ ] **[SEC-SBX-1]** Plugin-Sandbox (gVisor/Kata/Firecracker, default no-net)
+- [ ] **[SEC-SBX-2]** OPA-Validierung `plugin.yaml` (CAPs/Secrets)
+- [ ] **[SEC-SBX-3]** SBOM/Cosign/Trivy-Scans in CI
+- [ ] **[VERIF-1]** Source Reputation & Bot-Likelihood Modul
+- [ ] **[VERIF-2]** Claim-Extractor + MinHash Cluster + Claim IDs
+- [ ] **[VERIF-3]** Evidence Retrieval (Hybrid BM25+Dense)
+- [ ] **[VERIF-4]** RTE/Stance Classifier + Aggregation
+- [ ] **[VERIF-5]** Temporal/Geo Checks (Mordecai + Heuristiken)
+- [ ] **[VERIF-6]** Media Forensics (pHash, EXIF, Reverse Search, ELA)
+- [ ] **[VERIF-7]** Schema/Mappings/Constraints für Verification (OpenSearch + Neo4j)
+- [ ] **[VERIF-8]** Review-UI (Evidence Panel, Overrides, History)
+- [ ] **[VERIF-9]** Active Learning Loop (Label-Store, Re-Training)
+- [ ] **[VERIF-10]** n8n Alerts/Escalations (Watchlists, kontrovers)
+- [ ] **[VERIF-11]** Dossier-Integration (Claim-basierte Reports mit Evidenz-Anhang)
+- [ ] **[LEGAL-1]** RAG-Service für Gesetzestexte
+- [ ] **[LEGAL-2]** Graph-Schema Erweiterung (:Law, :LawChange)
+- [ ] **[LEGAL-3]** NiFi ingest_laws + rag_index
+- [ ] **[LEGAL-4]** n8n Compliance Alerts + Lobbying Reports
+- [ ] **[LEGAL-5]** Frontend Tab „Legal/Compliance“
+- [ ] **[LEGAL-6]** Dossier-Vorlage Compliance Report
+- [ ] **[DISINFO-1]** Claim-Cluster Pipeline (MinHash/SimHash)
+- [ ] **[DISINFO-2]** Bot-Likelihood Modul
+- [ ] **[DISINFO-3]** Temporal Pattern Detection
+- [ ] **[DISINFO-4]** n8n Narrative Alerts + BotNet Dossier
+- [ ] **[DISINFO-5]** Frontend Dashboard Top Narratives
+- [ ] **[DISINFO-6]** Fact-Check API Integration
+- [ ] **[SUPPLY-1]** Graph-Schema SupplyChains + Sanctions
+- [ ] **[SUPPLY-2]** NiFi ingest_supply_data + enrich_sanctions
+- [ ] **[SUPPLY-3]** Simulation Engine (Event → Impact)
+- [ ] **[SUPPLY-4]** n8n Risk Alerts + Impact Reports
+- [ ] **[SUPPLY-5]** Frontend Supply Graph + Simulation Tool
+- [ ] **[SUPPLY-6]** Dossier Supply Chain Risk Report
+- [ ] **[FIN-1]** Graph-Schema Accounts/Transfers
+- [ ] **[FIN-2]** NiFi ingest_financial_data + enrich_sanctions
+- [ ] **[FIN-3]** Leak-Integration (ICIJ Leaks → Graph)
+- [ ] **[FIN-4]** Anomaly Detection Module
+- [ ] **[FIN-5]** n8n Red Flag Alerts + Escalations
+- [ ] **[FIN-6]** Frontend Finanzgraph + Risk-Dashboard
+- [ ] **[FIN-7]** Dossier Financial Red Flags
+- [ ] **[GEO-1]** NiFi ingest_adsb + ingest_ais + merge_geo_social
+- [ ] **[GEO-2]** Graph-Schema Events/Assets/Conflicts
+- [ ] **[GEO-3]** Geo-Time Anomaly Detection
+- [ ] **[GEO-4]** n8n Alerts + Conflict Reports
+- [ ] **[GEO-5]** Frontend Map Dashboard + Timeline
+- [ ] **[GEO-6]** Simulation Engine (Eskalations-Szenarien)
+- [ ] **[GEO-7]** Dossier Geopolitical Report
+- [ ] **[HUM-1]** NiFi ingest_health_weather_data + merge_indicators
+- [ ] **[HUM-2]** Graph-Schema Crisis/Indicators/Regions
+- [ ] **[HUM-3]** Risk Assessment Modul (ML)
+- [ ] **[HUM-4]** n8n Crisis Alerts + Reports
+- [ ] **[HUM-5]** Frontend Crisis Dashboard + Forecast
+- [ ] **[HUM-6]** Dossier Humanitarian Crisis Report
+- [ ] **[CLIMATE-1]** NiFi ingest_climate_data (NASA/ESA/Copernicus)
+- [ ] **[CLIMATE-2]** Graph-Schema ClimateIndicators
+- [ ] **[CLIMATE-3]** CO₂/Emission Scoring Modul
+- [ ] **[CLIMATE-4]** n8n Alerts (Emission Targets)
+- [ ] **[CLIMATE-5]** Frontend Climate Dashboard + Heatmap
+- [ ] **[CLIMATE-6]** Dossier Climate Risk Report
+- [ ] **[TECH-1]** NiFi ingest_patents + research_data
+- [ ] **[TECH-2]** Graph-Schema Patents/TechTrends
+- [ ] **[TECH-3]** Innovation Hotspot Detection
+- [ ] **[TECH-4]** n8n Tech Trend Reports
+- [ ] **[TECH-5]** Frontend Patent/Innovation Graph
+- [ ] **[TECH-6]** Dossier Technology Trends
+- [ ] **[TERROR-1]** Ingest Propaganda Sources (Social, Web)
+- [ ] **[TERROR-2]** Graph-Schema TerrorNetworks
+- [ ] **[TERROR-3]** Finance Flow Analysis
+- [ ] **[TERROR-4]** n8n Alerts Suspicious Networks
+- [ ] **[TERROR-5]** Frontend Terror Network Graph
+- [ ] **[TERROR-6]** Dossier Terrorism Threat Report
+- [ ] **[HEALTH-1]** NiFi ingest_health_data (WHO, RKI, Social)
+- [ ] **[HEALTH-2]** Graph-Schema HealthEvents/Regions
+- [ ] **[HEALTH-3]** Epidemic Outbreak Detection
+- [ ] **[HEALTH-4]** n8n Health Alerts + Reports
+- [ ] **[HEALTH-5]** Frontend Health Dashboard
+- [ ] **[HEALTH-6]** Dossier Health/Epidemic Report
+- [ ] **[ETHICS-1]** Ingest Model Cards + AI Incident Data
+- [ ] **[ETHICS-2]** Graph-Schema Bias/Models/Orgs
+- [ ] **[ETHICS-3]** Bias Detection Modul
+- [ ] **[ETHICS-4]** n8n Alerts (Bias, Ethics Violations)
+- [ ] **[ETHICS-5]** Frontend AI Ethics Dashboard
+- [ ] **[ETHICS-6]** Dossier AI Ethics Report
+- [ ] **[MEDIA-1]** Ingest Images/Videos (EXIF, Hashing)
+- [ ] **[MEDIA-2]** Deepfake Detection Modul
+- [ ] **[MEDIA-3]** Graph-Schema MediaAuthenticity
+- [ ] **[MEDIA-4]** n8n Alerts Fake Media
+- [ ] **[MEDIA-5]** Frontend Media Forensics Panel
+- [ ] **[MEDIA-6]** Dossier Media Authenticity Report
+- [ ] **[ECON-1]** NiFi ingest_economic_data (IMF, OECD, World Bank)
+- [ ] **[ECON-2]** Graph-Schema EconomicIndicators/Trades
+- [ ] **[ECON-3]** Market Risk Analysis Modul
+- [ ] **[ECON-4]** n8n Economic Reports
+- [ ] **[ECON-5]** Frontend Economic Dashboard
+- [ ] **[ECON-6]** Dossier Economic Intelligence Report
+- [ ] **[CULTURE-1]** Ingest Social/News/Blog Data
+- [ ] **[CULTURE-2]** Graph-Schema Narratives/Discourse
+- [ ] **[CULTURE-3]** Meme/Hashtag Cluster Detection
+- [ ] **[CULTURE-4]** n8n Cultural Trend Reports
+- [ ] **[CULTURE-5]** Frontend Cultural Trends Dashboard
+- [ ] **[CULTURE-6]** Dossier Cultural Intelligence Report
+- [ ] **[CLI-WT-1]** `it waveterm open` – WaveTerm Instanz öffnen (Browser/Panel)
+- [ ] **[CLI-WT-2]** `it waveterm send` – Kommando in aktiven Workspace senden
+- [ ] **[CLI-WT-3]** `it waveterm case` – Case-Verzeichnis mounten/attachen
+- [ ] **[CLI-WT-4]** `it waveterm export` – Session/Artefakte → Dossier-Appendix
+- [ ] **[CLI-WT-5]** Vault-/Token-Handling für WaveTerm-Kommandos
+- [ ] **[CLI-WT-6]** OPA-Policies für WaveTerm-CLI-Befehle
+- [ ] **[CLI-WT-7]** Roundtrip-Tests (CLI → WaveTerm → Artefakte → Dossier)
+- [ ] **[FLOWISE-1]** Flowise Deployment (Container, OIDC via Agent-Gateway)
+- [ ] **[FLOWISE-2]** Agent-Gateway (Auth, RBAC, Rate-Limit, Audit, Vault)
+- [ ] **[FLOWISE-3]** Tool-Adapter v1 (search, graph, rag)
+- [ ] **[FLOWISE-4]** Agent-Registry (PG + YAML Sign + API)
+- [ ] **[FLOWISE-5]** Starter-Agents (Research, Graph, Dossier)
+- [ ] **[FLOWISE-6]** n8n Node `Run Flowise Agent`
+- [ ] **[FLOWISE-7]** NiFi Processor `InvokeFlowiseAgent`
+- [ ] **[FLOWISE-8]** Tool-Adapter v2 (verify, geo, forensics)
+- [ ] **[FLOWISE-9]** Security Policies (OPA Rego + Sandbox Profiles)
+- [ ] **[FLOWISE-10]** Preset Wiring (default_agents)
+- [ ] **[FLOWISE-11]** Eval Suites + CI Scorer
+- [ ] **[FLOWISE-12]** Meta-Planner Agent (v1.0)
+- [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts
+- [ ] **[FLOWISE-14]** Canary & Rollback Mechanik
+- [ ] **[WT-EMBED-1]** Webview Tab `/terminal` + SSO (OIDC)
+- [ ] **[WT-EMBED-2]** Profiles Loader (journalism/compliance/crisis/…)
+- [ ] **[WT-EMBED-3]** “Send to WaveTerm” Actions (+context payload)
+- [ ] **[WT-EMBED-4]** Session Recording → Dossier Appendix
+- [ ] **[WT-PLUGIN-1]** WaveTerm Plugin Manifest (`it` commands, panels)
+- [ ] **[WT-PLUGIN-2]** Dossier/Graph Previews (MD/SVG)
+- [ ] **[WT-PLUGIN-3]** Command Palettes & Snippets
+- [ ] **[WT-JOBS-1]** `/api/jobs` (queue, artifacts)
+- [ ] **[WT-JOBS-2]** n8n Node `waveterm.run`
+- [ ] **[WT-JOBS-3]** NiFi Processor `WaveTermInvoker`
+- [ ] **[WT-SEC-1]** gVisor/Kata runtime + default no-net
+- [ ] **[WT-SEC-2]** OPA policies (tool allowlist, export gates)
+- [ ] **[WT-SEC-3]** Vault tokens (short-lived) for CLI/API
+- [ ] **[WT-DOC-1]** `docs/waveterm/README.md` (Setup, Profiles, Safety)
+- [ ] **[WT-DOC-2]** `docs/waveterm/presets/*.yaml` Beispiele
+- [ ] **[WT-DOC-3]** `docs/api/jobs.md` Spezifikation
+- [ ] **[EXPORT-1]** Bundle-Builder (md + assets + meta/export.json)
+- [ ] **[EXPORT-2]** Graph-Exporter (mermaid.mmd, dot, svg)
+- [ ] **[EXPORT-3]** Canvas-Exporter (excalidraw.json)
+- [ ] **[EXPORT-4]** Geo-Exporter (geojson + map.png/svg)
+- [ ] **[APPFLOWY-1]** AppFlowy Adapter – Watched Folder
+- [ ] **[APPFLOWY-2]** AppFlowy Adapter – API Mode (optional)
+- [ ] **[AFFINE-1]** AFFiNE Adapter – Watched Folder + Edgeless Import
+- [ ] **[AFFINE-2]** AFFiNE Adapter – API Mode (optional)
+- [ ] **[FE-EXPORT-1]** Frontend Export-Dialog (Targets + Formate)
+- [ ] **[CLI-EXP-1]** CLI `it export dossier/graph/canvas`
+- [ ] **[N8N-EXP-1]** n8n Nodes `export_to_appflowy` / `export_to_affine`
+- [ ] **[POLICY-EXP-1]** OPA-Regeln (classification gates)
+- [ ] **[VAULT-EXP-1]** Secrets Handling für Adapter-APIs
+- [ ] **[QA-EXP-1]** Golden Bundle Tests
+- [ ] **[QA-EXP-2]** Roundtrip Import Tests
+
+## Konsolidierte Detail-Tasks (erledigt)
+
+_keine erledigten Tasks erkannt_

@@ -1,0 +1,51 @@
+# 14. Datenintegration mit NiFi
+
+**Apache NiFi** ist der Motor für **Ingest & ETL** (Extract, Transform, Load).
+Es sorgt dafür, dass Daten aus beliebigen Quellen automatisiert ins System fließen.
+
+---
+
+## 14.1 Funktionen
+
+- **Batch-Ingest** (Dateien, Datenbanken, APIs)
+- **Streaming-Ingest** (RSS, Kafka, Social Media)
+- **Transformation** (Normalisierung ins kanonische Schema)
+- **Routing & Filtering** (z. B. nur relevante Dokumente weiterleiten)
+
+---
+
+## 14.2 Beispiel-Pipelines
+
+- **ingest_normalize** → Rohdaten aufnehmen, Metadaten ergänzen, ins Schema überführen
+- **claim_extract** → Text analysieren, Behauptungen extrahieren
+- **evidence_retrieval** → externe Belege abrufen und anhängen
+- **geo_time_media** → Prüfung auf Zeit, Ort und Medien-Integrität
+- **aggregate_upsert** → Speicherung in OpenSearch (Suche) und Neo4j (Graph)
+
+---
+
+## 14.3 Nutzung in InfoTerminal
+
+1. NiFi-UI starten:
+
+   ```bash
+   docker compose --profile nifi up -d
+   ```
+
+   UI: [http://localhost:8080/nifi](http://localhost:8080/nifi)
+
+2. Flow auswählen (z. B. `ingest_normalize`)
+
+3. Datenquelle konfigurieren (Pfad, API-Endpoint, DB-Verbindung)
+
+4. Pipeline starten → Ergebnisse landen in Aleph, Search & Graph
+
+---
+
+## 14.4 Best Practices
+
+- Lieber **kleine, modulare Flows** statt eine riesige Pipeline
+- Fehler in **Retry-Loops** abfangen (z. B. Netzwerkprobleme)
+- Immer **Provenienz speichern**: Quelle, Zeit, Transformationsschritte
+
+---

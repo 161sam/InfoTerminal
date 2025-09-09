@@ -1,0 +1,143 @@
+# 12. Roadmap & Weiterentwicklung
+
+InfoTerminal befindet sich im aktiven Aufbau.
+Die Entwicklung folgt einem **feingranularen Versionierungsplan**:
+
+- **v0.1.0 → v0.1.9.1 … v0.1.9.9** → Feinschliff & Kernstabilität
+- **v0.2.0** → Feature-Vollständigkeit (alle geplanten Bausteine für Gotham-ähnliche Plattform enthalten)
+- **v1.0.0** → Produktionsreife, inklusive Hardening, Compliance, Security & DAO-Struktur
+
+---
+
+## 12.1 Aktueller Stand (v0.1.0)
+
+Bereits implementiert oder stabilisiert:
+
+- **Frontend** (Next.js 14.2.5, Tailwind mit Brand-Layer, Seiten `/search`, `/graphx`, `/settings`)
+- **Backend APIs**:
+  - `search-api` (FastAPI + OpenSearch)
+  - `graph-api` (FastAPI + Neo4j mit Lifespan-Handling)
+  - `graph-views` (Postgres, robuste Healthchecks)
+
+- **Gateway & OPA** (Grundlage für Security-Layer)
+- **Flowise-Connector** (Agents/Playbooks)
+- **CLI (infoterminal-cli)** über pipx installierbar
+  - Grundbefehle: `start`, `stop`, `restart`, `rm`, `status`, `logs`
+  - Subcommands: `search.query`, `graph.ping`, `graph.cypher`, `views.query`, `analytics.kpis`, `settings.show`, `ui.run`
+
+- **Ports**: keine Standardports, Patch-Script (`patch_ports.sh`) ist authoritative
+- **Observability Profile** (Prometheus, Grafana, Loki, Tempo, Alertmanager) vorkonfiguriert
+- **Health-Policy**: `/healthz` (liveness), `/readyz` (readiness), `IT_FORCE_READY=1` für Tests
+- **Dev-Workflow**: `scripts/dev_up.sh`, `scripts/dev_install.sh`, `scripts/dev_health.sh`, `scripts/seed_demo.sh`
+- **Security-Basics**: sichere Passwörter für Neo4j, OPA/Gateway vorhanden
+
+---
+
+## 12.2 Kurzfristige Roadmap (v0.1.9.1 → v0.1.9.9)
+
+Ziel: Vollständigkeit der v0.2 Features in feingranularen Schritten
+
+### Features in Arbeit
+
+- **Ontologie-Layer** (Kanonisches Schema für Entities, Relations, Provenienz, PII-Flags)
+- **Graph-Algorithmen** (Centrality, Community Detection, Pathfinding)
+- **NLP v1**
+  - NER (Person, Organisation, Ort)
+  - Relation Extraction
+  - Summarization
+
+- **OAuth2/OIDC Auth** voll integriert
+- **Dossier-Lite** (Reports aus Search & Graph exportierbar)
+- **Geospatial-Layer** (Leaflet/MapLibre, GeoJSON, Bewegungsdaten)
+- **NiFi Pipelines** (Batch- & Stream-Ingest → Aleph/OpenSearch/Graph)
+- **n8n Playbooks** für Investigations (Alerts, Auto-Dossiers, Eskalationen)
+- **Video-Pipeline** (NiFi → FFmpeg → ML → Object/Face Detection)
+- **Collaboration-Basics** (Shared Notes, Multi-User Sessions, Audit Logs)
+- **Superset Dashboards** mit Cross-Filter & Deep-Links
+
+---
+
+## 12.3 Mittelfristige Roadmap (v0.2.0)
+
+Ziel: **Feature-Vollständigkeit wie Palantir Gotham – mit zusätzlichen Alleinstellungsmerkmalen**
+
+### Kern-Module
+
+- **Search**: Embedding-Reranking, semantische Suche
+- **Graph**: Erweiterte Algorithmen (Betweenness, Influence, Flow)
+- **Dashboards**: Superset++ mit Investigation Timeline & Verlinkung zu Entities
+- **Document Management**: OCR, Language ID, NER, Shingling, Aleph-Integration
+- **Agents**: Investigation Assistant, Financial Risk Assistant, Custom Agents via Flowise
+- **Playbooks**: n8n für Veracity Alerts, Auto-Dossiers, Eskalationen
+- **Geospatial**: MapLibre-Integration, Bewegungs- & Geoclustering-Queries
+- **Video**: Integration von ML-Modellen für Objekterkennung, Gesichtsmatching, Bewegungsanalyse
+- **Collaboration**: Multi-User Workspaces, Audit Trails, Shared Notes
+
+### Erweiterte Sicherheit
+
+- **Security-Layer**
+  - Egress-Gateway (Tor/VPN)
+  - Ephemeral Filesystem
+  - Vault-Integration
+  - Sandbox für Plugins (gVisor/Kata/Firecracker)
+
+- **Verification-Layer**
+  - Source Reputation
+  - Claim Extraction & Clustering
+  - Evidence Retrieval & Rerank
+  - RTE/Stance Classifier
+  - Temporal/Geo Checks
+  - Media Forensics
+  - Review-UI mit Evidence Panel
+
+---
+
+## 12.4 Langfristige Roadmap (v1.0.0)
+
+Ziel: **Produktionsreife Plattform, DAO-ready, Föderierte Deployments, Ethical AI**
+
+### Vollständige Module
+
+- **Search & NLP**: Embeddings, Summarization, Resolve, Deep Entity Linking
+- **Graph**: GNNs, Advanced Path Queries, Temporal Graph Analysis
+- **Dashboards**: Investigation Timeline, Case Management, Full Cross-Filter
+- **Document Management**: Vollintegration Aleph, Multi-Language OCR, Fingerprinting
+- **Agents**: Erweiterbarer Agent Marketplace (Flowise + n8n)
+- **Playbooks**: Automatisierung für Investigations, Alerts, Compliance
+- **Geospatial**: Movement Queries, Real-Time Tracking, Clustering
+- **Video**: Echtzeit-Analyse, Multi-Source Video Fusion
+- **Collaboration**: Multi-Org, Rollen & Berechtigungen, DAO-ready Governance
+
+### Security & Compliance
+
+- Vollständige **RLS & OPA Policies**
+- **Dual-Plane Logging** (persistent vs. ephemeral)
+- **Audit Logs** für Compliance (ISO 27001, GDPR, AI Act, NIS2)
+- **Ethical AI** mit Bias-Checks, Model Cards, Explainability
+- **Green Hosting** & nachhaltige Deployments
+
+### Erweiterte AI/ML/DL-Funktionen
+
+- **Graph Neural Networks (GNNs)**
+- **Deep Embeddings** für cross-modal Search (Text, Bild, Video)
+- **Federated Learning** (Verteiltes Training ohne Datenweitergabe)
+- **Active Learning Loops** (human-in-the-loop Feedback zur Modellverbesserung)
+
+### Plugin-Architektur
+
+- **SDKs für Python, JS, CLI**
+- **Integration von Kali Linux Tools** als Datenquellen & Analysen
+- **Externe Workspaces** (AppFlowy, AFFiNE, WaveTerm) bidirektional integrierbar
+- **Marktplatz für Community-Plugins**
+
+---
+
+## 12.5 Langfristige Vision (über v1.0 hinaus)
+
+- **Alle Kali Linux Tools** als Datenquellen/Plugins verfügbar
+- **Föderierte, dezentrale Deployments** – DAO-ready Strukturen mit gemeinschaftlicher Governance
+- **Externe Live-Datenquellen** (News, Social Media, IoT-Feeds, Regierungsdaten) → automatisiert normalisiert in das kanonische Schema
+- **Investigation Collaboration**: Timeline + Shared Notes + Evidence Panel + Superset Dashboards → komplettes „Palantir Gotham Replacement“
+- **Ethical & Sustainable AI** als Differenzierungsmerkmal
+
+---

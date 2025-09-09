@@ -1,0 +1,20 @@
+# Blueprints
+
+Status and descriptions of intelligence blueprints.
+- [Aiethics](blueprint-aiethics.md)
+- [Climate](blueprint-climate.md)
+- [Cultural](blueprint-cultural.md)
+- [Disinfo](blueprint-disinfo.md)
+- [Economic](blueprint-economic.md)
+- [Financial](blueprint-financial.md)
+- [Flowise Agents](blueprint-flowise-agents.md)
+- [Geopolitical](blueprint-geopolitical.md)
+- [Health](blueprint-health.md)
+- [Humanitarian](blueprint-humanitarian.md)
+- [Legal](blueprint-legal.md)
+- [Mediaforensics](blueprint-mediaforensics.md)
+- [Security](blueprint-security.md)
+- [Supplychain](blueprint-supplychain.md)
+- [Technology](blueprint-technology.md)
+- [Terrorism](blueprint-terrorism.md)
+- [Verification](blueprint-verification.md)

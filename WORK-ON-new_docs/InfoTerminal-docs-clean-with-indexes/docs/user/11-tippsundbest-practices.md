@@ -1,0 +1,99 @@
+# 11. Tipps & Best Practices
+
+---
+
+## 11.1 Allgemeine Nutzung
+
+- **Starte klein, denke groß**: Beginne mit einzelnen Datenquellen (z. B. Dokumenten oder einer API), bevor du komplexe Pipelines baust.
+- **CLI + Frontend kombinieren**: Nutze die CLI für schnelle Abfragen & Automatisierung, das Frontend für Exploration & Visualisierung.
+- **Gesundheitsstatus prüfen**: Verwende regelmäßig
+
+  ```bash
+  it status
+  ```
+
+  um sicherzustellen, dass alle Services laufen.
+
+---
+
+## 11.2 Troubleshooting
+
+- **Frontend lädt nicht?**
+  - Prüfe, ob Node.js ≥ 20 installiert ist
+  - Logs ansehen:
+
+    ```bash
+    it logs --service frontend
+    ```
+
+- **Neo4j-Login schlägt fehl?**
+  - Standard-Dev-Zugang:
+
+    ```
+    user: neo4j
+    pass: test12345
+    ```
+
+  - Falls blockiert: Container neu starten und Volume ggf. löschen.
+
+- **Port-Konflikte?**
+  - Immer `scripts/patch_ports.sh` nutzen, **nicht** manuell ändern.
+  - `.env.dev.ports` ist die einzige Quelle der Wahrheit.
+
+- **CLI findet Services nicht?**
+  - Prüfe `.env.local` und `it settings.show`
+  - Dienste per `it restart` neu starten.
+
+---
+
+## 11.3 Monitoring
+
+- **Metriken aktivieren**
+  - Setze `IT_ENABLE_METRICS=1` in `.env.local`.
+  - Zugriff unter:
+
+    ```
+    http://localhost:<port>/metrics
+    ```
+
+- **Logs im Blick behalten**
+  - Mit Loki + Grafana alle Logs zentral abrufen.
+  - Filtere nach `X-Request-Id`, um Requests über Services hinweg zu verfolgen.
+
+- **Traces nur bei Bedarf aktivieren**
+  - Setze `IT_OTEL=1` → aktiviert OpenTelemetry.
+  - Tipp: Im Dev-Modus nur für Debugging nutzen (spart Ressourcen).
+
+---
+
+## 11.4 Performance & Ressourcen
+
+- **Dev vs. Prod**:
+  - Im Dev-Modus laufen APIs lokal mit Hot-Reload → praktisch, aber speicherintensiv.
+  - Im Prod-Modus Container nutzen → stabiler & ressourcenschonender.
+
+- **Observability modular starten**:
+  - Nutze `docker compose --profile observability up -d` nur, wenn Monitoring gebraucht wird.
+
+- **Hardware-Tipps**:
+  - 16 GB RAM empfohlen
+  - SSD statt HDD → spürbar schnellere Datenbankzugriffe
+
+---
+
+## 11.5 Best Practices für Workflows
+
+- **Suche eingrenzen**: Nutze Filter (Zeit, Quelle, Entitätstyp), um präzisere Ergebnisse zu erhalten.
+- **Graph-Queries speichern**: Häufige Cypher-Queries in Skripten oder CLI-Aliasen wiederverwenden.
+- **Dashboards verlinken**: Superset-Dashboards mit Deep-Links zu Graph- oder Suchergebnissen kombinieren.
+- **Playbooks automatisieren**: Wiederkehrende Aufgaben (z. B. tägliche Alerts, wöchentliche Reports) über n8n automatisieren.
+
+---
+
+## 11.6 Zusammenarbeit im Team
+
+- **Shared Notes nutzen**: Dokumentiere Erkenntnisse direkt in InfoTerminal.
+- **Audit Logs im Blick**: Jeder Schritt wird erfasst → ideal für Compliance & gemeinsame Nachvollziehbarkeit.
+- **Rollen sauber definieren**: Analysten, Admins und Auditoren klar trennen.
+
+---
