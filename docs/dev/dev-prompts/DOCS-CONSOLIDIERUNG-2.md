@@ -99,6 +99,3 @@ Ziel: Roadmap-Integration + echte Deduplizierung implementieren.
 * Anzahl deduplizierter Abschnitte (mit Ziel-Dateien).
 * Top-5 Journal-Einträge aus `migration_journal.md`.
 * Commit-Hashes der letzten beiden Commits.
-
-
-Willst du, dass ich dir parallel noch einen **Reviewer-Guide für den nächsten PR** formuliere (worauf dein Review-Fokus liegen sollte)?
