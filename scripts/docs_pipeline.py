@@ -294,9 +294,9 @@ def load_todo_tasks() -> List[Tuple[str, Path, int, str, bool]]:
     return tasks
 
 
-def update_section(path: Path, heading: str, items: List[str]) -> int:
+def update_section(path: Path, heading: str, items: List[str]) -> Tuple[int, set[str]]:
     if not items:
-        return 0
+        return 0, set()
     if path.exists():
         lines = path.read_text(encoding="utf-8").splitlines()
     else:
@@ -321,6 +321,7 @@ def update_section(path: Path, heading: str, items: List[str]) -> int:
         if m:
             existing_ids.add(m.group(1))
     added = 0
+    inserted_ids: set[str] = set()
     for item in items:
         m = id_re.match(item)
         if not m:
@@ -330,10 +331,11 @@ def update_section(path: Path, heading: str, items: List[str]) -> int:
             continue
         lines.insert(insert_at, item)
         existing_ids.add(tid)
+        inserted_ids.add(tid)
         insert_at += 1
         added += 1
     write_file(path, "\n".join(lines) + "\n")
-    return added
+    return added, inserted_ids
 
 
 def integrate_todo_tasks() -> int:
@@ -344,31 +346,32 @@ def integrate_todo_tasks() -> int:
     for task_id, fpath, line_no, text, done in tasks:
         rel = fpath.as_posix()
         bullet = f"- [{'x' if done else ' '}] {task_id} {text} ({rel}:{line_no})"
-        if "v0.1" in rel:
-            if done:
-                v01.append(bullet)
-        if "v0.2" in rel:
-            if not done:
-                v02.append(bullet)
-        if "v0.1" in rel or "v0.2" in rel or "v0.3" in rel:
+        if "v0.1" in rel and done:
+            v01.append(bullet)
+        if "v0.2" in rel and not done:
+            v02.append(bullet)
+        if any(v in rel for v in ("v0.1", "v0.2", "v0.3")):
             master.append(bullet)
-    added = 0
-    added += update_section(
+
+    added_ids: set[str] = set()
+    _, ids = update_section(
         DOCS_DIR / "dev/roadmap/v0.1-overview.md", "Abgeschlossene Detail-Tasks", v01
     )
-    added += update_section(
+    added_ids.update(ids)
+    _, ids = update_section(
         DOCS_DIR / "dev/roadmap/v0.2-overview.md", "Offene Detail-Tasks", v02
     )
+    added_ids.update(ids)
     master_file = DOCS_DIR / "dev/roadmap/v0.3-plus/master-todo.md"
-    master_added = update_section(master_file, "Master TODO", master)
-    added += master_added
+    master_added, ids = update_section(master_file, "Master TODO", master)
+    added_ids.update(ids)
     if master_added == 0 and not master_file.exists():
         write_file(master_file, "# Master TODO\n")
-    if added:
-        print(f"Integrated {added} roadmap tasks")
+    if added_ids:
+        print(f"Integrated {len(added_ids)} roadmap tasks")
     else:
         print("No new roadmap tasks")
-    return added
+    return len(added_ids)
 
 
 def ensure_roadmap_index() -> None:
@@ -551,7 +554,8 @@ def replace_with_pointer(
     src: Path, start: int, end: int, target: Path, anchor: str
 ) -> None:
     lines = read_lines(src)
-    pointer = f"➡ Consolidated at: {os.path.relpath(target, src.parent)}#{anchor}"
+    rel_target = os.path.relpath(target, src.parent).replace(os.sep, "/")
+    pointer = f"➡ Consolidated at: {rel_target}#{anchor}"
     if lines[start - 1 : end] == [pointer]:
         return
     lines[start - 1 : end] = [pointer]
@@ -586,13 +590,13 @@ def append_section(
     return anchor
 
 
-def dedupe() -> None:
+def dedupe() -> int:
     ensure_out_dir()
     dup_file = OUT_DIR / "duplicates_report.md"
     if not dup_file.exists():
         check_broken_links()
         check_naming()
-        return
+        return 0
     processed: set[Tuple[Path, int, int]] = set()
     merged: List[str] = []
     for line in dup_file.read_text(encoding="utf-8").splitlines():
@@ -636,6 +640,7 @@ def dedupe() -> None:
         print("No duplicates merged")
     check_broken_links()
     check_naming()
+    return len(merged)
 
 
 # ---------------------------------------------------------------------------
