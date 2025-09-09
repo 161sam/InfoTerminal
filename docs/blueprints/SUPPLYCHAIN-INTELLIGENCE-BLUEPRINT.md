@@ -1,0 +1,3 @@
+# SUPPLYCHAIN-INTELLIGENCE-BLUEPRINT.md
+
+Summary placeholder.

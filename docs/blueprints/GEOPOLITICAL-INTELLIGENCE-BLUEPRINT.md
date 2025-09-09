@@ -1,0 +1,3 @@
+# GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md
+
+Summary placeholder.

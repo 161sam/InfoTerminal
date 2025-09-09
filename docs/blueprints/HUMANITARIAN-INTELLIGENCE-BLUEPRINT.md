@@ -1,0 +1,3 @@
+# HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md
+
+Summary placeholder.

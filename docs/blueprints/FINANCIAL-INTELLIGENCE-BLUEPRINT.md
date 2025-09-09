@@ -1,0 +1,3 @@
+# FINANCIAL-INTELLIGENCE-BLUEPRINT.md
+
+Summary placeholder.
