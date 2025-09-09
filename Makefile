@@ -1,4 +1,4 @@
-.PHONY: gv.test gv.cov fe.test test
+.PHONY: gv.test gv.cov fe.test fe.dev fe.build test
 
 gv.test:
 	@cd services/graph-views && \
@@ -13,7 +13,13 @@ gv.cov:
 	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q $(COVER)
 
 fe.test:
-	@CI=1 npm -w apps/frontend run test --silent -- --reporter=dot
+	@it fe test
+
+fe.dev:
+	@it fe dev
+
+fe.build:
+	@it fe build
 
 test:
 	@set -e; \
