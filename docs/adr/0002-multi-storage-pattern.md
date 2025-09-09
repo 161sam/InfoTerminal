@@ -1,14 +1,8 @@
-# ADR 0002: Multi-Storage Pattern
-
-Date: 2025-09-02
-
+➡ Consolidated at: ../dev/guides/rag-systems.md#adr-0002-multi-storage-pattern
 ## Status
 
 Accepted
-
-## Context
-
-Different workloads require search, graph traversal and transactional storage.
+➡ Consolidated at: ../dev/guides/rag-systems.md#
 
 ## Decision
 

@@ -1,5 +1,4 @@
-<!-- markdownlint-disable MD013 -->
-
+➡ Consolidated at: guides/frontend-modernization.md#markdownlint-disable-md013
 # InfoTerminal Frontend Modernisierung - Implementierung Guide
 
 ## 🎯 Überblick

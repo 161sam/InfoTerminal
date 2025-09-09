@@ -1,11 +1,4 @@
-# Presets (Profile) – Überblick
-
-- **Journalismus (INCognito+)** → maximaler Quellenschutz, „save-nothing“, starke Verifikation & manuelle Reviews.
-- **Behörden/Firmen (Forensics+)** → gerichtsfeste Nachvollziehbarkeit, Chain-of-Custody, vollständiges Auditing.
-- **Forschung (Balanced)** → produktives Arbeiten, moderate OPSEC, gute Reproduzierbarkeit.
-
----
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
 # 1) Journalismus-Preset (INCognito+)
 
 ## Ziele
@@ -15,28 +8,14 @@ Quellenschutz, minimaler Footprint, kontrolliertes Scraping, starke Verifikation
 ## Security/Runtime
 
 ```bash
-# Betriebsmodus
-IT_MODE=incognito
-IT_EGRESS=tor+vpn
-IT_HTTP_PROXY=http://proxy:8118
+➡ Consolidated at: ../dev/guides/preset-profiles.md#betriebsmodus
 IT_SOCKS5_PROXY=socks5://tor:9050
 IT_DOH=1
 IT_BLOCK_DNS=1
-IT_NO_LOG_PERSIST=1
-IT_EPHEMERAL_FS=1
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#it-no-log-persist-1
 # Scraper/Browser
 IT_BROWSER_WEBRTC_OFF=1
-IT_BROWSER_PROFILE=strict
-IT_SCRAPER_RESPECT_ROBOTS=1
-IT_SCRAPER_DOMAIN_WHITELIST=media.gov,deutsche_presse*.tld,behörden*.de,ngo*.org
-IT_SCRAPER_RATE_LIMIT=low
-```
-
-## NiFi Pipelines (aktiviert)
-
-- `ingest_rss_journalism` (RSS/Atom-Whitelist, sanfte Backoffs)
-- `ingest_web_readability_incognito` (Readability/trafilatura, Playwright nur für Whitelist)
+➡ Consolidated at: ../dev/guides/preset-profiles.md#it-browser-profile-strict
 - `nlp_claims` → `evidence_retrieval` → `rte_scoring` → `geo_time_media` → `aggregate_upsert` (voller Verifikationspfad)
 - `geo_enrich_light` (Nominatim mit aggressivem Rate-Limit + Cache)
 
@@ -46,14 +25,7 @@ IT_SCRAPER_RATE_LIMIT=low
 JournalismContext:
   HTTP_PROXY: "http://proxy:8118"
   SOCKS_PROXY: "socks5://tor:9050"
-  ROBOTS_ENFORCE: "true"
-  DOMAIN_WHITELIST: "media.gov,deutsche_presse*.tld,ngo*.org"
-  RATE_LIMIT_RPS: "0.3"
-  GEO_CODER_CACHE_TTL: "86400"
-```
-
-## n8n Playbooks
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#robots-enforce-true
 - **Breaking-News Watchlist**: Keywords/Entities → Alert in sicheren Kanal (z.B. Matrix/Signal via Relay)
 - **Controversy Escalation**: `veracity in {likely_false,false,manipulative}` → Senior-Review
 - **Auto-Dossier Lite**: Verified/Likely True → kurzes PDF mit Evidenzliste
@@ -61,13 +33,7 @@ JournalismContext:
 ## Verification Defaults
 
 ```yaml
-verif:
-  weights:
-    {
-      source:0.2,
-      content:0.1,
-      corro:0.3,
-      rte:0.25,
+➡ Consolidated at: ../dev/guides/preset-profiles.md#verif
       temporal:0.05,
       geo:0.05,
       media:0.05,
@@ -86,12 +52,7 @@ verif:
 - **/search**: Quelle=„trusted press“, Zeitraum=letzte 24–72h, Badge-Filter `veracity≥likely_true`
 - **/graphx**: Entity-Fokus (People/Orgs), Geo-Heatmap aus
 - **Dossier**: Kurzvorlage (Claim + 2–3 Pro/Contra Quellen, Hash/Zeitstempel)
-- **Review-UI**: „Review before share“ erzwungen
-
-## Plugin-Whitelist (Kali/Tools)
-
-- **Allowed**: `whois`, `theHarvester` (nur passive Quellen), `exiftool`, `imagehash`, `yara` (offline), `nmap -sL` (Listing only)
-- **Blocked**: aktive Exploits/Intrusion-Tools
+➡ Consolidated at: ../dev/guides/preset-profiles.md#review-ui-review-before-share-erzwungen
 
 ---
 
@@ -120,26 +81,14 @@ IT_CHAIN_OF_CUSTODY=1
 - Voller Verifikationspfad mit **mehr Evidenz-Quellen** (Gov/NGO/Datenbanken)
 - `geo_enrich_enterprise` (interner Geocoder/Cache)
 
-### Provenienz & Hash
-
-- Jeder Flow schreibt `hash_sha256`, `signer`, `sigstore_bundle` in Metadata
-- Exporte → WORM-Bucket (Retention Policy)
-
-## n8n Playbooks
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#provenienz-hash
 - **Case Lifecycle**: Intake → Triage → Corroboration → Legal Review → Dossier mit Signatur
 - **Sanktions-/Threat-Checks**: MISP/OTX/OFAC/BAFA → Graph-Verknüpfung → Alert
 - **Chain-of-Custody Report**: automatisch generieren & signieren
 
 ## Verification Defaults
 
-```yaml
-verif:
-  weights:
-    {
-      source:0.25,
-      content:0.1,
-      corro:0.25,
+➡ Consolidated at: ../dev/guides/preset-profiles.md#yaml
       rte:0.25,
       temporal:0.05,
       geo:0.05,
@@ -148,10 +97,7 @@ verif:
   thresholds:
     verified: { score: 0.90, conf: 0.80 } # strenger
     likely_true: { score: 0.75, conf: 0.65 }
-  evidence_required:
-    min_independent_sources: 3
-    must_include: ["gov", "ngo", "reputable_press"]
-  require_human_review_for_publish: true
+➡ Consolidated at: ../dev/guides/preset-profiles.md#evidence-required
 ```
 
 ## Frontend Defaults
@@ -166,14 +112,7 @@ verif:
 - **Allowed** (mit Sandbox & Genehmigung): `nmap` (nur passiv/Version-Scan im eigenen Netz), `tshark/wireshark` (PCAP-Import), `yara`, `exiftool`, `pdfid`, `pefile`
 - **Blocked**: Exploits ohne Mandat; Standard „default no-net“ Sandbox
 
----
-
-# 3) Forschung-Preset (Balanced)
-
-## Ziele
-
-Schnelle Exploration, gute Reproduzierbarkeit, moderate OPSEC, nachvollziehbare Ergebnisse.
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#
 ## Security/Runtime
 
 ```bash
@@ -181,21 +120,12 @@ IT_MODE=standard
 IT_EGRESS=proxy
 IT_NO_LOG_PERSIST=0
 IT_EPHEMERAL_FS=0
-IT_DOH=1
-IT_BLOCK_DNS=1
-```
-
-## NiFi Pipelines (aktiviert)
+➡ Consolidated at: ../dev/guides/preset-profiles.md#it-doh-1
 
 - `ingest_rss_social_web_balanced`
 - `ingest_api_generic` (öffentliche APIs + Key-Scoped)
 - Verifikation komplett, aber **schneller eingestellt** (weniger tiefe Evidenzsuche)
-- `geo_enrich_standard` (Cache aggressiver)
-
-### NiFi Parameter Context (Ausschnitt)
-
-```yaml
-ResearchContext:
+➡ Consolidated at: ../dev/guides/preset-profiles.md#geo-enrich-standard-cache-aggressiver
   RATE_LIMIT_RPS: "1.0"
   EVIDENCE_TOPK: "8"
   RETRIEVAL_TIMEOUT_S: "8"
@@ -224,26 +154,14 @@ verif:
   thresholds:
     verified: { score: 0.80, conf: 0.70 }
     likely_true: { score: 0.65, conf: 0.55 }
-  active_learning: true
-  sample_uncertain_for_labeling: 0.2 # 20% der unsicheren Fälle in Label-Queue
-```
-
-## Frontend Defaults
-
-- **/search**: Badge-Filter `≥uncertain` (alles sichtbar), Sortierung „Neuheit + Score“
+➡ Consolidated at: ../dev/guides/preset-profiles.md#active-learning-true
 - **/graphx**: Communities + Embeddings-Ansicht
 - **Dossier**: Forschungsbericht (Methoden, Parameter, Repro-Hinweise)
 - **Review-UI**: Override erlaubt, Label-Store prominent
 
 ## Plugin-Whitelist (Kali/Tools)
 
-- **Allowed**: alle **passiven/forensischen** Tools; aktive nur im Lab/Isolated-Netz (Preset prüft Sandbox `no-net`)
-
----
-
-# Preset-Auswahl (Switching)
-
-Du kannst Presets als **Config-Pakete** ablegen und per ENV aktivieren:
+➡ Consolidated at: ../dev/guides/preset-profiles.md#allowed-alle-passiven-forensischen-tools-aktive-nur-im-lab-isolated-netz-preset-pr-ft-sandbox-no-net
 
 ```bash
 IT_PROFILE={journalism|agency|research}
@@ -252,10 +170,7 @@ IT_PROFILE={journalism|agency|research}
 # - n8n Workflows (enable/disable)
 # - Verification weights/thresholds
 # - Frontend defaults
-# - Security env & proxy wiring
-```
-
-Beispiel: `config/presets/journalism.yaml`
+➡ Consolidated at: ../dev/guides/preset-profiles.md#security-env-proxy-wiring
 
 ```yaml
 profile: journalism
@@ -270,13 +185,7 @@ verification:
 nifi_context: JournalismContext
 n8n_enable: [breaking_news_watchlist, controversy_escalation, auto_dossier_lite]
 frontend:
-  search_defaults: {badges_min: "likely_true", time_range: "72h"}
-  dossier_template: "journalism_short.md"
-plugins:
-  whitelist: [whois, theHarvester, exiftool, imagehash, yara]
-```
-
----
+➡ Consolidated at: ../dev/guides/preset-profiles.md#search-defaults-badges-min-likely-true-time-range-72h
 
 # Preset-Workflows (End-to-End Skizze)
 
@@ -292,12 +201,7 @@ plugins:
 2. n8n Case Lifecycle → Dossier (Langform) → Signatur → WORM
 3. Vollständige Logs/Traces, 4-Augen-Review, Sandbox-Härtung
 
-**Forschung:**
-
-1. Mixed Sources → NiFi → Verifikation (schneller) → Search/Graph
-2. n8n Trendreport/Anomalien → Auto-Cluster → Forschungs-Dossier
-3. Reproduzierbare Settings, Active Learning an
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#forschung
 ---
 
 # Umsetzung: Tickets (zum Master TODO-Index ergänzen)

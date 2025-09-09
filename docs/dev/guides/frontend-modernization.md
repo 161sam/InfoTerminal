@@ -486,3 +486,443 @@ Nach der vollständigen Implementierung haben Sie InfoTerminal in eine **moderne
 - 📊 **Advanced Features**
 
 Die Modernisierung positioniert InfoTerminal als **professionelle Intelligence-Plattform**, die sowohl für kleine Teams als auch große Enterprise-Umgebungen geeignet ist.
+---
+merged_from:
+  - docs/dev/frontend_modernization_guide.md#L1-L2
+merged_at: 2025-09-09T13:55:10.782688Z
+---
+
+<!-- markdownlint-disable MD013 -->
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L55-L57
+merged_at: 2025-09-09T13:55:10.784568Z
+---
+
+### 2. Dependencies installieren
+
+```bash
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L68-L70
+merged_at: 2025-09-09T13:55:10.786464Z
+---
+
+```bash
+# Neue Komponenten-Struktur
+mkdir -p src/components/{ui,forms,auth,charts,mobile,health}
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L202-L204
+merged_at: 2025-09-09T13:55:10.788270Z
+---
+
+NEXT_PUBLIC_SEARCH_API=http://localhost:8001
+NEXT_PUBLIC_GRAPH_API=http://localhost:8002
+NEXT_PUBLIC_DOCENTITIES_API=http://localhost:8006
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L261-L263
+merged_at: 2025-09-09T13:55:10.790212Z
+---
+
+# Type Check
+npm run typecheck
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L382-L384
+merged_at: 2025-09-09T13:55:10.792358Z
+---
+
+npm install
+```
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L267-L269
+merged_at: 2025-09-09T13:55:10.794446Z
+---
+
+
+# Performance Audit
+npx lighthouse http://localhost:3000 --view
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L385-L387
+merged_at: 2025-09-09T13:55:10.796209Z
+---
+
+npm run build:css
+
+# Purge Cache
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L393-L395
+merged_at: 2025-09-09T13:55:10.798062Z
+---
+
+npm install --save-dev @next/bundle-analyzer
+```
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L403-L405
+merged_at: 2025-09-09T13:55:10.799869Z
+---
+
+### Für Entwickler
+
+1. **Component Storybook** - Komponenten-Dokumentation
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L410-L412
+merged_at: 2025-09-09T13:55:10.801791Z
+---
+
+2. **Brand Guidelines** - Farben, Typography, Spacing
+3. **Responsive Breakpoints** - Mobile/Desktop Guidelines
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L10-L13
+merged_at: 2025-09-09T13:55:10.803557Z
+---
+
+## 📋 Überblick der Modernisierung
+
+Diese umfassende Frontend-Modernisierung verwandelt das InfoTerminal von einer einfachen UI in eine **enterprise-ready, professionelle Anwendung** mit:
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L14-L28
+merged_at: 2025-09-09T13:55:10.805391Z
+---
+
+- **🌗 Dark Mode Support** - Automatisches Theme-Switching + System-Sync
+- **📱 Mobile-First Design** - Vollständig responsive mit Touch-Optimierung
+- **⚡ Command Palette** - Keyboard-Shortcuts für Power User (Cmd+K)
+- **🔔 Smart Notifications** - Toast-Messages mit Action-Buttons
+- **📊 Advanced Charts** - Interactive Charts mit Recharts
+- **🗃️ Professional Data Tables** - Sortierung, Filterung, Pagination
+- **📝 Form System** - Validierung + Error Handling
+- **🔐 Authentication Flow** - Login/Register mit Guards
+- **⚡ Real-time Updates** - WebSocket-Integration
+- **📈 Performance Monitoring** - Web Vitals Tracking
+- **🔍 Advanced Search** - Faceted Search mit Reranking
+
+### 🛠️ Technische Verbesserungen
+
+- **TypeScript** - Vollständige Typisierung
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L29-L39
+merged_at: 2025-09-09T13:55:10.807447Z
+---
+
+
+# Backup bestehender Dateien
+cp pages/index.tsx pages/index.tsx.backup
+cp pages/search.tsx pages/search.tsx.backup
+cp pages/docs/[id].tsx pages/docs/[id].tsx.backup
+cp pages/graphx.tsx pages/graphx.tsx.backup
+cp tailwind.config.js tailwind.config.js.backup
+```
+
+➡ Consolidated at: frontend-modernization.md#2-dependencies-installieren
+# Core Dependencies
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L42-L46
+merged_at: 2025-09-09T13:55:10.809090Z
+---
+
+mkdir -p src/lib
+mkdir -p src/hooks
+mkdir -p src/types
+
+# Layout Komponenten
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L47-L54
+merged_at: 2025-09-09T13:55:10.811024Z
+---
+
+mkdir -p src/components/upload
+```
+
+### 4. Dateien erstellen & ersetzen
+
+#### Core Files
+
+1. **Design System** → `src/lib/theme.ts`
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L58-L60
+merged_at: 2025-09-09T13:55:10.812930Z
+---
+
+
+#### Form System
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L61-L63
+merged_at: 2025-09-09T13:55:10.814890Z
+---
+
+
+#### UI Components
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L64-L67
+merged_at: 2025-09-09T13:55:10.816571Z
+---
+
+3. **Error Boundary** → `src/components/ui/ErrorBoundary.tsx`
+
+#### Pages (Ersetzen)
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L71-L76
+merged_at: 2025-09-09T13:55:10.819039Z
+---
+
+
+1. **Tailwind Config** → `tailwind.config.js`
+2. **Next.js Config** → Update für Fonts & optimizations
+
+### 5. Tailwind Konfiguration
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L77-L84
+merged_at: 2025-09-09T13:55:10.820939Z
+---
+
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L87-L94
+merged_at: 2025-09-09T13:55:10.822858Z
+---
+
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
+      animation: {
+        "fade-in": "fadeIn 0.5s ease-in-out",
+        "slide-up": "slideUp 0.3s ease-out",
+      },
+    },
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L95-L100
+merged_at: 2025-09-09T13:55:10.824817Z
+---
+
+```
+
+### 6. App-Level Integration
+
+#### `pages/_app.tsx` updaten
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L101-L105
+merged_at: 2025-09-09T13:55:10.826658Z
+---
+
+import { CommandPaletteProvider } from '../src/components/ui/CommandPalette'
+import { AuthProvider } from '../src/components/auth/AuthProvider'
+import { RealtimeProvider } from '../src/lib/realtime'
+import { ErrorBoundary } from '../src/components/ui/ErrorBoundary'
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L106-L111
+merged_at: 2025-09-09T13:55:10.828564Z
+---
+
+    <div className={inter.className}>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <AuthProvider>
+            <RealtimeProvider>
+              <NotificationProvider>
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L112-L118
+merged_at: 2025-09-09T13:55:10.830497Z
+---
+
+          </AuthProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </div>
+  )
+}
+```
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L119-L123
+merged_at: 2025-09-09T13:55:10.832352Z
+---
+
+NEXT_PUBLIC_NLP_API=http://localhost:8003
+NEXT_PUBLIC_WS_URL=ws://localhost:8080/ws
+NEXT_PUBLIC_ALEPH_URL=http://localhost:8082
+NEXT_PUBLIC_GRAFANA_URL=http://localhost:3001
+```
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L205-L214
+merged_at: 2025-09-09T13:55:10.834255Z
+---
+
+  swcMinify: true,
+  images: {
+    formats: ["image/webp", "image/avif"],
+  },
+  experimental: {
+    optimizeCss: true,
+    gzipSize: true,
+  },
+};
+```
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L217-L223
+merged_at: 2025-09-09T13:55:10.836235Z
+---
+
+### Performance Monitoring
+
+```typescript
+// In production, enable monitoring
+const performanceConfig = {
+  enablePerformanceMonitor: process.env.NODE_ENV === "production",
+  enableAnalytics: true,
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L224-L230
+merged_at: 2025-09-09T13:55:10.838094Z
+---
+
+1. **User Experience**
+   - Page Load Times
+   - User Interaction Response
+   - Error Rates
+   - Feature Adoption
+
+2. **Technical Performance**
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L231-L237
+merged_at: 2025-09-09T13:55:10.840042Z
+---
+
+
+### Theme Anpassungen
+
+```typescript
+// src/lib/theme.ts - Farben anpassen
+export const theme = {
+  colors: {
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L238-L244
+merged_at: 2025-09-09T13:55:10.841989Z
+---
+
+};
+```
+
+### Component Overrides
+
+```typescript
+// Globale Component Styles
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L245-L251
+merged_at: 2025-09-09T13:55:10.843889Z
+---
+
+```
+
+## 🔧 Troubleshooting
+
+### Häufige Probleme & Lösungen
+
+#### 1. Build Errors
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L252-L258
+merged_at: 2025-09-09T13:55:10.845684Z
+---
+
+rm -rf node_modules package-lock.json
+➡ Consolidated at: frontend-modernization.md#npm-install
+#### 2. Styling Issues
+
+```bash
+# Tailwind CSS nicht lädt
+➡ Consolidated at: frontend-modernization.md#npm-run-build-css
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L264-L266
+merged_at: 2025-09-09T13:55:10.847581Z
+---
+
+# Viewport Meta Tag prüfen
+# <meta name="viewport" content="width=device-width, initial-scale=1">
+```
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L270-L272
+merged_at: 2025-09-09T13:55:10.849675Z
+---
+
+3. **API Reference** - Hook & Utility Dokumentation
+
+### Für Designer
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L276-L279
+merged_at: 2025-09-09T13:55:10.851778Z
+---
+
+### Vor der Modernisierung (Baseline)
+
+- ❌ Keine Mobile Unterstützung
+- ❌ Inline Styles überall
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L280-L293
+merged_at: 2025-09-09T13:55:10.853673Z
+---
+
+### Nach der Modernisierung (Ziel)
+
+- ✅ **90%+ Mobile Satisfaction Score**
+- ✅ **< 2s Page Load Time**
+- ✅ **95%+ Component Reusability**
+- ✅ **Professional Enterprise Look**
+- ✅ **Advanced Features (Command Palette, Real-time, etc.)**
+
+## 🚀 Go-Live Checklist
+
+- [ ] **Alle Tests bestanden**
+- [ ] **Performance Benchmarks erreicht**
+- [ ] **Mobile Testing abgeschlossen**
+- [ ] **Accessibility validiert** (WCAG 2.1)

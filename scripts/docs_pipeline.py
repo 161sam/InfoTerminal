@@ -17,6 +17,7 @@ python3 scripts/docs_pipeline.py analyze consolidate dedupe
 The implementation favours idempotency: running the same command multiple
  times yields the same output.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -61,6 +62,7 @@ def append_journal(entry: str) -> None:
     with JOURNAL_FILE.open("a", encoding="utf-8") as fh:
         fh.write(entry + "\n")
 
+
 # ---------------------------------------------------------------------------
 # Analysis helpers
 # ---------------------------------------------------------------------------
@@ -102,7 +104,9 @@ def analyze() -> None:
         for fname in sorted(files):
             fpath = Path(root) / fname
             rel_path = fpath.relative_to(REPO_ROOT)
-            if fpath.suffix.lower() in {".yaml", ".yml", ".json"} or fname.startswith("blueprint-"):
+            if fpath.suffix.lower() in {".yaml", ".yml", ".json"} or fname.startswith(
+                "blueprint-"
+            ):
                 inventory_lines.append(f"- {rel_path}")
             if fpath.suffix.lower() == ".md":
                 summary = first_nonempty_line(fpath)
@@ -110,7 +114,14 @@ def analyze() -> None:
                 lines = fpath.read_text(encoding="utf-8").splitlines()
                 for idx, line in enumerate(lines, 1):
                     if CHECKBOX_RE.search(line) or TODO_RE.search(line):
-                        todo_rows.append((str(rel_path), line.strip(), idx, hash_text(f"{rel_path}:{idx}:{line.strip()}")))
+                        todo_rows.append(
+                            (
+                                str(rel_path),
+                                line.strip(),
+                                idx,
+                                hash_text(f"{rel_path}:{idx}:{line.strip()}"),
+                            )
+                        )
                 start = 1
                 title = "<start>"
                 buf: List[str] = []
@@ -130,12 +141,16 @@ def analyze() -> None:
                     sections.append((norm, str(rel_path), title, start, len(lines)))
 
     write_file(OUT_DIR / "tree_with_summaries.txt", "\n".join(tree_lines) + "\n")
-    write_file(OUT_DIR / "inventory_blueprints_yaml_json.md", "\n".join(inventory_lines) + "\n")
+    write_file(
+        OUT_DIR / "inventory_blueprints_yaml_json.md", "\n".join(inventory_lines) + "\n"
+    )
 
     todo_lines = ["| ID | File | Line | Text |", "|---|---|---|---|"]
     for i, (path, text, line_no, digest) in enumerate(todo_rows, 1):
         tid = f"T{i:04d}-{digest[:4]}"
-        todo_lines.append(f"| {tid} | {path} | {line_no} | {text.replace('|', '\\\\|')} |")
+        todo_lines.append(
+            f"| {tid} | {path} | {line_no} | {text.replace('|', '\\\\|')} |"
+        )
     write_file(OUT_DIR / "todo_index.md", "\n".join(todo_lines) + "\n")
 
     dup_lines = ["# Potential duplicate sections\n"]
@@ -156,6 +171,7 @@ def analyze() -> None:
 
     check_broken_links()
     check_naming()
+
 
 # ---------------------------------------------------------------------------
 # Consolidation helpers
@@ -229,7 +245,9 @@ def ensure_presets_readme() -> None:
     if not path.parent.exists():
         return
     lines = ["# Preset Profiles", ""]
-    for f in sorted(path.parent.glob("profile-*.yml")) + sorted(path.parent.glob("profile-*.yaml")):
+    for f in sorted(path.parent.glob("profile-*.yml")) + sorted(
+        path.parent.glob("profile-*.yaml")
+    ):
         lines.append(f"- `{f.name}`")
     if (path.parent / "waveterm").exists():
         lines.append("- [waveterm/](waveterm/)")
@@ -248,6 +266,89 @@ def ensure_integrations_readme() -> None:
         else:
             lines.append(f"- {d.name}/")
     write_file(path, "\n".join(lines) + "\n")
+
+
+def load_todo_tasks() -> List[Tuple[str, Path, int, str, bool]]:
+    todo_file = OUT_DIR / "todo_index.md"
+    tasks: List[Tuple[str, Path, int, str, bool]] = []
+    if not todo_file.exists():
+        return tasks
+    for line in todo_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line.startswith("| T"):
+            continue
+        parts = [p.strip() for p in line.strip("|").split("|")]
+        if len(parts) != 4:
+            continue
+        task_id, file_path, line_no, text = parts
+        done = "[x]" in text.lower()
+        text = re.sub(r"^- \[[xX ]\]\s*", "", text)
+        tasks.append((task_id, Path(file_path), int(line_no), text.strip(), done))
+    return tasks
+
+
+def update_section(path: Path, heading: str, items: List[str]) -> int:
+    if not items:
+        return 0
+    if path.exists():
+        lines = path.read_text(encoding="utf-8").splitlines()
+    else:
+        title = path.stem.replace("-", " ").title()
+        lines = [f"# {title}", ""]
+    heading_line = f"## {heading}"
+    try:
+        idx = lines.index(heading_line)
+    except ValueError:
+        lines.extend(["", heading_line, ""])
+        idx = lines.index(heading_line)
+    insert_at = idx + 1
+    while insert_at < len(lines) and lines[insert_at].startswith("-"):
+        insert_at += 1
+    existing = set(lines[idx + 1 : insert_at])
+    added = 0
+    for item in items:
+        if item not in existing:
+            lines.insert(insert_at, item)
+            existing.add(item)
+            insert_at += 1
+            added += 1
+    write_file(path, "\n".join(lines) + "\n")
+    return added
+
+
+def integrate_todo_tasks() -> int:
+    tasks = load_todo_tasks()
+    v01: List[str] = []
+    v02: List[str] = []
+    master: List[str] = []
+    for task_id, fpath, line_no, text, done in tasks:
+        rel = fpath.as_posix()
+        bullet = f"- [{'x' if done else ' '}] {task_id} {text} ({rel}:{line_no})"
+        if "v0.1" in rel:
+            if done:
+                v01.append(bullet)
+        if "v0.2" in rel:
+            if not done:
+                v02.append(bullet)
+        if "v0.1" in rel or "v0.2" in rel or "v0.3" in rel:
+            master.append(bullet)
+    added = 0
+    added += update_section(
+        DOCS_DIR / "dev/roadmap/v0.1-overview.md", "Abgeschlossene Detail-Tasks", v01
+    )
+    added += update_section(
+        DOCS_DIR / "dev/roadmap/v0.2-overview.md", "Offene Detail-Tasks", v02
+    )
+    master_file = DOCS_DIR / "dev/roadmap/v0.3-plus/master-todo.md"
+    master_added = update_section(master_file, "Master TODO", master)
+    added += master_added
+    if master_added == 0 and not master_file.exists():
+        write_file(master_file, "# Master TODO\n")
+    if added:
+        print(f"Integrated {added} roadmap tasks")
+    else:
+        print("No new roadmap tasks")
+    return added
 
 
 def ensure_roadmap_index() -> None:
@@ -274,14 +375,20 @@ def consolidate_runbook_stack() -> None:
     if src1.exists():
         text1 = src1.read_text(encoding="utf-8")
         parts.append(text1)
-        merged_from.append(f"docs/runbooks/RUNBOOK-stack.md#L1-L{len(text1.splitlines())}")
+        merged_from.append(
+            f"docs/runbooks/RUNBOOK-stack.md#L1-L{len(text1.splitlines())}"
+        )
     if src2.exists():
         text2 = src2.read_text(encoding="utf-8")
         parts.append(text2)
         merged_from.append(f"docs/OPERABILITY.md#L1-L{len(text2.splitlines())}")
     if not parts:
         return
-    fm = ["---", "merged_from:"] + [f"  - {m}" for m in merged_from] + [f"merged_at: {datetime.utcnow().isoformat()}Z", "---", ""]
+    fm = (
+        ["---", "merged_from:"]
+        + [f"  - {m}" for m in merged_from]
+        + [f"merged_at: {datetime.utcnow().isoformat()}Z", "---", ""]
+    )
     write_file(dst, "\n".join(fm) + "\n\n".join(parts))
     if src1.exists():
         src1.unlink()
@@ -310,14 +417,42 @@ def consolidate() -> None:
             path.mkdir(parents=True)
             append_journal(f"- ACTION: mkdir\n  DST: docs/{t}\n  WHY: ensure structure")
 
-    move_with_provenance(DOCS_DIR / "testing.md", DOCS_DIR / "dev/guides/testing.md", "structure")
-    move_with_provenance(DOCS_DIR / "dev/testing.md", DOCS_DIR / "dev/guides/testing.md", "structure")
-    move_with_provenance(DOCS_DIR / "dev/RAG-Systeme.md", DOCS_DIR / "dev/guides/rag-systems.md", "structure")
-    move_with_provenance(DOCS_DIR / "dev/Frontend-Modernisierung.md", DOCS_DIR / "dev/guides/frontend-modernization.md", "structure")
-    move_with_provenance(DOCS_DIR / "dev/Frontend-Modernisierung_Setup-Guide.md", DOCS_DIR / "dev/guides/frontend-modernization-setup-guide.md", "structure")
-    move_with_provenance(DOCS_DIR / "dev/ROADMAPv0.1.0.md", DOCS_DIR / "dev/roadmap/v0.1-overview.md", "structure")
-    move_with_provenance(DOCS_DIR / "dev/Release-Planv0.2-v1.0.md", DOCS_DIR / "dev/roadmap/v0.2-overview.md", "structure")
-    move_with_provenance(DOCS_DIR / "runbooks/RUNBOOK-obs-opa-secrets.md", DOCS_DIR / "runbooks/obs-opa-secrets.md", "naming")
+    move_with_provenance(
+        DOCS_DIR / "testing.md", DOCS_DIR / "dev/guides/testing.md", "structure"
+    )
+    move_with_provenance(
+        DOCS_DIR / "dev/testing.md", DOCS_DIR / "dev/guides/testing.md", "structure"
+    )
+    move_with_provenance(
+        DOCS_DIR / "dev/RAG-Systeme.md",
+        DOCS_DIR / "dev/guides/rag-systems.md",
+        "structure",
+    )
+    move_with_provenance(
+        DOCS_DIR / "dev/Frontend-Modernisierung.md",
+        DOCS_DIR / "dev/guides/frontend-modernization.md",
+        "structure",
+    )
+    move_with_provenance(
+        DOCS_DIR / "dev/Frontend-Modernisierung_Setup-Guide.md",
+        DOCS_DIR / "dev/guides/frontend-modernization-setup-guide.md",
+        "structure",
+    )
+    move_with_provenance(
+        DOCS_DIR / "dev/ROADMAPv0.1.0.md",
+        DOCS_DIR / "dev/roadmap/v0.1-overview.md",
+        "structure",
+    )
+    move_with_provenance(
+        DOCS_DIR / "dev/Release-Planv0.2-v1.0.md",
+        DOCS_DIR / "dev/roadmap/v0.2-overview.md",
+        "structure",
+    )
+    move_with_provenance(
+        DOCS_DIR / "runbooks/RUNBOOK-obs-opa-secrets.md",
+        DOCS_DIR / "runbooks/obs-opa-secrets.md",
+        "naming",
+    )
 
     consolidate_runbook_stack()
     ensure_roadmap_index()
@@ -325,18 +460,131 @@ def consolidate() -> None:
     ensure_blueprints_readme()
     ensure_presets_readme()
     ensure_integrations_readme()
+    integrate_todo_tasks()
+
 
 # ---------------------------------------------------------------------------
-# Dedupe step – placeholder plus QA checks
+# Dedupe step – consolidate duplicate sections and fix links
 # ---------------------------------------------------------------------------
+
+
+def slugify(text: str) -> str:
+    text = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return re.sub(r"-+", "-", text)
+
+
+def canonical_target(path: Path) -> Path | None:
+    p = path.as_posix().lower()
+    if "rag" in p:
+        return DOCS_DIR / "dev/guides/rag-systems.md"
+    if "frontend" in p and "modern" in p:
+        return DOCS_DIR / "dev/guides/frontend-modernization.md"
+    if "preset" in p and "profile" in p:
+        return DOCS_DIR / "dev/guides/preset-profiles.md"
+    if "flowise" in p and "agent" in p:
+        return DOCS_DIR / "dev/guides/flowise-agents.md"
+    if "operability" in p:
+        return DOCS_DIR / "runbooks/stack.md"
+    return None
+
+
+def extract_sections(line: str) -> List[Tuple[Path, int, int]]:
+    clean = re.sub(r"`[^`]*`", "", line)
+    matches = re.findall(r"(docs/[^\s#]+)#L(\d+)-L(\d+)", clean)
+    result = []
+    for path, start, end in matches:
+        result.append((REPO_ROOT / path, int(start), int(end)))
+    return result
+
+
+def read_lines(path: Path) -> List[str]:
+    return path.read_text(encoding="utf-8").splitlines()
+
+
+def replace_with_pointer(
+    src: Path, start: int, end: int, target: Path, anchor: str
+) -> None:
+    lines = read_lines(src)
+    pointer = f"➡ Consolidated at: {os.path.relpath(target, src.parent)}#{anchor}"
+    if lines[start - 1 : end] == [pointer]:
+        return
+    lines[start - 1 : end] = [pointer]
+    write_file(src, "\n".join(lines) + "\n")
+
+
+def append_section(
+    target: Path, src_rel: str, start: int, end: int, section: List[str]
+) -> str:
+    if target.exists():
+        tlines = read_lines(target)
+    else:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        tlines = [f"# {target.stem.replace('-', ' ').title()}", ""]
+    ref = f"{src_rel}#L{start}-L{end}"
+    if ref in "\n".join(tlines):
+        # already merged
+        return slugify(section[0] if section else "section")
+    anchor = slugify(HEADING_RE.sub(r"\2", section[0]) if section else "section")
+    fm = [
+        "---",
+        "merged_from:",
+        f"  - {ref}",
+        f"merged_at: {datetime.utcnow().isoformat()}Z",
+        "---",
+        "",
+    ]
+    tlines.extend(fm + section)
+    write_file(target, "\n".join(tlines) + "\n")
+    return anchor
 
 
 def dedupe() -> None:
     ensure_out_dir()
-    note = "Dedupe step not yet implemented. See duplicates_report.md for candidates."
-    write_file(OUT_DIR / "dedupe_placeholder.txt", note + "\n")
+    dup_file = OUT_DIR / "duplicates_report.md"
+    if not dup_file.exists():
+        check_broken_links()
+        check_naming()
+        return
+    processed: set[Tuple[Path, int, int]] = set()
+    merged: List[str] = []
+    for line in dup_file.read_text(encoding="utf-8").splitlines():
+        if not line.startswith("- "):
+            continue
+        sections = extract_sections(line)
+        for src, start, end in sections:
+            key = (src, start, end)
+            if key in processed:
+                continue
+            processed.add(key)
+            target = canonical_target(src)
+            if not target or target == src:
+                continue
+            lines = read_lines(src)
+            section = lines[start - 1 : end]
+            if not section or section[0].startswith("➡ Consolidated at:"):
+                continue
+            anchor = append_section(
+                target, str(src.relative_to(REPO_ROOT)), start, end, section
+            )
+            replace_with_pointer(src, start, end, target, anchor)
+            hashval = hash_text("\n".join(section))
+            merged.append(
+                f"- {src.relative_to(REPO_ROOT)} -> {target.relative_to(REPO_ROOT)}"
+            )
+            append_journal(
+                "- ACTION: merge+link\n"
+                f"  SRC: {src.relative_to(REPO_ROOT)}#L{start}-L{end}\n"
+                f"  DST: {target.relative_to(REPO_ROOT)}#{anchor}\n"
+                "  WHY: deduplicate\n"
+                f"  HASH: {hashval}"
+            )
+    if merged:
+        print(f"Deduplicated {len(merged)} sections")
+    else:
+        print("No duplicates merged")
     check_broken_links()
     check_naming()
+
 
 # ---------------------------------------------------------------------------
 # QA helpers
