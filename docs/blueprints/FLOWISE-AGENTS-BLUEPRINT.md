@@ -1,6 +1,4 @@
-### `docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md`
-
-````markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-blueprints-flowise-agents-blueprint-md
 # 🔌 FLOWISE-AGENTS-BLUEPRINT
 
 ## 🎯 Ziele
@@ -13,8 +11,8 @@
 **Komponenten**
 - **Flowise** (UI/Runtime): Agent-Flows, Node-Editor, Memory, Tracing.
 - **Agent-Gateway (FastAPI)**: OIDC/JWT, RBAC, Rate-Limits, Audit, Secrets-Broker.
-- **Tool-Adapter** (svc): Bridges zu internen Services  
-  `search-adapter` → OpenSearch • `graph-adapter` → Neo4j • `rag-adapter` → Laws/Docs  
+- **Tool-Adapter** (svc): Bridges zu internen Services
+  `search-adapter` → OpenSearch • `graph-adapter` → Neo4j • `rag-adapter` → Laws/Docs
   `verify-adapter` → Claims/Evidence/RTE/Media • `geo-adapter` → Geocoding/Geo-Checks • `dossier-adapter` → Render/Export
 - **Agent-Registry** (Postgres + YAML): signierte Agent-Definitionen, Versionierung.
 - **Mem-Store** (Redis/PG): Chat-Memory, Tool-Caches, Rate-Counter.
@@ -40,18 +38,7 @@ Flowise Flow → `agent-gateway` (JWT) → `tool-adapter` → Internal API (sear
 
 ## 🧩 Preset → Default Agents
 | Preset              | Default Agents                                              |
-|---------------------|-------------------------------------------------------------|
-| Journalism          | research_assistant, disinfo_hunter, dossier_drafter        |
-| Agency/Compliance   | legal_compliance_checker, financial_red_flag, lobby_mapper |
-| Research            | research_assistant, graph_scout, timeline_builder          |
-| Climate Researcher  | climate_data_analyst, dossier_drafter                      |
-| Compliance Officer  | legal_compliance_checker, supply_risk_scout                |
-| Crisis Analyst      | crisis_early_warning, geo_watch, timeline_builder          |
-| Disinfo Watchdog    | disinfo_hunter, media_auth_assistant                       |
-| Economic Analyst    | economic_trend_analyst, supply_risk_scout                  |
-
-## 🔗 Tool-Adapter Endpunkte (Kurz)
-- `POST /tool/search.query` → { q, filter?, topK? } → docs[]
+➡ Consolidated at: ../dev/guides/flowise-agents.md#
 - `POST /tool/graph.cypher` → { query, params? } → rows[]
 - `POST /tool/rag.retrieve` → { domain, query, topK? } → passages[]
 - `POST /tool/verify.claim_extract` → { text } → claims[]
@@ -87,8 +74,7 @@ FLOWISE-1 Deploy • FLOWISE-2 Gateway • FLOWISE-3 Adapter v1 • FLOWISE-4 Re
 
 ### `docs/api/agent-gateway.md`
 ```markdown
-# Agent Gateway API
-
+➡ Consolidated at: ../dev/guides/flowise-agents.md#agent-gateway-api
 Base URL: `/api/agent` • Auth: **OIDC Bearer JWT** (`Authorization: Bearer <token>`)
 
 ## Gemeinsame Konventionen
@@ -111,10 +97,10 @@ Base URL: `/api/agent` • Auth: **OIDC Bearer JWT** (`Authorization: Bearer <to
 - `POST /tool/search.query` → `{q, filter?, topK?}` → `{docs:[{id,score,source,excerpt}]}`
 - `POST /tool/graph.cypher` → `{query, params?}` → `{rows:[...]}`
 - `POST /tool/rag.retrieve` → `{domain:"laws|docs", query, topK?}` → `{passages:[...]}`
-- `POST /tool/verify.claim_extract` → `{text}` → `{claims:[{id,text,spans}]}`  
+- `POST /tool/verify.claim_extract` → `{text}` → `{claims:[{id,text,spans}]}`
 - `POST /tool/verify.evidence_retrieve` → `{claim}` → `{passages:[...]}`
 - `POST /tool/verify.rte` → `{claim,evidence}` → `{label:"supports|refutes|neutral",score:0..1}`
-- `POST /tool/forensics.image` → `{url|bytes}` → `{exif:{},phash:"...",reverse:[...]}`  
+- `POST /tool/forensics.image` → `{url|bytes}` → `{exif:{},phash:"...",reverse:[...]}`
 - `POST /tool/dossier.render` → `{template,data}` → `{url:"/artifacts/..."}`
 
 ## Fehlercodes
@@ -156,12 +142,11 @@ curl -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" \
 ### `docs/nodes/flowise_n8n.md`
 ```markdown
 # n8n Node – Run Flowise Agent
-
-## Zweck
+➡ Consolidated at: ../dev/guides/flowise-agents.md#
 Flowise-Agent aus n8n Workflows anstoßen (Alerts, Dossiers, Batch-Analysen).
 
 ## Inputs
-- JSON:  
+- JSON:
   `case_id` (string), `prompt` (string), `context` (object), `preset` (string), `limits` (object)
 
 ## Optionen
@@ -173,7 +158,7 @@ Flowise-Agent aus n8n Workflows anstoßen (Alerts, Dossiers, Batch-Analysen).
 - `agent_result`: `{ steps, output, evidence, cost, request_id }`
 
 ## Beispiel (HTTP Request Node)
-- Methode: POST  
+- Methode: POST
 - URL: `/api/agent/agents/{{ $json.agentId }}:invoke`
 - Header: `Authorization: Bearer {{$json.jwt}}`, `Content-Type: application/json`
 - Body RAW JSON:
@@ -206,8 +191,7 @@ Flowise-Agent aus n8n Workflows anstoßen (Alerts, Dossiers, Batch-Analysen).
 ```markdown
 # NiFi Processor – InvokeFlowiseAgent
 
-## Zweck
-Batch-Analysen während des Ingests (Pre-Labels, Claim-Extract, Dossier-Snippets).
+➡ Consolidated at: ../dev/guides/flowise-agents.md#zweck
 
 ## Properties
 - `Agent ID` (string, required) – `disinfo_hunter@1.2.0`
@@ -461,4 +445,3 @@ default_agents: [economic_trend_analyst, supply_risk_scout]
 - [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts
 - [ ] **[FLOWISE-14]** Canary & Rollback Mechanik
 ```
-

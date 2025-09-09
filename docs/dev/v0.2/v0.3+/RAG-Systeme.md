@@ -1,17 +1,6 @@
 # ⚖️ RAG-Systeme für Gesetzestexte & Compliance-Analysen
 
-## 1) Zielbild
-
-* **RAG-Layer** mit Gesetzestexten (z. B. SGB, StGB, EU-Verordnungen, Finanzmarktgesetze).
-* **Verknüpfung mit Datenquellen** (Firmenregister, OpenBB, Open Data, News/SoMe, Threat Feeds).
-* **Fragen beantworten können wie:**
-
-  * „Welche Politiker aus Partei X haben über Lobby- oder Firmenverbindungen Einfluss auf Gesetz Y genommen?“
-  * „Welche Firmen aus Branche Z verstoßen gegen Paragraph X?“
-  * „Welche geplanten Gesetze hätten wirtschaftliche Auswirkungen auf Unternehmen A?“
-
----
-
+➡ Consolidated at: ../../guides/rag-systems.md#1-zielbild
 ## 2) Architektur-Erweiterung
 
 ### a) RAG-Speicher
@@ -25,29 +14,13 @@
 * **RAG Query Flow**:
 
   1. User-Frage → Query Expansion (Entities, Zeit, Gesetzesbegriffe).
-  2. Retrieval: relevante Gesetzesparagraphen + Unternehmensdaten + Politische Akteure.
-  3. **Pattern Engine**:
-
-     * Verstößt eine Handlung gegen Paragraph X?
-     * Existieren Verbindungen zwischen Akteur ↔ Firma ↔ Gesetz?
-  4. Antwort: textuell + Graph-Visualisierung + Evidenz-Liste.
+➡ Consolidated at: ../../guides/rag-systems.md#2-retrieval-relevante-gesetzesparagraphen-unternehmensdaten-politische-akteure
 
 ### c) Mustererkennung
 
 * **Pattern Templates**:
 
-  * *Compliance-Check*: Firma ↔ Aktivität ↔ Paragraph.
-  * *Influence-Mapping*: Politiker ↔ Gesetz ↔ Firma ↔ Outcome.
-  * *Risk-Scoring*: Wahrscheinlichkeit, dass eine Handlung als „illegal“ oder „kritisch“ einzustufen ist.
-
----
-
-## 3) Szenario-Umsetzung
-
-### Beispiel A – Politiker & Firmen
-
-**Query:** „Welche Politiker der Partei X haben Verbindungen zu Firma Y und Gesetze mit Auswirkungen verabschiedet?“
-
+➡ Consolidated at: ../../guides/rag-systems.md#compliance-check-firma-aktivit-t-paragraph
 * Retrieval: Partei X (Graph: Entities), Firma Y (Handelsregister, Lobbylisten), Gesetzesänderungen (Parlamentsdokumente).
 * Pipeline:
 
@@ -59,16 +32,7 @@
 ### Beispiel B – Branchen-Compliance
 
 **Query:** „Welche Firmen aus Branche Z stehen in Verbindung zu Gesetzesverstößen?“
-
-* Retrieval: Firmen-Cluster (Branche Z), News/Dossiers, Gesetzestexte.
-* Pipeline:
-
-  * NLP → Extract „Verstoß gegen §X“ aus Artikeln.
-  * Mapping zu Firmen im Graph.
-  * RAG → Paragraph X Definition + Auslegung.
-* Ergebnis: Liste + Graph + Risikobewertung.
-
----
+➡ Consolidated at: ../../guides/rag-systems.md#
 
 ## 4) Technische Umsetzung (Integration in InfoTerminal)
 
@@ -80,18 +44,7 @@
     * `/law/retrieve?q=...`
     * `/law/context?entity=...` (zeigt, welche Gesetze für Entität relevant sind)
   * Backend: LangChain/LlamaIndex mit OpenSearch + Neo4j.
-
-* **Graph-Erweiterung**:
-
-  * `(:Law)-[:APPLIES_TO]->(:Sector|:Firm|:Event)`
-  * `(:Politician)-[:SUPPORTED|:OPPOSED]->(:Law)`
-  * `(:LawChange)-[:AMENDS]->(:Law)`
-
-* **NLP/Verification Layer**:
-
-  * Claim Extraction erkennt juristische Claims („Firma X verstößt gegen §23…“).
-  * Mapping zu Paragraphen im RAG-Speicher.
-  * Evidenz Panel zeigt Gesetzestext + relevante Artikel.
+➡ Consolidated at: ../../guides/rag-systems.md#
 
 * **Frontend**:
 
@@ -103,20 +56,7 @@
 ---
 
 ## 5) Erweiterungen & Differenzierung
-
-* **Predictive Impact**: Simulation, wie geplante Gesetze Branchen/Unternehmen betreffen.
-* **Comparative Law**: EU vs. nationales Recht nebeneinander.
-* **Compliance Alerts**: n8n Flow → „Neue Gesetzesänderung betrifft Branche Z → Firmenwarnung“.
-* **Auto-Dossiers**: „Top 10 Verstöße gegen Umweltgesetzgebung im letzten Quartal“.
-* **Ethical Checks**: Kennzeichnung, wenn Analyse unsicher/mehrdeutig (Transparenz).
-
----
-
-# 📌 Fazit
-
-Deine Idee → **RAG auf Gesetze + Datenquellen** = **Compliance & Legal Intelligence Layer**.
-
-* Kurzfristig: Gesetzeswerke (SGB, StGB, EU-Verordnungen) indexieren → Retrieval + Graph-Knoten.
+➡ Consolidated at: ../../guides/rag-systems.md#
 * Mittelfristig: Pattern-Engine (Compliance, Influence, Risk).
 * Langfristig: Predictive + Simulation (Impact geplanter Gesetze).
 

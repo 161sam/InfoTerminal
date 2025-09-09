@@ -97,23 +97,7 @@ Flowise Flow → `agent-gateway` (JWT) → `tool-adapter` → Internal API (sear
 
 ---
 
-## 🧩 Preset-Anbindung (Defaults)
-
-| Preset             | Default Agents                                                               |
-| ------------------ | ---------------------------------------------------------------------------- |
-| Journalism         | Research Assistant, Disinfo Hunter, Dossier Drafter                          |
-| Agency/Compliance  | Legal Compliance Checker, Financial Red-Flag Analyst, Lobby-Influence Mapper |
-| Research           | Research Assistant, Graph Scout, Timeline Builder                            |
-| Climate Researcher | Climate Data Analyst, Dossier Drafter                                        |
-| Compliance Officer | Legal Compliance Checker, Supply Risk Scout                                  |
-| Crisis Analyst     | Crisis Early-Warning, Geo Watch, Timeline Builder                            |
-| Disinfo Watchdog   | Disinfo Hunter, Media Authenticity Assistant                                 |
-| Economic Analyst   | Economic Trend Analyst, Supply Risk Scout                                    |
-
-> Preset lädt passende Agents + begrenzte Tools (least-privilege).
-
----
-
+➡ Consolidated at: ../guides/flowise-agents.md#preset-anbindung-defaults
 ## 📦 Beispiel: Agent Registry (YAML)
 
 ```yaml
