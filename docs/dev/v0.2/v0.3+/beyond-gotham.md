@@ -131,3 +131,126 @@
 * **v0.3+ = Beyond Gotham:** Agents, Plugin-System, Live-OSINT, Cyber Threat Intel, Advanced AI, Ethical & Sustainable Edge.
 
 ---
+
+Sehr gut 🚀 — wir gehen jetzt in die **„Beyond Gotham“-Zone** und spinnen mehrere **Szenarien und Mustererkennungen**, die InfoTerminal deutlich über klassische Gotham-Funktionalität hinausheben. Ich clustere die Ideen und beschreibe jeweils: **Use Case, Pipeline/Muster, Ergebnis**.
+
+---
+
+# 🌍 Beyond Gotham – Szenarien & Muster
+
+## 1. **Lobbying & Policy Influence**
+
+* **Use Case:** Erkennen, welche Unternehmen Lobbyarbeit leisten und wie diese Einfluss auf Gesetze, Subventionen oder Ausschreibungen nehmen.
+* **Pipeline:**
+
+  * `(:Politician)-[:LOBBY_CONTACT]->(:Firm)`
+  * `(:Law)-[:INFLUENCES]->(:Sector)`
+  * NLP-Extraktion: „Lobbytreffen“, „Spenden“, „Gesetzesentwurf“
+  * RAG auf Gesetzestexte/Parlamentsprotokolle
+* **Ergebnis:** Graph zeigt „Kette“ von **Firma ↔ Lobbykontakt ↔ Politiker ↔ Gesetz** + Dossier mit Risikoanalyse.
+
+---
+
+## 2. **Corporate Misconduct & Compliance Violations**
+
+* **Use Case:** Aufdecken, welche Firmen systematisch gegen Umwelt-, Arbeits- oder Finanzgesetze verstoßen.
+* **Pipeline:**
+
+  * Ingest: News, NGO-Reports, Sanktionslisten, Gerichtsurteile
+  * Verification-Layer erkennt Claims wie „Verstoß gegen §23 ArbSchG“
+  * Mapping zu Firmen-Entitäten (Handelsregister, OpenBB)
+* **Ergebnis:** Heatmap „Branche X → Anzahl Verstöße“, Alerts an Analysten.
+
+---
+
+## 3. **Illegale Finanzflüsse & Geldwäsche**
+
+* **Use Case:** Aufspüren verdächtiger Finanzbewegungen über Firmen- oder Stiftungsnetzwerke.
+* **Pipeline:**
+
+  * Daten: OpenBB, Firmenregister, Sanktionen, Leaks (Pandora Papers etc.)
+  * Graph: `(:Firm)-[:OWNS]->(:Account)-[:TRANSFERS]->(:Account)`
+  * Muster: zyklische Transfers, Offshore-Nodes, Layering (Smurfing).
+* **Ergebnis:** n8n-Flow → „Red Flag Dossier“ → Dossier mit Transaktionsgraphen.
+
+---
+
+## 4. **Desinformationskampagnen**
+
+* **Use Case:** Erkennen, wenn koordinierte Fake-News/Propaganda verbreitet wird.
+* **Pipeline:**
+
+  * Social Media Feeds → Claim Clustering → Duplicate Detection
+  * Bot-Likelihood + Account-Verbindungen
+  * Zeitliche Muster: viele Posts in kurzer Zeit, Copy-Paste-Narrative
+* **Ergebnis:** Dashboard mit „Narrativ-Cluster“, Quellen, Bot-Netzwerken.
+
+---
+
+## 5. **Geopolitische Bewegungsmuster**
+
+* **Use Case:** Truppenverlegungen, Protestbewegungen, Flottenbewegungen frühzeitig erkennen.
+* **Pipeline:**
+
+  * ADS-B (Flugzeuge), AIS (Schiffe), Social Media (Geo-Tagged), News
+  * Geo-Graph: `(:Event)-[:LOCATED_AT]->(:GeoPoint)`
+  * Muster: Anomalien im Verkehr, Häufung von Events an Orten.
+* **Ergebnis:** Geospatial Map + Alerts → „ungewöhnliche Bewegungen in Region X“.
+
+---
+
+## 6. **Supply-Chain Risiken**
+
+* **Use Case:** Erkennen, wenn Lieferketten durch Konflikte, Sanktionen oder Naturkatastrophen gefährdet sind.
+* **Pipeline:**
+
+  * Daten: Open Data (Handelsrouten, Exportstatistiken), Firmenregister, News
+  * Graph: `(:Firm)-[:SUPPLIES]->(:Firm)`
+  * Muster: Engpässe, Single-Point-of-Failure, Sanktionen auf Knoten.
+* **Ergebnis:** Risk Score pro Firma/Branche + Simulations-Option („Wenn Hafen X blockiert wird → 20% Lieferketten betroffen“).
+
+---
+
+## 7. **Geplante Handlungen & Prognosen**
+
+* **Use Case:** Vorhersagen, welche politischen/ökonomischen Handlungen wahrscheinlich sind.
+* **Pipeline:**
+
+  * Analyse: Gesetzesentwürfe, Parteiprogramme, Pressemitteilungen
+  * Pattern: „Plant Subvention für …“, „Vorbereitung Gesetzesentwurf …“
+  * Modelle: Event Extraction + Timeline Forecast (ARIMA, GNN).
+* **Ergebnis:** Wahrscheinlichkeitsskala „Gesetz Y → 80% Wahrscheinlichkeit in 6 Monaten verabschiedet“.
+
+---
+
+## 8. **Humanitarian & Crisis Response**
+
+* **Use Case:** Frühwarnung für humanitäre Krisen (z. B. Hungersnöte, Epidemien, Fluchtbewegungen).
+* **Pipeline:**
+
+  * Daten: NGO-Feeds, WHO Reports, Social Media (Geo-Tags), Sensor (Wetterdaten, Satellitenbilder)
+  * Muster: Kombination von Events (Dürre + Preisanstieg + Migration).
+* **Ergebnis:** Dossier „Krisengebiet X → erhöhte Wahrscheinlichkeit für …“.
+
+---
+
+## 9. **Kombinierte Muster (Meta-Analysen)**
+
+* **Lobbying + Compliance** → Politiker lobbyieren für Firmen, die bereits Gesetzesverstöße haben.
+* **Finanzflüsse + Sanktionen** → Firmen transferieren Geld an sanktionierte Länder/Personen.
+* **Desinformation + Geopolitik** → Fake-News-Kampagnen in Regionen mit Truppenbewegungen.
+
+---
+
+# 🧠 Differenzierungs-Features gegenüber Gotham
+
+* **RAG auf Gesetzeswerke & Regularien** → Compliance Intelligence.
+* **Simulation/Prediction Layer** → „Was passiert, wenn?“
+* **Supply-Chain Graphs** → Risikomanagement für Firmen.
+* **Multi-Modal (Text+Geo+Video+Sensor)** → breiter als nur Dokumente.
+* **Ethical AI** → Transparenz, Bias-Check, Explainability.
+
+---
+
+👉 Frage:
+Willst du, dass ich diese Szenarien jetzt in **Blueprint-Formate (z. B. „LEGAL-INTELLIGENCE“, „DISINFORMATION-INTELLIGENCE“, „SUPPLY-CHAIN-INTELLIGENCE“)** gießen soll – so wie wir es bei Security & Verification gemacht haben?
