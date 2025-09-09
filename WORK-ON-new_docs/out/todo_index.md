@@ -1,0 +1,505 @@
+# TODO index
+
+
+- T123eec7a docs/SECURITY_SWEEP.md#L3: - TODO: Secrets rotieren (Keycloak admin, oauth2-proxy cookie, DB-Passwörter).
+- T9f6d4e2b docs/SECURITY_SWEEP.md#L4: - TODO: TLS/Ingress für Prod (Cert-Manager).
+- T95beeb03 docs/SECURITY_SWEEP.md#L5: - TODO: Backups für PG/OpenSearch/Neo4j.
+- T08770c5a docs/TODO-Index.md#L1: # TODO-Index
+- Teebdb0bc docs/release-checklist-v0.1.md#L10: - [ ] Alle **PRs gemergt** (Security, Tests, dbt, Pipelines, Observability, Docs).
+- T6c054b93 docs/release-checklist-v0.1.md#L11: - [ ] **Conftest/OPA Policies** laufen sauber (`make ci-policy`).
+- T7b3c6a97 docs/release-checklist-v0.1.md#L12: - [ ] **Secrets entfernt** aus Manifests/Code (`grep -R "password" infra/ services/ | grep -v example` → leer).
+- T105487d6 docs/release-checklist-v0.1.md#L13: - [ ] **ExternalSecrets** konfiguriert für DBs, Keycloak, OAuth-Proxy.
+- Teca070fc docs/release-checklist-v0.1.md#L14: - [ ] **Ingress TLS** aktiv (cert-manager, staging Issuer OK).
+- T32fc4428 docs/release-checklist-v0.1.md#L15: - [ ] Optional: **mTLS Overlay** dokumentiert (falls Mesh aktiv).
+- T4f3a4fbb docs/release-checklist-v0.1.md#L21: - [ ] **Pytest** für Search-API & Graph-API grün (inkl. Coverage-Report).
+- Td26eb117 docs/release-checklist-v0.1.md#L22: - [ ] **Vitest** Frontend-Tests laufen (mind. SearchBox/Detail-Page).
+- Td31f6320 docs/release-checklist-v0.1.md#L23: - [ ] **Playwright E2E Smoke**: Dummy-Login → Suche → Graph → Asset-Detail funktioniert.
+- T685a9f1c docs/release-checklist-v0.1.md#L24: - [ ] **CI-Pipeline** (lint, typecheck, tests, e2e, security-scan, perf-smoke) grün.
+- Tab336203 docs/release-checklist-v0.1.md#L25: - [ ] **Dependabot** aktiviert (pip, npm, GitHub Actions).
+- T8f6509a4 docs/release-checklist-v0.1.md#L26: - [ ] **Trivy Scan** ohne kritische Findings.
+- T34585d61 docs/release-checklist-v0.1.md#L32: - [ ] **dbt build/test** grün (Seeds, Models, Tests).
+- T2acaec2b docs/release-checklist-v0.1.md#L33: - [ ] **dbt docs generate** erzeugt Artefakt (Docs erreichbar).
+- T8c283abc docs/release-checklist-v0.1.md#L34: - [ ] **Snapshots** (dim_asset SCD2) laufen (`dbt snapshot`).
+- T3e64a531 docs/release-checklist-v0.1.md#L35: - [ ] **Exposures** definiert (Superset Dashboards verlinkt).
+- T5a64e8a4 docs/release-checklist-v0.1.md#L36: - [ ] **Freshness Checks** für Sources ohne Errors.
+- Td46f9a42 docs/release-checklist-v0.1.md#L42: - [ ] **Superset Dashboard** „analytics_prices“ importiert:
+- T887e2ee6 docs/release-checklist-v0.1.md#L45: - [ ] **Deep-Link** von Superset zu Frontend `/asset/[id]` funktioniert.
+- T7e0be2e1 docs/release-checklist-v0.1.md#L46: - [ ] Frontend-Detailseiten für **Asset** & **Person** verfügbar (Charts, Graph-Snippet, News).
+- Tb8e15dc1 docs/release-checklist-v0.1.md#L47: - [ ] **Vitest/Playwright Tests** decken Detailseiten ab.
+- T852109aa docs/release-checklist-v0.1.md#L53: - [ ] **NiFi Flow** aktiv: Watch-Folder → Aleph Upload → Erfolg/Fehlerpfade sichtbar.
+- T6e44531b docs/release-checklist-v0.1.md#L54: - [ ] **Airflow DAG** `openbb_dbt_superset` läuft: OpenBB → dbt run/test → Superset Refresh.
+- Td0e1d9c3 docs/release-checklist-v0.1.md#L55: - [ ] **CronJobs** für Backups aktiv (Postgres, OpenSearch, Neo4j).
+- T574bfa1d docs/release-checklist-v0.1.md#L56: - [ ] Restore-Runbook einmal **trocken getestet**.
+- Ta42b9b1e docs/release-checklist-v0.1.md#L62: - [ ] **OTel Collector** deployed (4317/4318/9464 erreichbar).
+- T3686a8ea docs/release-checklist-v0.1.md#L63: - [ ] **Python Services** exportieren Traces + `/metrics`.
+- T50c95364 docs/release-checklist-v0.1.md#L64: - [ ] **Node Services** exportieren Traces + `/metrics`.
+- Tfd890733 docs/release-checklist-v0.1.md#L65: - [ ] **Prometheus** scrapt Services; Grafana Panels gefüllt.
+- T81973fbd docs/release-checklist-v0.1.md#L66: - [ ] **Tempo** zeigt Traces End-to-End (Frontend → Gateway → APIs → DB).
+- Tb3e96bed docs/release-checklist-v0.1.md#L67: - [ ] **Loki** enthält Logs aller Services (Promtail shipping OK).
+- T206b6181 docs/release-checklist-v0.1.md#L68: - [ ] **Grafana Dashboards**:
+- Tf9ff8ace docs/release-checklist-v0.1.md#L76: - [ ] **README** Quickstart aktualisiert (Makefile Targets, Health-Checks).
+- Tf0bed26f docs/release-checklist-v0.1.md#L77: - [ ] **ADRs** (mind. OPA/ABAC, Multi-Storage, OIDC, Policy Gateway) im Repo.
+- Te2d936fa docs/release-checklist-v0.1.md#L78: - [ ] **Runbooks** vorhanden: Auth/Gateway, Neo4j Recovery, Search Reindex, Superset Admin.
+- T8dc3e1de docs/release-checklist-v0.1.md#L79: - [ ] **Language Policy**: Docs in EN, DE als Appendix.
+- T72f3bcfb docs/release-checklist-v0.1.md#L80: - [ ] **CONTRIBUTING.md**, **CODEOWNERS**, Issue/PR-Templates im Repo.
+- Tffe9d529 docs/release-checklist-v0.1.md#L81: - [ ] **CI Docs-Checks** grün (markdownlint, link check, doctoc).
+- T60e9ff73 docs/release-checklist-v0.1.md#L87: - [ ] **Secrets** in Staging (Vault/ExternalSecrets) gesetzt.
+- Tc0036628 docs/release-checklist-v0.1.md#L88: - [ ] **Ingress Hosts** & TLS validiert.
+- Tc622e84c docs/release-checklist-v0.1.md#L89: - [ ] **Demo-Data Seed** erfolgreich (`make seed-demo`).
+- T1aba4558 docs/release-checklist-v0.1.md#L90: - [ ] **Smoke-Test** im Staging:
+- T63c7922a docs/release-checklist-v0.1.md#L103: - [ ] `main` eingefroren, `release/v0.1` Branch erstellt.
+- T0400782a docs/release-checklist-v0.1.md#L104: - [ ] **Changelog** generiert (`git log --oneline v0.0.0..HEAD`).
+- Tb6c0d1dc docs/release-checklist-v0.1.md#L105: - [ ] **Release Notes** erstellt (Features, Breaking Changes, Known Issues).
+- Tbac8349c docs/release-checklist-v0.1.md#L106: - [ ] **Tag v0.1.0** gesetzt und Release publiziert.
+- T34456b6a docs/release-checklist-v0.1.md#L107: - [ ] Dokumentation zur Installation/Exploration angehängt.
+- Td5d2c97b docs/waveterm/README.md#L388: ### **TODO-Index – Ergänzung**
+- T47044964 docs/waveterm/README.md#L390: > Hänge an `docs/TODO-Index.md` an:
+- T5f70b37c docs/waveterm/README.md#L394: - [ ] **[WT-EMBED-1]** Webview Tab `/terminal` + SSO (OIDC)
+- T97595967 docs/waveterm/README.md#L395: - [ ] **[WT-EMBED-2]** Profiles Loader (journalism/compliance/crisis/…)
+- T929c8a6b docs/waveterm/README.md#L396: - [ ] **[WT-EMBED-3]** “Send to WaveTerm” Actions (+context payload)
+- Tb9f3e5a3 docs/waveterm/README.md#L397: - [ ] **[WT-EMBED-4]** Session Recording → Dossier Appendix
+- T67309ce5 docs/waveterm/README.md#L398: - [ ] **[WT-PLUGIN-1]** WaveTerm Plugin Manifest (`it` commands, panels)
+- T4a48ca51 docs/waveterm/README.md#L399: - [ ] **[WT-PLUGIN-2]** Dossier/Graph Previews (MD/SVG)
+- Te18e3065 docs/waveterm/README.md#L400: - [ ] **[WT-PLUGIN-3]** Command Palettes & Snippets
+- T6f2a48f3 docs/waveterm/README.md#L401: - [ ] **[WT-JOBS-1]** `/api/jobs` (queue, artifacts)
+- T37580cf6 docs/waveterm/README.md#L402: - [ ] **[WT-JOBS-2]** n8n Node `waveterm.run`
+- T62463ab4 docs/waveterm/README.md#L403: - [ ] **[WT-JOBS-3]** NiFi Processor `WaveTermInvoker`
+- T179ca16b docs/waveterm/README.md#L404: - [ ] **[WT-SEC-1]** gVisor/Kata runtime + default no-net
+- Tb2c802d2 docs/waveterm/README.md#L405: - [ ] **[WT-SEC-2]** OPA policies (tool allowlist, export gates)
+- Tf4c50303 docs/waveterm/README.md#L406: - [ ] **[WT-SEC-3]** Vault tokens (short-lived) for CLI/API
+- Tbbf5f486 docs/waveterm/README.md#L407: - [ ] **[WT-DOC-1]** `docs/waveterm/README.md` (Setup, Profiles, Safety)
+- Tb6f6d90d docs/waveterm/README.md#L408: - [ ] **[WT-DOC-2]** `docs/waveterm/presets/*.yaml` Beispiele
+- T34306263 docs/waveterm/README.md#L409: - [ ] **[WT-DOC-3]** `docs/api/jobs.md` Spezifikation
+- T974f7e75 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L443: ### **TODO-Index Ergänzung (neuer Abschnitt)**
+- T5eb5852d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L445: > füge ans Ende von `docs/TODO-Index.md` hinzu:
+- Tb2e9a387 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L449: - [ ] **[FLOWISE-1]** Flowise Deployment (Container, OIDC via Agent-Gateway)
+- T81994d8d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L450: - [ ] **[FLOWISE-2]** Agent-Gateway (Auth, RBAC, Rate-Limit, Audit, Vault)
+- Td7da51db docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L451: - [ ] **[FLOWISE-3]** Tool-Adapter v1 (search, graph, rag)
+- T4c758e03 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L452: - [ ] **[FLOWISE-4]** Agent-Registry (PG + YAML Sign + API)
+- Tc3eedc8d docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L453: - [ ] **[FLOWISE-5]** Starter-Agents (Research, Graph, Dossier)
+- T3482a3d0 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L454: - [ ] **[FLOWISE-6]** n8n Node `Run Flowise Agent`
+- Ta491a9b3 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L455: - [ ] **[FLOWISE-7]** NiFi Processor `InvokeFlowiseAgent`
+- T2479b33a docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L456: - [ ] **[FLOWISE-8]** Tool-Adapter v2 (verify, geo, forensics)
+- T9c7ee596 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L457: - [ ] **[FLOWISE-9]** Security Policies (OPA Rego + Sandbox Profiles)
+- Ted8fd21c docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L458: - [ ] **[FLOWISE-10]** Preset Wiring (default_agents)
+- T5f8607a9 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L459: - [ ] **[FLOWISE-11]** Eval Suites + CI Scorer
+- Tbe8b0da0 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L460: - [ ] **[FLOWISE-12]** Meta-Planner Agent (v1.0)
+- T350cd138 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L461: - [ ] **[FLOWISE-13]** Cost/Token Budgets + Alerts
+- T6bfd2fc8 docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L462: - [ ] **[FLOWISE-14]** Canary & Rollback Mechanik
+- Te8f46288 docs/blueprints/SECURITY-BLUEPRINT.md#L120: ## ✅ Tickets (Erweiterung zum TODO-Index)
+- Td4ba2caa docs/blueprints/VERIFICATION-BLUEPRINT.md#L171: # 🧩 Tickets (zum Ergänzen deines TODO-Index)
+- Ta03b5205 docs/blueprints/VERIFICATION-BLUEPRINT.md#L504: ## ✅ Tickets (zum TODO-Index ergänzen)
+- T071f5ecb docs/presets/Presets(Profile).md#L303: # Umsetzung: Tickets (zum Master TODO-Index ergänzen)
+- T9923a9b4 docs/dev/Checkliste.md#L10: Weitere Details siehe `TODO-Index.md`.
+- T33138fb0 docs/dev/Frontend-Modernisierung.md#L288: - [ ] **Desktop Navigation** - Sidebar funktioniert
+- Te928e303 docs/dev/Frontend-Modernisierung.md#L289: - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
+- T8ef864e3 docs/dev/Frontend-Modernisierung.md#L290: - [ ] **Dark/Light Mode** - Toggle funktioniert
+- T2374c640 docs/dev/Frontend-Modernisierung.md#L291: - [ ] **Command Palette** - Cmd+K öffnet Palette
+- T2c90e49a docs/dev/Frontend-Modernisierung.md#L292: - [ ] **Search Functionality** - Faceted Search + Results
+- T2ba50a1d docs/dev/Frontend-Modernisierung.md#L293: - [ ] **Form Validation** - Error States + Success
+- T0a72b67e docs/dev/Frontend-Modernisierung.md#L294: - [ ] **Real-time Updates** - WebSocket Connection
+- T6e99a49d docs/dev/Frontend-Modernisierung.md#L295: - [ ] **Notifications** - Toast Messages
+- T2956ecf8 docs/dev/Frontend-Modernisierung.md#L296: - [ ] **Charts** - Interactive Visualizations
+- T5dc85c21 docs/dev/Frontend-Modernisierung.md#L297: - [ ] **Data Tables** - Sorting + Filtering + Pagination
+- Te8f6d86e docs/dev/Frontend-Modernisierung.md#L298: - [ ] **Authentication** - Login/Logout Flow
+- Tadfc9428 docs/dev/Frontend-Modernisierung.md#L322: - [ ] **Bundle Size** < 500KB gzipped
+- T42ccdae2 docs/dev/Frontend-Modernisierung.md#L323: - [ ] **First Contentful Paint** < 1.8s
+- T8d454dbe docs/dev/Frontend-Modernisierung.md#L324: - [ ] **Largest Contentful Paint** < 2.5s
+- Ta4574305 docs/dev/Frontend-Modernisierung.md#L325: - [ ] **Cumulative Layout Shift** < 0.1
+- T1d5daf19 docs/dev/Frontend-Modernisierung.md#L326: - [ ] **First Input Delay** < 100ms
+- T96dafc78 docs/dev/Frontend-Modernisierung.md#L456: - [ ] **Alle Tests bestanden**
+- T335fb5ef docs/dev/Frontend-Modernisierung.md#L457: - [ ] **Performance Benchmarks erreicht**
+- Ta0ad4aa2 docs/dev/Frontend-Modernisierung.md#L458: - [ ] **Mobile Testing abgeschlossen**
+- Tf52ce64e docs/dev/Frontend-Modernisierung.md#L459: - [ ] **Accessibility validiert** (WCAG 2.1)
+- T1e6ee7c8 docs/dev/Frontend-Modernisierung.md#L460: - [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge)
+- Te08b8c4e docs/dev/Frontend-Modernisierung.md#L461: - [ ] **User Acceptance Testing** abgeschlossen
+- T6dd59241 docs/dev/Frontend-Modernisierung.md#L462: - [ ] **Documentation aktualisiert**
+- T316ca101 docs/dev/Frontend-Modernisierung.md#L463: - [ ] **Deployment Pipeline getestet**
+- T1b8f0bb9 docs/dev/Frontend-Modernisierung.md#L464: - [ ] **Monitoring Setup** aktiv
+- T3f17275c docs/dev/Frontend-Modernisierung.md#L465: - [ ] **Rollback Plan** definiert
+- Td4cec498 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L277: - [ ] **Desktop Navigation** - Sidebar funktioniert
+- Taa903608 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L278: - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
+- T04b498f8 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L279: - [ ] **Dark/Light Mode** - Toggle funktioniert
+- Te4ea2932 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L280: - [ ] **Command Palette** - Cmd+K öffnet Palette
+- T539a7e4f docs/dev/Frontend-Modernisierung_Setup-Guide.md#L281: - [ ] **Search Functionality** - Faceted Search + Results
+- T21a969db docs/dev/Frontend-Modernisierung_Setup-Guide.md#L282: - [ ] **Form Validation** - Error States + Success
+- Tf9f1306d docs/dev/Frontend-Modernisierung_Setup-Guide.md#L283: - [ ] **Real-time Updates** - WebSocket Connection
+- Tf1b4fb53 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L284: - [ ] **Notifications** - Toast Messages
+- T2c63be87 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L285: - [ ] **Charts** - Interactive Visualizations
+- T0fccb6e1 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L286: - [ ] **Data Tables** - Sorting + Filtering + Pagination
+- Tf77baf7c docs/dev/Frontend-Modernisierung_Setup-Guide.md#L287: - [ ] **Authentication** - Login/Logout Flow
+- Tc1e0e703 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L311: - [ ] **Bundle Size** < 500KB gzipped
+- T1d8ed2a1 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L312: - [ ] **First Contentful Paint** < 1.8s
+- Te242cbcd docs/dev/Frontend-Modernisierung_Setup-Guide.md#L313: - [ ] **Largest Contentful Paint** < 2.5s
+- T9e8c1fbc docs/dev/Frontend-Modernisierung_Setup-Guide.md#L314: - [ ] **Cumulative Layout Shift** < 0.1
+- T353d7c00 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L315: - [ ] **First Input Delay** < 100ms
+- T19d66e3c docs/dev/Frontend-Modernisierung_Setup-Guide.md#L445: - [ ] **Alle Tests bestanden**
+- T62c1c760 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L446: - [ ] **Performance Benchmarks erreicht**
+- T5f096d53 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L447: - [ ] **Mobile Testing abgeschlossen**
+- T15c6b57a docs/dev/Frontend-Modernisierung_Setup-Guide.md#L448: - [ ] **Accessibility validiert** (WCAG 2.1)
+- T49bb8fa6 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L449: - [ ] **Cross-Browser getestet** (Chrome, Firefox, Safari, Edge)
+- Taef73292 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L450: - [ ] **User Acceptance Testing** abgeschlossen
+- T09ea074c docs/dev/Frontend-Modernisierung_Setup-Guide.md#L451: - [ ] **Documentation aktualisiert**
+- Tb662f376 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L452: - [ ] **Deployment Pipeline getestet**
+- T8574cfe5 docs/dev/Frontend-Modernisierung_Setup-Guide.md#L453: - [ ] **Monitoring Setup** aktiv
+- T540a338e docs/dev/Frontend-Modernisierung_Setup-Guide.md#L454: - [ ] **Rollback Plan** definiert
+- Ta178ef20 docs/dev/README.md#L429: # TODO: filter by OPA decision (resource tags vs user attributes)
+- T9addc53a docs/dev/SECURITY-BLUEPRINT.md#L120: ## ✅ Tickets (Erweiterung zum TODO-Index)
+- Ta02a31b3 docs/dev/VERIFICATION-BLUEPRINT.md#L360: ## ✅ Tickets (zum TODO-Index ergänzen)
+- T38a558f2 docs/dev/frontend_modernization_guide.md#L205: - [ ] Design System implementiert
+- T8f4a4081 docs/dev/frontend_modernization_guide.md#L206: - [ ] Layout System eingerichtet
+- T064fbb29 docs/dev/frontend_modernization_guide.md#L207: - [ ] Komponenten modernisiert
+- Tf94f86fe docs/dev/frontend_modernization_guide.md#L208: - [ ] Responsive Design getestet
+- T0d0306b3 docs/dev/frontend_modernization_guide.md#L209: - [ ] Performance optimiert
+- T599d5fc8 docs/dev/frontend_modernization_guide.md#L210: - [ ] Tests aktualisiert
+- Tdf6d5cdf docs/dev/frontend_modernization_guide.md#L211: - [ ] Accessibility geprüft
+- Te4bc2664 docs/dev/frontend_modernization_guide.md#L212: - [ ] Cross-Browser Tests
+- Teb76ea95 docs/dev/frontend_modernization_guide.md#L213: - [ ] Mobile Experience validiert
+- T8937a599 docs/dev/frontend_modernization_guide.md#L214: - [ ] Documentation aktualisiert
+- Tf92eaf1d docs/dev/superset-nifi-flowise.md#L184: - [ ] **Superset-Composer**: JS/Python Helper eingebaut → Link öffnet Dashboard mit Filtern
+- Tbf72ef17 docs/dev/superset-nifi-flowise.md#L185: - [ ] **NiFi→Aleph**: InvokeHTTP Multipart konfiguriert, 200/202 Rückgabe sichtbar
+- T0b791bfe docs/dev/superset-nifi-flowise.md#L186: - [ ] **Flowise Agent**: Tools/Schemas registriert, Guardrail-Prompt gesetzt, Tool-Limit aktiv
+- Tc01505d6 docs/dev/superset-nifi-flowise.md#L187: - [ ] **Smoke Tests**:
+- T65885270 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L73: * `WORK-ON-new_docs/out/todo_index.md` (alle Checkboxen `- [ ]`/`- [x]`/nummerierte, plus `TODO:`/`FIXME:`/`NOTE:`; **mit IDs T####-hash, Datei, Zeile, Text**)
+- Ta858e2aa docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L103: master-todo.md
+- Tc23e93c9 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L132: * `docs/dev/roadmap/v0.3-plus/master-todo.md`: **alle offenen & erledigten** Tasks (Master-Register) mit Links zur Provenance.
+- Tb565f1f1 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L243: > **docs: consolidation, indices, dedup, roadmap & todo provenance (idempotent)**
+- Te28e7e42 docs/dev/dev-prompts/DOCS-CONSOLIDIERUNG.md#L256: * **Alle** TODOs (Checkboxen + TODO/FIXME/NOTE) in `todo_index.md` mit **IDs + Quelle+Zeile**.
+- T49f1ca8b docs/dev/v0.2/Datenquellen-Cluster.md#L89: TODO: **Feature-Pakete** schnüren (z. B. „Media Sources Pack“, „Threat Intel Pack“), die direkt in die Roadmap (0.3/0.5) integriert werden können!
+- T32c849c4 docs/dev/v0.2/FlowiseAI-Agents-integration.md#L186: ## 📋 Tickets (zum TODO-Index hinzufügen)
+- Tb2f30ee7 docs/dev/v0.2/FlowiseAI-Agents-integration.md#L233: ## TODO:
+- Tba970cbe docs/dev/v0.2/FlowiseAI-Agents-integration.md#L236: * `TODO-Index.md` (FLOWISE-Tickets anhängen)
+- Tf6a24a5d docs/dev/v0.2/Preset-Profile.md#L276: # Umsetzung: Tickets (zum Master TODO-Index ergänzen)
+- T7bc99b30 docs/dev/v0.2/Preset-Profile.md#L288: TODO: packe das als `docs/presets/` (je ein YAML + README) ins Repo und ergänze `PRESET-*.md` mit konkreten NiFi Template-Exports und n8n JSONs für die drei Profile.
+- T7fda6ac5 docs/dev/v0.2/TODO-Index.md#L1: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
+- T96c614d5 docs/dev/v0.2/TODO-Index.md#L9: - [ ] **[CORE-API-1]** Vereinheitliche `/healthz` und `/readyz` Endpoints
+- T6b53c8a4 docs/dev/v0.2/TODO-Index.md#L10: - [ ] **[CORE-API-2]** Einheitliches Error-Schema (RFC 7807 JSON Problem Detail)
+- Tdaa23089 docs/dev/v0.2/TODO-Index.md#L11: - [ ] **[CORE-API-3]** Swagger/OpenAPI Doku für alle Services
+- Tf9c44215 docs/dev/v0.2/TODO-Index.md#L12: - [ ] **[CORE-API-4]** OAuth2 JWT Auth im Gateway + OIDC Integration
+- T40201c9c docs/dev/v0.2/TODO-Index.md#L13: - [ ] **[CORE-API-5]** Audit-Logging Middleware (structured JSON mit X-Request-ID)
+- T6751fa30 docs/dev/v0.2/TODO-Index.md#L16: - [ ] **[GRAPH-1]** Ontologie-Layer (Entities, Events, Relations, Properties)
+- Taf050ca3 docs/dev/v0.2/TODO-Index.md#L17: - [ ] **[GRAPH-2]** Graph-Algorithmen v1 (Degree Centrality, Betweenness, Louvain, Dijkstra)
+- T59b8bd9a docs/dev/v0.2/TODO-Index.md#L18: - [ ] **[GRAPH-3]** Robustere Cypher-Queries (Retry/Backoff)
+- T67ada37b docs/dev/v0.2/TODO-Index.md#L19: - [ ] **[GRAPH-4]** Graph-Export (GraphML, JSON)
+- Tb2f142a9 docs/dev/v0.2/TODO-Index.md#L20: - [ ] **[GRAPH-5]** Audit: Query-Logs + Query-Metrics
+- T583511c7 docs/dev/v0.2/TODO-Index.md#L23: - [ ] **[SEARCH-1]** NLP v1 Integration (NER, RE, Summarization)
+- Td447eff2 docs/dev/v0.2/TODO-Index.md#L24: - [ ] **[SEARCH-2]** Embedding Reranking Pipeline (Flag-gesteuert)
+- Tb65ad138 docs/dev/v0.2/TODO-Index.md#L25: - [ ] **[SEARCH-3]** Index-Policy für „news“, „docs“ und „plugins“
+- T55a9d5ec docs/dev/v0.2/TODO-Index.md#L26: - [ ] **[SEARCH-4]** Export: JSON/CSV Dumps pro Index
+- T691f4516 docs/dev/v0.2/TODO-Index.md#L27: - [ ] **[SEARCH-5]** Observability: Search-Latency + Query Errors in Prometheus
+- T820ca449 docs/dev/v0.2/TODO-Index.md#L30: - [ ] **[VIEWS-1]** Healthcheck (SELECT 1 + DB latency)
+- T712e08d4 docs/dev/v0.2/TODO-Index.md#L31: - [ ] **[VIEWS-2]** Views für Ontologie-Entities (JOIN Neo4j + Postgres)
+- T2b976b3e docs/dev/v0.2/TODO-Index.md#L32: - [ ] **[VIEWS-3]** Integration mit Superset (Cross-Filter Views)
+- Tcb6348b8 docs/dev/v0.2/TODO-Index.md#L33: - [ ] **[VIEWS-4]** Ready-Metrics (Connections, Idle, Errors)
+- T3943b83a docs/dev/v0.2/TODO-Index.md#L36: - [ ] **[FE-1]** Einheitliches Theme (globals.css konsolidieren)
+- T239835d3 docs/dev/v0.2/TODO-Index.md#L37: - [ ] **[FE-2]** /search: Facettenfilter + Ranking-Regler
+- T1740a146 docs/dev/v0.2/TODO-Index.md#L38: - [ ] **[FE-3]** /graphx: Ontologie-Visualisierung + Algorithmen-Ergebnisse
+- T9abc3901 docs/dev/v0.2/TODO-Index.md#L39: - [ ] **[FE-4]** /graphx: Geospatial Layer (Leaflet/MapLibre)
+- T23ac25a1 docs/dev/v0.2/TODO-Index.md#L40: - [ ] **[FE-5]** /settings: Endpoints + OAuth2/OIDC Config sichtbar
+- Tc22256e6 docs/dev/v0.2/TODO-Index.md#L41: - [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
+- T937e2f61 docs/dev/v0.2/TODO-Index.md#L42: - [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
+- Tbb528afa docs/dev/v0.2/TODO-Index.md#L43: - [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- T8977f932 docs/dev/v0.2/TODO-Index.md#L44: - [ ] **[FE-9]** Verification-Badges & Evidence-Panel (Veracity Scores)
+- Tfcc18c85 docs/dev/v0.2/TODO-Index.md#L45: - [ ] **[FE-10]** Review-UI für Claims/Evidence (Overrides, History)
+- T6700f0dc docs/dev/v0.2/TODO-Index.md#L48: - [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
+- T7bb02d96 docs/dev/v0.2/TODO-Index.md#L49: - [ ] **[GATE-2]** Policy-Dateien für Role-Based-Access erweitern
+- Taa570ddf docs/dev/v0.2/TODO-Index.md#L50: - [ ] **[GATE-3]** Attribute-Level Security vorbereiten
+- T2d5151d5 docs/dev/v0.2/TODO-Index.md#L51: - [ ] **[GATE-4]** Audit-Logs in Loki weiterleiten
+- T41cc3d9c docs/dev/v0.2/TODO-Index.md#L54: - [ ] **[NIFI-1]** RSS/Atom Ingest Flow
+- Tb872722a docs/dev/v0.2/TODO-Index.md#L55: - [ ] **[NIFI-2]** API Ingest Flow
+- Td2c73ca4 docs/dev/v0.2/TODO-Index.md#L56: - [ ] **[NIFI-3]** File Watch/Upload Flow (OCR + NLP)
+- T2f805132 docs/dev/v0.2/TODO-Index.md#L57: - [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
+- T538cc227 docs/dev/v0.2/TODO-Index.md#L58: - [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
+- T4cbbedec docs/dev/v0.2/TODO-Index.md#L59: - [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- Ta9315cdf docs/dev/v0.2/TODO-Index.md#L60: - [ ] **[NIFI-7]** Verification-Pipeline: Claim Extract, Retrieval, RTE, Geo/Time/Media Checks, Aggregation
+- Tf81ce959 docs/dev/v0.2/TODO-Index.md#L63: - [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
+- Ta2ff9eaa docs/dev/v0.2/TODO-Index.md#L64: - [ ] **[N8N-2]** Alerts Flow (keyword watchlists → Slack/Email)
+- Tedefb47a docs/dev/v0.2/TODO-Index.md#L65: - [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
+- T05512e8e docs/dev/v0.2/TODO-Index.md#L66: - [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
+- T27928674 docs/dev/v0.2/TODO-Index.md#L67: - [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- T670382ca docs/dev/v0.2/TODO-Index.md#L68: - [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate)
+- T83fe939a docs/dev/v0.2/TODO-Index.md#L69: - [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review)
+- T2296ac84 docs/dev/v0.2/TODO-Index.md#L72: - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
+- T071175b0 docs/dev/v0.2/TODO-Index.md#L73: - [ ] **[CLI-2]** Export Command (`it export [graph|search|dossier]`)
+- Tbb757a60 docs/dev/v0.2/TODO-Index.md#L74: - [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`)
+- Tb21c66b1 docs/dev/v0.2/TODO-Index.md#L75: - [ ] **[CLI-4]** Auth Command (`it login --oidc`)
+- T858d65b1 docs/dev/v0.2/TODO-Index.md#L76: - [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table)
+- Tfa9a75ec docs/dev/v0.2/TODO-Index.md#L79: - [ ] **[OBS-1]** Observability Profile (Prometheus, Grafana, Loki, Tempo, Alertmanager)
+- Te9a60584 docs/dev/v0.2/TODO-Index.md#L80: - [ ] **[OBS-2]** Structured JSON Logs (X-Request-ID)
+- T12a45cbe docs/dev/v0.2/TODO-Index.md#L81: - [ ] **[OBS-3]** Backup-Scripts (Neo4j, Postgres, OpenSearch)
+- T6a239443 docs/dev/v0.2/TODO-Index.md#L82: - [ ] **[OBS-4]** Coverage Gate fixen + CI stabilisieren
+- T50dfc868 docs/dev/v0.2/TODO-Index.md#L83: - [ ] **[OBS-5]** Frontend Build Konflikt (settings page) lösen
+- Te4176dd4 docs/dev/v0.2/TODO-Index.md#L88: - [ ] **[SEC-EGRESS-1]** Egress-Gateway (Tor+VPN+Proxy-Chain, Kill-Switch, DNS-Sinkhole)
+- T76860348 docs/dev/v0.2/TODO-Index.md#L89: - [ ] **[SEC-EGRESS-2]** NetworkPolicy: Services nur via Egress-Gateway
+- T09020bc9 docs/dev/v0.2/TODO-Index.md#L90: - [ ] **[SEC-EGRESS-3]** UI-Schalter `IT_MODE/IT_EGRESS`, Proxy-Injektion
+- T312b93e0 docs/dev/v0.2/TODO-Index.md#L91: - [ ] **[SEC-EGRESS-4]** DNS-Hardening: DoH/Tor-DNS, blockiere Port 53
+- T486ef2ed docs/dev/v0.2/TODO-Index.md#L92: - [ ] **[SEC-STORE-1]** Ephemeral FS (Incognito Sessions, Auto-Wipe)
+- T1fb00e36 docs/dev/v0.2/TODO-Index.md#L93: - [ ] **[SEC-STORE-2]** Vault-Integration + per-Tenant Keys
+- Te046d4d0 docs/dev/v0.2/TODO-Index.md#L94: - [ ] **[SEC-STORE-3]** Hash+Sign-Pipeline für Forensics-Exporte
+- T16c0defd docs/dev/v0.2/TODO-Index.md#L95: - [ ] **[SEC-BROWSER-1]** Remote Browser Pool (Profile, WebRTC-Off, Cookie-Jar per Case)
+- T07d9b72a docs/dev/v0.2/TODO-Index.md#L96: - [ ] **[SEC-BROWSER-2]** Identity Profiles (UA/Locale/Timezone)
+- T120d3b48 docs/dev/v0.2/TODO-Index.md#L97: - [ ] **[SEC-BROWSER-3]** robots.txt-Enforcer + Quell-Whitelist
+- T37a44314 docs/dev/v0.2/TODO-Index.md#L98: - [ ] **[SEC-AUDIT-1]** Dual-Plane Logging (persistent vs. in-memory)
+- Tf6f0ac08 docs/dev/v0.2/TODO-Index.md#L99: - [ ] **[SEC-AUDIT-2]** UI-Warnungen (Export enthält Metadaten)
+- Tf47ef523 docs/dev/v0.2/TODO-Index.md#L100: - [ ] **[SEC-SBX-1]** Plugin-Sandbox (gVisor/Kata/Firecracker, default no-net)
+- T1e77dce9 docs/dev/v0.2/TODO-Index.md#L101: - [ ] **[SEC-SBX-2]** OPA-Validierung `plugin.yaml` (CAPs/Secrets)
+- T7fb20f8d docs/dev/v0.2/TODO-Index.md#L102: - [ ] **[SEC-SBX-3]** SBOM/Cosign/Trivy-Scans in CI
+- T1c9c78b6 docs/dev/v0.2/TODO-Index.md#L107: - [ ] **[VERIF-1]** Source Reputation & Bot-Likelihood Modul
+- T2fc57e38 docs/dev/v0.2/TODO-Index.md#L108: - [ ] **[VERIF-2]** Claim-Extractor + MinHash Cluster + Claim IDs
+- T5950a90f docs/dev/v0.2/TODO-Index.md#L109: - [ ] **[VERIF-3]** Evidence Retrieval (Hybrid BM25+Dense)
+- T1e613ad0 docs/dev/v0.2/TODO-Index.md#L110: - [ ] **[VERIF-4]** RTE/Stance Classifier + Aggregation
+- T3e09c258 docs/dev/v0.2/TODO-Index.md#L111: - [ ] **[VERIF-5]** Temporal/Geo Checks (Mordecai + Heuristiken)
+- Tdf0fea1d docs/dev/v0.2/TODO-Index.md#L112: - [ ] **[VERIF-6]** Media Forensics (pHash, EXIF, Reverse Search, ELA)
+- Tf0796a6f docs/dev/v0.2/TODO-Index.md#L113: - [ ] **[VERIF-7]** Schema/Mappings/Constraints für Verification (OpenSearch + Neo4j)
+- T5ad28f17 docs/dev/v0.2/TODO-Index.md#L114: - [ ] **[VERIF-8]** Review-UI (Evidence Panel, Overrides, History)
+- T0c056d58 docs/dev/v0.2/TODO-Index.md#L115: - [ ] **[VERIF-9]** Active Learning Loop (Label-Store, Re-Training)
+- T6a135243 docs/dev/v0.2/TODO-Index.md#L116: - [ ] **[VERIF-10]** n8n Alerts/Escalations (Watchlists, kontrovers)
+- T2a9efbbd docs/dev/v0.2/TODO-Index.md#L117: - [ ] **[VERIF-11]** Dossier-Integration (Claim-basierte Reports mit Evidenz-Anhang)
+- Tc3e76b03 docs/dev/v0.2/Ticket-Checkliste.md#L1: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
+- T3c74f562 docs/dev/v0.2/Ticket-Checkliste.md#L9: - [ ] **[CORE-API-1]** Vereinheitliche `/healthz` und `/readyz` Endpoints
+- T86384cee docs/dev/v0.2/Ticket-Checkliste.md#L10: - [ ] **[CORE-API-2]** Einheitliches Error-Schema (RFC 7807 JSON Problem Detail)
+- Tf1ebad68 docs/dev/v0.2/Ticket-Checkliste.md#L11: - [ ] **[CORE-API-3]** Swagger/OpenAPI Doku für alle Services
+- Tef38943a docs/dev/v0.2/Ticket-Checkliste.md#L12: - [ ] **[CORE-API-4]** OAuth2 JWT Auth im Gateway + OIDC Integration
+- T2c4e0e55 docs/dev/v0.2/Ticket-Checkliste.md#L13: - [ ] **[CORE-API-5]** Audit-Logging Middleware (structured JSON mit X-Request-ID)
+- T260ec1ba docs/dev/v0.2/Ticket-Checkliste.md#L16: - [ ] **[GRAPH-1]** Ontologie-Layer (Entities, Events, Relations, Properties)
+- Tcf392a31 docs/dev/v0.2/Ticket-Checkliste.md#L17: - [ ] **[GRAPH-2]** Graph-Algorithmen v1 (Degree Centrality, Betweenness, Louvain, Dijkstra)
+- Tc2929de2 docs/dev/v0.2/Ticket-Checkliste.md#L18: - [ ] **[GRAPH-3]** Robustere Cypher-Queries (Retry/Backoff)
+- T99a53243 docs/dev/v0.2/Ticket-Checkliste.md#L19: - [ ] **[GRAPH-4]** Graph-Export (GraphML, JSON)
+- Tbd7b9b38 docs/dev/v0.2/Ticket-Checkliste.md#L20: - [ ] **[GRAPH-5]** Audit: Query-Logs + Query-Metrics
+- Tfd8d5463 docs/dev/v0.2/Ticket-Checkliste.md#L23: - [ ] **[SEARCH-1]** NLP v1 Integration (NER, RE, Summarization)
+- Tfe9c9b01 docs/dev/v0.2/Ticket-Checkliste.md#L24: - [ ] **[SEARCH-2]** Embedding Reranking Pipeline (Flag-gesteuert)
+- Tfb88ffb0 docs/dev/v0.2/Ticket-Checkliste.md#L25: - [ ] **[SEARCH-3]** Index-Policy für „news“, „docs“ und „plugins“
+- T930adfd5 docs/dev/v0.2/Ticket-Checkliste.md#L26: - [ ] **[SEARCH-4]** Export: JSON/CSV Dumps pro Index
+- T4371a444 docs/dev/v0.2/Ticket-Checkliste.md#L27: - [ ] **[SEARCH-5]** Observability: Search-Latency + Query Errors in Prometheus
+- Ta1249e1c docs/dev/v0.2/Ticket-Checkliste.md#L30: - [ ] **[VIEWS-1]** Healthcheck (SELECT 1 + DB latency)
+- T8031896a docs/dev/v0.2/Ticket-Checkliste.md#L31: - [ ] **[VIEWS-2]** Views für Ontologie-Entities (JOIN Neo4j + Postgres)
+- T4e3ab17e docs/dev/v0.2/Ticket-Checkliste.md#L32: - [ ] **[VIEWS-3]** Integration mit Superset (Cross-Filter Views)
+- T2ecc8c30 docs/dev/v0.2/Ticket-Checkliste.md#L33: - [ ] **[VIEWS-4]** Ready-Metrics (Connections, Idle, Errors)
+- T2e7ef320 docs/dev/v0.2/Ticket-Checkliste.md#L36: - [ ] **[FE-1]** Einheitliches Theme (globals.css konsolidieren)
+- Tf5ef504e docs/dev/v0.2/Ticket-Checkliste.md#L37: - [ ] **[FE-2]** /search: Facettenfilter + Ranking-Regler
+- T8249b090 docs/dev/v0.2/Ticket-Checkliste.md#L38: - [ ] **[FE-3]** /graphx: Ontologie-Visualisierung + Algorithmen-Ergebnisse
+- T53434e25 docs/dev/v0.2/Ticket-Checkliste.md#L39: - [ ] **[FE-4]** /graphx: Geospatial Layer (Leaflet/MapLibre)
+- Tf4718a0d docs/dev/v0.2/Ticket-Checkliste.md#L40: - [ ] **[FE-5]** /settings: Endpoints + OAuth2/OIDC Config sichtbar
+- T2e62061b docs/dev/v0.2/Ticket-Checkliste.md#L41: - [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
+- T7965089b docs/dev/v0.2/Ticket-Checkliste.md#L42: - [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
+- T361b2744 docs/dev/v0.2/Ticket-Checkliste.md#L43: - [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- T57338d8b docs/dev/v0.2/Ticket-Checkliste.md#L46: - [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
+- T3f9b35c6 docs/dev/v0.2/Ticket-Checkliste.md#L47: - [ ] **[GATE-2]** Policy-Dateien für Role-Based-Access erweitern
+- Tb3a4b50c docs/dev/v0.2/Ticket-Checkliste.md#L48: - [ ] **[GATE-3]** Attribute-Level Security vorbereiten
+- T3d064402 docs/dev/v0.2/Ticket-Checkliste.md#L49: - [ ] **[GATE-4]** Audit-Logs in Loki weiterleiten
+- T9f55a7e3 docs/dev/v0.2/Ticket-Checkliste.md#L52: - [ ] **[NIFI-1]** RSS/Atom Ingest Flow
+- T57541fe4 docs/dev/v0.2/Ticket-Checkliste.md#L53: - [ ] **[NIFI-2]** API Ingest Flow
+- T5b962c45 docs/dev/v0.2/Ticket-Checkliste.md#L54: - [ ] **[NIFI-3]** File Watch/Upload Flow (OCR + NLP)
+- T33e5f56d docs/dev/v0.2/Ticket-Checkliste.md#L55: - [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
+- Ta3e06510 docs/dev/v0.2/Ticket-Checkliste.md#L56: - [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
+- T61eaba80 docs/dev/v0.2/Ticket-Checkliste.md#L57: - [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- T916bb7e9 docs/dev/v0.2/Ticket-Checkliste.md#L60: - [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
+- T49602af1 docs/dev/v0.2/Ticket-Checkliste.md#L61: - [ ] **[N8N-2]** Alerts Flow (keyword watchlists → Slack/Email)
+- T8ca4f49d docs/dev/v0.2/Ticket-Checkliste.md#L62: - [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
+- T7ca5c4fb docs/dev/v0.2/Ticket-Checkliste.md#L63: - [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
+- T03560a6d docs/dev/v0.2/Ticket-Checkliste.md#L64: - [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- T212d7d93 docs/dev/v0.2/Ticket-Checkliste.md#L67: - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
+- T31f1363d docs/dev/v0.2/Ticket-Checkliste.md#L68: - [ ] **[CLI-2]** Export Command (`it export [graph|search|dossier]`)
+- T46578c8e docs/dev/v0.2/Ticket-Checkliste.md#L69: - [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`)
+- Tcddb81e2 docs/dev/v0.2/Ticket-Checkliste.md#L70: - [ ] **[CLI-4]** Auth Command (`it login --oidc`)
+- Tf7bd1421 docs/dev/v0.2/Ticket-Checkliste.md#L71: - [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table)
+- T5a2d6148 docs/dev/v0.2/Ticket-Checkliste.md#L74: - [ ] **[OBS-1]** Observability Profile (Prometheus, Grafana, Loki, Tempo, Alertmanager)
+- Td15bbcb1 docs/dev/v0.2/Ticket-Checkliste.md#L75: - [ ] **[OBS-2]** Structured JSON Logs (X-Request-ID)
+- T08448e85 docs/dev/v0.2/Ticket-Checkliste.md#L76: - [ ] **[OBS-3]** Backup-Scripts (Neo4j, Postgres, OpenSearch)
+- Td2236406 docs/dev/v0.2/Ticket-Checkliste.md#L77: - [ ] **[OBS-4]** Coverage Gate fixen + CI stabilisieren
+- T9bd657cd docs/dev/v0.2/Ticket-Checkliste.md#L78: - [ ] **[OBS-5]** Frontend Build Konflikt (settings page) lösen
+- T9b019ff4 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L1: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v1.0)
+- T98e90d90 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L9: - [ ] **[CORE-API-1]** Vereinheitliche `/healthz` und `/readyz` Endpoints
+- T65a07da1 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L10: - [ ] **[CORE-API-2]** Einheitliches Error-Schema (RFC 7807 JSON Problem Detail)
+- Tbf0ac642 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L11: - [ ] **[CORE-API-3]** Swagger/OpenAPI Doku für alle Services
+- Tc7b2ea55 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L12: - [ ] **[CORE-API-4]** OAuth2 JWT Auth im Gateway + OIDC Integration
+- Ta895be4c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L13: - [ ] **[CORE-API-5]** Audit-Logging Middleware (structured JSON mit X-Request-ID)
+- T80a2e913 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L16: - [ ] **[GRAPH-1]** Ontologie-Layer (Entities, Events, Relations, Properties)
+- T2c6aa5b0 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L17: - [ ] **[GRAPH-2]** Graph-Algorithmen v1 (Degree Centrality, Betweenness, Louvain, Dijkstra)
+- T1030e0fd docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L18: - [ ] **[GRAPH-3]** Robustere Cypher-Queries (Retry/Backoff)
+- T3c059eea docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L19: - [ ] **[GRAPH-4]** Graph-Export (GraphML, JSON)
+- T7e80880f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L20: - [ ] **[GRAPH-5]** Audit: Query-Logs + Query-Metrics
+- Td25582d3 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L23: - [ ] **[SEARCH-1]** NLP v1 Integration (NER, RE, Summarization)
+- T041e81a9 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L24: - [ ] **[SEARCH-2]** Embedding Reranking Pipeline (Flag-gesteuert)
+- Tfd930023 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L25: - [ ] **[SEARCH-3]** Index-Policy für „news“, „docs“ und „plugins“
+- T3c21423e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L26: - [ ] **[SEARCH-4]** Export: JSON/CSV Dumps pro Index
+- T41fef9d2 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L27: - [ ] **[SEARCH-5]** Observability: Search-Latency + Query Errors in Prometheus
+- T9e560efe docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L30: - [ ] **[VIEWS-1]** Healthcheck (SELECT 1 + DB latency)
+- T37219dc9 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L31: - [ ] **[VIEWS-2]** Views für Ontologie-Entities (JOIN Neo4j + Postgres)
+- T66bd4524 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L32: - [ ] **[VIEWS-3]** Integration mit Superset (Cross-Filter Views)
+- T6e54ac16 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L33: - [ ] **[VIEWS-4]** Ready-Metrics (Connections, Idle, Errors)
+- Tc05d7b58 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L36: - [ ] **[FE-1]** Einheitliches Theme (globals.css konsolidieren)
+- T09986fb5 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L37: - [ ] **[FE-2]** /search: Facettenfilter + Ranking-Regler
+- T7ca3edc4 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L38: - [ ] **[FE-3]** /graphx: Ontologie-Visualisierung + Algorithmen-Ergebnisse
+- Tbfd46364 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L39: - [ ] **[FE-4]** /graphx: Geospatial Layer (Leaflet/MapLibre)
+- T6ecc94ac docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L40: - [ ] **[FE-5]** /settings: Endpoints + OAuth2/OIDC Config sichtbar
+- T7ca78b51 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L41: - [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
+- T1b1da82d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L42: - [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
+- Te05ddd88 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L43: - [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- T2ffc74f0 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L44: - [ ] **[FE-9]** Verification-Badges & Evidence-Panel (Veracity Scores)
+- T45fd5c7b docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L45: - [ ] **[FE-10]** Review-UI für Claims/Evidence (Overrides, History)
+- T0b8d92a4 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L48: - [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
+- Ta0c3bfe4 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L49: - [ ] **[GATE-2]** Policy-Dateien für Role-Based-Access erweitern
+- T3f86dd6a docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L50: - [ ] **[GATE-3]** Attribute-Level Security vorbereiten
+- T6b86dd7e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L51: - [ ] **[GATE-4]** Audit-Logs in Loki weiterleiten
+- T1d7717fb docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L54: - [ ] **[NIFI-1]** RSS/Atom Ingest Flow
+- T0c39b3a6 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L55: - [ ] **[NIFI-2]** API Ingest Flow
+- T2ef30966 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L56: - [ ] **[NIFI-3]** File Watch/Upload Flow (OCR + NLP)
+- Tfc5ed44a docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L57: - [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
+- T51d406f2 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L58: - [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
+- T153dda62 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L59: - [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- Tddc6f2da docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L60: - [ ] **[NIFI-7]** Verification-Pipeline (Claims, Retrieval, RTE, Geo/Media, Aggregation)
+- Tac36672e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L63: - [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
+- Ta9312730 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L64: - [ ] **[N8N-2]** Alerts Flow (keyword watchlists → Slack/Email)
+- T372c0169 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L65: - [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
+- Tfd4e6beb docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L66: - [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
+- T8215cd0e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L67: - [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- T7ca16b98 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L68: - [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate)
+- T1981f93b docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L69: - [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review)
+- T15767370 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L72: - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
+- T68c472d8 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L73: - [ ] **[CLI-2]** Export Command (`it export [graph|search|dossier]`)
+- T8604ab72 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L74: - [ ] **[CLI-3]** Plugin Command (`it plugin run <tool>`)
+- Tc399e39a docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L75: - [ ] **[CLI-4]** Auth Command (`it login --oidc`)
+- T106b7d7f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L76: - [ ] **[CLI-5]** Format-Optionen für Status/Logs (json/yaml/table)
+- Td37df55d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L79: - [ ] **[OBS-1]** Observability Profile (Prometheus, Grafana, Loki, Tempo, Alertmanager)
+- T933459f0 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L80: - [ ] **[OBS-2]** Structured JSON Logs (X-Request-ID)
+- T071543a2 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L81: - [ ] **[OBS-3]** Backup-Scripts (Neo4j, Postgres, OpenSearch)
+- Tc6581fd9 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L82: - [ ] **[OBS-4]** Coverage Gate fixen + CI stabilisieren
+- T8b2d5322 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L83: - [ ] **[OBS-5]** Frontend Build Konflikt (settings page) lösen
+- T7db02ef5 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L88: - [ ] **[SEC-EGRESS-1]** Egress-Gateway (Tor+VPN+Proxy-Chain, Kill-Switch, DNS-Sinkhole)
+- T16e2dcde docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L89: - [ ] **[SEC-EGRESS-2]** NetworkPolicy: Services nur via Egress-Gateway
+- T92b03197 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L90: - [ ] **[SEC-EGRESS-3]** UI-Schalter `IT_MODE/IT_EGRESS`, Proxy-Injektion
+- T4020de87 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L91: - [ ] **[SEC-EGRESS-4]** DNS-Hardening: DoH/Tor-DNS, blockiere Port 53
+- Td4f1efbf docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L92: - [ ] **[SEC-STORE-1]** Ephemeral FS (Incognito Sessions, Auto-Wipe)
+- Tf488f7cd docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L93: - [ ] **[SEC-STORE-2]** Vault-Integration + per-Tenant Keys
+- T446f8627 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L94: - [ ] **[SEC-STORE-3]** Hash+Sign-Pipeline für Forensics-Exporte
+- T31b9b5ab docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L95: - [ ] **[SEC-BROWSER-1]** Remote Browser Pool (Profile, WebRTC-Off, Cookie-Jar per Case)
+- Tdbcf673a docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L96: - [ ] **[SEC-BROWSER-2]** Identity Profiles (UA/Locale/Timezone)
+- T8ce46fb4 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L97: - [ ] **[SEC-BROWSER-3]** robots.txt-Enforcer + Quell-Whitelist
+- T99a18dbb docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L98: - [ ] **[SEC-AUDIT-1]** Dual-Plane Logging (persistent vs. in-memory)
+- Ta7915861 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L99: - [ ] **[SEC-AUDIT-2]** UI-Warnungen (Export enthält Metadaten)
+- T7d18c1ee docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L100: - [ ] **[SEC-SBX-1]** Plugin-Sandbox (gVisor/Kata/Firecracker, default no-net)
+- Td21d0237 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L101: - [ ] **[SEC-SBX-2]** OPA-Validierung `plugin.yaml` (CAPs/Secrets)
+- T2238d26f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L102: - [ ] **[SEC-SBX-3]** SBOM/Cosign/Trivy-Scans in CI
+- T6bc3091c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L105: - [ ] **[VERIF-1]** Source Reputation & Bot-Likelihood Modul
+- Ta4e8d4e8 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L106: - [ ] **[VERIF-2]** Claim-Extractor + MinHash Cluster + Claim IDs
+- T1c331227 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L107: - [ ] **[VERIF-3]** Evidence Retrieval (Hybrid BM25+Dense)
+- Ta6b4b836 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L108: - [ ] **[VERIF-4]** RTE/Stance Classifier + Aggregation
+- T8b5fd368 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L109: - [ ] **[VERIF-5]** Temporal/Geo Checks (Mordecai + Heuristiken)
+- T180ba18d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L110: - [ ] **[VERIF-6]** Media Forensics (pHash, EXIF, Reverse Search, ELA)
+- Tc4b93c16 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L111: - [ ] **[VERIF-7]** Schema/Mappings/Constraints für Verification (OpenSearch + Neo4j)
+- T77fde1ec docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L112: - [ ] **[VERIF-8]** Review-UI (Evidence Panel, Overrides, History)
+- Tce13cf19 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L113: - [ ] **[VERIF-9]** Active Learning Loop (Label-Store, Re-Training)
+- T69fa6b9e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L114: - [ ] **[VERIF-10]** n8n Alerts/Escalations (Watchlists, kontrovers)
+- Tf3ee4ebd docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L115: - [ ] **[VERIF-11]** Dossier-Integration (Claim-basierte Reports mit Evidenz-Anhang)
+- T14e59e2f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L120: - [ ] **[LEGAL-1]** RAG-Service für Gesetzestexte
+- T4ead3226 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L121: - [ ] **[LEGAL-2]** Graph-Schema Erweiterung (:Law, :LawChange)
+- T2047a757 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L122: - [ ] **[LEGAL-3]** NiFi ingest_laws + rag_index
+- T6762a565 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L123: - [ ] **[LEGAL-4]** n8n Compliance Alerts + Lobbying Reports
+- T2e6ce046 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L124: - [ ] **[LEGAL-5]** Frontend Tab „Legal/Compliance“
+- Tf1e02267 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L125: - [ ] **[LEGAL-6]** Dossier-Vorlage Compliance Report
+- T4708d8c6 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L128: - [ ] **[DISINFO-1]** Claim-Cluster Pipeline (MinHash/SimHash)
+- T31fc216d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L129: - [ ] **[DISINFO-2]** Bot-Likelihood Modul
+- T4f04dea7 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L130: - [ ] **[DISINFO-3]** Temporal Pattern Detection
+- T9568b165 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L131: - [ ] **[DISINFO-4]** n8n Narrative Alerts + BotNet Dossier
+- Tb1c070e9 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L132: - [ ] **[DISINFO-5]** Frontend Dashboard Top Narratives
+- T1dcdd73a docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L133: - [ ] **[DISINFO-6]** Fact-Check API Integration
+- T46c16667 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L136: - [ ] **[SUPPLY-1]** Graph-Schema SupplyChains + Sanctions
+- Ta53352bf docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L137: - [ ] **[SUPPLY-2]** NiFi ingest_supply_data + enrich_sanctions
+- Tbb7eb051 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L138: - [ ] **[SUPPLY-3]** Simulation Engine (Event → Impact)
+- T50dca75f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L139: - [ ] **[SUPPLY-4]** n8n Risk Alerts + Impact Reports
+- T2a9c25be docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L140: - [ ] **[SUPPLY-5]** Frontend Supply Graph + Simulation Tool
+- T08f61ccc docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L141: - [ ] **[SUPPLY-6]** Dossier Supply Chain Risk Report
+- T1d1b7443 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L144: - [ ] **[FIN-1]** Graph-Schema Accounts/Transfers
+- Ta3cced00 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L145: - [ ] **[FIN-2]** NiFi ingest_financial_data + enrich_sanctions
+- Tfd362fb6 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L146: - [ ] **[FIN-3]** Leak-Integration (ICIJ Leaks → Graph)
+- T332741ce docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L147: - [ ] **[FIN-4]** Anomaly Detection Module
+- T20697a13 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L148: - [ ] **[FIN-5]** n8n Red Flag Alerts + Escalations
+- Tc62121ce docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L149: - [ ] **[FIN-6]** Frontend Finanzgraph + Risk-Dashboard
+- T6ff24c71 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L150: - [ ] **[FIN-7]** Dossier Financial Red Flags
+- T67f7dcdf docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L153: - [ ] **[GEO-1]** NiFi ingest_adsb + ingest_ais + merge_geo_social
+- Tbf12851c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L154: - [ ] **[GEO-2]** Graph-Schema Events/Assets/Conflicts
+- Taea22c53 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L155: - [ ] **[GEO-3]** Geo-Time Anomaly Detection
+- T1a1a1d42 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L156: - [ ] **[GEO-4]** n8n Alerts + Conflict Reports
+- T19f9a63c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L157: - [ ] **[GEO-5]** Frontend Map Dashboard + Timeline
+- T2ee21faf docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L158: - [ ] **[GEO-6]** Simulation Engine (Eskalations-Szenarien)
+- T2f844223 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L159: - [ ] **[GEO-7]** Dossier Geopolitical Report
+- Te37ffd8d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L162: - [ ] **[HUM-1]** NiFi ingest_health_weather_data + merge_indicators
+- T506b4526 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L163: - [ ] **[HUM-2]** Graph-Schema Crisis/Indicators/Regions
+- T2b4c1a56 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L164: - [ ] **[HUM-3]** Risk Assessment Modul (ML)
+- T4c5e0b5e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L165: - [ ] **[HUM-4]** n8n Crisis Alerts + Reports
+- T592bf836 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L166: - [ ] **[HUM-5]** Frontend Crisis Dashboard + Forecast
+- Te6a53430 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L167: - [ ] **[HUM-6]** Dossier Humanitarian Crisis Report
+- Tdae0d505 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L172: - [ ] **[CLIMATE-1]** NiFi ingest_climate_data (NASA/ESA/Copernicus)
+- Td4b84698 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L173: - [ ] **[CLIMATE-2]** Graph-Schema ClimateIndicators
+- T1637519f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L174: - [ ] **[CLIMATE-3]** CO₂/Emission Scoring Modul
+- Tc7e3d37c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L175: - [ ] **[CLIMATE-4]** n8n Alerts (Emission Targets)
+- Te2e1cc02 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L176: - [ ] **[CLIMATE-5]** Frontend Climate Dashboard + Heatmap
+- Tee182a19 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L177: - [ ] **[CLIMATE-6]** Dossier Climate Risk Report
+- T3fb5ce0e docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L180: - [ ] **[TECH-1]** NiFi ingest_patents + research_data
+- T3a765387 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L181: - [ ] **[TECH-2]** Graph-Schema Patents/TechTrends
+- T79ca9f99 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L182: - [ ] **[TECH-3]** Innovation Hotspot Detection
+- Te06695d0 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L183: - [ ] **[TECH-4]** n8n Tech Trend Reports
+- T2bc7ebba docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L184: - [ ] **[TECH-5]** Frontend Patent/Innovation Graph
+- T9331c680 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L185: - [ ] **[TECH-6]** Dossier Technology Trends
+- T1a7dbb11 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L188: - [ ] **[TERROR-1]** Ingest Propaganda Sources (Social, Web)
+- Tb3f1c1fd docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L189: - [ ] **[TERROR-2]** Graph-Schema TerrorNetworks
+- T27a1b4f7 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L190: - [ ] **[TERROR-3]** Finance Flow Analysis
+- T22987a00 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L191: - [ ] **[TERROR-4]** n8n Alerts Suspicious Networks
+- Ta9924200 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L192: - [ ] **[TERROR-5]** Frontend Terror Network Graph
+- T556f4de8 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L193: - [ ] **[TERROR-6]** Dossier Terrorism Threat Report
+- T33d49c77 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L196: - [ ] **[HEALTH-1]** NiFi ingest_health_data (WHO, RKI, Social)
+- T28b2871d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L197: - [ ] **[HEALTH-2]** Graph-Schema HealthEvents/Regions
+- T285ec35b docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L198: - [ ] **[HEALTH-3]** Epidemic Outbreak Detection
+- Te099d4ed docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L199: - [ ] **[HEALTH-4]** n8n Health Alerts + Reports
+- T7e5bd677 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L200: - [ ] **[HEALTH-5]** Frontend Health Dashboard
+- T9566bac6 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L201: - [ ] **[HEALTH-6]** Dossier Health/Epidemic Report
+- T9be3e880 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L204: - [ ] **[ETHICS-1]** Ingest Model Cards + AI Incident Data
+- T0224fbb9 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L205: - [ ] **[ETHICS-2]** Graph-Schema Bias/Models/Orgs
+- T72d2ee22 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L206: - [ ] **[ETHICS-3]** Bias Detection Modul
+- Tb20776b0 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L207: - [ ] **[ETHICS-4]** n8n Alerts (Bias, Ethics Violations)
+- T2b54964d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L208: - [ ] **[ETHICS-5]** Frontend AI Ethics Dashboard
+- T626b3a4b docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L209: - [ ] **[ETHICS-6]** Dossier AI Ethics Report
+- T2501c79d docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L212: - [ ] **[MEDIA-1]** Ingest Images/Videos (EXIF, Hashing)
+- T589c55f2 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L213: - [ ] **[MEDIA-2]** Deepfake Detection Modul
+- T695af690 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L214: - [ ] **[MEDIA-3]** Graph-Schema MediaAuthenticity
+- T376abb53 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L215: - [ ] **[MEDIA-4]** n8n Alerts Fake Media
+- T0a9f1830 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L216: - [ ] **[MEDIA-5]** Frontend Media Forensics Panel
+- Tba2ed8c8 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L217: - [ ] **[MEDIA-6]** Dossier Media Authenticity Report
+- T4d93d5ad docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L220: - [ ] **[ECON-1]** NiFi ingest_economic_data (IMF, OECD, World Bank)
+- T14dc9ba1 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L221: - [ ] **[ECON-2]** Graph-Schema EconomicIndicators/Trades
+- Tf3ec442c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L222: - [ ] **[ECON-3]** Market Risk Analysis Modul
+- T0cd07ccc docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L223: - [ ] **[ECON-4]** n8n Economic Reports
+- T0bf6341c docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L224: - [ ] **[ECON-5]** Frontend Economic Dashboard
+- Tdf2aaf71 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L225: - [ ] **[ECON-6]** Dossier Economic Intelligence Report
+- T6a5b522a docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L228: - [ ] **[CULTURE-1]** Ingest Social/News/Blog Data
+- T8739e6bd docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L229: - [ ] **[CULTURE-2]** Graph-Schema Narratives/Discourse
+- T047831b1 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L230: - [ ] **[CULTURE-3]** Meme/Hashtag Cluster Detection
+- T6ff50254 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L231: - [ ] **[CULTURE-4]** n8n Cultural Trend Reports
+- T227c1d1f docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L232: - [ ] **[CULTURE-5]** Frontend Cultural Trends Dashboard
+- Td40aa618 docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L233: - [ ] **[CULTURE-6]** Dossier Cultural Intelligence Report
+- T04f85588 docs/dev/v0.2/v0.3+/Preset-Profile_ideen.md#L103: # 📌 Tickets (zum TODO-Index ergänzen)
+- T72f781f0 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L3: - [ ] **[CLI-WT-1]** `it waveterm open` – WaveTerm Instanz öffnen (Browser/Panel)
+- T5a1c6d78 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L4: - [ ] **[CLI-WT-2]** `it waveterm send` – Kommando in aktiven Workspace senden
+- Tda3e0788 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L5: - [ ] **[CLI-WT-3]** `it waveterm case` – Case-Verzeichnis mounten/attachen
+- T4a5c5818 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L6: - [ ] **[CLI-WT-4]** `it waveterm export` – Session/Artefakte → Dossier-Appendix
+- Tabac2b40 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L7: - [ ] **[CLI-WT-5]** Vault-/Token-Handling für WaveTerm-Kommandos
+- Tb3adb79e docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L8: - [ ] **[CLI-WT-6]** OPA-Policies für WaveTerm-CLI-Befehle
+- T829b8481 docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md#L9: - [ ] **[CLI-WT-7]** Roundtrip-Tests (CLI → WaveTerm → Artefakte → Dossier)
+- T65cf57fc docs/export/AFFINE.md#L189: ### **TODO-Index – Ergänzungen**
+- T23b56cb5 docs/export/AFFINE.md#L191: > Hänge diesen Block an `docs/TODO-Index.md` an.
+- Td4c05623 docs/export/AFFINE.md#L195: - [ ] **[EXPORT-1]** Bundle-Builder (md + assets + meta/export.json)
+- T1551263f docs/export/AFFINE.md#L196: - [ ] **[EXPORT-2]** Graph-Exporter (mermaid.mmd, dot, svg)
+- T66f7054e docs/export/AFFINE.md#L197: - [ ] **[EXPORT-3]** Canvas-Exporter (excalidraw.json)
+- T35bcacfc docs/export/AFFINE.md#L198: - [ ] **[EXPORT-4]** Geo-Exporter (geojson + map.png/svg)
+- Tf6289b76 docs/export/AFFINE.md#L199: - [ ] **[APPFLOWY-1]** AppFlowy Adapter – Watched Folder
+- Tdafa68d5 docs/export/AFFINE.md#L200: - [ ] **[APPFLOWY-2]** AppFlowy Adapter – API Mode (optional)
+- T52af8638 docs/export/AFFINE.md#L201: - [ ] **[AFFINE-1]** AFFiNE Adapter – Watched Folder + Edgeless Import
+- T33b2eddd docs/export/AFFINE.md#L202: - [ ] **[AFFINE-2]** AFFiNE Adapter – API Mode (optional)
+- T5e0d0572 docs/export/AFFINE.md#L203: - [ ] **[FE-EXPORT-1]** Frontend Export-Dialog (Targets + Formate)
+- Tbb2cc692 docs/export/AFFINE.md#L204: - [ ] **[CLI-EXP-1]** CLI `it export dossier/graph/canvas`
+- T678e914c docs/export/AFFINE.md#L205: - [ ] **[N8N-EXP-1]** n8n Nodes `export_to_appflowy` / `export_to_affine`
+- T414d2db2 docs/export/AFFINE.md#L206: - [ ] **[POLICY-EXP-1]** OPA-Regeln (classification gates)
+- T6936730f docs/export/AFFINE.md#L207: - [ ] **[VAULT-EXP-1]** Secrets Handling für Adapter-APIs
+- Tf262bbe0 docs/export/AFFINE.md#L208: - [ ] **[QA-EXP-1]** Golden Bundle Tests
+- T63db88d6 docs/export/AFFINE.md#L209: - [ ] **[QA-EXP-2]** Roundtrip Import Tests
