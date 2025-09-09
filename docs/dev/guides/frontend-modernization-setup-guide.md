@@ -1,3 +1,8 @@
+---
+merged_from:
+  - docs/dev/Frontend-Modernisierung_Setup-Guide.md#L1-L472
+merged_at: 2025-09-09T13:14:27.278990Z
+---
 <!-- markdownlint-disable MD013 -->
 
 # 🚀 InfoTerminal Frontend Modernisierung - Kompletter Setup Guide
@@ -20,14 +25,6 @@ Diese umfassende Frontend-Modernisierung verwandelt das InfoTerminal von einer e
 - **⚡ Real-time Updates** - WebSocket-Integration
 - **📈 Performance Monitoring** - Web Vitals Tracking
 - **🔍 Advanced Search** - Faceted Search mit Reranking
-
-### Richtlinien für Theme & Config
-
-- Primärfarben werden in `tailwind.config.js` unter `theme.extend.colors.primary` definiert.
-- Fokus-Ringe nutzen konsequent `ring-primary-500` und sind global über `:focus-visible` aktiviert.
-- Konfiguration immer mit `import config from "@/lib/config"` einbinden (Default-Import).
-- API-Fehler führen nicht zum Absturz, sondern werden als Badge oder Hinweis im UI angezeigt.
-- Das globale Stylesheet `src/styles/globals.css` bindet ganz oben `@import "tailwindcss";` ein, danach folgen eigene `@layer`-Regeln.
 
 ### 🛠️ Technische Verbesserungen
 
@@ -60,9 +57,6 @@ cp tailwind.config.js tailwind.config.js.backup
 ```bash
 # Core Dependencies
 npm install @tailwindcss/forms @tailwindcss/typography @tailwindcss/line-clamp
-
-# Ab Next.js 14 ist das PostCSS-Plugin erforderlich
-npm install -D @tailwindcss/postcss
 
 # Optional Advanced Components
 npm install @headlessui/react @heroicons/react

@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
-"""Docs consolidation helper.
+"""Documentation consolidation helper.
 
-This script provides three subcommands:
-- analyze: generate tree, inventories, TODO index, duplicates report, link and naming checks
-- consolidate: ensure target docs structure and index README files
-- dedupe: placeholder for future deduplication logic
+The script implements three subcommands which may be chained:
 
-The script is intentionally simple and focuses on idempotent behaviour. It writes
-all analysis artifacts to WORK-ON-new_docs/out/.
+```
+python3 scripts/docs_pipeline.py analyze consolidate dedupe
+```
+
+* ``analyze`` – generate inventories, TODO index, duplicate report and
+  a tree view of ``docs/``. Results are written to ``WORK-ON-new_docs/out``.
+* ``consolidate`` – ensure the target folder structure, move a couple of
+  legacy files to their canonical location and update index files.
+* ``dedupe`` – placeholder; currently only runs link and naming checks
+  again so the reports reflect the consolidated state.
+
+The implementation favours idempotency: running the same command multiple
+ times yields the same output.
 """
 from __future__ import annotations
 
@@ -15,13 +23,9 @@ import argparse
 import hashlib
 import os
 import re
-import textwrap
-from pathlib import Path
-import json
-import zipfile
 from datetime import datetime
-from typing import List, Tuple
-import difflib
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
@@ -30,8 +34,8 @@ OUT_DIR = WORK_DIR / "out"
 JOURNAL_FILE = OUT_DIR / "migration_journal.md"
 
 MD_LINK_RE = re.compile(r"\[(?P<text>[^\]]+)\]\((?P<target>[^)]+)\)")
-CHECKBOX_RE = re.compile(r"- \[( |x)\] .*")
-TODO_RE = re.compile(r"\b(TODO|FIXME|NOTE):?\b", re.IGNORECASE)
+CHECKBOX_RE = re.compile(r"- \[( |x|X)\] .*")
+TODO_RE = re.compile(r"\b(TODO|FIXME|NOTE):?\b")
 HEADING_RE = re.compile(r"^(#+)\s+(.*)")
 
 
@@ -39,99 +43,249 @@ def ensure_out_dir() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def hash_text(text: str) -> str:
-    return hashlib.sha1(text.encode("utf-8")).hexdigest()[:8]
-
-
 def write_file(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(content, encoding="utf-8")
+    tmp.replace(path)
+
+
+def append_journal(entry: str) -> None:
+    JOURNAL_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with JOURNAL_FILE.open("a", encoding="utf-8") as fh:
+        fh.write(entry + "\n")
+
+# ---------------------------------------------------------------------------
+# Analysis helpers
+# ---------------------------------------------------------------------------
+
+
+def hash_text(text: str) -> str:
+    return hashlib.sha1(text.encode("utf-8")).hexdigest()
+
+
+def normalize(text: str) -> str:
+    text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    text = re.sub(MD_LINK_RE, lambda m: m.group("text"), text)
+    text = re.sub(r"[^a-z0-9]+", " ", text.lower())
+    return " ".join(text.split())
+
+
+def first_nonempty_line(path: Path) -> str:
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line:
+                return line
+    except Exception:
+        pass
+    return ""
 
 
 def analyze() -> None:
     ensure_out_dir()
-    # optional extraction of analysis zip
-    zip_path = WORK_DIR / "InfoTerminal-analysis-reports.zip"
-    target_ws = WORK_DIR / "_analysis_ws"
-    if zip_path.exists() and not target_ws.exists():
-        with zipfile.ZipFile(zip_path) as zf:
-            zf.extractall(target_ws)
     tree_lines: List[str] = []
-    inventory_lines: List[str] = ["# Inventory of blueprints/yaml/json\n\n"]
-    todo_lines: List[str] = ["# TODO index\n\n"]
-    duplicates: List[Tuple[str, str, str]] = []  # (file, heading, hash)
-    sections = []  # list of (norm_text, file, heading, start_line, end_line)
+    inventory_lines: List[str] = ["# Inventory of blueprints/yaml/json\n"]
+    todo_rows: List[Tuple[str, str, int, str]] = []
+    sections: List[Tuple[str, str, str, int, int]] = []
 
-    # walk docs
-    for root, _, files in os.walk(DOCS_DIR):
-        rel_root = Path(root).relative_to(REPO_ROOT)
+    for root, dirs, files in os.walk(DOCS_DIR):
+        rel_root = Path(root).relative_to(DOCS_DIR)
         indent = "  " * len(rel_root.parts)
-        tree_lines.append(f"{indent}{rel_root}/")
+        tree_lines.append(f"{indent}{rel_root.name}/" if rel_root.parts else "docs/")
         for fname in sorted(files):
             fpath = Path(root) / fname
             rel_path = fpath.relative_to(REPO_ROOT)
-            tree_lines.append(f"{indent}  {rel_path}")
-            if fname.endswith(('.yaml', '.yml', '.json')) or fname.startswith('blueprint-'):
+            if fpath.suffix.lower() in {".yaml", ".yml", ".json"} or fname.startswith("blueprint-"):
                 inventory_lines.append(f"- {rel_path}")
-            if fname.endswith('.md'):
-                lines = fpath.read_text(encoding='utf-8').splitlines()
-                if lines:
-                    summary = lines[0].strip()
-                    tree_lines.append(f"{indent}    > {summary}")
+            if fpath.suffix.lower() == ".md":
+                summary = first_nonempty_line(fpath)
+                tree_lines.append(f"{indent}  {fname} :: {summary}")
+                lines = fpath.read_text(encoding="utf-8").splitlines()
                 for idx, line in enumerate(lines, 1):
                     if CHECKBOX_RE.search(line) or TODO_RE.search(line):
-                        tid = hash_text(f"{rel_path}:{idx}:{line.strip()}")
-                        todo_lines.append(f"- T{tid} {rel_path}#L{idx}: {line.strip()}")
-                # section parsing for duplicates
-                sec_start = None
-                sec_title = None
-                buf = []
+                        todo_rows.append((str(rel_path), line.strip(), idx, hash_text(f"{rel_path}:{idx}:{line.strip()}")))
+                start = 1
+                title = "<start>"
+                buf: List[str] = []
                 for i, line in enumerate(lines, 1):
                     m = HEADING_RE.match(line)
                     if m:
-                        if sec_start is not None:
+                        if buf:
                             norm = normalize("\n".join(buf))
-                            sections.append((norm, str(rel_path), sec_title, sec_start, i-1))
-                        sec_title = m.group(2).strip()
-                        sec_start = i
+                            sections.append((norm, str(rel_path), title, start, i - 1))
+                        title = m.group(2).strip()
+                        start = i
                         buf = []
                     else:
                         buf.append(line)
-                if sec_start is not None:
+                if buf:
                     norm = normalize("\n".join(buf))
-                    sections.append((norm, str(rel_path), sec_title, sec_start, len(lines)))
-    # duplicates detection (naive hash-based)
-    seen = {}
-    for norm, path, title, start, end in sections:
-        h = hash_text(norm)
-        if h in seen and difflib.SequenceMatcher(None, norm, seen[h][0]).ratio() >= 0.88:
-            duplicates.append((seen[h][1], f"{path}#{title}", f"L{start}-L{end}"))
-        else:
-            seen[h] = (norm, f"{path}#{title}")
-    dup_lines = ["# Potential duplicate sections\n\n"]
-    for a, b, lines in duplicates:
-        dup_lines.append(f"- {a} <-> {b} ({lines})")
+                    sections.append((norm, str(rel_path), title, start, len(lines)))
 
     write_file(OUT_DIR / "tree_with_summaries.txt", "\n".join(tree_lines) + "\n")
     write_file(OUT_DIR / "inventory_blueprints_yaml_json.md", "\n".join(inventory_lines) + "\n")
+
+    todo_lines = ["| ID | File | Line | Text |", "|---|---|---|---|"]
+    for i, (path, text, line_no, digest) in enumerate(todo_rows, 1):
+        tid = f"T{i:04d}-{digest[:4]}"
+        todo_lines.append(f"| {tid} | {path} | {line_no} | {text.replace('|', '\|')} |")
     write_file(OUT_DIR / "todo_index.md", "\n".join(todo_lines) + "\n")
+
+    seen: Dict[str, Tuple[str, str, int, int]] = {}
+    dup_lines = ["# Potential duplicate sections\n"]
+    for norm, path, title, start, end in sections:
+        if not norm.strip():
+            continue
+        h = hash_text(norm)
+        if h in seen:
+            a = seen[h]
+            dup_lines.append(f"- {a[0]}#L{a[2]}-L{a[3]} <-> {path}#L{start}-L{end} ({title})")
+        else:
+            seen[h] = (path, title, start, end)
     write_file(OUT_DIR / "duplicates_report.md", "\n".join(dup_lines) + "\n")
 
     check_broken_links()
     check_naming()
 
+# ---------------------------------------------------------------------------
+# Consolidation helpers
+# ---------------------------------------------------------------------------
 
-def normalize(text: str) -> str:
-    text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-    text = re.sub(MD_LINK_RE, lambda m: m.group('text'), text)
-    text = re.sub(r"[^a-zA-Z0-9]+", " ", text)
-    return " ".join(text.lower().split())
+
+def move_with_provenance(src: Path, dst: Path, why: str) -> None:
+    if not src.exists() or dst.exists():
+        return
+    content = src.read_text(encoding="utf-8")
+    lines = content.splitlines()
+    fm = [
+        "---",
+        "merged_from:",
+        f"  - {src.relative_to(REPO_ROOT)}#L1-L{len(lines)}",
+        f"merged_at: {datetime.utcnow().isoformat()}Z",
+        "---",
+        "",
+    ]
+    write_file(dst, "\n".join(fm) + content)
+    src.unlink()
+    append_journal(
+        "- ACTION: move\n  SRC: {0}\n  DST: {1}\n  WHY: {2}\n  DIFF: moved".format(
+            src.relative_to(REPO_ROOT), dst.relative_to(REPO_ROOT), why
+        )
+    )
+
+
+def ensure_docs_readme() -> None:
+    path = DOCS_DIR / "README.md"
+    if not path.exists():
+        return
+    content = path.read_text(encoding="utf-8").splitlines()
+    start_marker = "<!-- GENERATED-QUICKLINKS -->"
+    end_marker = "<!-- /GENERATED-QUICKLINKS -->"
+    links = [
+        start_marker,
+        "* [Architecture](architecture/)",
+        "* [Blueprints](blueprints/)",
+        "* [Dev](dev/)",
+        "* [Integrations](integrations/)",
+        "* [Presets](presets/)",
+        "* [Runbooks](runbooks/)",
+        "* [User Guide](user/)",
+        end_marker,
+    ]
+    try:
+        i = content.index(start_marker)
+        j = content.index(end_marker) + 1
+        new_content = content[:i] + links + content[j:]
+    except ValueError:
+        for idx, line in enumerate(content):
+            if line.startswith("#"):
+                break
+        new_content = content[: idx + 1] + [""] + links + [""] + content[idx + 1 :]
+    write_file(path, "\n".join(new_content) + "\n")
+
+
+def ensure_blueprints_readme() -> None:
+    path = DOCS_DIR / "blueprints/README.md"
+    if not path.parent.exists():
+        return
+    lines = ["# Blueprints", ""]
+    for f in sorted(path.parent.glob("blueprint-*.md")):
+        lines.append(f"- [{f.stem}](./{f.name})")
+    write_file(path, "\n".join(lines) + "\n")
+
+
+def ensure_presets_readme() -> None:
+    path = DOCS_DIR / "presets/README.md"
+    if not path.parent.exists():
+        return
+    lines = ["# Preset Profiles", ""]
+    for f in sorted(path.parent.glob("profile-*.yml")) + sorted(path.parent.glob("profile-*.yaml")):
+        lines.append(f"- `{f.name}`")
+    if (path.parent / "waveterm").exists():
+        lines.append("- [waveterm/](waveterm/)")
+    write_file(path, "\n".join(lines) + "\n")
+
+
+def ensure_integrations_readme() -> None:
+    path = DOCS_DIR / "integrations/README.md"
+    if not path.parent.exists():
+        return
+    lines = ["# Integrations", ""]
+    for d in sorted(p for p in path.parent.iterdir() if p.is_dir()):
+        md_files = sorted(d.glob("*.md"))
+        if md_files:
+            lines.append(f"- [{d.name}](./{d.name}/{md_files[0].name})")
+        else:
+            lines.append(f"- {d.name}/")
+    write_file(path, "\n".join(lines) + "\n")
+
+
+def ensure_roadmap_index() -> None:
+    path = DOCS_DIR / "dev/roadmap/README.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# Roadmap",
+        "",
+        "- [v0.1 overview](v0.1-overview.md)",
+        "- [v0.2 overview](v0.2-overview.md)",
+        "- [v0.3-plus](v0.3-plus/)",
+    ]
+    write_file(path, "\n".join(lines) + "\n")
+
+
+def consolidate_runbook_stack() -> None:
+    dst = DOCS_DIR / "runbooks/stack.md"
+    if dst.exists():
+        return
+    src1 = DOCS_DIR / "runbooks/RUNBOOK-stack.md"
+    src2 = DOCS_DIR / "OPERABILITY.md"
+    parts = []
+    merged_from = []
+    if src1.exists():
+        text1 = src1.read_text(encoding="utf-8")
+        parts.append(text1)
+        merged_from.append(f"docs/runbooks/RUNBOOK-stack.md#L1-L{len(text1.splitlines())}")
+    if src2.exists():
+        text2 = src2.read_text(encoding="utf-8")
+        parts.append(text2)
+        merged_from.append(f"docs/OPERABILITY.md#L1-L{len(text2.splitlines())}")
+    if not parts:
+        return
+    fm = ["---", "merged_from:"] + [f"  - {m}" for m in merged_from] + [f"merged_at: {datetime.utcnow().isoformat()}Z", "---", ""]
+    write_file(dst, "\n".join(fm) + "\n\n".join(parts))
+    if src1.exists():
+        src1.unlink()
+    if src2.exists():
+        src2.unlink()
+    append_journal(
+        "- ACTION: merge\n  SRC: docs/runbooks/RUNBOOK-stack.md & docs/OPERABILITY.md\n  DST: docs/runbooks/stack.md\n  WHY: runbooks\n  DIFF: merged"
+    )
 
 
 def consolidate() -> None:
     ensure_out_dir()
-    entries = []
-    targets = [
+    for t in [
         "architecture/diagrams",
         "blueprints",
         "dev/guides",
@@ -141,40 +295,57 @@ def consolidate() -> None:
         "presets/waveterm",
         "runbooks",
         "user",
-    ]
-    for t in targets:
+    ]:
         path = DOCS_DIR / t
         if not path.exists():
             path.mkdir(parents=True)
-            entries.append(f"- ACTION: mkdir\n  DST: docs/{t}\n  WHY: ensure structure")
-    if entries:
-        content = "\n".join(entries) + "\n"
-        if JOURNAL_FILE.exists():
-            JOURNAL_FILE.write_text(JOURNAL_FILE.read_text(encoding="utf-8") + content, encoding="utf-8")
-        else:
-            write_file(JOURNAL_FILE, content)
+            append_journal(f"- ACTION: mkdir\n  DST: docs/{t}\n  WHY: ensure structure")
+
+    move_with_provenance(DOCS_DIR / "testing.md", DOCS_DIR / "dev/guides/testing.md", "structure")
+    move_with_provenance(DOCS_DIR / "dev/testing.md", DOCS_DIR / "dev/guides/testing.md", "structure")
+    move_with_provenance(DOCS_DIR / "dev/RAG-Systeme.md", DOCS_DIR / "dev/guides/rag-systems.md", "structure")
+    move_with_provenance(DOCS_DIR / "dev/Frontend-Modernisierung.md", DOCS_DIR / "dev/guides/frontend-modernization.md", "structure")
+    move_with_provenance(DOCS_DIR / "dev/Frontend-Modernisierung_Setup-Guide.md", DOCS_DIR / "dev/guides/frontend-modernization-setup-guide.md", "structure")
+    move_with_provenance(DOCS_DIR / "dev/ROADMAPv0.1.0.md", DOCS_DIR / "dev/roadmap/v0.1-overview.md", "structure")
+    move_with_provenance(DOCS_DIR / "dev/Release-Planv0.2-v1.0.md", DOCS_DIR / "dev/roadmap/v0.2-overview.md", "structure")
+    move_with_provenance(DOCS_DIR / "runbooks/RUNBOOK-obs-opa-secrets.md", DOCS_DIR / "runbooks/obs-opa-secrets.md", "naming")
+
+    consolidate_runbook_stack()
+    ensure_roadmap_index()
+    ensure_docs_readme()
+    ensure_blueprints_readme()
+    ensure_presets_readme()
+    ensure_integrations_readme()
+
+# ---------------------------------------------------------------------------
+# Dedupe step – placeholder plus QA checks
+# ---------------------------------------------------------------------------
 
 
 def dedupe() -> None:
     ensure_out_dir()
-    # Placeholder: In a full implementation, duplicate sections would be merged.
-    note = textwrap.dedent(
-        """
-        Dedupe step not yet implemented. See duplicates_report.md for candidates.
-        """
-    )
-    write_file(OUT_DIR / "dedupe_placeholder.txt", note)
+    note = "Dedupe step not yet implemented. See duplicates_report.md for candidates."
+    write_file(OUT_DIR / "dedupe_placeholder.txt", note + "\n")
+    check_broken_links()
+    check_naming()
+
+# ---------------------------------------------------------------------------
+# QA helpers
+# ---------------------------------------------------------------------------
 
 
 def check_broken_links() -> None:
-    lines = ["# Broken markdown links\n\n"]
+    lines = ["# Broken markdown links\n"]
     for md in DOCS_DIR.rglob("*.md"):
-        content = md.read_text(encoding="utf-8")
+        try:
+            content = md.read_text(encoding="utf-8")
+        except Exception:
+            continue
         for m in MD_LINK_RE.finditer(content):
             target = m.group("target")
-            if target.startswith("http"):
+            if target.startswith("http") or target.startswith("#"):
                 continue
-            target_path = (md.parent / target).resolve()
+            target_path = (md.parent / target.split("#")[0]).resolve()
             if not target_path.exists():
                 rel = md.relative_to(REPO_ROOT)
                 lines.append(f"- {rel}: broken link to {target}")
@@ -182,14 +353,12 @@ def check_broken_links() -> None:
 
 
 def check_naming() -> None:
-    bad = ["# Naming issues\n\n"]
+    bad = ["# Naming issues\n"]
     valid_re = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+)?$")
     for path in DOCS_DIR.rglob("*"):
         if path.is_file():
-            name = path.name
-            if not valid_re.match(name):
-                rel = path.relative_to(REPO_ROOT)
-                bad.append(f"- {rel}")
+            if not valid_re.match(path.name):
+                bad.append(f"- {path.relative_to(REPO_ROOT)}")
     write_file(OUT_DIR / "naming_issues.md", "\n".join(bad) + "\n")
 
 

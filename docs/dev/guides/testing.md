@@ -1,3 +1,8 @@
+---
+merged_from:
+  - docs/testing.md#L1-L32
+merged_at: 2025-09-09T13:14:27.276196Z
+---
 # Testing and Coverage
 
 This repository targets **100% line and branch coverage** for all project code. Generated files and third-party boilerplate are excluded via coverage configuration.

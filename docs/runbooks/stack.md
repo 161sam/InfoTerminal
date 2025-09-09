@@ -1,3 +1,21 @@
+---
+merged_from:
+  - docs/runbooks/RUNBOOK-stack.md#L1-L10
+  - docs/OPERABILITY.md#L1-L334
+merged_at: 2025-09-09T13:14:27.281674Z
+---
+# Health-Checks
+
+- Search: curl [localhost:9200](http://localhost:9200)
+- Keycloak: [localhost:8081](http://localhost:8081) (admin/adminadmin)
+- API: [127.0.0.1:8001](http://127.0.0.1:8001/healthz)
+
+## Common Issues
+
+- Ports belegt → `lsof -i :PORT`
+- OpenSearch grün → `GET /_cluster/health?wait_for_status=yellow`
+
+
 # Operability
 
 ## Quickstart

@@ -1,3 +1,8 @@
+---
+merged_from:
+  - docs/runbooks/RUNBOOK-obs-opa-secrets.md#L1-L28
+merged_at: 2025-09-09T13:14:27.281066Z
+---
 # Observability, OPA Audit and Secrets
 
 ## Quick-Run

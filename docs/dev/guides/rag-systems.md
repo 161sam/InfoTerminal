@@ -1,3 +1,8 @@
+---
+merged_from:
+  - docs/dev/RAG-Systeme.md#L1-L117
+merged_at: 2025-09-09T13:14:27.277117Z
+---
 # ⚖️ RAG-Systeme für Gesetzestexte & Compliance-Analysen
 
 ## 1) Zielbild
