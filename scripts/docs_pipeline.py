@@ -147,7 +147,7 @@ def analyze() -> None:
 
     todo_lines = ["| ID | File | Line | Text |", "|---|---|---|---|"]
     for i, (path, text, line_no, digest) in enumerate(todo_rows, 1):
-        tid = f"T{i:04d}-{digest[:4]}"
+        tid = f"T{i:04d}-{digest[:8]}"
         todo_lines.append(
             f"| {tid} | {path} | {line_no} | {text.replace('|', '\\\\|')} |"
         )
@@ -281,6 +281,8 @@ def load_todo_tasks() -> List[Tuple[str, Path, int, str, bool]]:
         if len(parts) != 4:
             continue
         task_id, file_path, line_no, text = parts
+        if file_path.startswith("docs/dev/roadmap/"):
+            continue
         done = "[x]" in text.lower()
         text = re.sub(r"^- \[[xX ]\]\s*", "", text)
         tasks.append((task_id, Path(file_path), int(line_no), text.strip(), done))
@@ -302,9 +304,12 @@ def update_section(path: Path, heading: str, items: List[str]) -> int:
         lines.extend(["", heading_line, ""])
         idx = lines.index(heading_line)
     insert_at = idx + 1
+    if insert_at < len(lines) and not lines[insert_at].startswith("-"):
+        if lines[insert_at].strip() == "":
+            insert_at += 1
     while insert_at < len(lines) and lines[insert_at].startswith("-"):
         insert_at += 1
-    existing = set(lines[idx + 1 : insert_at])
+    existing = set(l for l in lines[idx + 1 : insert_at] if l.startswith("-"))
     added = 0
     for item in items:
         if item not in existing:
@@ -488,6 +493,20 @@ def canonical_target(path: Path) -> Path | None:
     return None
 
 
+def find_existing_anchor(target: Path, hashval: str) -> str | None:
+    """Return existing anchor for a section hash at target if present in journal."""
+    if not JOURNAL_FILE.exists():
+        return None
+    target_rel = str(target.relative_to(REPO_ROOT))
+    content = JOURNAL_FILE.read_text(encoding="utf-8")
+    for block in content.split("- ACTION"):
+        if f"DST: {target_rel}#" in block and f"HASH: {hashval}" in block:
+            m = re.search(r"DST: \S+#([^\n]*)", block)
+            if m:
+                return m.group(1).strip()
+    return None
+
+
 def extract_sections(line: str) -> List[Tuple[Path, int, int]]:
     clean = re.sub(r"`[^`]*`", "", line)
     matches = re.findall(r"(docs/[^\s#]+)#L(\d+)-L(\d+)", clean)
@@ -523,8 +542,10 @@ def append_section(
     ref = f"{src_rel}#L{start}-L{end}"
     if ref in "\n".join(tlines):
         # already merged
-        return slugify(section[0] if section else "section")
+        return slugify(section[0] if section else "section") or "section"
     anchor = slugify(HEADING_RE.sub(r"\2", section[0]) if section else "section")
+    if not anchor:
+        anchor = "section"
     fm = [
         "---",
         "merged_from:",
@@ -563,11 +584,15 @@ def dedupe() -> None:
             section = lines[start - 1 : end]
             if not section or section[0].startswith("➡ Consolidated at:"):
                 continue
-            anchor = append_section(
-                target, str(src.relative_to(REPO_ROOT)), start, end, section
-            )
-            replace_with_pointer(src, start, end, target, anchor)
             hashval = hash_text("\n".join(section))
+            existing = find_existing_anchor(target, hashval)
+            if existing:
+                anchor = existing
+            else:
+                anchor = append_section(
+                    target, str(src.relative_to(REPO_ROOT)), start, end, section
+                )
+            replace_with_pointer(src, start, end, target, anchor)
             merged.append(
                 f"- {src.relative_to(REPO_ROOT)} -> {target.relative_to(REPO_ROOT)}"
             )

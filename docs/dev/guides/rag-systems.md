@@ -242,3 +242,15 @@ merged_at: 2025-09-09T13:55:10.872275Z
 Deine Idee → **RAG auf Gesetze + Datenquellen** = **Compliance & Legal Intelligence Layer**.
 
 * Kurzfristig: Gesetzeswerke (SGB, StGB, EU-Verordnungen) indexieren → Retrieval + Graph-Knoten.
+---
+merged_from:
+  - docs/dev/v0.2/v0.3+/RAG-Systeme.md#L6-L11
+merged_at: 2025-09-09T14:17:02.164373Z
+---
+
+### a) RAG-Speicher
+
+* **Gesetze/Regelwerke**: in Chunks (Paragraph/Artikel), mit Metadaten (Quelle, Gültigkeit, Änderungsdatum).
+* **Index**: OpenSearch (BM25 + Embeddings), ergänzt durch Neo4j-Knoten „(\:Law {id, title, paragraph, domain})“.
+* **Versionierung**: Jede Änderung (z. B. neue Gesetzesnovelle) als neuer Node mit `[:AMENDS]` Relation.
+

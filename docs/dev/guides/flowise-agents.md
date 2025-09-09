@@ -73,3 +73,19 @@ merged_at: 2025-09-09T13:55:10.860708Z
 > Preset lädt passende Agents + begrenzte Tools (least-privilege).
 
 ---
+---
+merged_from:
+  - docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L142-L143
+merged_at: 2025-09-09T14:17:02.137607Z
+---
+
+### `docs/nodes/flowise_n8n.md`
+```markdown
+---
+merged_from:
+  - docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md#L190-L191
+merged_at: 2025-09-09T14:17:02.139466Z
+---
+
+```markdown
+# NiFi Processor – InvokeFlowiseAgent

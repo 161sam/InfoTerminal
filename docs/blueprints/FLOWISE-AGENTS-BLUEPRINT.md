@@ -139,8 +139,7 @@ curl -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" \
 
 ---
 
-### `docs/nodes/flowise_n8n.md`
-```markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-nodes-flowise-n8n-md
 # n8n Node – Run Flowise Agent
 ➡ Consolidated at: ../dev/guides/flowise-agents.md#
 Flowise-Agent aus n8n Workflows anstoßen (Alerts, Dossiers, Batch-Analysen).
@@ -188,8 +187,7 @@ Flowise-Agent aus n8n Workflows anstoßen (Alerts, Dossiers, Batch-Analysen).
 ---
 
 ### `docs/nodes/flowise_nifi.md`
-```markdown
-# NiFi Processor – InvokeFlowiseAgent
+➡ Consolidated at: ../dev/guides/flowise-agents.md#markdown
 
 ➡ Consolidated at: ../dev/guides/flowise-agents.md#zweck
 

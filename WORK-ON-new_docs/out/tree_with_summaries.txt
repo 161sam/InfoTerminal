@@ -6,9 +6,21 @@ docs/
   STYLE_GUIDE.md :: # Documentation Style Guide
   TODO-Index.md :: # TODO-Index
   release-checklist-v0.1.md :: # 🚀 Release-Checkliste v0.1 – InfoTerminal
-  runbooks/
-    obs-opa-secrets.md :: ---
-    stack.md :: ---
+  dossiers/
+    README.md :: Dossier templates overview.
+  integrations/
+    README.md :: # Integrations
+  cli/
+    README.md :: # InfoTerminal CLI
+    waveterm-demo.md :: # WaveTerm Demo (planned)
+  adr/
+    0000-template.md :: # ADR {NNNN}: {Title}
+    0001-choose-opa-for-abac.md :: # ADR 0001: Choose OPA for ABAC
+    0002-multi-storage-pattern.md :: ➡ Consolidated at: ../dev/guides/rag-systems.md#adr-0002-multi-storage-pattern
+    0003-identity-oidc-keycloak.md :: # ADR 0003: Identity via OIDC with Keycloak
+    0004-policy-gateway-opa-forwardauth.md :: # ADR 0004: Policy Gateway via OPA ForwardAuth
+  diagrams/
+    ARCHITECTURE.md :: # Architecture
   waveterm/
     README.md :: # WaveTerm Integration
     policies/
@@ -16,6 +28,15 @@ docs/
   nifi/
     WaveTermInvoker.md :: # NiFi: WaveTermInvoker
     flowise_nifi.md :: # NiFi: InvokeFlowiseAgent
+  runbooks/
+    obs-opa-secrets.md :: ---
+    stack.md :: ---
+  architecture/
+    ADR-000-stack.md :: # ADR-000: Baseline Stack
+    diagrams/
+  n8n/
+    flowise_n8n.md :: # n8n: Flowise Agent Node
+    waveterm_run.md :: # n8n: WaveTerm Run Node
   blueprints/
     AIETHICS-INTELLIGENCE-BLUEPRINT.md :: # AIETHICS-INTELLIGENCE-BLUEPRINT.md
     CLIMATE-INTELLIGENCE-BLUEPRINT.md :: # CLIMATE-INTELLIGENCE-BLUEPRINT.md
@@ -23,7 +44,7 @@ docs/
     DISINFO-INTELLIGENCE-BLUEPRINT.md :: # 🛰️ DISINFORMATION-INTELLIGENCE-BLUEPRINT.md
     ECONOMIC-INTELLIGENCE-BLUEPRINT.md :: # ECONOMIC-INTELLIGENCE-BLUEPRINT.md
     FINANCIAL-INTELLIGENCE-BLUEPRINT.md :: # 💰 FINANCIAL-INTELLIGENCE-BLUEPRINT.md
-    FLOWISE-AGENTS-BLUEPRINT.md :: ### `docs/blueprints/FLOWISE-AGENTS-BLUEPRINT.md`
+    FLOWISE-AGENTS-BLUEPRINT.md :: ➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-blueprints-flowise-agents-blueprint-md
     GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md :: # 🌍 GEOPOLITICAL-INTELLIGENCE-BLUEPRINT.md
     HEALTH-INTELLIGENCE-BLUEPRINT.md :: # HEALTH-INTELLIGENCE-BLUEPRINT.md
     HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md :: # 🕊️ HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md
@@ -35,24 +56,77 @@ docs/
     TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md :: # TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
     TERRORISM-INTELLIGENCE-BLUEPRINT.md :: # TERRORISM-INTELLIGENCE-BLUEPRINT.md
     VERIFICATION-BLUEPRINT.md :: # 🧭 Ziele
-  cli/
-    README.md :: # InfoTerminal CLI
-    waveterm-demo.md :: # WaveTerm Demo (planned)
-  screenshots/
-  api/
-    agent-gateway.md :: # Agent Gateway API
-    jobs.md :: # Jobs API
-  adr/
-    0000-template.md :: # ADR {NNNN}: {Title}
-    0001-choose-opa-for-abac.md :: # ADR 0001: Choose OPA for ABAC
-    0002-multi-storage-pattern.md :: # ADR 0002: Multi-Storage Pattern
-    0003-identity-oidc-keycloak.md :: # ADR 0003: Identity via OIDC with Keycloak
-    0004-policy-gateway-opa-forwardauth.md :: # ADR 0004: Policy Gateway via OPA ForwardAuth
-  diagrams/
-    ARCHITECTURE.md :: # Architecture
-  n8n/
-    flowise_n8n.md :: # n8n: Flowise Agent Node
-    waveterm_run.md :: # n8n: WaveTerm Run Node
+  dev/
+    Architektur-für-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
+    Checkliste.md :: # Status auf einen Blick
+    Datenquellen-Cluster.md :: # 🌐 Datenquellen-Cluster für InfoTerminal
+    Palantir-Gotham_technische-Recherche.md :: # Palantir Gotham – technische Recherche (Stand: 5. Sept 2025)
+    README.md :: # InfoTerminal — Open, Modular Intelligence Platform (Gotham-style, OSS)
+    SECURITY-BLUEPRINT.md :: # 🔐 InfoTerminal Security Blueprint
+    VERIFICATION-BLUEPRINT.md :: # 🛡️ VERIFICATION-BLUEPRINT.md
+    analytics_frontend.md :: # Analytics frontend & Superset
+    analytics_links.md :: # Deep link schema
+    backups.md :: # Backups
+    demo-loader.md :: # Demo Loader
+    etl_automation.md :: # ETL Automation Runbook
+    frontend-docs.md :: # Frontend Health Monitoring
+    frontend_modernization_guide.md :: ➡ Consolidated at: guides/frontend-modernization.md#markdownlint-disable-md013
+    graph-linking.md :: # Graph Linking
+    nifi-aleph.md :: # NiFi → Aleph Dokumenten-Pipeline
+    observability.md :: # Observability
+    perf.md :: # Performance Smoke Tests
+    search-ui.md :: # Search UI
+    security-hardening.md :: # Security Hardening
+    storage.md :: # Storage
+    superset-nifi-flowise.md :: # Superset-Filter-Composer, NiFi → Aleph Upload & Flowise Agent
+    testing.md :: # Testing Strategy
+    tls.md :: # TLS
+    v0.2/
+      Architektur-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
+      DEVELOPMENT-PLAN.md :: # 🚀 Detaillierter Entwicklungsplan InfoTerminal
+      Datenquellen-Cluster.md :: # 🌐 Datenquellen-Cluster für InfoTerminal
+      Feature-Mapping.md :: # 📊 Feature-Mapping: Palantir Gotham vs. InfoTerminal
+      Feature-Priorisierung.md :: # 📊 Feature-Priorisierung InfoTerminal (ab v0.2)
+      FlowiseAI-Agents-integration.md :: alles klar — ich ergänze den Entwicklungsplan um die **FlowiseAI Agents** (so wie wir’s zuvor angedacht hatten) und mache es direkt **repo-tauglich**: Ziele, Architektur, Phasen-Roadmap, Integrationspunkte (NiFi/n8n), Security/Governance, Presets, Tickets, Beispiel-Configs.
+      Preset-Profile.md :: ➡ Consolidated at: ../guides/preset-profiles.md#presets-profile-berblick
+      Roadmap.md :: # 🌍 Erweiterte Roadmap InfoTerminal
+      TODO-Index.md :: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
+      Ticket-Checkliste.md :: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
+      To-Build-Liste_v0.1.9.1-v0.2.md :: # 📌 To-Build-Liste InfoTerminal v0.1.9.1 → v0.2
+      v0.3+/
+        Blueprint-Ideen.md :: # 🌐 Beyond Gotham – Weitere Blueprint-Ideen
+        Master-TODO-Index.md :: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v1.0)
+        Preset-Profile_ideen.md :: # 📑 Neue Preset-Profile
+        RAG-Systeme.md :: # ⚖️ RAG-Systeme für Gesetzestexte & Compliance-Analysen
+        Release-Plan.md :: # 🚀 Release-Plan InfoTerminal (v0.2 → v1.0)
+        Roadmap_Gotham-Gaps_Beyond-Gotham.md :: # 🚀 InfoTerminal Roadmap (erweitert mit Beyond Gotham Blueprints)
+        TODO-Index-cli-ergänzung.md :: ## 30. CLI – WaveTerm Features (planned)
+        beyond-gotham.md :: # 🌟 InfoTerminal Ausbau ab v0.2
+    dev-prompts/
+      DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
+      DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
+      Test.md :: # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
+    roadmap/
+      README.md :: # Roadmap
+      v0.1-overview.md :: ---
+      v0.2-overview.md :: ---
+      v0.3-plus/
+        master-todo.md :: # Master Todo
+    guides/
+      flowise-agents.md :: # Flowise Agents
+      frontend-modernization-setup-guide.md :: ---
+      frontend-modernization.md :: ---
+      preset-profiles.md :: # Preset Profiles
+      rag-systems.md :: ---
+      testing.md :: ---
+    runbooks/
+      auth-gateway-troubleshooting.md :: # Auth Gateway Troubleshooting
+      incident-template.md :: # Incident Report
+      neo4j-recovery.md :: # Neo4j Recovery
+      restore.md :: # Restore Runbook
+      search-index-ops.md :: # Search Index Operations
+      superset-admin.md :: # Superset Administration
+    research/
   user/
     1.Einführung.md :: # 1. Einführung
     10.Anwendungsfälle.md :: # 10. Anwendungsfälle
@@ -71,88 +145,16 @@ docs/
     8.Integrationen&Erweiterbarkeit.md :: # 8. Integrationen & Erweiterbarkeit
     9.Sicherheit&Compliance.md :: # 9. Sicherheit & Compliance
     index.md :: # 📘 InfoTerminal – Benutzerhandbuch
-  architecture/
-    ADR-000-stack.md :: # ADR-000: Baseline Stack
-    diagrams/
-  dossiers/
-    README.md :: Dossier templates overview.
-  dev/
-    Architektur-für-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
-    Checkliste.md :: # Status auf einen Blick
-    Datenquellen-Cluster.md :: # 🌐 Datenquellen-Cluster für InfoTerminal
-    Palantir-Gotham_technische-Recherche.md :: # Palantir Gotham – technische Recherche (Stand: 5. Sept 2025)
-    README.md :: # InfoTerminal — Open, Modular Intelligence Platform (Gotham-style, OSS)
-    SECURITY-BLUEPRINT.md :: # 🔐 InfoTerminal Security Blueprint
-    VERIFICATION-BLUEPRINT.md :: # 🛡️ VERIFICATION-BLUEPRINT.md
-    analytics_frontend.md :: # Analytics frontend & Superset
-    analytics_links.md :: # Deep link schema
-    backups.md :: # Backups
-    demo-loader.md :: # Demo Loader
-    etl_automation.md :: # ETL Automation Runbook
-    frontend-docs.md :: # Frontend Health Monitoring
-    frontend_modernization_guide.md :: <!-- markdownlint-disable MD013 -->
-    graph-linking.md :: # Graph Linking
-    nifi-aleph.md :: # NiFi → Aleph Dokumenten-Pipeline
-    observability.md :: # Observability
-    perf.md :: # Performance Smoke Tests
-    search-ui.md :: # Search UI
-    security-hardening.md :: # Security Hardening
-    storage.md :: # Storage
-    superset-nifi-flowise.md :: # Superset-Filter-Composer, NiFi → Aleph Upload & Flowise Agent
-    testing.md :: # Testing Strategy
-    tls.md :: # TLS
-    roadmap/
-      README.md :: # Roadmap
-      v0.1-overview.md :: ---
-      v0.2-overview.md :: ---
-      v0.3-plus/
-        master-todo.md :: # Master Todo
-    guides/
-      frontend-modernization-setup-guide.md :: ---
-      frontend-modernization.md :: ---
-      rag-systems.md :: ---
-      testing.md :: ---
-    runbooks/
-      auth-gateway-troubleshooting.md :: # Auth Gateway Troubleshooting
-      incident-template.md :: # Incident Report
-      neo4j-recovery.md :: # Neo4j Recovery
-      restore.md :: # Restore Runbook
-      search-index-ops.md :: # Search Index Operations
-      superset-admin.md :: # Superset Administration
-    v0.2/
-      Architektur-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
-      DEVELOPMENT-PLAN.md :: # 🚀 Detaillierter Entwicklungsplan InfoTerminal
-      Datenquellen-Cluster.md :: # 🌐 Datenquellen-Cluster für InfoTerminal
-      Feature-Mapping.md :: # 📊 Feature-Mapping: Palantir Gotham vs. InfoTerminal
-      Feature-Priorisierung.md :: # 📊 Feature-Priorisierung InfoTerminal (ab v0.2)
-      FlowiseAI-Agents-integration.md :: alles klar — ich ergänze den Entwicklungsplan um die **FlowiseAI Agents** (so wie wir’s zuvor angedacht hatten) und mache es direkt **repo-tauglich**: Ziele, Architektur, Phasen-Roadmap, Integrationspunkte (NiFi/n8n), Security/Governance, Presets, Tickets, Beispiel-Configs.
-      Preset-Profile.md :: # Presets (Profile) – Überblick
-      Roadmap.md :: # 🌍 Erweiterte Roadmap InfoTerminal
-      TODO-Index.md :: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
-      Ticket-Checkliste.md :: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
-      To-Build-Liste_v0.1.9.1-v0.2.md :: # 📌 To-Build-Liste InfoTerminal v0.1.9.1 → v0.2
-      v0.3+/
-        Blueprint-Ideen.md :: # 🌐 Beyond Gotham – Weitere Blueprint-Ideen
-        Master-TODO-Index.md :: # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v1.0)
-        Preset-Profile_ideen.md :: # 📑 Neue Preset-Profile
-        RAG-Systeme.md :: # ⚖️ RAG-Systeme für Gesetzestexte & Compliance-Analysen
-        Release-Plan.md :: # 🚀 Release-Plan InfoTerminal (v0.2 → v1.0)
-        Roadmap_Gotham-Gaps_Beyond-Gotham.md :: # 🚀 InfoTerminal Roadmap (erweitert mit Beyond Gotham Blueprints)
-        TODO-Index-cli-ergänzung.md :: ## 30. CLI – WaveTerm Features (planned)
-        beyond-gotham.md :: # 🌟 InfoTerminal Ausbau ab v0.2
-    research/
-    dev-prompts/
-      DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
-      DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
-      Test.md :: # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
-  integrations/
-    README.md :: # Integrations
+  screenshots/
+  img/
+  presets/
+    Presets(Profile).md :: ➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
+    README.md :: # Preset Profiles
+    waveterm/
   export/
     AFFINE.md :: ### `docs/export/AFFINE.md`
     APPFLOWY.md :: ### `docs/export/APPFLOWY.md`
     BUNDLE-SPEC.md :: # Bundle Spec
-  presets/
-    Presets(Profile).md :: # Presets (Profile) – Überblick
-    README.md :: # Preset Profiles
-    waveterm/
-  img/
+  api/
+    agent-gateway.md :: # Agent Gateway API
+    jobs.md :: # Jobs API
