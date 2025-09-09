@@ -1,72 +1,104 @@
-Act as Codex on server2 for the repo at /home/saschi/InfoTerminal.
+# 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
 
-Branch policy:
-- git fetch --all
-- git checkout main && git pull
-- git checkout -b codex/docs-dedupe-and-merge || git checkout codex/docs-dedupe-and-merge
-- Work ONLY on this branch in this run.
+**Kontext:**
+Repo: `/home/saschi/InfoTerminal`
+Branch: `codex/docs-consolidation` (falls nicht vorhanden, neu anlegen)
+Bestehendes Skript: `scripts/docs_pipeline.py` (mit analyze/consolidate/dedupe Platzhaltern)
+Ziel: Roadmap-Integration + echte Deduplizierung implementieren.
 
-Goals (idempotent):
-1) Implement REAL dedup + link-rewrite in scripts/docs_pipeline.py (the current step is a placeholder).
-2) Run the pipeline: make docs.dedupe && make docs.analyze (to refresh reports).
-3) Fix link/name issues reported by the pipeline (broken_links.md, naming_issues.md).
-4) Commit atomic changes with clear messages; push the branch.
+---
 
-Dedup implementation details (update scripts/docs_pipeline.py):
-- Input reports:
-  - WORK-ON-new_docs/out/duplicates_report.md
-  - WORK-ON-new_docs/out/todo_index.md
-- Canonical targets (mapping rules):
-  * RAG / Retrieval / Pipelines → docs/dev/guides/rag-systems.md
-  * Frontend modernization/setup → docs/dev/guides/frontend-modernization.md
-  * Preset profiles / personas → docs/dev/guides/preset-profiles.md
-  * Flowise agents → docs/dev/guides/flowise-agents.md
-  * Operability bits → docs/runbooks/stack.md
-  * Strategy/Planning content → docs/dev/roadmap/*.md (keep only high-level; move detailed how-to content to guides)
-- For each duplicate section candidate (similarity ≥ 0.88):
-  1) Parse file A/B, extract exact section line ranges (start/end) and heading.
-  2) Compute a normalized hash of the section to ensure idempotence.
-  3) If the section (by hash) is already present at the canonical target, SKIP merge.
-  4) Else: append full section 1:1 to the canonical target, with YAML front matter:
-     ---
-     merged_from:
-       - <relative/source.md>#L<start>-L<end>
-     merged_at: <UTC-ISO>
-     ---
-  5) Replace the original source section by a one-line pointer:
-     "➡ Consolidated at: ../<target>.md#<heading-anchor>"
-     Preserve surrounding structure. Record the exact replaced line span.
-  6) Write an entry to WORK-ON-new_docs/out/migration_journal.md:
-     - ACTION: merge+link
-       SRC: <source.md>#L<start>-L<end>
-       DST: <target.md>#<anchor>
-       WHY: deduplicate
-       DIFF: <hash-original> -> <hash-target>
-- After dedup, run a cross-link updater:
-  * Validate all relative Markdown links; fix broken anchors to new canonical headings.
-  * Update any moved filenames (kebab-case renames); record in journal with ACTION: rename+relink.
-- Ensure idempotence:
-  * Use content-hash checks before writing.
-  * When the exact “pointer line” already exists at source, do nothing.
-  * When the merged section (by hash) already exists at target, do not insert duplicates.
+## 🧭 Aufgaben
 
-Fix lint/tooling notes:
-- If "make lint.safe" warned about missing patterns:
-  * Update scripts/prettier_safe.list to include *.md under docs/.
-  * In scripts/format_safe.sh, ensure xargs path handling is robust; no failure on empty sets.
-  * Re-run scripts/format_safe.sh; do not block if prettier not installed; print a friendly hint instead.
+### 1) Roadmap Task Integration
 
-Execute:
-- make docs.dedupe
-- make docs.analyze
-- Inspect WORK-ON-new_docs/out/{migration_journal.md,broken_links.md,naming_issues.md}
-- If broken links remain, run the updater again until clean.
+* Erweitere `scripts/docs_pipeline.py` um Logik in `consolidate`:
 
-Git:
-- git add scripts/docs_pipeline.py scripts/format_safe.sh scripts/prettier_safe.list Makefile docs/ WORK-ON-new_docs/out/
-- git commit -m "docs: implement real dedup + link rewrites with provenance; refresh indices and reports"
-- git push -u origin codex/docs-dedupe-and-merge
+  * Lade `WORK-ON-new_docs/out/todo_index.md`.
+  * Finde Tasks, deren Pfad auf `v0.1`, `v0.2` oder `v0.3+` verweist.
+  * Schreibe in:
 
-Output for me:
-- Summarize how many sections merged, how many sources replaced by links, and top 10 journal entries.
-- Confirm branch name and latest commit hash.
+    * `docs/dev/roadmap/v0.1-overview.md` → Abschnitt **„Abgeschlossene Detail-Tasks“** (done-Tasks).
+    * `docs/dev/roadmap/v0.2-overview.md` → Abschnitt **„Offene Detail-Tasks“** (open-Tasks).
+    * `docs/dev/roadmap/v0.3-plus/master-todo.md` → Liste aller Tasks (open+done) mit Verweis (File, Zeile, ID).
+  * Format:
+
+    ```markdown
+    - [ ] T0123-abcd1234 Implement NER API in `services/nlp` (docs/dev/roadmap/v0.2-to-build.md:14)
+    ```
+
+### 2) Deduplizierung & Link-Rewrites
+
+* Erweitere `dedupe` in `scripts/docs_pipeline.py`:
+
+  * Eingabe: `WORK-ON-new_docs/out/duplicates_report.md`.
+  * Für jeden Eintrag:
+
+    * Wähle **kanonischen Zielort** (Heuristik):
+
+      * `rag` → `docs/dev/guides/rag-systems.md`
+      * `frontend-modernisierung` → `docs/dev/guides/frontend-modernization.md`
+      * `preset-profile` → `docs/dev/guides/preset-profiles.md`
+      * `flowise`+`agent` → `docs/dev/guides/flowise-agents.md`
+      * `operability` → `docs/runbooks/stack.md`
+      * Sonst: Roadmap-Dateien nur für Plan/Strategie-Inhalte.
+    * Prüfe, ob Abschnitt (per Hash) bereits am Ziel vorhanden → wenn ja, SKIP.
+    * Wenn nicht:
+
+      * Kopiere Abschnitt **1:1** ans Zielende, mit Front-Matter:
+
+        ```yaml
+        ---
+        merged_from:
+          - <rel_path>#L<start>-L<end>
+        merged_at: <UTC_ISO>
+        ---
+        ```
+      * Ersetze Quellabschnitt durch:
+
+        ```
+        ➡ Consolidated at: ../<target>.md#<heading-anchor>
+        ```
+    * Trage Änderung in `WORK-ON-new_docs/out/migration_journal.md` ein:
+
+      ```
+      - ACTION: merge+link
+        SRC: docs/dev/v0.2/RAG-Systeme.md#L12-L88
+        DST: docs/dev/guides/rag-systems.md#retrieval
+        WHY: deduplicate
+        HASH: <section-hash>
+      ```
+
+### 3) Idempotenz
+
+* Bei erneutem Lauf:
+
+  * Keine doppelten Einträge im Ziel (prüfe Hash).
+  * Keine erneuten Pointers in der Quelle (prüfe bereits vorhandene Zeilen).
+  * Journal-Einträge nur für **neue Änderungen**.
+
+### 4) Reports
+
+* Nach Konsolidierung & Deduplizierung → `make docs.all` neu laufen lassen.
+* Aktualisiere Reports (`todo_index.md`, `duplicates_report.md`, `migration_journal.md`).
+
+### 5) Commits
+
+* Thematische Commits:
+
+  * `docs: integrate TODO index into roadmap files (idempotent)`
+  * `docs: implement deduplication with provenance + link rewrites`
+* Branch: `codex/docs-consolidation`
+* Push: `git push -u origin codex/docs-consolidation`
+
+---
+
+## 🎯 Output für mich
+
+* Anzahl Tasks, die in Roadmaps integriert wurden.
+* Anzahl deduplizierter Abschnitte (mit Ziel-Dateien).
+* Top-5 Journal-Einträge aus `migration_journal.md`.
+* Commit-Hashes der letzten beiden Commits.
+
+
+Willst du, dass ich dir parallel noch einen **Reviewer-Guide für den nächsten PR** formuliere (worauf dein Review-Fokus liegen sollte)?
