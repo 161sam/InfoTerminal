@@ -1,1 +1,36 @@
 profile: climate_researcher
+description: "Preset für Klimarisiko-Analysen (Climate Intelligence)."
+security:
+  mode: standard
+  egress: proxy
+  doh: true
+  block_dns: true
+  ephemeral_fs: false
+  logging_persist: true
+verification:
+  # Fokus auf Datenqualität statt Fake-News; etwas lockerer
+  weights: {source:0.15, content:0.10, corro:0.20, rte:0.20, temporal:0.10, geo:0.15, media:0.10}
+  thresholds:
+    verified: {score: 0.80, conf: 0.70}
+    likely_true: {score: 0.65, conf: 0.55}
+nifi_context: ClimateContext
+nifi_enable:
+  - ingest_climate_data         # Copernicus/ESA/NASA APIs
+  - ingest_open_data            # CO₂-Bilanzen, Wetter, Landwirtschaft
+  - geo_enrich_standard
+  - aggregate_upsert
+n8n_enable:
+  - climate_alerts
+  - climate_quarterly_report
+frontend:
+  dashboards:
+    default: climate
+  search_defaults:
+    time_range: "90d"
+    badges_min: "uncertain"
+  views:
+    climate_heatmap: true
+    geo_layer: true
+  dossier_template: "climate_risk_report.md"
+plugins:
+  whitelist: [exiftool, imagehash, whois]
