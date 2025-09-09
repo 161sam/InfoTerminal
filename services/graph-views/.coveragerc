@@ -1,15 +1,7 @@
 [run]
-branch = True
-source = .
-
-[report]
 omit =
-    _shared/health.py
-    _shared/obs/*
-    db.py
-    it_logging.py
-    metrics.py
-    samples/*
-exclude_lines =
-    if __name__ == "__main__":
-    pragma: no cover
+    services/graph-views/db.py
+    services/graph-views/it_logging.py
+    services/graph-views/metrics.py
+    services/graph-views/_shared/obs/*
+    services/graph-views/_shared/health.py

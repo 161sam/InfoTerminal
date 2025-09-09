@@ -50,6 +50,13 @@ Die CLI bietet:
 - **Plugin-Runner:** Integration externer Tools (z. B. Kali Linux, nmap, exiftool)
 - **Presets:** Profilbasierte Startkonfigurationen (`--preset journalism`, `--preset compliance`)
 
+### Frontend via CLI
+```bash
+it fe dev     # Next.js dev
+it fe build   # Production build
+it fe test    # Vitest (dot reporter)
+```
+
 ---
 
 ## 🔄 Flows & Pipelines
@@ -212,6 +219,15 @@ make gv.venv   # einmalig
 make format    # auto-fix (tolerant)
 make lint      # strikt
 ```
+
+**Safe Prettier**
+Für schnelle, stabile Formatierung ohne Templating-/Ops-Dateien:
+```bash
+make fmt.safe      # schreibt nur kuratierte Pfade
+make lint.safe     # checkt nur kuratierte Pfade
+```
+
+Die kuratierten Pfade liegen in `scripts/prettier_safe.list`. Bei Bedarf erweitern.
 
 ---
 

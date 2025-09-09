@@ -1,4 +1,4 @@
-.PHONY: gv.test gv.cov fe.test test
+.PHONY: gv.test gv.cov fe.test fe.dev fe.build test
 
 gv.test:
 	@cd services/graph-views && \
@@ -13,7 +13,13 @@ gv.cov:
 	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q $(COVER)
 
 fe.test:
-	@CI=1 npm -w apps/frontend run test --silent -- --reporter=dot
+	@it fe test
+
+fe.dev:
+	@it fe dev
+
+fe.build:
+	@it fe build
 
 test:
 	@set -e; \
@@ -78,3 +84,12 @@ format: gv.venv
 	# Repo-Root + Frontend: Format mit Ignore-Pfad, tolerant
 	@npx -y prettier@3.3.3 -w "**/*.{md,yaml,yml,json}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
 	@npx -y prettier@3.3.3 -w "apps/frontend/**/*.{ts,tsx,js,jsx,json,md,yaml,yml}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
+
+.PHONY: fmt.safe lint.safe
+
+fmt.safe:
+	@chmod +x scripts/format_safe.sh
+	@./scripts/format_safe.sh || true
+
+lint.safe:
+	@npx -y prettier@3.3.3 -c $(shell tr '\n' ' ' < scripts/prettier_safe.list) --ignore-path .prettierignore --log-level warn || true
