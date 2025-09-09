@@ -3,12 +3,7 @@
 ➡ Consolidated at: ../../guides/rag-systems.md#1-zielbild
 ## 2) Architektur-Erweiterung
 
-### a) RAG-Speicher
-
-* **Gesetze/Regelwerke**: in Chunks (Paragraph/Artikel), mit Metadaten (Quelle, Gültigkeit, Änderungsdatum).
-* **Index**: OpenSearch (BM25 + Embeddings), ergänzt durch Neo4j-Knoten „(\:Law {id, title, paragraph, domain})“.
-* **Versionierung**: Jede Änderung (z. B. neue Gesetzesnovelle) als neuer Node mit `[:AMENDS]` Relation.
-
+➡ Consolidated at: ../../guides/rag-systems.md#a-rag-speicher
 ### b) Abfrage & Verknüpfung
 
 * **RAG Query Flow**:

@@ -29,15 +29,10 @@ cd apps/frontend
 ➡ Consolidated at: frontend-modernization.md#
 npm install @tailwindcss/forms @tailwindcss/typography @tailwindcss/line-clamp
 
-# Optional Advanced Components
-npm install @headlessui/react @heroicons/react
-
+➡ Consolidated at: frontend-modernization.md#optional-advanced-components
 # Development Dependencies
 npm install --save-dev @types/node
-```
-
-### 3. Ordnerstruktur erstellen
-
+➡ Consolidated at: frontend-modernization.md#section
 ➡ Consolidated at: frontend-modernization.md#bash
 ➡ Consolidated at: frontend-modernization.md#mkdir-p-src-lib
 mkdir -p src/components/layout
@@ -111,9 +106,7 @@ export default function App({ Component, pageProps }: any) {
             </RealtimeProvider>
 ➡ Consolidated at: frontend-modernization.md#authprovider
 
-#### Environment Variables
-
-```bash
+➡ Consolidated at: frontend-modernization.md#environment-variables
 # .env.local
 ➡ Consolidated at: frontend-modernization.md#next-public-search-api-http-localhost-8001
 ➡ Consolidated at: frontend-modernization.md#next-public-nlp-api-http-localhost-8003
@@ -127,74 +120,42 @@ export default function App({ Component, pageProps }: any) {
 - ✅ Dark Mode implementieren
 - ✅ Basic Layout testen
 
-### Phase 2: Navigation & Layout (Tag 3-4)
-
-- ✅ DashboardLayout implementieren
-- ✅ Mobile Navigation hinzufügen
-- ✅ Header/Sidebar modernisieren
-- ✅ Responsive Design testen
-
+➡ Consolidated at: frontend-modernization.md#phase-2-navigation-layout-tag-3-4
 ### Phase 3: Core Components (Tag 5-7)
 
 - ✅ Form System implementieren
 - ✅ Data Table hinzufügen
 - ✅ Charts integrieren
 - ✅ Error Boundaries einbauen
-
-### Phase 4: Advanced Features (Tag 8-10)
-
-- ✅ Command Palette aktivieren
-- ✅ Notifications implementieren
-- ✅ Real-time Updates einbauen
-- ✅ Authentication Flow
+➡ Consolidated at: frontend-modernization.md#section
 
 ### Phase 5: Pages Migration (Tag 11-12)
 
 - ✅ Homepage modernisieren
 - ✅ Search Page übarbeiten
 - ✅ Document Detail optimieren
-- ✅ Graph Viewer erweitern
-
-### Phase 6: Polish & Testing (Tag 13-14)
-
-- ✅ Mobile Testing
-- ✅ Performance Optimierung
-- ✅ Accessibility Check
+➡ Consolidated at: frontend-modernization.md#graph-viewer-erweitern
 - ✅ Browser Compatibility
 
 ## 🧪 Testing & Validation
 
 ### Development Testing
 
-```bash
-# Build Test
-npm run build
+➡ Consolidated at: frontend-modernization.md#bash
 
 ➡ Consolidated at: frontend-modernization.md#type-check
 # Unit Tests
 npm run test
 
 # E2E Tests
-npm run e2e
-➡ Consolidated at: frontend-modernization.md#
-```
-
-### Manual Testing Checklist
-
-- [ ] **Desktop Navigation** - Sidebar funktioniert
+➡ Consolidated at: frontend-modernization.md#npm-run-e2e
 - [ ] **Mobile Navigation** - Hamburger Menu + Bottom Tabs
 - [ ] **Dark/Light Mode** - Toggle funktioniert
 - [ ] **Command Palette** - Cmd+K öffnet Palette
 - [ ] **Search Functionality** - Faceted Search + Results
 - [ ] **Form Validation** - Error States + Success
 - [ ] **Real-time Updates** - WebSocket Connection
-- [ ] **Notifications** - Toast Messages
-- [ ] **Charts** - Interactive Visualizations
-- [ ] **Data Tables** - Sorting + Filtering + Pagination
-- [ ] **Authentication** - Login/Logout Flow
-
-## 🚀 Production Deployment
-
+➡ Consolidated at: frontend-modernization.md#notifications-toast-messages
 ### Build Optimizations
 
 ```javascript
@@ -210,9 +171,7 @@ module.exports = {
 - [ ] **First Contentful Paint** < 1.8s
 - [ ] **Largest Contentful Paint** < 2.5s
 - [ ] **Cumulative Layout Shift** < 0.1
-- [ ] **First Input Delay** < 100ms
-
-## 📊 Monitoring & Analytics
+➡ Consolidated at: frontend-modernization.md#first-input-delay-100ms
 
 ➡ Consolidated at: frontend-modernization.md#performance-monitoring
   enableErrorTracking: true,
@@ -220,20 +179,7 @@ module.exports = {
 ```
 
 ### Key Metrics zu verfolgen
-
-➡ Consolidated at: frontend-modernization.md#1-user-experience
-   - Core Web Vitals
-   - Bundle Size
-   - Cache Hit Rates
-   - API Response Times
-
-## 🎨 Customization Guide
-➡ Consolidated at: frontend-modernization.md#
-    primary: {
-      // Corporate Colors hier ändern
-      500: "#0ea5e9", // Hauptfarbe
-      600: "#0284c7", // Hover States
-    },
+➡ Consolidated at: frontend-modernization.md#section
   },
 ➡ Consolidated at: frontend-modernization.md#
 // src/components/ui/Button.tsx
@@ -258,14 +204,7 @@ rm -rf .next
 ```bash
 # Bundle Analyzer
 ➡ Consolidated at: frontend-modernization.md#npm-install-save-dev-next-bundle-analyzer
-#### 4. Mobile Issues
-
-```bash
-➡ Consolidated at: frontend-modernization.md#viewport-meta-tag-pr-fen
-
-## 📚 Dokumentation & Training
-
-➡ Consolidated at: frontend-modernization.md#f-r-entwickler
+➡ Consolidated at: frontend-modernization.md#4-mobile-issues
 2. **Style Guide** - Design System Regeln
 ➡ Consolidated at: frontend-modernization.md#3-api-reference-hook-utility-dokumentation
 
@@ -284,9 +223,7 @@ rm -rf .next
 - [ ] **Deployment Pipeline getestet**
 - [ ] **Monitoring Setup** aktiv
 - [ ] **Rollback Plan** definiert
-
----
-
+➡ Consolidated at: frontend-modernization.md#section
 ## 🎉 Herzlichen Glückwunsch
 
 Nach der vollständigen Implementierung haben Sie InfoTerminal in eine **moderne, professionelle und benutzerfreundliche Anwendung** verwandelt, die mit aktuellen Enterprise-Standards mithalten kann.

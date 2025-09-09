@@ -926,3 +926,157 @@ merged_at: 2025-09-09T13:55:10.853673Z
 - [ ] **Performance Benchmarks erreicht**
 - [ ] **Mobile Testing abgeschlossen**
 - [ ] **Accessibility validiert** (WCAG 2.1)
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L114-L116
+merged_at: 2025-09-09T14:17:02.143510Z
+---
+
+#### Environment Variables
+
+```bash
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L167-L169
+merged_at: 2025-09-09T14:17:02.144949Z
+---
+
+```bash
+# Build Test
+npm run build
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L32-L34
+merged_at: 2025-09-09T14:17:02.146577Z
+---
+
+# Optional Advanced Components
+npm install @headlessui/react @heroicons/react
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L35-L38
+merged_at: 2025-09-09T14:17:02.148237Z
+---
+
+```
+
+### 3. Ordnerstruktur erstellen
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L123-L129
+merged_at: 2025-09-09T14:17:02.150018Z
+---
+
+### Phase 2: Navigation & Layout (Tag 3-4)
+
+- ✅ DashboardLayout implementieren
+- ✅ Mobile Navigation hinzufügen
+- ✅ Header/Sidebar modernisieren
+- ✅ Responsive Design testen
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L130-L136
+merged_at: 2025-09-09T14:17:02.151675Z
+---
+
+
+### Phase 4: Advanced Features (Tag 8-10)
+
+- ✅ Command Palette aktivieren
+- ✅ Notifications implementieren
+- ✅ Real-time Updates einbauen
+- ✅ Authentication Flow
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L137-L143
+merged_at: 2025-09-09T14:17:02.153297Z
+---
+
+- ✅ Graph Viewer erweitern
+
+### Phase 6: Polish & Testing (Tag 13-14)
+
+- ✅ Mobile Testing
+- ✅ Performance Optimierung
+- ✅ Accessibility Check
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L151-L157
+merged_at: 2025-09-09T14:17:02.154936Z
+---
+
+npm run e2e
+➡ Consolidated at: frontend-modernization.md#
+```
+
+### Manual Testing Checklist
+
+- [ ] **Desktop Navigation** - Sidebar funktioniert
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L158-L164
+merged_at: 2025-09-09T14:17:02.156429Z
+---
+
+- [ ] **Notifications** - Toast Messages
+- [ ] **Charts** - Interactive Visualizations
+- [ ] **Data Tables** - Sorting + Filtering + Pagination
+- [ ] **Authentication** - Login/Logout Flow
+
+## 🚀 Production Deployment
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L248-L250
+merged_at: 2025-09-09T14:17:02.157992Z
+---
+
+
+---
+
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L174-L176
+merged_at: 2025-09-09T14:17:02.159531Z
+---
+
+- [ ] **First Input Delay** < 100ms
+
+## 📊 Monitoring & Analytics
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L182-L195
+merged_at: 2025-09-09T14:17:02.161054Z
+---
+
+
+➡ Consolidated at: frontend-modernization.md#1-user-experience
+   - Core Web Vitals
+   - Bundle Size
+   - Cache Hit Rates
+   - API Response Times
+
+## 🎨 Customization Guide
+➡ Consolidated at: frontend-modernization.md#
+    primary: {
+      // Corporate Colors hier ändern
+      500: "#0ea5e9", // Hauptfarbe
+      600: "#0284c7", // Hover States
+    },
+---
+merged_from:
+  - docs/dev/guides/frontend-modernization-setup-guide.md#L207-L214
+merged_at: 2025-09-09T14:17:02.162538Z
+---
+
+#### 4. Mobile Issues
+
+```bash
+➡ Consolidated at: frontend-modernization.md#viewport-meta-tag-pr-fen
+
+## 📚 Dokumentation & Training
+
+➡ Consolidated at: frontend-modernization.md#f-r-entwickler

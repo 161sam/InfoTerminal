@@ -73,19 +73,7 @@ IT_WORM_BUCKETS=1  # Write Once Read Many für Exporte/Artefakte
 IT_CHAIN_OF_CUSTODY=1
 ```
 
-## NiFi Pipelines (aktiviert)
-
-- `ingest_rss_enterprise` + `ingest_api_enterprise` (API Keys/SLAs)
-- `ingest_file_ocr_forensics` (Tesseract + Hash/Sign)
-- `video_ingest_forensics` (keyframes + hashes, chain-of-custody)
-- Voller Verifikationspfad mit **mehr Evidenz-Quellen** (Gov/NGO/Datenbanken)
-- `geo_enrich_enterprise` (interner Geocoder/Cache)
-
-➡ Consolidated at: ../dev/guides/preset-profiles.md#provenienz-hash
-- **Case Lifecycle**: Intake → Triage → Corroboration → Legal Review → Dossier mit Signatur
-- **Sanktions-/Threat-Checks**: MISP/OTX/OFAC/BAFA → Graph-Verknüpfung → Alert
-- **Chain-of-Custody Report**: automatisch generieren & signieren
-
+➡ Consolidated at: ../dev/guides/preset-profiles.md#nifi-pipelines-aktiviert
 ## Verification Defaults
 
 ➡ Consolidated at: ../dev/guides/preset-profiles.md#yaml
@@ -119,12 +107,7 @@ IT_CHAIN_OF_CUSTODY=1
 IT_MODE=standard
 IT_EGRESS=proxy
 IT_NO_LOG_PERSIST=0
-IT_EPHEMERAL_FS=0
-➡ Consolidated at: ../dev/guides/preset-profiles.md#it-doh-1
-
-- `ingest_rss_social_web_balanced`
-- `ingest_api_generic` (öffentliche APIs + Key-Scoped)
-- Verifikation komplett, aber **schneller eingestellt** (weniger tiefe Evidenzsuche)
+➡ Consolidated at: ../dev/guides/preset-profiles.md#it-ephemeral-fs-0
 ➡ Consolidated at: ../dev/guides/preset-profiles.md#geo-enrich-standard-cache-aggressiver
   RATE_LIMIT_RPS: "1.0"
   EVIDENCE_TOPK: "8"

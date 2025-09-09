@@ -443,3 +443,66 @@ merged_at: 2025-09-09T13:55:10.933016Z
 1. Mixed Sources → NiFi → Verifikation (schneller) → Search/Graph
 2. n8n Trendreport/Anomalien → Auto-Cluster → Forschungs-Dossier
 3. Reproduzierbare Settings, Active Learning an
+---
+merged_from:
+  - docs/dev/v0.2/Preset-Profile.md#L67-L79
+merged_at: 2025-09-09T14:17:02.165955Z
+---
+
+## NiFi Pipelines (aktiviert)
+
+* `ingest_rss_enterprise` + `ingest_api_enterprise` (API Keys/SLAs)
+* `ingest_file_ocr_forensics` (Tesseract + Hash/Sign)
+* `video_ingest_forensics` (keyframes + hashes, chain-of-custody)
+* Voller Verifikationspfad mit **mehr Evidenz-Quellen** (Gov/NGO/Datenbanken)
+* `geo_enrich_enterprise` (interner Geocoder/Cache)
+
+➡ Consolidated at: ../guides/preset-profiles.md#provenienz-hash
+* **Case Lifecycle**: Intake → Triage → Corroboration → Legal Review → Dossier mit Signatur
+* **Sanktions-/Threat-Checks**: MISP/OTX/OFAC/BAFA → Graph-Verknüpfung → Alert
+* **Chain-of-Custody Report**: automatisch generieren & signieren
+
+---
+merged_from:
+  - docs/presets/Presets(Profile).md#L76-L88
+merged_at: 2025-09-09T14:17:02.167407Z
+---
+
+## NiFi Pipelines (aktiviert)
+
+- `ingest_rss_enterprise` + `ingest_api_enterprise` (API Keys/SLAs)
+- `ingest_file_ocr_forensics` (Tesseract + Hash/Sign)
+- `video_ingest_forensics` (keyframes + hashes, chain-of-custody)
+- Voller Verifikationspfad mit **mehr Evidenz-Quellen** (Gov/NGO/Datenbanken)
+- `geo_enrich_enterprise` (interner Geocoder/Cache)
+
+➡ Consolidated at: ../dev/guides/preset-profiles.md#provenienz-hash
+- **Case Lifecycle**: Intake → Triage → Corroboration → Legal Review → Dossier mit Signatur
+- **Sanktions-/Threat-Checks**: MISP/OTX/OFAC/BAFA → Graph-Verknüpfung → Alert
+- **Chain-of-Custody Report**: automatisch generieren & signieren
+
+---
+merged_from:
+  - docs/dev/v0.2/Preset-Profile.md#L92-L98
+merged_at: 2025-09-09T14:17:02.168645Z
+---
+
+
+## Security/Runtime
+➡ Consolidated at: ../guides/preset-profiles.md#
+```
+
+## NiFi Pipelines (aktiviert)
+
+---
+merged_from:
+  - docs/presets/Presets(Profile).md#L110-L115
+merged_at: 2025-09-09T14:17:02.169959Z
+---
+
+IT_EPHEMERAL_FS=0
+➡ Consolidated at: ../dev/guides/preset-profiles.md#it-doh-1
+
+- `ingest_rss_social_web_balanced`
+- `ingest_api_generic` (öffentliche APIs + Key-Scoped)
+- Verifikation komplett, aber **schneller eingestellt** (weniger tiefe Evidenzsuche)

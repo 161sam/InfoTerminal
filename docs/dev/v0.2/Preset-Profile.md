@@ -64,19 +64,7 @@ IT_WORM_BUCKETS=1  # Write Once Read Many für Exporte/Artefakte
 IT_CHAIN_OF_CUSTODY=1
 ```
 
-## NiFi Pipelines (aktiviert)
-
-* `ingest_rss_enterprise` + `ingest_api_enterprise` (API Keys/SLAs)
-* `ingest_file_ocr_forensics` (Tesseract + Hash/Sign)
-* `video_ingest_forensics` (keyframes + hashes, chain-of-custody)
-* Voller Verifikationspfad mit **mehr Evidenz-Quellen** (Gov/NGO/Datenbanken)
-* `geo_enrich_enterprise` (interner Geocoder/Cache)
-
-➡ Consolidated at: ../guides/preset-profiles.md#provenienz-hash
-* **Case Lifecycle**: Intake → Triage → Corroboration → Legal Review → Dossier mit Signatur
-* **Sanktions-/Threat-Checks**: MISP/OTX/OFAC/BAFA → Graph-Verknüpfung → Alert
-* **Chain-of-Custody Report**: automatisch generieren & signieren
-
+➡ Consolidated at: ../guides/preset-profiles.md#nifi-pipelines-aktiviert
 ## Verification Defaults
 
 ➡ Consolidated at: ../guides/preset-profiles.md#yaml
@@ -101,13 +89,7 @@ IT_CHAIN_OF_CUSTODY=1
 ## Ziele
 
 Schnelle Exploration, gute Reproduzierbarkeit, moderate OPSEC, nachvollziehbare Ergebnisse.
-
-## Security/Runtime
-➡ Consolidated at: ../guides/preset-profiles.md#
-```
-
-## NiFi Pipelines (aktiviert)
-
+➡ Consolidated at: ../guides/preset-profiles.md#section
 * `ingest_rss_social_web_balanced`
 * `ingest_api_generic` (öffentliche APIs + Key-Scoped)
 * Verifikation komplett, aber **schneller eingestellt** (weniger tiefe Evidenzsuche)
