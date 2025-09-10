@@ -532,7 +532,7 @@ def canonical_target(path: Path) -> Path | None:
     rules: List[Tuple[Tuple[str, ...], Path]] = [
         (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
         (("frontend-modernisierung",), DOCS_DIR / "dev/guides/frontend-modernization.md"),
-        (("preset", "profile"), DOCS_DIR / "dev/guides/preset-profiles.md"),
+        (("preset-profile",), DOCS_DIR / "dev/guides/preset-profiles.md"),
         (("flowise", "agent"), DOCS_DIR / "dev/guides/flowise-agents.md"),
         (("operability",), DOCS_DIR / "runbooks/stack.md"),
     ]
