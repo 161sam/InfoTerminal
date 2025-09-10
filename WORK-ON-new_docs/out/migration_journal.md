@@ -691,3 +691,8 @@
   DST: docs/dev/guides/frontend-modernization.md#setup
   WHY: deduplicate
   HASH: 3b774861b0350b97e2f23a216cb1c2f3efafb643
+- ACTION: merge+link
+  SRC: docs/export/AFFINE.md#L51-L53
+  DST: docs/dev/guides/frontend-modernization.md#cli
+  WHY: deduplicate
+  HASH: e27c4c66499781135a66e80681fb10f753f4ec8a
