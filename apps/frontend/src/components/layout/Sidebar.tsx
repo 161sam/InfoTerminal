@@ -1,35 +1,29 @@
-import { NavLink } from "react-router-dom";
-import { appRoutes, getExternalUrl } from "../../routes/appRoutes";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { sidebar } from "@/lib/routes";
 
 export default function Sidebar() {
+  const { pathname } = useRouter();
   return (
-    <aside className="h-screen w-64 shrink-0 border-r bg-white/70 backdrop-blur px-3 py-4 sticky top-0">
+    <aside className="h-screen w-64 shrink-0 border-r border-neutral-800 bg-neutral-950/60 backdrop-blur px-3 py-4 sticky top-0">
       <div className="mb-6 px-2">
-        <h1 className="text-xl font-semibold tracking-tight">InfoTerminal</h1>
-        <p className="text-xs text-neutral-500">Unified Analyst Workspace</p>
+        <h1 className="text-lg font-semibold tracking-tight">InfoTerminal</h1>
+        <p className="text-xs text-neutral-400">Unified Analyst Workspace</p>
       </div>
-
       <nav className="space-y-1">
-        {appRoutes.filter(r => r.enabled !== false).map((r) => {
-          const to = r.path;
-          const isExt = r.kind === "external";
-          const disabled = isExt && !getExternalUrl(r); // kein URL in env
+        {sidebar.map(item => {
+          if (item.label === "—") return <div key={"div-" + Math.random()} className="my-2 border-t border-neutral-800" />;
+          const active = item.href && pathname === item.href;
+          const disabled = item.externalKey && !process.env[item.externalKey as any];
+          const cls = [
+            "block rounded-md px-3 py-2 text-sm",
+            active ? "bg-neutral-800 text-white" : "text-neutral-300 hover:bg-neutral-800/60",
+            disabled ? "opacity-40 pointer-events-none" : "",
+          ].join(" ");
           return (
-            <NavLink
-              key={r.key}
-              to={to}
-              className={({ isActive }) =>
-                [
-                  "block rounded-lg px-3 py-2 text-sm",
-                  disabled ? "opacity-40 pointer-events-none" : "hover:bg-neutral-100",
-                  isActive ? "bg-neutral-900 text-white hover:bg-neutral-900" : "text-neutral-800"
-                ].join(" ")
-              }
-              title={disabled ? "URL not configured (.env)" : undefined}
-              end={r.path === "/"}
-            >
-              {r.label}
-            </NavLink>
+            <Link key={item.label} href={item.href} className={cls} title={disabled ? `.env fehlt: ${item.externalKey}` : undefined}>
+              {item.label}
+            </Link>
           );
         })}
       </nav>
