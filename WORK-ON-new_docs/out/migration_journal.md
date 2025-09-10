@@ -651,3 +651,38 @@
   DST: docs/dev/guides/flowise-agents.md#docs-export-bundle-spec-md
   WHY: deduplicate
   HASH: 20ff2ae62c1699f750aaaafd7b947e8d8df6cea7
+- ACTION: merge+link
+  SRC: docs/waveterm/README.md#L8-L10
+  DST: docs/dev/guides/flowise-agents.md#docs-waveterm-readme-md
+  WHY: deduplicate
+  HASH: ca2385a1125dbfc15552f42c96d9ac12f54bb5b2
+- ACTION: merge+link
+  SRC: docs/waveterm/README.md#L229-L231
+  DST: docs/dev/guides/flowise-agents.md#markdown
+  WHY: deduplicate
+  HASH: ab73d1113ca30d5a948c8f1f38e65cc3faf9402c
+- ACTION: merge+link
+  SRC: docs/waveterm/README.md#L335-L337
+  DST: docs/dev/guides/flowise-agents.md#section
+  WHY: deduplicate
+  HASH: e35919f68683daa3038cc855ee48846ebc9ae4d7
+- ACTION: merge+link
+  SRC: docs/waveterm/README.md#L366-L367
+  DST: docs/dev/guides/flowise-agents.md#command-string-template
+  WHY: deduplicate
+  HASH: 3307b76cf28b7829b207942c3ccd45679154476d
+- ACTION: merge+link
+  SRC: docs/export/APPFLOWY.md#L2-L4
+  DST: docs/dev/guides/flowise-agents.md#docs-export-appflowy-md
+  WHY: deduplicate
+  HASH: 151bd73ed4c7fa42cfca80cd268791e7d5e74e6a
+- ACTION: merge+link
+  SRC: docs/waveterm/README.md#L331-L333
+  DST: docs/dev/guides/flowise-agents.md#docs-n8n-waveterm-run-md
+  WHY: deduplicate
+  HASH: 54982470270be37c705c5bd06b30cd9fadd9f527
+- ACTION: merge+link
+  SRC: docs/waveterm/README.md#L360-L361
+  DST: docs/dev/guides/flowise-agents.md#nifi-processor-waveterminvoker
+  WHY: deduplicate
+  HASH: 764fa53e1f4100988f1c39b46a12c4ef76ee1670

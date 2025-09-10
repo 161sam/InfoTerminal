@@ -105,3 +105,64 @@ merged_at: 2025-09-10T07:12:12.917045Z
 
 ### `docs/export/BUNDLE-SPEC.md`
 ```markdown
+---
+merged_from:
+  - docs/waveterm/README.md#L8-L10
+merged_at: 2025-09-10T07:23:57.733735Z
+---
+
+### `docs/waveterm/README.md`
+
+```markdown
+---
+merged_from:
+  - docs/waveterm/README.md#L229-L231
+merged_at: 2025-09-10T07:23:57.739153Z
+---
+
+````markdown
+# Job API (WaveTerm ↔ InfoTerminal)
+
+---
+merged_from:
+  - docs/waveterm/README.md#L335-L337
+merged_at: 2025-09-10T07:23:57.743479Z
+---
+
+
+## Zweck
+Kommandos in WaveTerm-Workspaces aus n8n orchestrieren (Ingest → Analyse → Export).
+---
+merged_from:
+  - docs/waveterm/README.md#L366-L367
+merged_at: 2025-09-10T07:23:57.747077Z
+---
+
+- `Command` (string template)
+- `Timeout Ms` (int, default 60000)
+---
+merged_from:
+  - docs/export/APPFLOWY.md#L2-L4
+merged_at: 2025-09-10T07:23:57.765584Z
+---
+
+### `docs/export/APPFLOWY.md`
+
+```markdown
+---
+merged_from:
+  - docs/waveterm/README.md#L331-L333
+merged_at: 2025-09-10T07:24:02.254339Z
+---
+
+### `docs/n8n/waveterm_run.md`
+
+````markdown
+---
+merged_from:
+  - docs/waveterm/README.md#L360-L361
+merged_at: 2025-09-10T07:24:02.258358Z
+---
+
+# NiFi Processor: WaveTermInvoker
+
