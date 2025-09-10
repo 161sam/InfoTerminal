@@ -1,26 +1,30 @@
 {
-  "name": "info-terminal",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "services/gateway"
-  ],
-  "scripts": {
-    "lint:md": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md'",
-    "lint:md:links": "markdown-link-check -q -c .mlc.config.json docs/**/*.md",
-    "lint:docs:md": "npm run lint:md && npm run lint:md:links",
-    "fmt:md": "prettier --write $(git ls-files '*.md')",
-    "test:fe": "npm -w apps/frontend test",
-    "build:fe": "npm -w apps/frontend run build",
-    "dev:fe": "npm -w apps/frontend run dev",
-    "lint:docs": "npm -w docs run lint || echo 'skip'",
-    "lint:md:fix": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md' --fix",
-    "fmt": "prettier -w 'docs/**/*.md' 'cli/**/*.md' 'README.md'"
-  },
   "devDependencies": {
     "markdown-link-check": "^3.12.2",
     "markdownlint-cli": "^0.45.0",
     "markdownlint-cli2": "^0.15.0",
     "prettier": "^3.6.2"
-  }
+  },
+  "name": "info-terminal",
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "private": true,
+  "scripts": {
+    "build:fe": "npm -w apps/frontend run build",
+    "dev:fe": "npm -w apps/frontend run dev",
+    "fmt": "prettier -w 'docs/**/*.md' 'cli/**/*.md' 'README.md'",
+    "fmt:md": "prettier --write $(git ls-files '*.md')",
+    "lint:docs": "npm -w docs run lint || echo 'skip'",
+    "lint:docs:md": "npm run lint:md && npm run lint:md:links",
+    "lint:md": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md'",
+    "lint:md:fix": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md' --fix",
+    "lint:md:links": "markdown-link-check -q -c .mlc.config.json docs/**/*.md",
+    "test:fe": "npm -w apps/frontend test"
+  },
+  "workspaces": [
+    "apps/*",
+    "services/gateway"
+  ]
 }
