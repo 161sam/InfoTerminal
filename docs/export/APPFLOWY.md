@@ -1,7 +1,5 @@
 
-### `docs/export/APPFLOWY.md`
-
-```markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-export-appflowy-md
 # AppFlowy Export – Integration Guide
 
 > Ziel: Dossiers, Graphen, Tabellen, Maps aus InfoTerminal **auf Knopfdruck** in **AppFlowy** nutzen – primär via Datei-/Bundle-Export (offline, robust), optional via Adapter/API falls verfügbar.

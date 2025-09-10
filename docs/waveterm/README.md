@@ -5,9 +5,7 @@ super — hier sind **alle repo-fertigen Dateien** für die WaveTerm-Kompatibili
 
 ---
 
-### `docs/waveterm/README.md`
-
-```markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-waveterm-readme-md
 # WaveTerm Integration (Open-Source Terminal)
 
 > Ziel: WaveTerm als Pro-Workspace in InfoTerminal nutzen **und** InfoTerminal (CLI/Frontend) nahtlos in WaveTerm einbinden.
@@ -228,9 +226,7 @@ env:
 
 ### `docs/api/jobs.md`
 
-````markdown
-# Job API (WaveTerm ↔ InfoTerminal)
-
+➡ Consolidated at: ../dev/guides/flowise-agents.md#markdown
 Base: `/api/jobs` • Auth: **OIDC Bearer JWT** • Errors: RFC7807
 
 ## POST /api/jobs
@@ -332,13 +328,9 @@ allow_fs_write {
 
 ---
 
-### `docs/n8n/waveterm_run.md`
-
-````markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-n8n-waveterm-run-md
 # n8n: WaveTerm Run Node
-
-## Zweck
-Kommandos in WaveTerm-Workspaces aus n8n orchestrieren (Ingest → Analyse → Export).
+➡ Consolidated at: ../dev/guides/flowise-agents.md#section
 
 ## Inputs
 ```json
@@ -365,12 +357,10 @@ Kommandos in WaveTerm-Workspaces aus n8n orchestrieren (Ingest → Analyse → E
 
 ### `docs/nifi/WaveTermInvoker.md`
 ```markdown
-# NiFi Processor: WaveTermInvoker
-
+➡ Consolidated at: ../dev/guides/flowise-agents.md#nifi-processor-waveterminvoker
 ## Properties
 - `Workspace Path` (string, required)
-- `Command` (string template)
-- `Timeout Ms` (int, default 60000)
+➡ Consolidated at: ../dev/guides/flowise-agents.md#command-string-template
 - `WT URL` (optional, falls HTTP-Adapter)
 
 ## Flow
