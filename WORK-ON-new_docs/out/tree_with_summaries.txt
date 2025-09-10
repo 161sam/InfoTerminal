@@ -12,6 +12,43 @@ docs/
     0002-multi-storage-pattern.md :: ➡ Consolidated at: ../dev/guides/rag-systems.md#adr-0002-multi-storage-pattern
     0003-identity-oidc-keycloak.md :: # ADR 0003: Identity via OIDC with Keycloak
     0004-policy-gateway-opa-forwardauth.md :: # ADR 0004: Policy Gateway via OPA ForwardAuth
+  architecture/
+    ADR-000-stack.md :: # ADR-000: Baseline Stack
+    diagrams/
+  export/
+    AFFINE.md :: ➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-export-affine-md
+    APPFLOWY.md :: ### `docs/export/APPFLOWY.md`
+    BUNDLE-SPEC.md :: # Bundle Spec
+  dossiers/
+    README.md :: Dossier templates overview.
+  waveterm/
+    README.md :: # WaveTerm Integration
+    policies/
+    presets/
+  user/
+    1.Einführung.md :: # 1. Einführung
+    10.Anwendungsfälle.md :: # 10. Anwendungsfälle
+    11.Tipps&Best-Practices.md :: # 11. Tipps & Best Practices
+    12.Roadmap&Weiterentwicklung.md :: # 12. Roadmap & Weiterentwicklung
+    13.Dokumentenmanagement-mit-Aleph.md :: # 13. Dokumentenmanagement mit Aleph
+    14.Datenintegration-mit-NiFi.md :: # 14. Datenintegration mit NiFi
+    15.Dashboards-mit-Superset.md :: # 15. Dashboards mit Superset
+    16.Anhang.md :: # 16. Anhang
+    2.Installation&Setup.md :: # 2. Installation & Setup
+    3.Erste-Schritte.md :: # 3. Erste Schritte
+    4.Kernfunktionen.md :: # 4. Kernfunktionen
+    5.Erweiterte-Funktionen.md :: # 5. Erweiterte Funktionen
+    6.Observability&Monitoring.md :: # 6. Observability & Monitoring
+    7.CLI-Handbuch.md :: # 7. CLI-Handbuch
+    8.Integrationen&Erweiterbarkeit.md :: # 8. Integrationen & Erweiterbarkeit
+    9.Sicherheit&Compliance.md :: # 9. Sicherheit & Compliance
+    index.md :: # 📘 InfoTerminal – Benutzerhandbuch
+  screenshots/
+  diagrams/
+    ARCHITECTURE.md :: # Architecture
+  api/
+    agent-gateway.md :: # Agent Gateway API
+    jobs.md :: # Jobs API
   blueprints/
     AIETHICS-INTELLIGENCE-BLUEPRINT.md :: # AIETHICS-INTELLIGENCE-BLUEPRINT.md
     CLIMATE-INTELLIGENCE-BLUEPRINT.md :: # CLIMATE-INTELLIGENCE-BLUEPRINT.md
@@ -57,6 +94,16 @@ docs/
     testing.md :: # Testing Strategy
     tls.md :: # TLS
     research/
+    roadmap/
+      README.md :: # Roadmap
+      v0.1-overview.md :: ---
+      v0.2-overview.md :: ---
+      v0.3-plus/
+        master-todo.md :: # Master Todo
+    dev-prompts/
+      DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
+      DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
+      Test.md :: # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
     guides/
       flowise-agents.md :: # Flowise Agents
       frontend-modernization-setup-guide.md :: ---
@@ -64,10 +111,13 @@ docs/
       preset-profiles.md :: # Preset Profiles
       rag-systems.md :: ---
       testing.md :: ---
-    dev-prompts/
-      DOCS-CONSOLIDIERUNG-2.md :: # 📋 Codex Entwickler Folge Prompt — Docs Konsolidierung Phase 2 (idempotent)
-      DOCS-CONSOLIDIERUNG.md :: # 📋 Codex Entwickler Prompt — InfoTerminal Docs Konsolidierung (idempotent)
-      Test.md :: # Codex Prompt — Vollständige Testabdeckung (100 %), idempotent
+    runbooks/
+      auth-gateway-troubleshooting.md :: # Auth Gateway Troubleshooting
+      incident-template.md :: # Incident Report
+      neo4j-recovery.md :: # Neo4j Recovery
+      restore.md :: # Restore Runbook
+      search-index-ops.md :: # Search Index Operations
+      superset-admin.md :: # Superset Administration
     v0.2/
       Architektur-Live-Datenquellen.md :: # Architektur für Live-Datenquellen
       DEVELOPMENT-PLAN.md :: # 🚀 Detaillierter Entwicklungsplan InfoTerminal
@@ -89,72 +139,22 @@ docs/
         Roadmap_Gotham-Gaps_Beyond-Gotham.md :: # 🚀 InfoTerminal Roadmap (erweitert mit Beyond Gotham Blueprints)
         TODO-Index-cli-ergänzung.md :: ## 30. CLI – WaveTerm Features (planned)
         beyond-gotham.md :: # 🌟 InfoTerminal Ausbau ab v0.2
-    roadmap/
-      README.md :: # Roadmap
-      v0.1-overview.md :: ---
-      v0.2-overview.md :: ---
-      v0.3-plus/
-        master-todo.md :: # Master Todo
-    runbooks/
-      auth-gateway-troubleshooting.md :: # Auth Gateway Troubleshooting
-      incident-template.md :: # Incident Report
-      neo4j-recovery.md :: # Neo4j Recovery
-      restore.md :: # Restore Runbook
-      search-index-ops.md :: # Search Index Operations
-      superset-admin.md :: # Superset Administration
+  integrations/
+    README.md :: # Integrations
   n8n/
     flowise_n8n.md :: # n8n: Flowise Agent Node
     waveterm_run.md :: # n8n: WaveTerm Run Node
+  img/
+  runbooks/
+    obs-opa-secrets.md :: ---
+    stack.md :: ---
   nifi/
     WaveTermInvoker.md :: # NiFi: WaveTermInvoker
     flowise_nifi.md :: # NiFi: InvokeFlowiseAgent
   cli/
     README.md :: # InfoTerminal CLI
     waveterm-demo.md :: # WaveTerm Demo (planned)
-  screenshots/
-  diagrams/
-    ARCHITECTURE.md :: # Architecture
-  api/
-    agent-gateway.md :: # Agent Gateway API
-    jobs.md :: # Jobs API
-  dossiers/
-    README.md :: Dossier templates overview.
-  user/
-    1.Einführung.md :: # 1. Einführung
-    10.Anwendungsfälle.md :: # 10. Anwendungsfälle
-    11.Tipps&Best-Practices.md :: # 11. Tipps & Best Practices
-    12.Roadmap&Weiterentwicklung.md :: # 12. Roadmap & Weiterentwicklung
-    13.Dokumentenmanagement-mit-Aleph.md :: # 13. Dokumentenmanagement mit Aleph
-    14.Datenintegration-mit-NiFi.md :: # 14. Datenintegration mit NiFi
-    15.Dashboards-mit-Superset.md :: # 15. Dashboards mit Superset
-    16.Anhang.md :: # 16. Anhang
-    2.Installation&Setup.md :: # 2. Installation & Setup
-    3.Erste-Schritte.md :: # 3. Erste Schritte
-    4.Kernfunktionen.md :: # 4. Kernfunktionen
-    5.Erweiterte-Funktionen.md :: # 5. Erweiterte Funktionen
-    6.Observability&Monitoring.md :: # 6. Observability & Monitoring
-    7.CLI-Handbuch.md :: # 7. CLI-Handbuch
-    8.Integrationen&Erweiterbarkeit.md :: # 8. Integrationen & Erweiterbarkeit
-    9.Sicherheit&Compliance.md :: # 9. Sicherheit & Compliance
-    index.md :: # 📘 InfoTerminal – Benutzerhandbuch
   presets/
     Presets(Profile).md :: ➡ Consolidated at: ../dev/guides/preset-profiles.md#presets-profile-berblick
     README.md :: # Preset Profiles
     waveterm/
-  img/
-  waveterm/
-    README.md :: # WaveTerm Integration
-    presets/
-    policies/
-  architecture/
-    ADR-000-stack.md :: # ADR-000: Baseline Stack
-    diagrams/
-  integrations/
-    README.md :: # Integrations
-  runbooks/
-    obs-opa-secrets.md :: ---
-    stack.md :: ---
-  export/
-    AFFINE.md :: ### `docs/export/AFFINE.md`
-    APPFLOWY.md :: ### `docs/export/APPFLOWY.md`
-    BUNDLE-SPEC.md :: # Bundle Spec

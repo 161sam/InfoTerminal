@@ -665,13 +665,25 @@ def dedupe() -> int:
         if not line.startswith("- "):
             continue
         sections = extract_sections(line)
+        if not sections:
+            continue
+        # Determine canonical target for this duplicate group.  When exactly one
+        # canonical mapping exists we treat the other sections as sources and
+        # merge them into the canonical file.  This allows pairs like
+        # ``flowise-agents.md`` <-> ``waveterm/README.md`` to be consolidated
+        # even though only one side matches the heuristics.
+        targets = [canonical_target(p) for p, _, _ in sections if canonical_target(p)]
+        target = None
+        if targets and all(t == targets[0] for t in targets):
+            target = targets[0]
+        if not target:
+            continue
         for src, start, end in sections:
             key = (src, start, end)
             if key in processed:
                 continue
             processed.add(key)
-            target = canonical_target(src)
-            if not target or target == src:
+            if src == target:
                 continue
             lines = read_lines(src)
             section = lines[start - 1 : end]

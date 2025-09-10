@@ -641,3 +641,13 @@
   DST: docs/dev/guides/frontend-modernization.md#herzlichen-gl-ckwunsch
   WHY: deduplicate
   HASH: dd636f623e3bdec7316c690c0ca2e60452e48785
+- ACTION: merge+link
+  SRC: docs/export/AFFINE.md#L1-L2
+  DST: docs/dev/guides/flowise-agents.md#docs-export-affine-md
+  WHY: deduplicate
+  HASH: 659610de45e3692cf1bd95c6bbf2aa37c6b4410d
+- ACTION: merge+link
+  SRC: docs/export/AFFINE.md#L105-L106
+  DST: docs/dev/guides/flowise-agents.md#docs-export-bundle-spec-md
+  WHY: deduplicate
+  HASH: 20ff2ae62c1699f750aaaafd7b947e8d8df6cea7
