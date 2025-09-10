@@ -389,25 +389,22 @@ def integrate_todo_tasks() -> int:
     v02.sort()
     master.sort()
 
-    added_ids: set[str] = set()
-    _, ids = update_section(
+    added_v01, _ = update_section(
         DOCS_DIR / "dev/roadmap/v0.1-overview.md", "Abgeschlossene Detail-Tasks", v01
     )
-    added_ids.update(ids)
-    _, ids = update_section(
+    added_v02, _ = update_section(
         DOCS_DIR / "dev/roadmap/v0.2-overview.md", "Offene Detail-Tasks", v02
     )
-    added_ids.update(ids)
     master_file = DOCS_DIR / "dev/roadmap/v0.3-plus/master-todo.md"
-    master_added, ids = update_section(master_file, "Master TODO", master)
-    added_ids.update(ids)
-    if master_added == 0 and not master_file.exists():
+    added_master, _ = update_section(master_file, "Master TODO", master)
+    if added_master == 0 and not master_file.exists():
         write_file(master_file, "# Master TODO\n")
-    if added_ids:
-        print(f"Integrated {len(added_ids)} roadmap tasks")
+    total_added = added_v01 + added_v02 + added_master
+    if total_added:
+        print(f"Integrated {total_added} roadmap tasks")
     else:
         print("No new roadmap tasks")
-    return len(added_ids)
+    return total_added
 
 
 def ensure_roadmap_index() -> None:
@@ -601,14 +598,20 @@ def read_lines(path: Path) -> List[str]:
 
 def replace_with_pointer(
     src: Path, start: int, end: int, target: Path, anchor: str
-) -> None:
+) -> bool:
+    """Replace the source section with a pointer to the canonical target.
+
+    Returns ``True`` when the file was modified, allowing the caller to keep the
+    operation idempotent and to avoid duplicate journal entries."""
+
     lines = read_lines(src)
     rel_target = os.path.relpath(target, src.parent).replace(os.sep, "/")
     pointer = f"➡ Consolidated at: {rel_target}#{anchor}"
     if lines[start - 1 : end] == [pointer]:
-        return
+        return False
     lines[start - 1 : end] = [pointer]
     write_file(src, "\n".join(lines) + "\n")
+    return True
 
 
 def append_section(
@@ -677,25 +680,28 @@ def dedupe() -> int:
             hashval = hash_text("\n".join(section))
             src_rel = str(src.relative_to(REPO_ROOT))
             existing = find_existing_anchor(target, src_rel, start, end, hashval, section)
+            was_new = False
             if existing:
                 anchor = existing
             else:
                 anchor = append_section(target, src_rel, start, end, section)
-            replace_with_pointer(src, start, end, target, anchor)
-            merged_pairs.append(
-                (
-                    str(src.relative_to(REPO_ROOT)),
-                    str(target.relative_to(REPO_ROOT)),
+                was_new = True
+            pointer_changed = replace_with_pointer(src, start, end, target, anchor)
+            if was_new or pointer_changed:
+                merged_pairs.append(
+                    (
+                        str(src.relative_to(REPO_ROOT)),
+                        str(target.relative_to(REPO_ROOT)),
+                    )
                 )
-            )
-            journal_entry = (
-                "- ACTION: merge+link\n"
-                f"  SRC: {src.relative_to(REPO_ROOT)}#L{start}-L{end}\n"
-                f"  DST: {target.relative_to(REPO_ROOT)}#{anchor}\n"
-                "  WHY: deduplicate\n"
-                f"  HASH: {hashval}"
-            )
-            append_journal(journal_entry)
+                journal_entry = (
+                    "- ACTION: merge+link\n"
+                    f"  SRC: {src.relative_to(REPO_ROOT)}#L{start}-L{end}\n"
+                    f"  DST: {target.relative_to(REPO_ROOT)}#{anchor}\n"
+                    "  WHY: deduplicate\n"
+                    f"  HASH: {hashval}"
+                )
+                append_journal(journal_entry)
     if merged_pairs:
         targets = {dst for _, dst in merged_pairs}
         print(
