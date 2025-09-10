@@ -350,7 +350,7 @@ def _detect_version(path: Path) -> str | None:
     """Return version marker ``1``/``2``/``3`` if the path references it.
 
     The matcher is deliberately fuzzy and scans the entire path for substrings
-    like ``v0.1`` or ``v0.3-plus``.  ``None`` is returned when no marker is
+    like ``v0.1`` or ``v0.3-plus``/``v0.3+``.  ``None`` is returned when no marker is
     present which keeps the consolidation idempotent.
     """
 
@@ -359,7 +359,7 @@ def _detect_version(path: Path) -> str | None:
         return "1"
     if "v0.2" in lower:
         return "2"
-    if "v0.3-plus" in lower or "v0.3" in lower:
+    if "v0.3-plus" in lower or "v0.3+" in lower or "v0.3" in lower:
         return "3"
     return None
 
@@ -547,9 +547,12 @@ def canonical_target(path: Path) -> Path | None:
     rules: List[Tuple[Tuple[str, ...], Path]] = [
         (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
         (("frontend-modernisierung",), DOCS_DIR / "dev/guides/frontend-modernization.md"),
+        (("frontendmodernisierung",), DOCS_DIR / "dev/guides/frontend-modernization.md"),
         (("frontend", "modernization"), DOCS_DIR / "dev/guides/frontend-modernization.md"),
         (("preset-profile",), DOCS_DIR / "dev/guides/preset-profiles.md"),
+        (("presetprofile",), DOCS_DIR / "dev/guides/preset-profiles.md"),
         (("preset", "profile"), DOCS_DIR / "dev/guides/preset-profiles.md"),
+        (("flowise-agent",), DOCS_DIR / "dev/guides/flowise-agents.md"),
         (("flowise", "agent"), DOCS_DIR / "dev/guides/flowise-agents.md"),
         (("operability",), DOCS_DIR / "runbooks/stack.md"),
     ]

@@ -1127,3 +1127,12 @@ merged_at: 2025-09-10T07:58:49.742218Z
 ## Setup
 
 ```bash
+---
+merged_from:
+  - docs/export/AFFINE.md#L51-L53
+merged_at: 2025-09-10T08:23:40.408341Z
+---
+
+## 🧰 CLI
+
+```bash

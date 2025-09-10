@@ -48,9 +48,7 @@ meta/export.json
 
 ---
 
-## 🧰 CLI
-
-```bash
+➡ Consolidated at: ../dev/guides/frontend-modernization.md#cli
 # Dossier + Canvas für AFFiNE
 it export dossier \
   --template docs/dossiers/disinfo_campaign_report.md.tmpl \
