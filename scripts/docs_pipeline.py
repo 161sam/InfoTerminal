@@ -346,28 +346,43 @@ def update_section(path: Path, heading: str, items: List[str]) -> Tuple[int, set
     return added, inserted_ids
 
 
+def _detect_version(path: Path) -> str | None:
+    """Return version marker ``1``/``2``/``3`` if the path references it.
+
+    The matcher is deliberately fuzzy and scans the entire path for substrings
+    like ``v0.1`` or ``v0.3-plus``.  ``None`` is returned when no marker is
+    present which keeps the consolidation idempotent.
+    """
+
+    lower = path.as_posix().lower()
+    if "v0.1" in lower:
+        return "1"
+    if "v0.2" in lower:
+        return "2"
+    if "v0.3-plus" in lower or "v0.3" in lower:
+        return "3"
+    return None
+
+
 def integrate_todo_tasks() -> int:
     """Integrate tasks from ``todo_index.md`` into roadmap overview files."""
 
-    version_re = re.compile(r"v0\.(\d+)(?:-plus)?")
     tasks = load_todo_tasks()
     v01: List[str] = []
     v02: List[str] = []
     master: List[str] = []
     for task_id, fpath, line_no, text, done in tasks:
+        version = _detect_version(fpath)
+        if not version:
+            continue
         rel = fpath.as_posix()
         bullet = f"- [{'x' if done else ' '}] {task_id} {text} ({rel}:{line_no})"
-        lower_rel = rel.lower()
-        m = version_re.search(lower_rel)
-        if not m:
-            continue
-        version = m.group(1)
         if version == "1" and done:
             v01.append(bullet)
         if version == "2" and not done:
             v02.append(bullet)
-        if version in {"1", "2", "3"} or "v0.3-plus" in lower_rel:
-            master.append(bullet)
+        # All versioned tasks (including v0.3+) are tracked in the master list
+        master.append(bullet)
 
     # Keep deterministic ordering across runs for idempotency
     v01.sort()
@@ -520,8 +535,10 @@ def slugify(text: str) -> str:
 def canonical_target(path: Path) -> Path | None:
     """Return canonical target file for a given path.
 
-    The mapping is deliberately small to keep the operation idempotent.  Only
-    known topics are consolidated; everything else is left in place.
+    The mapping follows a couple of simple keyword heuristics.  Only a small
+    curated set of topics is consolidated which keeps the operation idempotent
+    and avoids surprising moves.  Roadmap files themselves are excluded since
+    they describe planning/strategy rather than content that should be merged.
     """
 
     rel = path.relative_to(REPO_ROOT).as_posix().lower()
@@ -529,6 +546,7 @@ def canonical_target(path: Path) -> Path | None:
         # Roadmap files contain planning information and are never deduplicated
         return None
 
+    # Keyword heuristics → canonical destinations
     rules: List[Tuple[Tuple[str, ...], Path]] = [
         (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
         (("frontend-modernisierung",), DOCS_DIR / "dev/guides/frontend-modernization.md"),
@@ -639,7 +657,7 @@ def dedupe() -> int:
         check_naming()
         return 0
     processed: set[Tuple[Path, int, int]] = set()
-    merged: List[str] = []
+    merged_pairs: List[Tuple[str, str]] = []
     for line in dup_file.read_text(encoding="utf-8").splitlines():
         if not line.startswith("- "):
             continue
@@ -664,8 +682,11 @@ def dedupe() -> int:
             else:
                 anchor = append_section(target, src_rel, start, end, section)
             replace_with_pointer(src, start, end, target, anchor)
-            merged.append(
-                f"- {src.relative_to(REPO_ROOT)} -> {target.relative_to(REPO_ROOT)}"
+            merged_pairs.append(
+                (
+                    str(src.relative_to(REPO_ROOT)),
+                    str(target.relative_to(REPO_ROOT)),
+                )
             )
             journal_entry = (
                 "- ACTION: merge+link\n"
@@ -675,13 +696,16 @@ def dedupe() -> int:
                 f"  HASH: {hashval}"
             )
             append_journal(journal_entry)
-    if merged:
-        print(f"Deduplicated {len(merged)} sections")
+    if merged_pairs:
+        targets = {dst for _, dst in merged_pairs}
+        print(
+            f"Deduplicated {len(merged_pairs)} sections into {len(targets)} files"
+        )
     else:
         print("No duplicates merged")
     check_broken_links()
     check_naming()
-    return len(merged)
+    return len(merged_pairs)
 
 
 # ---------------------------------------------------------------------------
