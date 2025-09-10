@@ -396,7 +396,7 @@ def integrate_todo_tasks() -> int:
         DOCS_DIR / "dev/roadmap/v0.2-overview.md", "Offene Detail-Tasks", v02
     )
     master_file = DOCS_DIR / "dev/roadmap/v0.3-plus/master-todo.md"
-    added_master, _ = update_section(master_file, "Master TODO", master)
+    added_master, _ = update_section(master_file, "Tasks", master)
     if added_master == 0 and not master_file.exists():
         write_file(master_file, "# Master TODO\n")
     total_added = added_v01 + added_v02 + added_master
@@ -547,7 +547,9 @@ def canonical_target(path: Path) -> Path | None:
     rules: List[Tuple[Tuple[str, ...], Path]] = [
         (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
         (("frontend-modernisierung",), DOCS_DIR / "dev/guides/frontend-modernization.md"),
+        (("frontend", "modernization"), DOCS_DIR / "dev/guides/frontend-modernization.md"),
         (("preset-profile",), DOCS_DIR / "dev/guides/preset-profiles.md"),
+        (("preset", "profile"), DOCS_DIR / "dev/guides/preset-profiles.md"),
         (("flowise", "agent"), DOCS_DIR / "dev/guides/flowise-agents.md"),
         (("operability",), DOCS_DIR / "runbooks/stack.md"),
     ]
