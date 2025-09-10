@@ -271,6 +271,14 @@ def ensure_integrations_readme() -> None:
 
 
 def load_todo_tasks() -> List[Tuple[str, Path, int, str, bool]]:
+    """Return tasks from the generated ``todo_index.md``.
+
+    The file is created by the ``analyze`` step.  Each line is a pipe separated
+    row containing the task id, the source file, the line number and the raw
+    todo text.  Tasks from the roadmap overview files are skipped to avoid
+    self‑references.
+    """
+
     todo_file = OUT_DIR / "todo_index.md"
     tasks: List[Tuple[str, Path, int, str, bool]] = []
     if not todo_file.exists():
@@ -339,6 +347,9 @@ def update_section(path: Path, heading: str, items: List[str]) -> Tuple[int, set
 
 
 def integrate_todo_tasks() -> int:
+    """Integrate tasks from ``todo_index.md`` into roadmap overview files."""
+
+    version_re = re.compile(r"v0\.(\d+)(?:-plus)?")
     tasks = load_todo_tasks()
     v01: List[str] = []
     v02: List[str] = []
@@ -347,11 +358,15 @@ def integrate_todo_tasks() -> int:
         rel = fpath.as_posix()
         bullet = f"- [{'x' if done else ' '}] {task_id} {text} ({rel}:{line_no})"
         lower_rel = rel.lower()
-        if "v0.1" in lower_rel and done:
+        m = version_re.search(lower_rel)
+        if not m:
+            continue
+        version = m.group(1)
+        if version == "1" and done:
             v01.append(bullet)
-        if "v0.2" in lower_rel and not done:
+        if version == "2" and not done:
             v02.append(bullet)
-        if any(v in lower_rel for v in ("v0.1", "v0.2", "v0.3", "v0.3-plus")):
+        if version in {"1", "2", "3"} or "v0.3-plus" in lower_rel:
             master.append(bullet)
 
     # Keep deterministic ordering across runs for idempotency
@@ -511,21 +526,18 @@ def canonical_target(path: Path) -> Path | None:
 
     rel = path.relative_to(REPO_ROOT).as_posix().lower()
     if rel.startswith("docs/dev/roadmap/"):
+        # Roadmap files contain planning information and are never deduplicated
         return None
-    p = rel
+
     rules: List[Tuple[Tuple[str, ...], Path]] = [
         (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
-        (
-            ("frontend-modernisierung",),
-            DOCS_DIR / "dev/guides/frontend-modernization.md",
-        ),
-        (("frontend", "modern"), DOCS_DIR / "dev/guides/frontend-modernization.md"),
+        (("frontend-modernisierung",), DOCS_DIR / "dev/guides/frontend-modernization.md"),
         (("preset", "profile"), DOCS_DIR / "dev/guides/preset-profiles.md"),
         (("flowise", "agent"), DOCS_DIR / "dev/guides/flowise-agents.md"),
         (("operability",), DOCS_DIR / "runbooks/stack.md"),
     ]
     for keywords, target in rules:
-        if all(k in p for k in keywords):
+        if all(k in rel for k in keywords):
             return target
     return None
 
