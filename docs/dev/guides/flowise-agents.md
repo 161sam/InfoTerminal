@@ -89,3 +89,19 @@ merged_at: 2025-09-09T14:17:02.139466Z
 
 ```markdown
 # NiFi Processor – InvokeFlowiseAgent
+---
+merged_from:
+  - docs/export/AFFINE.md#L1-L2
+merged_at: 2025-09-10T07:11:58.672158Z
+---
+
+### `docs/export/AFFINE.md`
+```markdown
+---
+merged_from:
+  - docs/export/AFFINE.md#L105-L106
+merged_at: 2025-09-10T07:12:12.917045Z
+---
+
+### `docs/export/BUNDLE-SPEC.md`
+```markdown

@@ -1,5 +1,4 @@
-### `docs/export/AFFINE.md`
-```markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-export-affine-md
 # AFFiNE Export – Integration Guide
 
 > Ziel: Inhalte aus InfoTerminal direkt in **AFFiNE** (Markdown + Edgeless Board) nutzen. Fokus: MD-Bundles, Graphen (Mermaid/DOT+SVG) und **Canvas via Excalidraw JSON**.
@@ -103,8 +102,7 @@ watched_folders:
 
 ---
 
-### `docs/export/BUNDLE-SPEC.md`
-```markdown
+➡ Consolidated at: ../dev/guides/flowise-agents.md#docs-export-bundle-spec-md
 # Bundle Spec – InfoTerminal → AppFlowy/AFFiNE
 
 ## Ziel
