@@ -354,6 +354,11 @@ def integrate_todo_tasks() -> int:
         if any(v in lower_rel for v in ("v0.1", "v0.2", "v0.3", "v0.3-plus")):
             master.append(bullet)
 
+    # Keep deterministic ordering across runs for idempotency
+    v01.sort()
+    v02.sort()
+    master.sort()
+
     added_ids: set[str] = set()
     _, ids = update_section(
         DOCS_DIR / "dev/roadmap/v0.1-overview.md", "Abgeschlossene Detail-Tasks", v01
@@ -504,7 +509,10 @@ def canonical_target(path: Path) -> Path | None:
     known topics are consolidated; everything else is left in place.
     """
 
-    p = path.as_posix().lower()
+    rel = path.relative_to(REPO_ROOT).as_posix().lower()
+    if rel.startswith("docs/dev/roadmap/"):
+        return None
+    p = rel
     rules: List[Tuple[Tuple[str, ...], Path]] = [
         (("rag",), DOCS_DIR / "dev/guides/rag-systems.md"),
         (
