@@ -1118,3 +1118,12 @@ merged_at: 2025-09-09T14:23:19.090876Z
 
 Nach der vollständigen Implementierung haben Sie InfoTerminal in eine **moderne, professionelle und benutzerfreundliche Anwendung** verwandelt, die mit aktuellen Enterprise-Standards mithalten kann.
 
+---
+merged_from:
+  - docs/dev/nifi-aleph.md#L11-L13
+merged_at: 2025-09-10T07:58:49.742218Z
+---
+
+## Setup
+
+```bash

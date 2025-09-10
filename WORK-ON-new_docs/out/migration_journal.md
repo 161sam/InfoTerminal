@@ -686,3 +686,8 @@
   DST: docs/dev/guides/flowise-agents.md#nifi-processor-waveterminvoker
   WHY: deduplicate
   HASH: 764fa53e1f4100988f1c39b46a12c4ef76ee1670
+- ACTION: merge+link
+  SRC: docs/dev/nifi-aleph.md#L11-L13
+  DST: docs/dev/guides/frontend-modernization.md#setup
+  WHY: deduplicate
+  HASH: 3b774861b0350b97e2f23a216cb1c2f3efafb643

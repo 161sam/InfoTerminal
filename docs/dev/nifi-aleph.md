@@ -8,9 +8,7 @@ Ziel ist eine minimal lauffähige Strecke, die Dateien aus einem Watch-Folder
                            \--> [outbox]
 ```
 
-## Setup
-
-```bash
+➡ Consolidated at: guides/frontend-modernization.md#setup
 # Services starten
 docker compose up -d aleph nifi doc-entities
 
