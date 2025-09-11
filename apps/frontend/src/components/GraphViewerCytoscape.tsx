@@ -7,6 +7,7 @@ type Props = {
   layout?: { name: string; [k: string]: any };
   style?: React.CSSProperties;
   className?: string;
+    directed?: boolean; // <- ergänzt, wird intern nicht benötigt
 };
 
 const GraphViewerCytoscape: React.FC<Props> = ({ elements, layout = { name: 'grid' }, style, className }) => {

@@ -37,7 +37,8 @@
     "prettier": "^3.3.3",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.1",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "prettier --write"
@@ -58,7 +59,8 @@
     "test": "vitest run --reporter=dot",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "version": "0.1.0"
 }

@@ -7,9 +7,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "lib": [
       "dom",
@@ -25,6 +27,10 @@
       {
         "name": "next"
       }
+    ],
+    "types": [
+      "vitest/globals",
+      "@testing-library/jest-dom"
     ]
   },
   "include": [
