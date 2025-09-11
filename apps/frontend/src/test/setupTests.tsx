@@ -64,18 +64,39 @@ if (!HTMLElement.prototype.getBoundingClientRect) {
 
 // -------------------- Library-Mocks --------------------
 
-// react-cytoscapejs durch simplen Stub ersetzen, damit kein echtes Canvas nötig ist
+// react-cytoscapejs: Fake-Implementierung ohne Canvas. Ruft die "cy"-Callback-Prop auf
+// und erlaubt das Auslösen eines "tap"-Events auf einen Node mit id 'a' über einen Button.
 vi.mock('react-cytoscapejs', () => {
   const React = require('react');
-  const CytoscapeStub = ({ elements }: any) => (
-    <div data-testid="cytoscape-stub">
-      {Array.isArray(elements) ? `elements:${elements.length}` : 'elements:0'}
-    </div>
-  );
+
+  const CytoscapeStub = ({ cy }: any) => {
+    const handlers: Record<string, (evt: any) => void> = {};
+
+    const fakeCy = {
+      on: (event: string, selector: string, handler: (evt: any) => void) => {
+        handlers[`${event}:${selector}`] = handler;
+      },
+      destroy: () => {},
+    } as const;
+
+    if (typeof cy === 'function') {
+      cy(fakeCy);
+    }
+
+    return (
+      <button
+        data-testid="fire-tap-a"
+        onClick={() => handlers['tap:node']?.({ target: { id: () => 'a' } })}
+      >
+        fire tap a
+      </button>
+    );
+  };
+
   return {
     __esModule: true,
     default: CytoscapeStub,
-    CytoscapeComponent: CytoscapeStub, // falls per Named Import verwendet
+    CytoscapeComponent: CytoscapeStub,
   };
 });
 
