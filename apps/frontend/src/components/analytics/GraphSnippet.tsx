@@ -1,25 +1,61 @@
+// apps/frontend/src/components/analytics/GraphSnippet.tsx
+import React, { useEffect, useRef } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
-import React from 'react';
 
-export interface GraphData {
-  nodes: { data: { id: string; label: string } }[];
-  edges: { data: { source: string; target: string } }[];
-}
-interface Props {
-  data: GraphData;
+type CyInstance = {
+  on: (event: string, selector: string, handler: (evt: any) => void) => void;
+  off?: (event: string, selector?: string) => void;
+  destroy?: () => void;
+  $: (selector: string) => { emit: (event: string) => void };
+};
+
+export type GraphSnippetProps = {
+  data: { nodes: any[]; edges: any[] };
   onNodeClick?: (id: string) => void;
-  cyRef?: (cy: any) => void;
+  /** For tests: exposes the Cytoscape instance once ready */
+  onReady?: (cy: CyInstance) => void;
+};
+
+function GraphSnippetComponent({ data, onNodeClick, onReady }: GraphSnippetProps) {
+  const cyRef = useRef<CyInstance | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // Im Testumfeld kann der Canvas/Renderer fehlen – daher defensiv zerstören
+      try {
+        const cy = cyRef.current;
+        if (cy && typeof cy.destroy === 'function') cy.destroy();
+      } catch {
+        // noop
+      } finally {
+        cyRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div data-testid="graph-snippet">
+      <CytoscapeComponent
+        // react-cytoscapejs akzeptiert ein kombiniertes Array aus nodes+edges
+        elements={[...(data?.nodes ?? []), ...(data?.edges ?? [])]}
+        cy={(cy: CyInstance) => {
+          cyRef.current = cy;
+          if (onNodeClick) {
+            cy.on('tap', 'node', (evt: any) => {
+              const id = typeof evt?.target?.id === 'function' ? evt.target.id() : undefined;
+              if (id) onNodeClick(id);
+            });
+          }
+          if (onReady) onReady(cy);
+        }}
+        style={{ width: '100%', height: 200 }}
+      />
+    </div>
+  );
 }
 
-export const GraphSnippet: React.FC<Props> = ({ data, onNodeClick, cyRef }) => (
-  <div data-testid="graph-snippet" style={{ width: '100%', height: 300 }}>
-    <CytoscapeComponent
-      elements={[...data.nodes, ...data.edges]}
-      style={{ width: '100%', height: '100%' }}
-      cy={(cy: any) => {
-        cyRef && cyRef(cy);
-        cy.on('tap', 'node', (evt: any) => onNodeClick && onNodeClick(evt.target.id()));
-      }}
-    />
-  </div>
-);
+// Named export (für Tests, die named import verwenden)
+export const GraphSnippet = React.memo(GraphSnippetComponent);
+
+// Default export (für Importe ohne geschweifte Klammern)
+export default GraphSnippet;

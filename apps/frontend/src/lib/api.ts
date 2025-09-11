@@ -8,7 +8,6 @@ export type Id = string;
 // ---------- Asset / News / Graph (Basis) ----------
 
 export async function fetchAsset(id: Id) {
-  // TODO: replace with real fetch to your gateway
   return { id, name: `Asset ${id}` };
 }
 
@@ -17,8 +16,6 @@ export async function fetchAssetPrices(
   from?: string | number,
   to?: string | number
 ): Promise<Array<{ t: number; v: number }>> {
-  // Akzeptiere from/to optional – Aufrufer übergeben teils 2-3 Args
-  // TODO: backend call; structure expected by pages/asset/[id].tsx charts
   return [{ t: Date.now(), v: 100 }];
 }
 
@@ -26,8 +23,6 @@ export async function fetchGraph(
   id: Id,
   depth?: number
 ): Promise<{ nodes: any[]; edges: any[] }> {
-  // depth optional – Aufrufer rufen z.B. fetchGraph(id, 1)
-  // TODO: return minimal graph structure used by pages/* consumers
   return {
     nodes: [{ id, name: `Node ${id}`, depth: depth ?? 0 }],
     edges: [],
@@ -35,7 +30,6 @@ export async function fetchGraph(
 }
 
 export async function fetchNews(id: Id) {
-  // TODO: backend call or leave empty for now
   return [];
 }
 
@@ -50,31 +44,41 @@ export type EgoParams = {
 };
 
 /**
- * GraphX erwartet ein Objekt mit .data.elements und optional .counts
+ * GraphX greift auf .data.nodes / .data.relationships / .counts zu,
+ * verwendet aber teilweise auch ein Cytoscape-ähnliches .data.elements.
+ * Wir liefern beides für maximale Kompatibilität.
  */
-export async function getEgo(
-  params: EgoParams
-): Promise<{ data: { elements: any[] }; counts?: Record<string, number> }> {
+export async function getEgo(params: EgoParams): Promise<{
+  data: {
+    nodes: Array<{ data: any }>;
+    relationships: Array<{ data: any }>;
+    elements: Array<{ data: any }>;
+  };
+  counts: { nodes: number; relationships: number };
+}> {
   const center = String(params.value ?? 'center');
-  const elements = [
+
+  const nodes = [
     { data: { id: center, label: 'Center' } },
     { data: { id: 'n2', label: 'Neighbor' } },
-    { data: { source: center, target: 'n2' } },
   ];
+  const relationships = [{ data: { source: center, target: 'n2' } }];
+  const elements = [...nodes, ...relationships];
+
   return {
-    data: { elements },
-    counts: { nodes: 2, edges: 1 },
+    data: { nodes, relationships, elements },
+    counts: { nodes: nodes.length, relationships: relationships.length },
   };
 }
 
 /**
- * GraphX greift auf .data (Array) und optional .counts zu
+ * loadPeople liefert { data: [...] , counts: {...} }
  */
 export async function loadPeople(
   query?: { q?: string; limit?: number }
 ): Promise<{
   data: Array<{ id: string; name: string; knows_id?: string }>;
-  counts?: Record<string, number>;
+  counts: { total: number };
 }> {
   const n = query?.limit ?? 5;
   const data = Array.from({ length: n }, (_, i) => ({
@@ -86,28 +90,61 @@ export async function loadPeople(
 }
 
 /**
- * Darf mit 1 oder 2 Argumenten aufgerufen werden.
- * Rückgabeform: { data: [...] } (nicht { path: ...}),
- * da graphx.tsx auf .data zugreift.
+ * getShortestPath wird teils als getShortestPath(a,b),
+ * teils mit Objektargumenten { srcLabel, srcKey, srcVal, dstLabel, dstKey, dstVal } aufgerufen.
+ * Wir unterstützen beides und liefern { data.{nodes,relationships,elements} }.
  */
+type ShortestPathObjArgs = {
+  srcLabel: string;
+  srcKey: string;
+  srcVal: string | number;
+  dstLabel: string;
+  dstKey: string;
+  dstVal: string | number;
+};
+
 export async function getShortestPath(
   a: Id,
   b?: Id
-): Promise<{ data: Array<{ data: any }> }> {
-  const start = String(a);
-  const end = String(b ?? a);
+): Promise<{
+  data: {
+    nodes: Array<{ data: any }>;
+    relationships: Array<{ data: any }>;
+    elements: Array<{ data: any }>;
+  };
+}>;
+
+export async function getShortestPath(
+  params: ShortestPathObjArgs
+): Promise<{
+  data: {
+    nodes: Array<{ data: any }>;
+    relationships: Array<{ data: any }>;
+    elements: Array<{ data: any }>;
+  };
+}>;
+
+export async function getShortestPath(
+  aOrObj: Id | ShortestPathObjArgs,
+  b?: Id
+) {
+  const start = typeof aOrObj === 'string' ? String(aOrObj) : String(aOrObj.srcVal);
+  const end =
+    typeof aOrObj === 'string' ? String(b ?? aOrObj) : String(aOrObj.dstVal);
+
   const ids = [start, 'mid', end];
 
   const nodes = ids.map((id) => ({ data: { id, label: id } }));
-  const edges = ids.slice(0, -1).map((id, i) => ({
+  const relationships = ids.slice(0, -1).map((id, i) => ({
     data: { source: id, target: ids[i + 1] },
   }));
+  const elements = [...nodes, ...relationships];
 
-  return { data: [...nodes, ...edges] };
+  return { data: { nodes, relationships, elements } };
 }
 
 /**
- * Liefert einfache Erfolgsantwort inkl. URL (z. B. für Download)
+ * Simple Erfolgsantwort inkl. URL
  */
 export async function exportDossier(
   entityId: Id

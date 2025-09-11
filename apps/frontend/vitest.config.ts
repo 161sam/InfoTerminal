@@ -1,3 +1,4 @@
+// apps/frontend/vitest.config.ts
 import { defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
@@ -7,8 +8,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/setupTests.ts'],
-    css: false,
+    // Enthält Polyfills für ResizeObserver & Canvas:
+    setupFiles: ['src/test/setupTests.tsx'],
+    css: true,
     include: ['src/__tests__/**/*.{test,spec}.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
@@ -19,7 +21,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // <- wichtig: projektrelativ statt absolut
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 });
