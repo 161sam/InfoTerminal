@@ -1,48 +1,29 @@
-export const VIEWS_API =
-  process.env.NEXT_PUBLIC_VIEWS_API || "http://localhost:8403";
+/**
+ * TEMP shim until Codex consolidates API layer.
+ * Replace with real implementations or re-export from existing modules.
+ */
 
-async function handleEnvelopeWithHeaders(res: Response) {
-  const requestId = res.headers.get("x-request-id") || undefined;
-  if (!res.ok) throw new Error(`HTTP ${res.status}${requestId ? ` (req ${requestId})` : ""}`);
-  const j = await res.json();
-  if (!j || j.ok !== true) {
-    const msg = j?.error?.message || "Request failed";
-    throw new Error(requestId ? `${msg} (req ${requestId})` : msg);
-  }
-  return { data: j.data, counts: j.counts || {}, requestId };
+export type Id = string;
+
+export async function fetchAsset(id: Id) {
+  // TODO: replace with real fetch to your gateway
+  return { id, name: `Asset ${id}` };
 }
 
-export async function getEgo(opts: {label:string; key:string; value:string; depth?:number; limit?:number}) {
-  const p = new URLSearchParams({ label: opts.label, key: opts.key, value: String(opts.value) });
-  if (opts.depth != null) p.set("depth", String(opts.depth));
-  if (opts.limit != null) p.set("limit", String(opts.limit));
-  const res = await fetch(`${VIEWS_API}/graphs/view/ego?${p.toString()}`);
-  return handleEnvelopeWithHeaders(res);
+export async function fetchAssetPrices(id: Id) {
+  // TODO: backend call; structure expected by pages/asset/[id].tsx charts
+  return [{ t: Date.now(), v: 100 }];
 }
 
-export async function getShortestPath(opts: {srcLabel:string;srcKey:string;srcValue:string;dstLabel:string;dstKey:string;dstValue:string;maxLen?:number}) {
-  const p = new URLSearchParams({
-    srcLabel: opts.srcLabel, srcKey: opts.srcKey, srcValue: String(opts.srcValue),
-    dstLabel: opts.dstLabel, dstKey: opts.dstKey, dstValue: String(opts.dstValue)
-  });
-  if (opts.maxLen != null) p.set("maxLen", String(opts.maxLen));
-  const res = await fetch(`${VIEWS_API}/graphs/view/shortest-path?${p.toString()}`);
-  return handleEnvelopeWithHeaders(res);
+export async function fetchGraph(id: Id) {
+  // TODO: return minimal graph structure used by pages/* consumers
+  return {
+    nodes: [{ id, name: `Node ${id}` }],
+    edges: [],
+  };
 }
 
-export async function loadPeople(rows: Array<{id:string; name:string; knows_id?:string}>) {
-  const res = await fetch(`${VIEWS_API}/graphs/load/csv?write=1`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ rows })
-  });
-  return handleEnvelopeWithHeaders(res);
-}
-
-export async function exportDossier(opts: {label:string; key:string; value:string; depth?:number; limit?:number}) {
-  const p = new URLSearchParams({ label: opts.label, key: opts.key, value: String(opts.value) });
-  if (opts.depth != null) p.set("depth", String(opts.depth));
-  if (opts.limit != null) p.set("limit", String(opts.limit));
-  const res = await fetch(`${VIEWS_API}/graphs/export/dossier?${p.toString()}`);
-  return handleEnvelopeWithHeaders(res);
+export async function fetchNews(id: Id) {
+  // TODO: backend call or leave empty for now
+  return [];
 }
