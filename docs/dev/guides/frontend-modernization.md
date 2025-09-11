@@ -1136,3 +1136,12 @@ merged_at: 2025-09-10T08:23:40.408341Z
 ## 🧰 CLI
 
 ```bash
+---
+merged_from:
+  - docs/dev/testing.md#L30-L32
+merged_at: 2025-09-11T08:20:08.533550Z
+---
+
+### Running locally
+
+```bash

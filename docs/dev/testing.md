@@ -27,9 +27,7 @@ Key rules:
 Coverage reports are written to `coverage.xml` for Python services and to the `coverage/` directory for the frontend.
 CI jobs fail if coverage ever drops below 100 % for the measured source paths.
 
-### Running locally
-
-```bash
+➡ Consolidated at: guides/frontend-modernization.md#running-locally
 # Backend services and CLI
 pytest --cov --cov-report=term-missing
 
