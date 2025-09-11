@@ -3,19 +3,21 @@ import React from "react";
 
 const CytoscapeComponent = dynamic(() => import("react-cytoscapejs"), {
   ssr: false,
-});
+}) as any;
 
 export interface CytoscapeElement {
   data: any;
 }
 
+interface Props {
+  elements: CytoscapeElement[];
+  directed?: boolean;
+}
+
 export default function GraphViewerCytoscape({
   elements,
   directed = false,
-}: {
-  elements: CytoscapeElement[];
-  directed?: boolean;
-}) {
+}: Props) {
   if (!elements || elements.length === 0) return null;
   return (
     <CytoscapeComponent

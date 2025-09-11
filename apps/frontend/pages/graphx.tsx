@@ -12,14 +12,19 @@ function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
 
   const seed = async () => {
-    const rows = [
+    const raw = [
       { id: "alice", name: "Alice", knows_id: "bob" },
       { id: "bob", name: "Bob", knows_id: "carol" },
       { id: "carol", name: "Carol", knows_id: null },
     ];
+    const rows = raw.map(row => ({
+      id: row.id,
+      name: row.name,
+      knows_id: row.knows_id ?? undefined,
+    }));
     try {
-      const { counts } = await loadPeople(rows);
-      alert(`Seed OK: nodesCreated=${counts.nodes} relsCreated=${counts.relationships}`);
+      const res = await loadPeople(rows);
+      alert(res.ok ? "Seed OK" : "Seed failed");
     } catch (e: any) {
       alert(`Seed failed: ${e?.message || e}`);
     }
@@ -38,7 +43,7 @@ function DevPanel() {
 
   const exportAlice = async () => {
     try {
-      const r = await exportDossier({ label: "Person", key: "id", value: "alice", depth: 2 });
+      const r = await exportDossier({ label: "Person", key: "id", value: "alice" });
       const blob = new Blob([JSON.stringify(r, null, 2)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -152,13 +157,9 @@ export default function GraphXPage() {
     e.preventDefault();
     try {
       const { data } = await getShortestPath({
-        srcLabel,
-        srcKey,
-        srcValue,
-        dstLabel,
-        dstKey,
-        dstValue,
-        maxLen,
+        src: srcValue,
+        dst: dstValue,
+        direction: directed ? 'OUT' : 'ANY',
       });
       const nodes = (data.nodes || []).map((n: any) => ({
         data: { id: String(n.id), label: n.properties?.name || String(n.id) },
