@@ -13,6 +13,13 @@ secrets/
 *.kube/config
 data/**/secrets.json
 
+# docs pipeline artifacts
+WORK-ON_new_docs/out/
+WORK-ON-new_docs/out/
+*.zip
+*.tgz
+*.tar.gz
+
 # Build & cache directories
 /node_modules/
 /.next/

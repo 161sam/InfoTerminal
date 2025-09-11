@@ -364,8 +364,13 @@ def _detect_version(path: Path) -> str | None:
     return None
 
 
-def integrate_todo_tasks() -> int:
-    """Integrate tasks from ``todo_index.md`` into roadmap overview files."""
+def integrate_todo_tasks(batch_size: int = 3) -> Dict[str, int]:
+    """Integrate tasks from ``todo_index.md`` into roadmap overview files.
+
+    ``batch_size`` controls how many roadmap files are updated in a single
+    invocation.  Progress is tracked via ``roadmap_batch_index.txt`` in the
+    output directory so repeated runs remain idempotent.
+    """
 
     tasks = load_todo_tasks()
     v01: List[str] = []
@@ -381,30 +386,44 @@ def integrate_todo_tasks() -> int:
             v01.append(bullet)
         if version == "2" and not done:
             v02.append(bullet)
-        # All versioned tasks (including v0.3+) are tracked in the master list
         master.append(bullet)
 
-    # Keep deterministic ordering across runs for idempotency
     v01.sort()
     v02.sort()
     master.sort()
 
-    added_v01, _ = update_section(
-        DOCS_DIR / "dev/roadmap/v0.1-overview.md", "Abgeschlossene Detail-Tasks", v01
-    )
-    added_v02, _ = update_section(
-        DOCS_DIR / "dev/roadmap/v0.2-overview.md", "Offene Detail-Tasks", v02
-    )
-    master_file = DOCS_DIR / "dev/roadmap/v0.3-plus/master-todo.md"
-    added_master, _ = update_section(master_file, "Tasks", master)
-    if added_master == 0 and not master_file.exists():
-        write_file(master_file, "# Master TODO\n")
-    total_added = added_v01 + added_v02 + added_master
+    order = [
+        (DOCS_DIR / "dev/roadmap/v0.2-overview.md", "Offene Detail-Tasks", v02),
+        (DOCS_DIR / "dev/roadmap/v0.1-overview.md", "Abgeschlossene Detail-Tasks", v01),
+        (DOCS_DIR / "dev/roadmap/v0.3-plus/master-todo.md", "Tasks", master),
+    ]
+    idx_file = OUT_DIR / "roadmap_batch_index.txt"
+    start = 0
+    if idx_file.exists():
+        try:
+            start = int(idx_file.read_text(encoding="utf-8").strip())
+        except Exception:
+            start = 0
+    end = min(start + batch_size, len(order))
+    counts: Dict[str, int] = {}
+    for path, heading, items in order[start:end]:
+        added, _ = update_section(path, heading, items)
+        counts[str(path.relative_to(REPO_ROOT))] = added
+        if heading == "Tasks" and added == 0 and not path.exists():
+            write_file(path, "# Master TODO\n")
+    if end >= len(order):
+        if idx_file.exists():
+            idx_file.unlink()
+    else:
+        write_file(idx_file, str(end))
+    total_added = sum(counts.values())
     if total_added:
-        print(f"Integrated {total_added} roadmap tasks")
+        print(
+            f"Integrated {total_added} roadmap tasks across {len(counts)} file(s)"
+        )
     else:
         print("No new roadmap tasks")
-    return total_added
+    return counts
 
 
 def ensure_roadmap_index() -> None:
@@ -455,7 +474,7 @@ def consolidate_runbook_stack() -> None:
     )
 
 
-def consolidate() -> None:
+def consolidate(batch_size: int = 3) -> None:
     ensure_out_dir()
     for t in [
         "architecture/diagrams",
@@ -516,7 +535,7 @@ def consolidate() -> None:
     ensure_blueprints_readme()
     ensure_presets_readme()
     ensure_integrations_readme()
-    integrate_todo_tasks()
+    integrate_todo_tasks(batch_size=batch_size)
 
 
 # ---------------------------------------------------------------------------
@@ -647,16 +666,12 @@ def append_section(
     return anchor
 
 
-def dedupe() -> int:
+def dedupe(max_sections: int | None = None, target: str | None = None) -> int:
     """Merge duplicate sections into canonical files and rewrite sources.
 
-    The dedupe step reads ``duplicates_report.md`` and for each section pair
-    determines a canonical target based on filename heuristics. Non-empty
-    sections that have not yet been consolidated are appended to the target with
-    provenance front-matter and a UTC timestamp. The original location is
-    replaced by a short pointer linking to the merged section. The operation is
-    idempotent: hashes and existing pointers are checked so running the command
-    repeatedly does not create duplicates.
+    ``max_sections`` limits how many source sections are merged during a single
+    run.  When ``target`` is provided only canonical paths containing that
+    segment are considered.
     """
     ensure_out_dir()
     dup_file = OUT_DIR / "duplicates_report.md"
@@ -666,29 +681,28 @@ def dedupe() -> int:
         return 0
     processed: set[Tuple[Path, int, int]] = set()
     merged_pairs: List[Tuple[str, str]] = []
+    merged_count = 0
     for line in dup_file.read_text(encoding="utf-8").splitlines():
         if not line.startswith("- "):
             continue
         sections = extract_sections(line)
         if not sections:
             continue
-        # Determine canonical target for this duplicate group.  When exactly one
-        # canonical mapping exists we treat the other sections as sources and
-        # merge them into the canonical file.  This allows pairs like
-        # ``flowise-agents.md`` <-> ``waveterm/README.md`` to be consolidated
-        # even though only one side matches the heuristics.
         targets = [canonical_target(p) for p, _, _ in sections if canonical_target(p)]
-        target = None
         if targets and all(t == targets[0] for t in targets):
-            target = targets[0]
-        if not target:
+            target_path = targets[0]
+        else:
+            target_path = None
+        if not target_path:
+            continue
+        if target and target not in target_path.parts:
             continue
         for src, start, end in sections:
             key = (src, start, end)
             if key in processed:
                 continue
             processed.add(key)
-            if src == target:
+            if src == target_path:
                 continue
             lines = read_lines(src)
             section = lines[start - 1 : end]
@@ -696,29 +710,36 @@ def dedupe() -> int:
                 continue
             hashval = hash_text("\n".join(section))
             src_rel = str(src.relative_to(REPO_ROOT))
-            existing = find_existing_anchor(target, src_rel, start, end, hashval, section)
+            existing = find_existing_anchor(
+                target_path, src_rel, start, end, hashval, section
+            )
             was_new = False
             if existing:
                 anchor = existing
             else:
-                anchor = append_section(target, src_rel, start, end, section)
+                anchor = append_section(target_path, src_rel, start, end, section)
                 was_new = True
-            pointer_changed = replace_with_pointer(src, start, end, target, anchor)
+            pointer_changed = replace_with_pointer(src, start, end, target_path, anchor)
             if was_new or pointer_changed:
                 merged_pairs.append(
                     (
                         str(src.relative_to(REPO_ROOT)),
-                        str(target.relative_to(REPO_ROOT)),
+                        str(target_path.relative_to(REPO_ROOT)),
                     )
                 )
                 journal_entry = (
                     "- ACTION: merge+link\n"
                     f"  SRC: {src.relative_to(REPO_ROOT)}#L{start}-L{end}\n"
-                    f"  DST: {target.relative_to(REPO_ROOT)}#{anchor}\n"
+                    f"  DST: {target_path.relative_to(REPO_ROOT)}#{anchor}\n"
                     "  WHY: deduplicate\n"
                     f"  HASH: {hashval}"
                 )
                 append_journal(journal_entry)
+                merged_count += 1
+                if max_sections and merged_count >= max_sections:
+                    break
+        if max_sections and merged_count >= max_sections:
+            break
     if merged_pairs:
         targets = {dst for _, dst in merged_pairs}
         print(
@@ -766,17 +787,28 @@ def check_naming() -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("tasks", nargs="+", help="tasks to run")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_analyze = sub.add_parser("analyze")
+
+    p_cons = sub.add_parser("consolidate")
+    p_cons.add_argument("--batch-size", type=int, default=3)
+    p_cons.add_argument("--commit-budget-files", type=int, default=None)
+    p_cons.add_argument("--commit-budget-lines", type=int, default=None)
+
+    p_ded = sub.add_parser("dedupe")
+    p_ded.add_argument("--max-sections", type=int, default=None)
+    p_ded.add_argument("--commit-budget-files", type=int, default=None)
+    p_ded.add_argument("--commit-budget-lines", type=int, default=None)
+    p_ded.add_argument("--target", type=str, default=None)
+
     args = parser.parse_args()
-    for task in args.tasks:
-        if task == "analyze":
-            analyze()
-        elif task == "consolidate":
-            consolidate()
-        elif task == "dedupe":
-            dedupe()
-        else:
-            raise ValueError(f"Unknown task {task}")
+    if args.command == "analyze":
+        analyze()
+    elif args.command == "consolidate":
+        consolidate(batch_size=args.batch_size)
+    elif args.command == "dedupe":
+        dedupe(max_sections=args.max_sections, target=args.target)
 
 
 if __name__ == "__main__":
