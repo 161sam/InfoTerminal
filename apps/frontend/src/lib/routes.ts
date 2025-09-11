@@ -16,7 +16,13 @@ export const getExternalUrl = (k: ExternalAppKey): string | null => {
   return v.trim() ? v : null;
 };
 
-export const sidebar = [
+export interface SidebarItem {
+  label: string;
+  href: string;
+  externalKey?: string;
+}
+
+export const sidebar: SidebarItem[] = [
   { label: "Dashboard", href: "/" },
   { label: "Search", href: "/search" },
   { label: "Graph", href: "/graphx" },

@@ -29,6 +29,6 @@ export const appRoutes: AppRoute[] = [
 // kleine Helfer:
 export const getExternalUrl = (r: AppRoute): string | null => {
   if (r.kind !== "external" || !r.urlEnvVar) return null;
-  const url = import.meta.env[r.urlEnvVar as keyof ImportMetaEnv] as string | undefined;
+  const url = process.env[r.urlEnvVar as keyof typeof process.env];
   return url && url.trim().length > 0 ? url : null;
 };
