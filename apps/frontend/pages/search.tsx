@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import Layout from "@/components/Layout";
-import Card from "@/components/ui/Card";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 import Button from "@/components/ui/Button";
 import Field from "@/components/ui/Field";
 import StatusPill from "@/components/ui/StatusPill";
@@ -49,32 +49,34 @@ export default function SearchPage() {
   const chips = ["demo", "graph", "open source"];
 
   return (
-    <Layout showHealth>
-      <h1 className="mb-4">Search</h1>
-      <div className="mb-4 flex items-end gap-2">
-        <Field
-          label="Query"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="flex-1"
-        />
-        <div>
-          <label className="mb-1 block text-sm font-medium">Sort</label>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="rounded-md border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500"
-          >
-            <option value="relevance">relevance</option>
-            <option value="date_desc">date_desc</option>
-            <option value="date_asc">date_asc</option>
-          </select>
-        </div>
-        <Button onClick={runSearch} isLoading={isLoading} disabled={!q}>
-          Search
-        </Button>
-      </div>
-      <div className="mb-4 flex gap-2">
+    <DashboardLayout title="Search">
+      <div className="space-y-6">
+        <h1 className="text-2xl font-semibold mb-6">Search</h1>
+        <Panel>
+          <div className="mb-4 flex items-end gap-2">
+          <Field
+            label="Query"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="flex-1"
+          />
+          <div>
+            <label className="mb-1 block text-sm font-medium">Sort</label>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="rounded-md border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500"
+            >
+              <option value="relevance">relevance</option>
+              <option value="date_desc">date_desc</option>
+              <option value="date_asc">date_asc</option>
+            </select>
+          </div>
+          <Button onClick={runSearch} isLoading={isLoading} disabled={!q}>
+            Search
+          </Button>
+          </div>
+          <div className="mb-2 flex gap-2">
         {chips.map((c) => (
           <button
             key={c}
@@ -84,22 +86,24 @@ export default function SearchPage() {
             {c}
           </button>
         ))}
+          {error && <StatusPill status="fail">{error}</StatusPill>}
+          </div>
+        </Panel>
+        <div className="space-y-4">
+          {isLoading && <div>Loading...</div>}
+          {!isLoading &&
+            results.map((r) => (
+              <Panel key={r.id}>
+                <h3 className="font-semibold">{r.title || r.id}</h3>
+                {r.snippet && <p className="text-sm text-gray-600 dark:text-slate-300">{r.snippet}</p>}
+                {r.score !== undefined && (
+                  <p className="text-xs text-gray-500">Score: {r.score}</p>
+                )}
+                {r.date && <p className="text-xs text-gray-500">{r.date}</p>}
+              </Panel>
+            ))}
+        </div>
       </div>
-      {error && <StatusPill status="fail">{error}</StatusPill>}
-      <div className="space-y-4">
-        {isLoading && <div>Loading...</div>}
-        {!isLoading &&
-          results.map((r) => (
-            <Card key={r.id}>
-              <h3 className="font-semibold">{r.title || r.id}</h3>
-              {r.snippet && <p className="text-sm text-gray-600">{r.snippet}</p>}
-              {r.score !== undefined && (
-                <p className="text-xs text-gray-500">Score: {r.score}</p>
-              )}
-              {r.date && <p className="text-xs text-gray-500">{r.date}</p>}
-            </Card>
-          ))}
-      </div>
-    </Layout>
+    </DashboardLayout>
   );
 }

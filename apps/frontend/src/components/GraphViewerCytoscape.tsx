@@ -1,45 +1,21 @@
-import dynamic from "next/dynamic";
-import React from "react";
+import React from 'react';
+import CytoscapeComponent from 'react-cytoscapejs';
 
-const CytoscapeComponent = dynamic(() => import("react-cytoscapejs"), {
-  ssr: false,
-}) as any;
+type CyElement = any; // TODO: narrow type if you have a schema
+type Props = {
+  elements: CyElement;
+  layout?: { name: string; [k: string]: any };
+  style?: React.CSSProperties;
+  className?: string;
+    directed?: boolean; // <- ergänzt, wird intern nicht benötigt
+};
 
-export interface CytoscapeElement {
-  data: any;
-}
-
-interface Props {
-  elements: CytoscapeElement[];
-  directed?: boolean;
-}
-
-export default function GraphViewerCytoscape({
-  elements,
-  directed = false,
-}: Props) {
-  if (!elements || elements.length === 0) return null;
+const GraphViewerCytoscape: React.FC<Props> = ({ elements, layout = { name: 'grid' }, style, className }) => {
   return (
-    <CytoscapeComponent
-      elements={elements as any}
-      layout={{ name: "breadthfirst" }}
-      style={{ width: "100%", height: 400, border: "1px solid #ccc", borderRadius: 8 }}
-      stylesheet={[
-        {
-          selector: "node",
-          style: {
-            label: "data(label)",
-          },
-        },
-        {
-          selector: "edge",
-          style: {
-            label: "data(label)",
-            "curve-style": "bezier",
-            "target-arrow-shape": directed ? "triangle" : "none",
-          },
-        },
-      ]}
-    />
+    <div className={className} style={{ width: '100%', height: '400px', ...style }}>
+      <CytoscapeComponent elements={elements} layout={layout} style={{ width: '100%', height: '100%' }} />
+    </div>
   );
-}
+};
+
+export default GraphViewerCytoscape;

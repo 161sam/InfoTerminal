@@ -1,5 +1,5 @@
 // apps/frontend/src/components/forms/FormComponents.tsx
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
 import { validateField, type ValidatorMap, type ValidationRule } from '@/lib/validation';
@@ -17,6 +17,7 @@ export type InputProps = Omit<React.ComponentProps<'input'>, 'value' | 'onChange
   error?: string | null;
   icon?: LucideIcon;
   rightElement?: React.ReactNode;
+  id?: string; // für htmlFor-Verknüpfung
 };
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -31,16 +32,22 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       rightElement,
       type = 'text',
       className,
+      id,
       ...rest
     },
     ref
   ) => {
     const [showPassword, setShowPassword] = useState(false);
+    const autoId = useId();
+    const inputId = id ?? `input-${autoId}`;
     const inputType = type === 'password' && showPassword ? 'text' : type;
 
     return (
       <div className={`space-y-1 ${className ?? ''}`}>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          htmlFor={inputId}
+        >
           {label}
           {rest.required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -54,6 +61,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           <input
             {...rest}
+            id={inputId}
             ref={ref}
             type={inputType}
             value={value}
@@ -77,6 +85,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -93,9 +102,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span>{error}</span>
           </div>
         ) : (
-          helpText && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">{helpText}</p>
-          )
+          helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{helpText}</p>
         )}
       </div>
     );

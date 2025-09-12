@@ -12,7 +12,6 @@ import {
   Clock
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-
 export default function SecurityPage() {
   const [auditLogs, setAuditLogs] = useState([
     { id: 1, action: 'User login', user: 'admin', timestamp: '2024-03-01 10:30:00', status: 'success' },

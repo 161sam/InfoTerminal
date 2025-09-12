@@ -1,11 +1,15 @@
-import type { AppProps } from "next/app";
-import AppLayout from "@/components/layout/AppLayout";
-import "@/styles/globals.css";
+import type { AppProps } from 'next/app';
+import '@/styles/globals.css';
+import { ThemeProvider } from '@/lib/theme-provider';
+import { ToastProvider, ToastViewport } from '@/components/ui/toast';
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <AppLayout>
-      <Component {...pageProps} />
-    </AppLayout>
+    <ThemeProvider>
+      <ToastProvider>
+        <Component {...pageProps} />
+        <ToastViewport />
+      </ToastProvider>
+    </ThemeProvider>
   );
 }

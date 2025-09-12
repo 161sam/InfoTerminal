@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Layout from "@/components/Layout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Field from "@/components/ui/Field";
@@ -58,13 +58,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <Layout showHealth>
+    <DashboardLayout title="Settings">
       <h1 className="mb-4">Settings</h1>
       <div className="space-y-6">
-        <Card>
-          <h2 className="mb-2">Theme</h2>
-          <p className="text-sm text-gray-600">Dark mode toggle coming soon.</p>
-        </Card>
 
         <Card>
           <h2 className="mb-4">API Endpoints</h2>
@@ -110,6 +106,6 @@ export default function SettingsPage() {
 
         <p className="text-xs text-gray-500">Saved to localStorage under it.settings.endpoints</p>
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 }

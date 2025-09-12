@@ -150,3 +150,68 @@ vi.mock('react-cytoscapejs', () => {
 vi.mock('lucide-react', () => new Proxy({}, {
   get: () => () => null,
 }));
+
+// --- Polyfills for JSDOM ---
+
+// 1) ResizeObserver (für recharts, etc.)
+class RO {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+if (typeof (globalThis as any).ResizeObserver === 'undefined') {
+  (globalThis as any).ResizeObserver = RO as any;
+}
+
+// 2) Canvas-Stub (für cytoscape & recharts)
+if (typeof HTMLCanvasElement !== 'undefined') {
+  // Avoid "Could not create canvas of type 2d"
+  (HTMLCanvasElement.prototype as any).getContext = function getContext() {
+    return {
+      // minimal 2D API surface
+      canvas: this,
+      fillRect() {},
+      clearRect() {},
+      getImageData() { return { data: new Uint8ClampedArray() }; },
+      putImageData() {},
+      createImageData() { return new ImageData(1, 1); },
+      setTransform() {},
+      drawImage() {},
+      save() {},
+      restore() {},
+      beginPath() {},
+      moveTo() {},
+      lineTo() {},
+      closePath() {},
+      stroke() {},
+      translate() {},
+      scale() {},
+      rotate() {},
+      arc() {},
+      fill() {},
+      measureText() { return { width: 0 }; },
+      transform() {},
+      resetTransform() {},
+      createLinearGradient() { return { addColorStop() {} }; },
+    };
+  };
+
+  // toDataURL is sometimes accessed
+  if (!(HTMLCanvasElement.prototype as any).toDataURL) {
+    (HTMLCanvasElement.prototype as any).toDataURL = () => '';
+  }
+}
+
+// 3) matchMedia stub (falls Komponenten es erwarten)
+if (typeof (window as any).matchMedia === 'undefined') {
+  (window as any).matchMedia = () => ({
+    matches: false,
+    media: '',
+    onchange: null,
+    addListener() {},
+    removeListener() {},
+    addEventListener() {},
+    removeEventListener() {},
+    dispatchEvent() { return false; },
+  });
+}
