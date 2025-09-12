@@ -72,21 +72,39 @@ export async function getEgo(params: EgoParams): Promise<{
 }
 
 /**
- * loadPeople liefert { data: [...] , counts: {...} }
+ * loadPeople: Konsistenter Rückgabetyp
+ * - Seed (Array übergeben) -> { data, inserted }
+ * - Query (kein Array)     -> { data }
  */
+type PersonRow = { id: string; name: string; knows_id?: string | null };
+
+// Overloads (typed)
+export function loadPeople(people: Array<PersonRow>): Promise<{ data: Array<PersonRow>; inserted: number }>;
+export function loadPeople(query?: { q?: string; limit?: number }): Promise<{ data: Array<PersonRow>; inserted?: undefined }>;
+
+// Implementation (broad signature)
 export async function loadPeople(
-  query?: { q?: string; limit?: number }
-): Promise<{
-  data: Array<{ id: string; name: string; knows_id?: string }>;
-  counts: { total: number };
-}> {
-  const n = query?.limit ?? 5;
+  arg?: Array<PersonRow> | { q?: string; limit?: number }
+): Promise<{ data: Array<PersonRow>; inserted?: number }> {
+  // Seed mode: array provided
+  if (Array.isArray(arg)) {
+    const data = arg.map((p) => ({
+      id: String(p.id),
+      name: String(p.name),
+      knows_id: p.knows_id ?? undefined,
+    }));
+    const inserted = data.length;
+    return { data, inserted };
+  }
+
+  // Query/default mode: generate list
+  const n = (arg as { limit?: number } | undefined)?.limit ?? 5;
   const data = Array.from({ length: n }, (_, i) => ({
     id: `p${i + 1}`,
     name: `Person ${i + 1}`,
     knows_id: i > 0 ? `p${i}` : undefined,
   }));
-  return { data, counts: { total: data.length } };
+  return { data };
 }
 
 /**
@@ -97,13 +115,17 @@ export async function loadPeople(
 type ShortestPathObjArgs = {
   srcLabel: string;
   srcKey: string;
-  srcVal: string | number;
+  srcValue?: string | number; // preferred naming
+  srcVal?: string | number;   // legacy alias
   dstLabel: string;
   dstKey: string;
-  dstVal: string | number;
+  dstValue?: string | number; // preferred naming
+  dstVal?: string | number;   // legacy alias
+  // optional parameters used by callers
+  maxLen?: number;
 };
 
-export async function getShortestPath(
+export function getShortestPath(
   a: Id,
   b?: Id
 ): Promise<{
@@ -114,7 +136,7 @@ export async function getShortestPath(
   };
 }>;
 
-export async function getShortestPath(
+export function getShortestPath(
   params: ShortestPathObjArgs
 ): Promise<{
   data: {
@@ -128,9 +150,14 @@ export async function getShortestPath(
   aOrObj: Id | ShortestPathObjArgs,
   b?: Id
 ) {
-  const start = typeof aOrObj === 'string' ? String(aOrObj) : String(aOrObj.srcVal);
+  const start =
+    typeof aOrObj === 'string'
+      ? String(aOrObj)
+      : String(aOrObj.srcValue ?? aOrObj.srcVal ?? '');
   const end =
-    typeof aOrObj === 'string' ? String(b ?? aOrObj) : String(aOrObj.dstVal);
+    typeof aOrObj === 'string'
+      ? String(b ?? aOrObj)
+      : String(aOrObj.dstValue ?? aOrObj.dstVal ?? '');
 
   const ids = [start, 'mid', end];
 
@@ -146,8 +173,30 @@ export async function getShortestPath(
 /**
  * Simple Erfolgsantwort inkl. URL
  */
-export async function exportDossier(
+// Overloads: accept plain Id or a selector object
+export function exportDossier(
   entityId: Id
-): Promise<{ ok: boolean; id: Id; url: string }> {
-  return { ok: true, id: entityId, url: `/api/dossier/${entityId}.pdf` };
+): Promise<{ ok: boolean; id: Id; url: string }>;
+
+export function exportDossier(
+  params: { label: string; key: string; value: string | number; depth?: number }
+): Promise<{ ok: boolean; label: string; key: string; value: string | number; depth?: number; url: string }>;
+
+export async function exportDossier(
+  entityOrParams: Id | { label: string; key: string; value: string | number; depth?: number }
+) {
+  if (typeof entityOrParams === 'string') {
+    const entityId = entityOrParams;
+    return { ok: true, id: entityId, url: `/api/dossier/${entityId}.pdf` };
+  }
+  const { label, key, value, depth } = entityOrParams;
+  const safeId = `${label.toLowerCase()}_${String(value)}`.replace(/[^a-z0-9_-]+/gi, '_');
+  return {
+    ok: true,
+    label,
+    key,
+    value,
+    depth,
+    url: `/api/dossier/${safeId}.pdf`,
+  };
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Layout from "@/components/Layout";
-import Card from "@/components/ui/Card";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 import Button from "@/components/ui/Button";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
 import GraphViewerCytoscape from "@/components/GraphViewerCytoscape";
@@ -18,8 +18,8 @@ function DevPanel() {
       { id: "carol", name: "Carol", knows_id: null },
     ];
     try {
-      const { counts } = await loadPeople(rows);
-      alert(`Seed OK: nodesCreated=${counts.nodes} relsCreated=${counts.relationships}`);
+      const { inserted } = await loadPeople(rows);
+      alert(`Seed OK: inserted=${inserted}`);
     } catch (e: any) {
       alert(`Seed failed: ${e?.message || e}`);
     }
@@ -178,10 +178,10 @@ export default function GraphXPage() {
   };
 
   return (
-    <Layout showHealth>
-      <h1 className="mb-4">GraphX</h1>
+    <DashboardLayout title="GraphX">
       <div className="space-y-6">
-        <Card>
+        <h1 className="text-2xl font-semibold mb-6">GraphX</h1>
+        <Panel>
           <h2 className="mb-2">Connections</h2>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
@@ -193,9 +193,9 @@ export default function GraphXPage() {
               {viewsStatus && <StatusPill status={viewsStatus} />}
             </div>
           </div>
-        </Card>
+        </Panel>
 
-        <Card>
+        <Panel>
           <h2 className="mb-2">Query</h2>
           <textarea
             value={query}
@@ -211,9 +211,9 @@ export default function GraphXPage() {
               <StatusPill status={runStatus} />
             )}
           </div>
-        </Card>
+        </Panel>
 
-        <Card>
+        <Panel>
           <h2 className="mb-2">Output</h2>
           {output ? (
             <pre className="max-h-96 overflow-auto text-xs">
@@ -224,15 +224,15 @@ export default function GraphXPage() {
               Run a query to see results
             </p>
           )}
-        </Card>
+        </Panel>
 
-        <Card>
+        <Panel>
           <h2 className="mb-2">Ego Sample</h2>
           <Button onClick={runEgo}>Run Ego(Person id=alice)</Button>
           {egoInfo && <p className="mt-2 text-sm">{egoInfo}</p>}
-        </Card>
+        </Panel>
 
-        <Card>
+        <Panel>
           <h2 className="mb-2">Shortest Path</h2>
           <form onSubmit={findPath} className="grid gap-2 md:grid-cols-3">
             <input
@@ -293,9 +293,9 @@ export default function GraphXPage() {
               <GraphViewerCytoscape elements={elements} directed={directed} />
             </div>
           )}
-        </Card>
+        </Panel>
       </div>
       <DevPanel />
-    </Layout>
+    </DashboardLayout>
   );
 }

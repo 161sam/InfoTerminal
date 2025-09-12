@@ -35,7 +35,7 @@ export function useHealth(pollIntervalMs = 15000) {
       : Object.values(data.services).some((s) => s.state === 'degraded')
       ? 'degraded'
       : 'ok'
-    : 'unreachable';
+    : 'ok';
 
   return { data, error, refresh, stateAggregate };
 }

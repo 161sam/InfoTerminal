@@ -11,13 +11,16 @@ export default defineConfig({
     // Enthält Polyfills für ResizeObserver & Canvas:
     setupFiles: ['src/test/setupTests.tsx'],
     css: true,
-    include: ['src/__tests__/**/*.{test,spec}.{ts,tsx}'],
+    include: ['src/__tests__/**/*.{test,spec}.{ts,tsx}', 'src/tests/**/*.{test,spec}.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
       '**/e2e/**',
     ],
+  },
+  esbuild: {
+    jsx: 'automatic',
   },
   resolve: {
     alias: {
