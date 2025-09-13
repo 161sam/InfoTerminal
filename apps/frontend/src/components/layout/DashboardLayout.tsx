@@ -3,56 +3,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import {
-  Search,
-  BarChart3,
-  Network,
-  FileText,
   Settings,
   Bell,
   Menu,
   X,
-  Home,
-  Users,
-  Database,
-  Shield,
   Activity,
-  MessageSquare,
-  Sparkles
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import GlobalHealth from '../health/GlobalHealth';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { NAV_ITEMS, isEnabled, type NavItem } from '@/components/navItems';
 
-interface NavigationItem {
-  name: string;
-  href: string;
-  icon: LucideIcon;
-  badge?: number;
-}
-
-import { extraNav, isEnabled } from '@/components/navItems';
-
-const baseNavigation: NavigationItem[] = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Search', href: '/search', icon: Search },
-  { name: 'Graph', href: '/graphx', icon: Network },
-  { name: 'Documents', href: '/documents', icon: FileText },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Entities', href: '/entities', icon: Users },
-  { name: 'Data', href: '/data', icon: Database },
-  { name: 'Security', href: '/security', icon: Shield }
-];
-
-const navigation: NavigationItem[] = [...baseNavigation];
-
-extraNav.filter(isEnabled).forEach((item) => {
-  if (!navigation.find((n) => n.href === item.href)) {
-    let icon = MessageSquare as LucideIcon;
-    if (item.icon === 'Sparkles') icon = Sparkles;
-    if (item.icon === 'MessageSquare') icon = MessageSquare;
-    navigation.push({ name: item.label, href: item.href, icon });
-  }
-});
+const navigation = NAV_ITEMS.filter(isEnabled);
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -111,7 +72,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
           aria-label="Sidebar"
           className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-xl focus:outline-none"
         >
-          <SidebarContent currentPath={router.pathname} onClose={() => setSidebarOpen(false)} />
+          <SidebarContent items={navigation} currentPath={router.pathname} onClose={() => setSidebarOpen(false)} />
         </div>
       </div>
 
@@ -122,7 +83,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         aria-label="Sidebar"
         className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800"
       >
-        <SidebarContent currentPath={router.pathname} />
+        <SidebarContent items={navigation} currentPath={router.pathname} />
       </aside>
 
       {/* Main content */}
@@ -175,11 +136,12 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
 }
 
 interface SidebarContentProps {
+  items: NavItem[];
   currentPath?: string;
   onClose?: () => void;
 }
 
-function SidebarContent({ currentPath, onClose }: SidebarContentProps) {
+function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
   return (
     <div className="flex h-full flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
       {/* Logo */}
@@ -199,7 +161,7 @@ function SidebarContent({ currentPath, onClose }: SidebarContentProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {navigation.map((item) => {
+        {items.map((item) => {
           const cp = currentPath || '';
           const isActive = cp === item.href || 
             (item.href !== '/' && cp.startsWith(item.href));
