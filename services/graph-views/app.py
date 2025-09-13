@@ -73,6 +73,11 @@ if os.getenv("IT_ENABLE_METRICS") == "1":
 setup_otel(app)
 app.include_router(ontology_router)
 app.include_router(dossier_router)
+try:
+    from .geo import router as geo_router  # type: ignore
+except Exception:  # pragma: no cover
+    from geo import router as geo_router  # type: ignore
+app.include_router(geo_router)
 
 app.state.rate_cfg = os.getenv("GV_RATE_LIMIT_WRITE", "")
 app.state.rate_cap, app.state.rate_refill = parse_rate(app.state.rate_cfg)

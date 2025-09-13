@@ -9,6 +9,7 @@ import { getEgo, loadPeople, getShortestPath, exportDossier } from "@/lib/api";
 import { toast } from "@/components/ui/toast";
 import DossierButton from "@/components/DossierButton";
 import AnalysisPanel from "@/components/graph/AnalysisPanel";
+import MapPanel from "@/components/MapPanel";
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
@@ -104,6 +105,7 @@ export default function GraphXPage() {
   const [maxLen, setMaxLen] = useState(4);
   const [directed, setDirected] = useState(false);
   const [elements, setElements] = useState<any[]>([]);
+  const [showMap, setShowMap] = useState(false);
 
   const pingGraph = async () => {
     setGraphStatus("loading");
@@ -300,8 +302,14 @@ export default function GraphXPage() {
           )}
         </Panel>
       </div>
-      <AnalysisPanel />
-      <DevPanel />
-    </DashboardLayout>
-  );
-}
+        <div className="mt-4">
+          <Button variant="secondary" onClick={() => setShowMap((v) => !v)}>
+            {showMap ? 'Hide Map' : 'Show Map'}
+          </Button>
+        </div>
+        {showMap && <div className="mt-4"><MapPanel /></div>}
+        <AnalysisPanel />
+        <DevPanel />
+      </DashboardLayout>
+    );
+  }
