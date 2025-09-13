@@ -124,3 +124,7 @@
 - **Prio Kann:** Active Learning, Review-UI, Dossier-Verifikation, Forensics Hash+Sign, Ethical AI
 
 ---
+
+# TODO-Index
+
+<!-- merged:20250913-101006 -->
