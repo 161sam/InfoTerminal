@@ -7,6 +7,7 @@ import GraphViewerCytoscape from "@/components/GraphViewerCytoscape";
 import config from "@/lib/config";
 import { getEgo, loadPeople, getShortestPath, exportDossier } from "@/lib/api";
 import { toast } from "@/components/ui/toast";
+import DossierButton from "@/components/DossierButton";
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
@@ -212,6 +213,9 @@ export default function GraphXPage() {
             )}
           </div>
         </Panel>
+
+        {/* Export graph query as dossier */}
+        <DossierButton getPayload={() => ({ query, entities: [], graphSelection: { nodes: [], edges: [] } })} />
 
         <Panel>
           <h2 className="mb-2">Output</h2>

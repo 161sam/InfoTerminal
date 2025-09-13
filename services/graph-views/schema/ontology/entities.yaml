@@ -1,0 +1,6 @@
+- name: Person
+  label: Person
+  properties:
+    - { name: id,   type: string, required: true }
+    - { name: name, type: text,   required: true }
+    - { name: birthDate, type: date, required: false }

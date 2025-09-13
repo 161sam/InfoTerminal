@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import Field from "@/components/ui/Field";
 import StatusPill from "@/components/ui/StatusPill";
 import config from "@/lib/config";
+import DossierButton from "@/components/DossierButton";
 
 type SearchResult = {
   id: string;
@@ -91,6 +92,8 @@ export default function SearchPage() {
           {error && <StatusPill status="fail">{error}</StatusPill>}
           </div>
         </Panel>
+        {/* Export current search as dossier */}
+        <DossierButton getPayload={() => ({ query: q, entities: [], graphSelection: { nodes: [], edges: [] } })} />
         <div className="space-y-4">
           {isLoading && <div>Loading...</div>}
           {!isLoading &&

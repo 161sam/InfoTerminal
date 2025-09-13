@@ -14,8 +14,12 @@ from audit import log_event, new_request_id
 
 from _shared.cors import apply_cors
 from _shared.health import make_healthz, make_readyz
-from _shared.obs.metrics_boot import enable_prometheus_metrics
+from starlette_exporter import PrometheusMiddleware, handle_metrics
+from common.request_id import RequestIdMiddleware
 from _shared.obs.otel_boot import setup_otel
+from it_logging import setup_logging
+from ontology.api import router as ontology_router
+from dossier.api import router as dossier_router
 try:  # pragma: no cover - import fallback for tests
     from . import neo  # type: ignore
 except ImportError:  # pragma: no cover
@@ -60,9 +64,15 @@ async def lifespan(app: FastAPI):
 # FastAPI-App
 # -----------------------
 app = FastAPI(title="graph-views", lifespan=lifespan)
+setup_logging(app, service_name="graph-views")
 apply_cors(app)
-enable_prometheus_metrics(app, route="/metrics")
+app.add_middleware(RequestIdMiddleware)
+if os.getenv("IT_ENABLE_METRICS") == "1":
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
 setup_otel(app)
+app.include_router(ontology_router)
+app.include_router(dossier_router)
 
 app.state.rate_cfg = os.getenv("GV_RATE_LIMIT_WRITE", "")
 app.state.rate_cap, app.state.rate_refill = parse_rate(app.state.rate_cfg)

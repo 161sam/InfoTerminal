@@ -1,0 +1,6 @@
+- name: KNOWS
+  type: KNOWS
+  from: Person
+  to: Person
+  properties:
+    - { name: since, type: date, required: false }
