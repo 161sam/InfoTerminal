@@ -26,6 +26,7 @@ import {
   ArrowUpDown,
   ExternalLink
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Panel from '@/components/layout/Panel';
 import { DataTable, Column, TableAction } from '@/components/ui/DataTable';
@@ -160,13 +161,15 @@ const MOCK_ENTITIES: Entity[] = [
   }
 ];
 
-const ENTITY_TYPE_ICONS = {
-  'Person': User,
-  'Organization': Building2,
-  'Location': MapPin,
-  'Email': Mail,
-  'Domain': Globe
-} as const;
+const ENTITY_TYPE_ICONS: Record<EntityLabel, LucideIcon> = {
+  Person: User,
+  Organization: Building2,
+  Location: MapPin,
+  Email: Mail,
+  Domain: Globe,
+  IP: Network,
+  Misc: ExternalLink,
+};
 
 const RISK_LEVELS = [
   { value: 'all', label: 'All Levels', color: 'gray' },

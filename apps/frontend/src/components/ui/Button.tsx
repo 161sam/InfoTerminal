@@ -1,7 +1,8 @@
 import React from "react";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "outline";
+  size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
 
@@ -10,19 +11,30 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  */
 const Button: React.FC<ButtonProps> = ({
   variant = "primary",
+  size = "md",
   isLoading = false,
   disabled,
   className = "",
   children,
   ...props
 }) => {
-  const base =
+  const variantClasses =
     variant === "primary"
       ? "bg-primary-600 text-white hover:bg-primary-700"
-      : "bg-gray-200 text-gray-800 hover:bg-gray-300";
+      : variant === "secondary"
+      ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+      : "border border-gray-300 text-gray-700 bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:text-slate-200 dark:hover:bg-gray-800"; // outline
+
+  const sizeClasses =
+    size === "sm"
+      ? "px-3 py-1.5 text-xs"
+      : size === "lg"
+      ? "px-5 py-3 text-base"
+      : "px-4 py-2 text-sm"; // md
+
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed ${base} ${className}`}
+      className={`inline-flex items-center justify-center rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed ${sizeClasses} ${variantClasses} ${className}`}
       disabled={disabled || isLoading}
       aria-busy={isLoading}
       {...props}

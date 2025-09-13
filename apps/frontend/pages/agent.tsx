@@ -12,6 +12,7 @@ import {
   History,
   Sparkles
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Panel from '@/components/layout/Panel';
 import { getApis } from '@/lib/config';
@@ -30,7 +31,7 @@ type PlaybookAction = {
   name: string;
   displayName: string;
   description: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: LucideIcon;
   color: string;
 };
 

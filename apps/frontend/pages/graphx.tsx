@@ -132,11 +132,11 @@ function DevToolsPanel() {
   return (
     <Panel title="Developer Tools" className="border-2 border-dashed border-orange-200 dark:border-orange-800">
       <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="outline" onClick={seedDemo}>
+        <Button size="sm" variant="secondary" onClick={seedDemo}>
           <Users size={14} className="mr-2" />
           Seed Demo Data
         </Button>
-        <Button size="sm" variant="outline" onClick={testEgo}>
+        <Button size="sm" variant="secondary" onClick={testEgo}>
           <Network size={14} className="mr-2" />
           Test Ego Query
         </Button>
@@ -330,7 +330,7 @@ export default function GraphExplorerPage() {
             
             <Button 
               size="sm" 
-              variant="outline" 
+              variant="secondary" 
               onClick={checkServices}
               disabled={graphStatus === "loading" || viewsStatus === "loading"}
             >
@@ -341,7 +341,7 @@ export default function GraphExplorerPage() {
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              variant="outline"
+              variant="secondary"
               onClick={() => setShowMap(!showMap)}
             >
               <MapPin size={14} className="mr-2" />
@@ -581,7 +581,7 @@ export default function GraphExplorerPage() {
                           </div>
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="secondary"
                             onClick={() => setCustomQuery(sample.query)}
                           >
                             Use
@@ -615,7 +615,7 @@ export default function GraphExplorerPage() {
                 <Panel title="Export & Import">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       onClick={() => {
                         const payload = { 
                           query: customQuery, 
@@ -629,7 +629,7 @@ export default function GraphExplorerPage() {
                       Export Graph Data
                     </Button>
                     
-                    <Button variant="outline">
+                    <Button variant="secondary">
                       <Database size={16} className="mr-2" />
                       Import Graph Data
                     </Button>
