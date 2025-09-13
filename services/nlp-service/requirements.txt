@@ -1,6 +1,6 @@
 fastapi==0.111.0
 uvicorn==0.30.1
-spacy==3.7.2
+spacy==3.8.2
 transformers==4.40.2
 prometheus-client==0.20.*
 prometheus-fastapi-instrumentator==6.1.*
