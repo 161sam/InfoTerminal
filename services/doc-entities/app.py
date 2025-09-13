@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # type: ignore
-from prometheus_fastapi_instrumentator import Instrumentator
+from starlette_exporter import PrometheusMiddleware, handle_metrics
+from common.request_id import RequestIdMiddleware
 import importlib.util
 from pathlib import Path
 
@@ -26,6 +26,34 @@ RESOLVER_RUNS = _metrics.RESOLVER_RUNS
 RESOLVER_ENTS = _metrics.RESOLVER_ENTS
 RESOLVER_LAT = _metrics.RESOLVER_LAT
 from pydantic import BaseModel
+
+
+class NERIn(BaseModel):
+    text: str
+    lang: str = "en"
+
+
+class Entity(BaseModel):
+    text: str
+    label: str
+    start: int
+    end: int
+
+
+class NEROut(BaseModel):
+    entities: List[Entity]
+    model: str
+
+
+class TextIn(BaseModel):
+    text: str
+    lang: str = "en"
+
+
+class RelIn(BaseModel):
+    text: str
+    lang: str = "en"
+
 
 ALLOW_TEST = os.getenv("ALLOW_TEST_MODE")
 SERVICE_DIR = Path(__file__).resolve().parent
@@ -43,14 +71,13 @@ if not ALLOW_TEST:
 GRAPH_URL = os.getenv("GRAPH_UI", "http://localhost:3000/graphx")
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
-FastAPIInstrumentor().instrument_app(app)  # type: ignore
+app.add_middleware(RequestIdMiddleware)
+if os.getenv("IT_ENABLE_METRICS") == "1":
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
 setup_otel(app)
-instrumentator = Instrumentator().instrument(app)
 
 
-@app.on_event("startup")
-async def _startup() -> None:
-    instrumentator.expose(app, include_in_schema=False, should_gzip=True)
 
 
 class AnnotReq(BaseModel):
@@ -64,6 +91,31 @@ class AnnotReq(BaseModel):
 def health() -> Dict[str, str]:
     """Simple health-check endpoint."""
     return {"status": "ok"}
+
+
+@app.get("/readyz")
+def readyz() -> Dict[str, str]:
+    return {"ok": True}
+
+
+@app.post("/ner", response_model=NEROut)
+def ner(inp: NERIn):
+    import re
+    ents = []
+    for m in re.finditer(r"\b[A-ZÄÖÜ][a-zäöüß]+", inp.text):
+        ents.append(Entity(text=m.group(0), label="MISC", start=m.start(), end=m.end()))
+    return NEROut(entities=ents, model="stub")
+
+
+@app.post("/summary")
+def summary(inp: TextIn):
+    s = inp.text.split(".")[0].strip()
+    return {"summary": s}
+
+
+@app.post("/relations")
+def relations(inp: RelIn):
+    return {"relations": []}
 
 
 @app.post("/annotate")
