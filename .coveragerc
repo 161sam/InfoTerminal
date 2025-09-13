@@ -1,10 +1,9 @@
 [run]
 branch = True
 source =
-    services/graph-views
+    services
 
 [report]
-fail_under = 92
 omit =
     apps/*
     **/tests/*

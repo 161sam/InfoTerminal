@@ -59,8 +59,8 @@
     "predev": "bash ../../scripts/tailwind_v4_guard.sh",
     "prepare": "husky",
     "start": "next start -p 3411",
-    "test": "vitest run --reporter=dot",
-    "test:ui": "vitest --ui",
+    "test": "vitest run --coverage",
+    "test:ui": "playwright test",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test"
