@@ -9,7 +9,8 @@ import { getEgo, loadPeople, getShortestPath, exportDossier } from "@/lib/api";
 import { toast } from "@/components/ui/toast";
 import DossierButton from "@/components/DossierButton";
 import AnalysisPanel from "@/components/graph/AnalysisPanel";
-import MapPanel from "@/components/MapPanel";
+import dynamic from "next/dynamic";
+const MapPanel = dynamic(() => import("@/components/MapPanel"), { ssr: false });
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
