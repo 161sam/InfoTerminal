@@ -22,4 +22,4 @@ Kurzanleitung für ein lokales End-to-End Setup von InfoTerminal (MVP).
 5. **Optional: dbt Modelle ausführen**
    - `make dbt-all`
 
-Weitere Details siehe `TODO-Index.md`.
+Weitere Details siehe [TODO-Index](docs/dev/roadmap/TODO-Index.md).
