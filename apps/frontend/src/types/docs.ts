@@ -1,8 +1,6 @@
-export type Entity = {
-  start: number;
-  end: number;
-  label: string;
-  text?: string;
+import type { Entity as BaseEntity } from "@/lib/nlp";
+
+export type Entity = BaseEntity & {
   node_id?: string;
 };
 
