@@ -18,6 +18,13 @@ export default defineConfig({
       '**/build/**',
       '**/e2e/**',
     ],
+    coverage: {
+      reporter: ['text', 'lcov'],
+      lines: 92,
+      branches: 92,
+      statements: 92,
+      functions: 92,
+    },
   },
   esbuild: {
     jsx: 'automatic',

@@ -40,7 +40,8 @@ packages = ["app"]
 include-package-data = true
 
 [tool.pytest.ini_options]
-addopts = "--cov=. --cov-report=xml:coverage.xml --cov-report=term-missing"
+addopts = "-q --strict-markers --disable-warnings --cov=app --cov-report=term-missing --cov-fail-under=92"
+asyncio_mode = "auto"
 
 [tool.uv]
 index-url = "https://pypi.org/simple"

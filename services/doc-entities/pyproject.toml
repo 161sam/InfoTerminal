@@ -18,3 +18,7 @@ dependencies = [
     "sqlalchemy>=2.0",
     "alembic>=1.13",
 ]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers --disable-warnings --cov=. --cov-report=term-missing --cov-fail-under=92"
+asyncio_mode = "auto"
