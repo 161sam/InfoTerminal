@@ -1,20 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import config from '@/lib/config';
+import { getApis } from '@/lib/config';
 
 type Msg = { role: string; content: string; steps?: any; references?: any };
 
 export default function AgentPage() {
+  const { AGENT_API } = getApis();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [text, setText] = useState('');
   const [workflowStatus, setWorkflowStatus] = useState<string | null>(null);
+  const [healthy, setHealthy] = useState<boolean | null>(null);
   const n8nConfigured = Boolean(process.env.NEXT_PUBLIC_N8N_URL);
-  const agentApiConfigured = Boolean(process.env.NEXT_PUBLIC_AGENT_API);
+
+  const checkHealth = () => {
+    fetch(`${AGENT_API}/healthz`)
+      .then((r) => setHealthy(r.ok))
+      .catch(() => setHealthy(false));
+  };
+
+  useEffect(() => {
+    checkHealth();
+  }, [AGENT_API]);
 
   const send = async () => {
     const body = { messages: [...messages.map(({ steps, references, ...m }) => m), { role: 'user', content: text }] };
     try {
-      const res = await fetch(`${config.AGENT_API}/chat`, {
+      const res = await fetch(`${AGENT_API}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -26,13 +37,14 @@ export default function AgentPage() {
       ]);
       setText('');
     } catch (e: any) {
+      setHealthy(false);
       setMessages((m) => [...m, { role: 'system', content: e.message || 'agent not reachable' }]);
     }
   };
 
   const runPlaybook = async (name: string) => {
     try {
-      const res = await fetch(`${config.AGENT_API}/playbooks/run`, {
+      const res = await fetch(`${AGENT_API}/playbooks/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, params: { q: text } }),
@@ -40,6 +52,7 @@ export default function AgentPage() {
       const data = await res.json();
       setMessages((m) => [...m, { role: 'system', content: JSON.stringify(data) }]);
     } catch (e: any) {
+      setHealthy(false);
       setMessages((m) => [...m, { role: 'system', content: e.message || 'playbook failed' }]);
     }
   };
@@ -50,7 +63,7 @@ export default function AgentPage() {
       return;
     }
     try {
-      const res = await fetch(`${config.AGENT_API}/workflows/trigger`, {
+      const res = await fetch(`${AGENT_API}/workflows/trigger`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
@@ -61,21 +74,22 @@ export default function AgentPage() {
     } catch (e: any) {
       const msg = e.message || 'workflow failed';
       setWorkflowStatus(msg);
+      setHealthy(false);
       setMessages((m) => [...m, { role: 'system', content: msg }]);
     }
   };
 
-  if (!agentApiConfigured) {
-    return (
-      <DashboardLayout title="Agent">
-        <div className="p-4">Agent-API nicht konfiguriert. Bitte NEXT_PUBLIC_AGENT_API setzen oder Feature-Flag deaktivieren.</div>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout title="Agent">
       <div className="p-4 space-y-4">
+        {healthy === false && (
+          <div className="p-2 rounded bg-yellow-100 text-yellow-800 flex items-center gap-2">
+            Service nicht erreichbar – ist der Container gestartet? (agent-connector)
+            <button onClick={checkHealth} className="underline">
+              Retry
+            </button>
+          </div>
+        )}
         <div className="space-y-2">
         {messages.map((m, i) => (
           <div key={i} className="border p-2 rounded">

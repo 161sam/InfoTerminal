@@ -1,20 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
-import config from "@/lib/config";
+import { getApis } from "@/lib/config";
 
 export default function NLPPage() {
+  const { DOC_ENTITIES_API } = getApis();
   const [text, setText] = useState("");
   const [ner, setNer] = useState<any | null>(null);
   const [summary, setSummary] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const docEntitiesApiConfigured = Boolean(process.env.NEXT_PUBLIC_DOC_ENTITIES_API || process.env.NEXT_PUBLIC_DOCENTITIES_API);
+  const [healthy, setHealthy] = useState<boolean | null>(null);
+
+  const checkHealth = () => {
+    fetch(`${DOC_ENTITIES_API}/healthz`)
+      .then((r) => setHealthy(r.ok))
+      .catch(() => setHealthy(false));
+  };
+
+  useEffect(() => {
+    checkHealth();
+  }, [DOC_ENTITIES_API]);
 
   const callNer = async () => {
     setError("");
     setSummary("");
     try {
-      const r = await fetch(`${config.DOCENTITIES_API}/ner`, {
+      const r = await fetch(`${DOC_ENTITIES_API}/ner`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })
@@ -23,6 +34,7 @@ export default function NLPPage() {
       const j = await r.json();
       setNer(j);
     } catch (e) {
+      setHealthy(false);
       setError("NLP-Service nicht verfügbar");
     }
   };
@@ -31,7 +43,7 @@ export default function NLPPage() {
     setError("");
     setNer(null);
     try {
-      const r = await fetch(`${config.DOCENTITIES_API}/summary`, {
+      const r = await fetch(`${DOC_ENTITIES_API}/summary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })
@@ -40,21 +52,22 @@ export default function NLPPage() {
       const j = await r.json();
       setSummary(j.summary);
     } catch (e) {
+      setHealthy(false);
       setError("NLP-Service nicht verfügbar");
     }
   };
 
-  if (!docEntitiesApiConfigured) {
-    return (
-      <DashboardLayout title="NLP">
-        <div className="p-4">DOC-Entities-API nicht konfiguriert. Bitte NEXT_PUBLIC_DOC_ENTITIES_API setzen oder Feature-Flag deaktivieren.</div>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout title="NLP">
       <div className="max-w-3xl space-y-6">
+        {healthy === false && (
+          <div className="p-2 rounded bg-yellow-100 text-yellow-800 flex items-center gap-2">
+            Service nicht erreichbar – ist der Container gestartet? (doc-entities)
+            <button onClick={checkHealth} className="underline">
+              Retry
+            </button>
+          </div>
+        )}
         <h1 className="text-2xl font-semibold">NLP</h1>
         <Panel>
           <div className="space-y-4">

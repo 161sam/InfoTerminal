@@ -16,6 +16,17 @@ export const GATEWAY_ENABLED_DEFAULT =
 export const GRAPH_DEEPLINK_FALLBACK =
   process.env.NEXT_PUBLIC_GRAPH_DEEPLINK_BASE ?? '/graphx?focus=';
 
+export function getApis() {
+  const agent = process.env.NEXT_PUBLIC_AGENT_API?.trim();
+  const nlp = process.env.NEXT_PUBLIC_DOC_ENTITIES_API?.trim();
+  const relAgent = '/api/agent';
+  const relNlp = '/api/doc-entities';
+  return {
+    AGENT_API: agent && agent.length > 0 ? agent : relAgent,
+    DOC_ENTITIES_API: nlp && nlp.length > 0 ? nlp : relNlp,
+  } as const;
+}
+
 const config = {
   ...DIRECT_ENDPOINTS,
   ...OTHER_ENDPOINTS,
