@@ -17,6 +17,7 @@ from starlette_exporter import PrometheusMiddleware, handle_metrics
 from common.request_id import RequestIdMiddleware
 import importlib.util
 from pathlib import Path
+from nlp_loader import ner_spacy, summarize
 
 SERVICE_DIR = Path(__file__).resolve().parent
 _spec = importlib.util.spec_from_file_location("doc_entities_metrics", SERVICE_DIR / "metrics.py")
@@ -100,17 +101,13 @@ def readyz() -> Dict[str, str]:
 
 @app.post("/ner", response_model=NEROut)
 def ner(inp: NERIn):
-    import re
-    ents = []
-    for m in re.finditer(r"\b[A-ZÄÖÜ][a-zäöüß]+", inp.text):
-        ents.append(Entity(text=m.group(0), label="MISC", start=m.start(), end=m.end()))
-    return NEROut(entities=ents, model="stub")
+    ents = ner_spacy(inp.text, inp.lang)
+    return NEROut(entities=[Entity(**e) for e in ents], model="spaCy")
 
 
 @app.post("/summary")
 def summary(inp: TextIn):
-    s = inp.text.split(".")[0].strip()
-    return {"summary": s}
+    return {"summary": summarize(inp.text, inp.lang)}
 
 
 @app.post("/relations")

@@ -20,6 +20,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import EntityBadge from '@/components/entities/EntityBadge';
 import { DocRecord } from '@/types/docs';
 import { uniqueEntities } from '@/lib/entities';
+import HighlightedText from '@/components/HighlightedText';
 
 export default function DocumentDetailPage() {
   const router = useRouter();
@@ -39,7 +40,17 @@ export default function DocumentDetailPage() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/docs/${encodeURIComponent(id as string)}`);
         if (!response.ok) throw new Error('Document not found');
         const docData = await response.json();
-        setDoc(docData);
+        try {
+          const nerRes = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/ner`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: docData.text, lang: 'en' })
+          });
+          const nerData = await nerRes.json();
+          setDoc({ ...docData, entities: nerData.entities });
+        } catch {
+          setDoc(docData);
+        }
       } catch (err) {
         setError('Document not found or unavailable');
       } finally {
@@ -55,10 +66,10 @@ export default function DocumentDetailPage() {
     
     setSummaryLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_NLP_URL}/summarize`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: doc.text })
+        body: JSON.stringify({ text: doc.text, lang: 'en' })
       });
       const data = await response.json();
       setSummary(data.summary || '');
@@ -315,64 +326,5 @@ export default function DocumentDetailPage() {
         </div>
       </div>
     </DashboardLayout>
-  );
-}
-
-function HighlightedText({ text, entities }: { text: string; entities: any[] }) {
-  if (!entities || entities.length === 0) {
-    return <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">{text}</p>;
-  }
-
-  const sortedEntities = [...entities].sort((a, b) => a.start - b.start);
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-
-  sortedEntities.forEach((entity, idx) => {
-    // Add text before entity
-    if (entity.start > lastIndex) {
-      parts.push(
-        <span key={`text-${idx}`}>
-          {text.slice(lastIndex, entity.start)}
-        </span>
-      );
-    }
-
-    // Add highlighted entity
-    const entityText = text.slice(entity.start, entity.end);
-    parts.push(
-      <mark
-        key={`entity-${idx}`}
-        className="bg-yellow-100 text-yellow-900 px-1 py-0.5 rounded font-medium cursor-pointer hover:bg-yellow-200 transition-colors"
-        title={`${entity.label}: ${entityText}`}
-      >
-        {entityText}
-        {entity.node_id && (
-          <a
-            href={`/graphx?focus=${encodeURIComponent(entity.node_id)}`}
-            className="ml-1 text-blue-600 hover:text-blue-800"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Network size={12} className="inline" />
-          </a>
-        )}
-      </mark>
-    );
-
-    lastIndex = entity.end;
-  });
-
-  // Add remaining text
-  if (lastIndex < text.length) {
-    parts.push(
-      <span key="text-end">
-        {text.slice(lastIndex)}
-      </span>
-    );
-  }
-
-  return (
-    <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-      {parts}
-    </div>
   );
 }
