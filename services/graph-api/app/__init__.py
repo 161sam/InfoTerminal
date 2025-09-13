@@ -10,9 +10,11 @@ from fastapi.responses import JSONResponse
 from it_logging import setup_logging
 from neo4j import exceptions
 
-SERVICE_DIR = Path(__file__).resolve().parent
-PARENT_DIR = SERVICE_DIR.parent
-for p in (SERVICE_DIR, PARENT_DIR):
+# ensure the service root and repository root are importable
+THIS_DIR = Path(__file__).resolve().parent
+SERVICE_DIR = THIS_DIR.parent
+REPO_ROOT = SERVICE_DIR.parent
+for p in (SERVICE_DIR, REPO_ROOT):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
@@ -21,7 +23,7 @@ from _shared.health import make_healthz, make_readyz, probe_db
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 from common.request_id import RequestIdMiddleware
 from _shared.obs.otel_boot import setup_otel
-from routes.alg import router as alg_router
+from .routes.alg import router as alg_router
 from utils.neo4j_client import get_driver, neo_session
 
 

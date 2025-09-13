@@ -1,5 +1,7 @@
 import os
 import sys
+from pathlib import Path
+
 import pytest
 from httpx import AsyncClient, ASGITransport
 from prometheus_client import REGISTRY, PROCESS_COLLECTOR, PLATFORM_COLLECTOR
@@ -8,6 +10,11 @@ os.environ.setdefault("OTEL_SDK_DISABLED", "true")
 os.environ.setdefault("IT_JSON_LOGS", "1")
 os.environ.setdefault("IT_ENV", "test")
 os.environ.setdefault("IT_LOG_SAMPLING", "")
+
+# make service root importable so we can import the app package
+SERVICE_ROOT = Path(__file__).resolve().parents[1]
+if str(SERVICE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SERVICE_ROOT))
 
 import app as app_module  # type: ignore
 sys.modules.setdefault("app", app_module)
