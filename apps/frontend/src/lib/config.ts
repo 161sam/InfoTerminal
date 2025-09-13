@@ -5,7 +5,7 @@ export const DIRECT_ENDPOINTS = {
 } as const;
 
 export const OTHER_ENDPOINTS = {
-  DOCENTITIES_API: process.env.NEXT_PUBLIC_DOCENTITIES_API ?? 'http://127.0.0.1:8403',
+  DOCENTITIES_API: process.env.NEXT_PUBLIC_DOCENTITIES_API ?? 'http://127.0.0.1:8613',
   NLP_API: process.env.NEXT_PUBLIC_NLP_API ?? 'http://127.0.0.1:8404',
 } as const;
 

@@ -11,7 +11,8 @@ from fastapi.responses import JSONResponse
 
 from .it_logging import setup_logging
 from search_api._shared.health import make_healthz, make_readyz, probe_http
-from search_api._shared.obs.metrics_boot import enable_prometheus_metrics
+from starlette_exporter import PrometheusMiddleware, handle_metrics
+from search_api.common.request_id import RequestIdMiddleware
 try:
     from search_api._shared.obs.otel_boot import setup_otel
 except Exception:
@@ -42,7 +43,10 @@ app.state.service_name = "search-api"
 app.state.version = os.getenv("GIT_SHA", "dev")
 app.state.start_ts = time.monotonic()
 setup_otel(app, service_name=app.state.service_name, version=app.state.version)
-enable_prometheus_metrics(app, path=os.getenv("IT_METRICS_PATH", "/metrics"))
+app.add_middleware(RequestIdMiddleware)
+if os.getenv("IT_ENABLE_METRICS") == "1":
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
 
 app.add_middleware(
     CORSMiddleware,

@@ -18,8 +18,10 @@ for p in (SERVICE_DIR, PARENT_DIR):
 
 from _shared.cors import apply_cors, get_cors_settings_from_env
 from _shared.health import make_healthz, make_readyz, probe_db
-from _shared.obs.metrics_boot import enable_prometheus_metrics
+from starlette_exporter import PrometheusMiddleware, handle_metrics
+from common.request_id import RequestIdMiddleware
 from _shared.obs.otel_boot import setup_otel
+from routes.alg import router as alg_router
 from utils.neo4j_client import get_driver, neo_session
 
 
@@ -48,7 +50,11 @@ app.state.service_name = "graph-api"
 app.state.version = os.getenv("GIT_SHA", "dev")
 app.state.start_ts = time.monotonic()
 setup_otel(app, service_name=app.state.service_name, version=app.state.version)
-enable_prometheus_metrics(app, path=os.getenv("IT_METRICS_PATH", "/metrics"))
+app.add_middleware(RequestIdMiddleware)
+if os.getenv("IT_ENABLE_METRICS") == "1":
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
+app.include_router(alg_router)
 
 @app.get("/healthz")
 def healthz():
