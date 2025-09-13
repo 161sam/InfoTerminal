@@ -15,7 +15,9 @@ import {
   Users,
   Database,
   Shield,
-  Activity
+  Activity,
+  MessageSquare,
+  Sparkles
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import GlobalHealth from '../health/GlobalHealth';
@@ -28,7 +30,9 @@ interface NavigationItem {
   badge?: number;
 }
 
-const navigation: NavigationItem[] = [
+import { extraNav, isEnabled } from '@/components/navItems';
+
+const baseNavigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Search', href: '/search', icon: Search },
   { name: 'Graph', href: '/graphx', icon: Network },
@@ -38,6 +42,17 @@ const navigation: NavigationItem[] = [
   { name: 'Data', href: '/data', icon: Database },
   { name: 'Security', href: '/security', icon: Shield }
 ];
+
+const navigation: NavigationItem[] = [...baseNavigation];
+
+extraNav.filter(isEnabled).forEach((item) => {
+  if (!navigation.find((n) => n.href === item.href)) {
+    let icon = MessageSquare as LucideIcon;
+    if (item.icon === 'Sparkles') icon = Sparkles;
+    if (item.icon === 'MessageSquare') icon = MessageSquare;
+    navigation.push({ name: item.label, href: item.href, icon });
+  }
+});
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -193,10 +208,11 @@ function SidebarContent({ currentPath, onClose }: SidebarContentProps) {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onClose}
               className={`
                 group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
-                ${isActive 
-                  ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600' 
+                ${isActive
+                  ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }
               `}
