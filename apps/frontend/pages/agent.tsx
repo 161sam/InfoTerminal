@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import config from '@/lib/config';
 
 type Msg = { role: string; content: string; steps?: any; references?: any };
@@ -8,6 +9,7 @@ export default function AgentPage() {
   const [text, setText] = useState('');
   const [workflowStatus, setWorkflowStatus] = useState<string | null>(null);
   const n8nConfigured = Boolean(process.env.NEXT_PUBLIC_N8N_URL);
+  const agentApiConfigured = Boolean(process.env.NEXT_PUBLIC_AGENT_API);
 
   const send = async () => {
     const body = { messages: [...messages.map(({ steps, references, ...m }) => m), { role: 'user', content: text }] };
@@ -63,9 +65,18 @@ export default function AgentPage() {
     }
   };
 
+  if (!agentApiConfigured) {
+    return (
+      <DashboardLayout title="Agent">
+        <div className="p-4">Agent-API nicht konfiguriert. Bitte NEXT_PUBLIC_AGENT_API setzen oder Feature-Flag deaktivieren.</div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <div className="p-4 space-y-4">
-      <div className="space-y-2">
+    <DashboardLayout title="Agent">
+      <div className="p-4 space-y-4">
+        <div className="space-y-2">
         {messages.map((m, i) => (
           <div key={i} className="border p-2 rounded">
             <strong>{m.role}:</strong> {m.content}
@@ -81,7 +92,7 @@ export default function AgentPage() {
         onChange={(e) => setText(e.target.value)}
         className="w-full border p-2 rounded"
       />
-      <div className="flex gap-2">
+        <div className="flex gap-2">
         <button onClick={send} className="px-4 py-2 bg-blue-600 text-white rounded">
           Send
         </button>
@@ -103,7 +114,8 @@ export default function AgentPage() {
           </button>
           {workflowStatus && <span className="text-xs text-gray-600">{workflowStatus}</span>}
         </div>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
