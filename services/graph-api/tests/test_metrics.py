@@ -4,7 +4,8 @@ import pathlib
 from fastapi.testclient import TestClient
 from prometheus_client import PLATFORM_COLLECTOR, PROCESS_COLLECTOR, REGISTRY
 
-MODULE_PATH = pathlib.Path(__file__).resolve().parents[1] / "app.py"
+SERVICE_ROOT = pathlib.Path(__file__).resolve().parents[1]
+MODULE_PATH = SERVICE_ROOT / "app" / "__init__.py"
 
 
 def _load_app(enable: bool):
@@ -20,7 +21,7 @@ def _load_app(enable: bool):
     else:
         os.environ.pop("IT_ENABLE_METRICS", None)
         os.environ.pop("IT_OBSERVABILITY", None)
-    spec = importlib.util.spec_from_file_location("graph_api", MODULE_PATH)
+    spec = importlib.util.spec_from_file_location("app", MODULE_PATH)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore
     return mod.app
