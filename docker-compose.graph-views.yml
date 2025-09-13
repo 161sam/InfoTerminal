@@ -46,6 +46,8 @@ services:
 
     ports:
       - "${GRAPH_VIEWS_PORT:-8403}:8403"
+    volumes:
+      - ${GEO_UPLOAD_DIR:-./data/geo}:${GEO_UPLOAD_DIR:-/data/geo}
 
     restart: unless-stopped
 

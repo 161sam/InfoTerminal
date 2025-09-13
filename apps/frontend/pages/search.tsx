@@ -6,6 +6,7 @@ import Field from "@/components/ui/Field";
 import StatusPill from "@/components/ui/StatusPill";
 import config from "@/lib/config";
 import DossierButton from "@/components/DossierButton";
+import MapPanel from "@/components/MapPanel";
 
 type SearchResult = {
   id: string;
@@ -22,6 +23,7 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
+  const [showMap, setShowMap] = useState(false);
 
   const runSearch = async () => {
     const params = new URLSearchParams({ q, sort, limit: "20" });
@@ -94,6 +96,9 @@ export default function SearchPage() {
         </Panel>
         {/* Export current search as dossier */}
         <DossierButton getPayload={() => ({ query: q, entities: [], graphSelection: { nodes: [], edges: [] } })} />
+        <Button variant="secondary" onClick={() => setShowMap((v) => !v)}>
+          {showMap ? "Hide Map" : "Show Map"}
+        </Button>
         <div className="space-y-4">
           {isLoading && <div>Loading...</div>}
           {!isLoading &&
@@ -108,6 +113,7 @@ export default function SearchPage() {
               </Panel>
             ))}
         </div>
+        {showMap && <MapPanel />}
       </div>
     </DashboardLayout>
   );

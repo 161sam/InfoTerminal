@@ -29,6 +29,8 @@ services:
     environment:
       - IT_ENABLE_METRICS=${IT_ENABLE_METRICS:-0}
       - IT_OTEL=${IT_OTEL:-0}
+    volumes:
+      - ${GEO_UPLOAD_DIR:-./data/geo}:${GEO_UPLOAD_DIR:-/data/geo}
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
       interval: 10s
