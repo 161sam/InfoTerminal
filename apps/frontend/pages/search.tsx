@@ -6,7 +6,8 @@ import Field from "@/components/ui/Field";
 import StatusPill from "@/components/ui/StatusPill";
 import config from "@/lib/config";
 import DossierButton from "@/components/DossierButton";
-import MapPanel from "@/components/MapPanel";
+import dynamic from "next/dynamic";
+const MapPanel = dynamic(() => import("@/components/MapPanel"), { ssr: false });
 
 type SearchResult = {
   id: string;
