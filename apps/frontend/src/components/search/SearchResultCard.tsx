@@ -12,14 +12,14 @@ interface SearchResultCardProps {
 
 export default function SearchResultCard({ item }: SearchResultCardProps) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {item.id ? (
               <Link 
                 href={`/documents/${item.id}`}
-                className="hover:text-primary-600 transition-colors"
+                className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 {item.title || item.id}
               </Link>
@@ -30,7 +30,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
           
           {/* Snippet with highlights */}
           {item.highlights && item.highlights.length > 0 ? (
-            <div className="text-gray-600 mb-3 line-clamp-3">
+            <div className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">
               {item.highlights.map((highlight, index) => (
                 <p 
                   key={index} 
@@ -41,7 +41,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
               ))}
             </div>
           ) : item.snippet ? (
-            <p className="text-gray-600 mb-3 line-clamp-3">{item.snippet}</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">{item.snippet}</p>
           ) : null}
           
           {/* Entity Types */}
@@ -82,7 +82,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
           )}
           
           {/* Metadata */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             {item.source && (
               <span className="inline-flex items-center gap-1">
                 <FileText size={14} />
@@ -105,7 +105,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
             )}
             
             {item.score && item.score > 0 && (
-              <span className="text-primary-600">
+              <span className="text-primary-600 dark:text-primary-400">
                 Relevance: {(item.score * 100).toFixed(1)}%
               </span>
             )}
@@ -117,7 +117,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
           {item.node_id && (
             <Link
               href={`/graphx?focus=${encodeURIComponent(item.node_id)}`}
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-primary-700 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/20 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors"
               title="View in Graph"
             >
               <Network size={16} />
@@ -130,7 +130,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
               href={item.meta.external_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               title="Open External Link"
             >
               <ExternalLink size={16} />
@@ -142,9 +142,9 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
       {/* Progress bar for score visualization */}
       {item.score && item.score > 0 && (
         <div className="mt-4">
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
             <div 
-              className="bg-primary-600 h-1.5 rounded-full transition-all duration-500"
+              className="bg-primary-600 dark:bg-primary-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(item.score * 100, 100)}%` }}
             />
           </div>

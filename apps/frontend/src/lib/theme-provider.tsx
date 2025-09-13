@@ -13,25 +13,43 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const THEME_KEY = 'ui.theme';
+
+// Helpers to apply theme instantly to the DOM
+const sysPrefersDark = () => (typeof window !== 'undefined') && !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+const applyTheme = (mode: Theme) => {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const isDark = mode === 'dark' || (mode === 'system' && sysPrefersDark());
+  root.classList.toggle('dark', isDark);
+  root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  root.setAttribute('data-theme-owner', 'tp');
+  document.body?.classList.remove('dark');
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isDark ? '#1f2937' : '#ffffff');
+};
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('system');
+  const [theme, setTheme] = useState<Theme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     // Load theme from localStorage
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-      setTheme(savedTheme);
-    }
+    let saved: Theme | null = null;
+    try {
+      saved = localStorage.getItem(THEME_KEY) as Theme;
+    } catch {}
+    const initialTheme: Theme = saved && ['light', 'dark', 'system'].includes(saved) ? (saved as Theme) : 'light';
+    setTheme(initialTheme);
+    // nachdem du initial theme bestimmt hast (light/dark/system)
+    applyTheme(initialTheme);
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
 
-    const root = window.document.documentElement;
-    
     const updateTheme = () => {
       let newResolvedTheme: 'light' | 'dark';
       
@@ -42,36 +60,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }
       
       setResolvedTheme(newResolvedTheme);
-      
-      // Update DOM
-      root.classList.remove('light', 'dark');
-      root.classList.add(newResolvedTheme);
-      
-      // Update meta theme-color for mobile browsers
-      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor) {
-        metaThemeColor.setAttribute('content', newResolvedTheme === 'dark' ? '#1f2937' : '#ffffff');
-      }
-
-      // Update CSS custom properties
-      if (newResolvedTheme === 'dark') {
-        root.style.setProperty('--color-bg-primary', '#1f2937');
-        root.style.setProperty('--color-bg-secondary', '#111827');
-        root.style.setProperty('--color-text-primary', '#f9fafb');
-        root.style.setProperty('--color-text-secondary', '#d1d5db');
-        root.style.setProperty('--color-border', '#374151');
-      } else {
-        root.style.setProperty('--color-bg-primary', '#ffffff');
-        root.style.setProperty('--color-bg-secondary', '#f8fafc');
-        root.style.setProperty('--color-text-primary', '#1f2937');
-        root.style.setProperty('--color-text-secondary', '#6b7280');
-        root.style.setProperty('--color-border', '#e5e7eb');
-      }
     };
 
     updateTheme();
-    
-    // Listen for system theme changes
+    // Also ensure DOM is updated in this pass
+    applyTheme(theme);
+
+    // Listen only when user mode is system
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleChange = () => updateTheme();
@@ -82,7 +77,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const handleSetTheme = (newTheme: Theme) => {
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    try { localStorage.setItem(THEME_KEY, newTheme); } catch {}
+    // Apply immediately to avoid any flicker
+    applyTheme(newTheme);
   };
 
   const value = {
@@ -102,7 +99,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    // Fallback for tests or environments without the provider
+    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    return {
+      theme: 'system' as Theme,
+      setTheme: () => {},
+      resolvedTheme: isDark ? 'dark' : 'light',
+      isDark,
+    };
   }
   return context;
 }

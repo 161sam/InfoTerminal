@@ -16,9 +16,9 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
 
   if (!aggregations || Object.keys(aggregations).length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
-        <p className="text-sm text-gray-500">No filters available</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Filters</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No filters available</p>
       </div>
     );
   }
@@ -76,24 +76,24 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Filters
           {getTotalSelected() > 0 && (
-            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300">
               {getTotalSelected()}
             </span>
           )}
         </h3>
         
         <div className="flex items-center gap-2">
-          <label className="flex items-center text-sm text-gray-600">
+          <label className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <input
               type="checkbox"
               checked={showCounts}
               onChange={(e) => setShowCounts(e.target.checked)}
-              className="mr-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              className="mr-1 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500"
             />
             Show counts
           </label>
@@ -108,23 +108,23 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
           const searchTerm = searchTerms[facetName] || '';
           
           return (
-            <div key={facetName} className="border border-gray-200 rounded-lg">
+            <div key={facetName} className="border border-gray-200 dark:border-gray-800 rounded-lg">
               <button
                 onClick={() => toggleFacet(facetName)}
-                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {getDisplayName(facetName)}
                   </span>
                   {selectedCount > 0 && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300">
                       {selectedCount}
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {buckets.length}
                   </span>
                   {isExpanded ? (
@@ -136,7 +136,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
               </button>
               
               {isExpanded && (
-                <div className="border-t border-gray-200 p-3">
+                <div className="border-t border-gray-200 dark:border-gray-800 p-3">
                   {/* Search within facet */}
                   {buckets.length > 5 && (
                     <div className="relative mb-3">
@@ -146,12 +146,12 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                         value={searchTerm}
                         onChange={(e) => updateSearchTerm(facetName, e.target.value)}
                         placeholder={`Search in ${getDisplayName(facetName).toLowerCase()}...`}
-                        className="w-full pl-7 pr-7 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                        className="w-full pl-7 pr-7 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                       />
                       {searchTerm && (
                         <button
                           onClick={() => clearSearchTerm(facetName)}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                         >
                           <X size={14} />
                         </button>
@@ -179,11 +179,11 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                                 checked={isSelected}
                                 disabled={isDisabled}
                                 onChange={() => !isDisabled && onToggle(facetName, bucket.key)}
-                                className="mr-2 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
+                                className="mr-2 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
                               />
                               <span 
                                 className={`text-sm truncate ${
-                                  isSelected ? 'font-medium text-gray-900' : 'text-gray-700'
+                                  isSelected ? 'font-medium text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'
                                 }`}
                                 title={bucket.key}
                               >
@@ -194,8 +194,8 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                             {showCounts && (
                               <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
                                 isSelected 
-                                  ? 'bg-primary-100 text-primary-800' 
-                                  : 'bg-gray-100 text-gray-600'
+                                  ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300' 
+                                  : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'
                               }`}>
                                 {bucket.doc_count.toLocaleString()}
                               </span>
@@ -204,7 +204,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                         );
                       })
                     ) : (
-                      <p className="text-sm text-gray-500 italic">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 italic">
                         No items match "{searchTerm}"
                       </p>
                     )}
@@ -212,10 +212,10 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                   
                   {/* Show more/less for long lists */}
                   {buckets.length > 10 && !searchTerm && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
                       <button
                         onClick={() => updateSearchTerm(facetName, '')}
-                        className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                        className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
                       >
                         View all {buckets.length} options
                       </button>
@@ -230,7 +230,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
       
       {/* Clear all filters */}
       {getTotalSelected() > 0 && (
-        <div className="mt-6 pt-4 border-t border-gray-200">
+        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-800">
           <button
             onClick={() => {
               Object.keys(selectedFilters).forEach(facetName => {
@@ -239,7 +239,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                 });
               });
             }}
-            className="w-full px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="w-full px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             Clear all filters
           </button>

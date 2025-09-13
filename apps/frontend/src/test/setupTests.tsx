@@ -63,6 +63,19 @@ if (!HTMLElement.prototype.getBoundingClientRect) {
 }
 
 // -------------------- Library-Mocks --------------------
+// Next.js router mock for components using useRouter in tests
+vi.mock('next/router', () => {
+  return {
+    __esModule: true,
+    useRouter: () => ({
+      pathname: '/',
+      push: vi.fn(),
+      prefetch: vi.fn(),
+      replace: vi.fn(),
+      query: {},
+    }),
+  };
+});
 
 // react-cytoscapejs: Fake-Implementierung ohne Canvas. Ruft die "cy"-Callback-Prop auf
 // und erlaubt das Auslösen eines "tap"-Events auf einen Node mit id 'a' über einen Button.

@@ -56,6 +56,8 @@ export default function SearchPage() {
           <div className="mb-4 flex items-end gap-2">
           <Field
             label="Query"
+            name="searchQuery"
+            id="search-query"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             className="flex-1"

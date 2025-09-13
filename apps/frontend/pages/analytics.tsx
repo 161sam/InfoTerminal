@@ -13,6 +13,7 @@ import {
   Calendar
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import Panel from '@/components/layout/Panel';
 import { TimeSeriesChart, MultiSeriesChart, DonutChart, MetricCard } from '@/components/charts';
 
 interface AnalyticsData {
@@ -182,8 +183,7 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Document Activity */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Document Activity</h3>
+          <Panel title="Document Activity">
             <MultiSeriesChart
               data={data.documentStats}
               xKey="date"
@@ -194,11 +194,10 @@ export default function AnalyticsPage() {
               height={300}
               showLegend
             />
-          </div>
+          </Panel>
 
           {/* Entity Distribution */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Entity Types</h3>
+          <Panel title="Entity Types">
             <DonutChart
               data={data.entityTypes}
               valueKey="count"
@@ -207,15 +206,14 @@ export default function AnalyticsPage() {
               centerLabel="Total"
               centerValue={data.entityTypes.reduce((sum, item) => sum + item.count, 0).toLocaleString()}
             />
-          </div>
+          </Panel>
         </div>
 
         {/* Charts Row 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Search Activity */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Search Activity (24h)</h3>
+          <Panel title="Search Activity (24h)" className="lg:col-span-2">
             <MultiSeriesChart
               data={data.searchActivity}
               xKey="date"
@@ -226,11 +224,10 @@ export default function AnalyticsPage() {
               height={280}
               showLegend
             />
-          </div>
+          </Panel>
 
           {/* Top Entities */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Top Entities</h3>
+          <Panel title="Top Entities">
             <div className="space-y-4">
               {data.topEntities.map((entity, index) => (
                 <div key={entity.name} className="flex items-center justify-between">
@@ -260,12 +257,11 @@ export default function AnalyticsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Panel>
         </div>
 
         {/* Performance Metrics */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">System Performance</h3>
+        <Panel title="System Performance">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600 mb-1">98.5%</div>
@@ -280,7 +276,7 @@ export default function AnalyticsPage() {
               <div className="text-sm text-gray-600">Index Size</div>
             </div>
           </div>
-        </div>
+        </Panel>
       </div>
     </DashboardLayout>
   );

@@ -94,7 +94,12 @@ export default function Search() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search documents, entities, connections..."
-            className="block w-full pl-10 pr-12 py-4 text-lg border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+            className="block w-full pl-10 pr-12 py-4 text-lg rounded-xl shadow-sm transition-all
+             border border-gray-300 dark:border-gray-600
+             bg-white dark:bg-gray-800
+             text-gray-900 dark:text-gray-100
+             placeholder:text-gray-400 dark:placeholder:text-gray-400
+             focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             data-search-input
           />
           {loading && (
@@ -112,7 +117,7 @@ export default function Search() {
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                 showFilters 
                   ? 'bg-primary-50 border-primary-200 text-primary-700' 
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600\n    text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <Filter size={16} />
@@ -129,7 +134,7 @@ export default function Search() {
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                 searchParams.rerank
                   ? 'bg-purple-50 border-purple-200 text-purple-700'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600\n    text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <Sparkles size={16} />
@@ -142,7 +147,10 @@ export default function Search() {
             <select
               value={searchParams.sort}
               onChange={(e) => handleSortChange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+            border border-gray-300 dark:border-gray-600
+            bg-white dark:bg-gray-800
+            text-gray-900 dark:text-gray-100"
             >
               <option value="relevance">Relevance</option>
               <option value="date_desc">Newest First</option>
@@ -265,19 +273,29 @@ function SearchPagination({ page, pageSize, total, onPageChange }: SearchPaginat
   const endItem = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6 rounded-lg border border-gray-200">
+    <div className="flex items-center justify-between px-4 py-3 sm:px-6 rounded-lg
+                 bg-white dark:bg-gray-900
+                 border border-gray-200 dark:border-gray-800">
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+            text-gray-700 dark:text-gray-200
+            bg-white dark:bg-gray-800
+            border border-gray-300 dark:border-gray-600
+            hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Previous
         </button>
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className="relative ml-3 inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative ml-3 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+            text-gray-700 dark:text-gray-200
+            bg-white dark:bg-gray-800
+            border border-gray-300 dark:border-gray-600
+            hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
         </button>
@@ -314,7 +332,7 @@ function SearchPagination({ page, pageSize, total, onPageChange }: SearchPaginat
                   className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
                     pageNum === page
                       ? 'z-10 bg-primary-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
-                      : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                      : 'text-gray-900 dark:text-gray-100 ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-offset-0'
                   }`}
                 >
                   {pageNum}

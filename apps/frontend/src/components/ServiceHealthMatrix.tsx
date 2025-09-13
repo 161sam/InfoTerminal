@@ -24,7 +24,10 @@ const ServiceHealthMatrix: React.FC = () => {
         ))}
       </button>
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-40 rounded border bg-white p-2 text-xs shadow">
+        <div className="absolute right-0 z-50 mt-2 w-40 rounded p-2 text-xs shadow
+                        bg-white dark:bg-gray-900
+                        border border-gray-200 dark:border-gray-800
+                        text-gray-900 dark:text-gray-100">
           {keys.map((k) => (
             <div key={k} className="flex justify-between">
               <span>{k}</span>
