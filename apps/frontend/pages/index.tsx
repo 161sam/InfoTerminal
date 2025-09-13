@@ -1,22 +1,25 @@
 // apps/frontend/pages/index.tsx - Moderne Dashboard Homepage
 import { useEffect, useState } from 'react';
-import { 
-  Search, 
-  FileText, 
-  Network, 
-  TrendingUp, 
-  Users, 
+import {
+  Search,
+  FileText,
+  Network,
+  TrendingUp,
+  Users,
   Database,
   Activity,
   ArrowUpRight,
   ArrowDownRight,
   BarChart3,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Panel from '@/components/layout/Panel';
 import { useHealth } from '@/hooks/useHealth';
+import { ff } from '@/components/navItems';
 
 interface DashboardStats {
   totalDocuments: number;
@@ -195,6 +198,24 @@ export default function Dashboard() {
                 icon={BarChart3}
                 color="orange"
               />
+              {ff('NEXT_PUBLIC_FEATURE_AGENT') && (
+                <QuickActionCard
+                  title="Investigation Agent"
+                  description="Chat with your data"
+                  href="/agent"
+                  icon={Bot}
+                  color="green"
+                />
+              )}
+              {ff('NEXT_PUBLIC_FEATURE_NLP') && (
+                <QuickActionCard
+                  title="NLP Playground"
+                  description="Experiment with language models"
+                  href="/nlp"
+                  icon={Sparkles}
+                  color="purple"
+                />
+              )}
             </div>
           </Panel>
         </div>

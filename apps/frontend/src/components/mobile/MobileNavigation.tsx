@@ -2,46 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {
-  Home,
-  Search,
-  Network,
-  FileText,
-  BarChart3,
   Settings,
   Menu,
   X,
   Bell,
   User,
-  MessageSquare,
-  Sparkles
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { useNotifications } from '@/lib/notifications';
-import { extraNav, isEnabled } from '@/components/navItems';
+import { NAV_ITEMS, isEnabled, type NavItem } from '@/components/navItems';
 
-interface MobileNavItem {
-  name: string;
-  href: string;
-  icon: LucideIcon;
-  badge?: number;
-}
-
-const navigationItems: MobileNavItem[] = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Search', href: '/search', icon: Search },
-  { name: 'Graph', href: '/graphx', icon: Network },
-  { name: 'Documents', href: '/documents', icon: FileText },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-];
-
-extraNav.filter(isEnabled).forEach(item => {
-  if (!navigationItems.find(n => n.href === item.href)) {
-    let icon = MessageSquare as LucideIcon;
-    if (item.icon === 'Sparkles') icon = Sparkles;
-    if (item.icon === 'MessageSquare') icon = MessageSquare;
-    navigationItems.push({ name: item.label, href: item.href, icon });
-  }
-});
+const navigationItems: NavItem[] = NAV_ITEMS.filter(isEnabled);
 
 export function MobileNavigation() {
   const router = useRouter();
