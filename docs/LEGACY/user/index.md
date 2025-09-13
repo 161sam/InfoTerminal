@@ -1,3 +1,9 @@
+
+
+> **Legacy Notice (v0.1)**  
+> This document describes pre-v0.2 behavior and is kept for historical reference.  
+> See the updated docs in `docs/` and the v0.2 roadmap for current guidance.
+
 # 📘 InfoTerminal – Benutzerhandbuch
 
 ## 1. Einführung

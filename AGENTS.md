@@ -1,96 +1,49 @@
-# 🤖 AGENTS.md – InfoTerminal
 
-Dieses Dokument beschreibt, wie autonome Entwickler-Agenten (z. B. Codex, Claude, OpenHands) im Projekt InfoTerminal eingesetzt werden.  
-Ziel: Koordinierte Arbeit an Modulen, schrittweise Fertigstellung bis **Release v0.1.0**.
+# AGENTS — v0.2 (Developer Guide)
 
----
+> Status: **Active** for v0.2.  
+> Language: **English** (developer docs).  
+> For product/user docs in German see `docs/`.
 
-## 🎯 Ziel
-InfoTerminal ist ein Open-Source-Framework für Datenintegration, Suche, Graphanalyse, Dokumentenmanagement und KI.  
-Release **v0.1.0** soll einen vollständigen MVP enthalten, der Datenfluss **(PDF → OCR → Suche/Graph → Dashboard)** demonstriert.
+## Purpose
+Define how AI automation (Codex/Claude/etc.) contributes to InfoTerminal:
+- Keep **docs & code in sync** (idempotent scripts, small PRs).
+- Implement **v0.2 must-haves**: Ontology layer, Graph algorithms (centrality/communities/pathfinding), NLP v1 (NER/Relations/Summary), OAuth2/OIDC, Observability profile, Dossier-Lite, NiFi ingestion + n8n playbooks, Flowise-based Assistant, Geospatial layer.
 
----
+## Operating Principles
+- **Idempotent by default**: prompts create rerunnable scripts with `DRY_RUN`.
+- **Conventional Commits**; one logical change per PR.
+- **Tests & docs first-class**: new services ship with healthz/readyz, metrics (opt-in), minimal tests and README updates.
+- **No standard host ports**: respect project port policy (Frontend 3411; Observability 3412–3416; Flowise 3417; Dockerized apps e.g. search-api 8611, graph-api 8612). Use `patch_ports.sh` as source of truth.
 
-## 🧩 Agentenrollen
+## Tooling & Targets
+- **Services**: search-api, graph-api, graph-views, doc-entities, gateway/OPA.
+- **Data**: OpenSearch, Neo4j, Postgres.
+- **Orchestration**: Docker Compose (infra), local dev scripts (dev_up.sh), future K8s/Helm.
+- **Automation**: NiFi (ingest), n8n (playbooks), Flowise (Assistant).
+- **Dashboards**: Superset (BI), Grafana (metrics/logs/traces).
 
-### 1. **Architect Agent**
-- Aufgabe: Analyse, Architekturentscheidungen, technische Konzepte.
-- Outputs: `docs/architecture/*`, Diagramme, ADRs.
-- Checkliste:
-  - [ ] Architektur konsistent halten (Services, APIs, DBs).
-  - [ ] Abhängigkeiten prüfen (Python, Node, Docker).
-  - [ ] Security-Policies vorbereiten (Keycloak, OPA).
+## Guardrails
+- Never commit secrets; use `.env` + `.env.example`.
+- Keep **/healthz**/**/readyz** consistent; readiness gates before handling.
+- Quiet OTEL by default in dev; enable via env flags.
+- Respect **no standard host ports** policy across compose/helm/frontend.
 
-### 2. **Builder Agent**
-- Aufgabe: Implementierung von Services, APIs, Pipelines.
-- Arbeitsbereiche: `services/*`, `etl/*`, `web/*`.
-- Checkliste:
-  - [ ] Microservices implementieren (search-api, graph-api, nlp-service, doc-entities).
-  - [ ] Frontend (Suche, Graph-Viewer, Dokumentenanzeige).
-  - [ ] ETL-Pipelines (NiFi, Airflow, dbt).
+## v0.2 Roadmap — Agent Work Packages
+1. **Ontology Layer**: canonical schema (entities/relations), mappings; docs + examples.
+2. **Graph Algorithms v1**: degree, betweenness, Louvain; API endpoints; FE visualization.
+3. **NLP v1**: NER + Relation Extraction + Summaries; doc-entities service + FE highlighting.
+4. **OAuth2/OIDC**: JWT at gateway; scopes/claims; minimal FE sign-in.
+5. **Observability Profile**: Prometheus/Grafana/Loki/Tempo wiring; structured JSON logs; request IDs; basic alerts.
+6. **Dossier-Lite**: build JSON/Markdown → export/download; FE action & templates.
+7. **NiFi/n8n/Flowise**: demo ingest flows; 1–2 playbooks; Assistant with tools (search, graph, docs).
+8. **Geospatial Layer**: MapLibre/Leaflet; GeoJSON ingest; FE overlays.
 
-### 3. **Ops Agent**
-- Aufgabe: Deployment & Betrieb.
-- Arbeitsbereiche: `deploy/*`, `docker-compose.yml`, `charts/`.
-- Checkliste:
-  - [ ] Dockerfiles für alle Services.
-  - [ ] Compose-Bundle lauffähig machen (`make dev-up`).
-  - [ ] Helm Chart vorbereiten (minimal).
-  - [ ] systemd-Units für native Installation (Kali/Debian).
-  - [ ] Observability (Prometheus, Grafana, Logs).
+## How to Contribute (Agent)
+- Produce **scripts + patches**; always idempotent; include `--help`, comments, and rollback hints.
+- Update docs **in the same PR**; add short usage examples.
+- Add smoke tests or curlable examples for new endpoints.
 
-### 4. **QA Agent**
-- Aufgabe: Tests, Qualitätssicherung, Docs.
-- Arbeitsbereiche: `tests/*`, `docs/*`, `README.md`.
-- Checkliste:
-  - [ ] Unit-Tests pro Service (Health, Endpunkte).
-  - [ ] E2E-Test: PDF → OCR → NER → Suche/Graph.
-  - [ ] CI-Konfiguration (Lint, Test).
-  - [ ] Screenshots & Quickstart-Anleitungen.
-
----
-
-## 📈 Workflow (Loop)
-
-1. **Plan**: Architect Agent erstellt/aktualisiert Roadmap (`TODO-Index.md`).
-2. **Build**: Builder Agent implementiert Module.
-3. **Deploy**: Ops Agent integriert in Compose/Helm.
-4. **Test**: QA Agent führt Tests & Reviews durch.
-5. **Loop** bis Release-Definition erreicht.
-
----
-
-## 🗺️ Aktuelle Mission (v0.1.0)
-
-- [ ] NLP-Service (`services/nlp-service`) fertigstellen
-- [ ] NiFi → Aleph Pipeline vorbereiten
-- [ ] Frontend Tabs für NLP/Docs finalisieren
-- [ ] Compose-Bundle mit allen Services lauffähig
-- [ ] Superset Dashboard (Demo) hinzufügen
-- [ ] Quickstart-Doku + Screenshots erstellen
-- [ ] GitHub Release mit Tag `v0.1.0`
-
----
-
-## 📜 Regeln für Agenten
-
-- **Keine Monolithen** → Code modular, pro Service in eigenem Ordner.  
-- **Keine Geheimnisse im Code** → Secrets nur über `.env`, nie hardcoden.  
-- **Automatisierung bevorzugen** → Make, Helm, CI.  
-- **Docs immer mitziehen** → Jede neue Funktion bekommt eine Doku-Seite oder README.  
-- **Tests sind Pflicht** → Kein Commit ohne mindestens 1 Test für neue Funktion.  
-
----
-
-## 🔄 Fortschrittstracking
-
-- Alle abgeschlossenen Tasks → `TODO-Index.md` abhaken.  
-- Jeder Service hat eigene README mit Setup/Usage.  
-- `AGENTS.md` wird nach jedem Major-Sprint aktualisiert.  
-
----
-
-## 🔖 Version
-`AGENTS.md` erstellt für InfoTerminal **v0.1.0-pre**.  
-Wird nach Release auf **v0.2** angepasst.
+## Notes
+- This document supersedes the pre-v0.2 AGENTS.md. The old version is archived under `docs/LEGACY/`.
 

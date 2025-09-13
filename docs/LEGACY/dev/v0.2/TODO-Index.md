@@ -1,3 +1,9 @@
+
+
+> **Legacy Notice (v0.1)**  
+> This document describes pre-v0.2 behavior and is kept for historical reference.  
+> See the updated docs in `docs/` and the v0.2 roadmap for current guidance.
+
 # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
 
 > Master-Checkliste aller Tickets / Features für den Weg von v0.1.9.1 bis v0.2  
@@ -124,7 +130,3 @@
 - **Prio Kann:** Active Learning, Review-UI, Dossier-Verifikation, Forensics Hash+Sign, Ethical AI
 
 ---
-
-# TODO-Index
-
-<!-- merged:20250913-101006 -->
