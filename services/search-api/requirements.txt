@@ -6,6 +6,8 @@ httpx>=0.27
 cachetools>=5.3
 numpy>=1.24
 sentence-transformers==2.2.2
+torch==2.3.1
+torchvision==0.18.1
 prometheus-client==0.20.*
 starlette-exporter==0.15.*
 opentelemetry-sdk
