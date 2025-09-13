@@ -15,6 +15,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import Panel from '@/components/layout/Panel';
 
 interface DataSource {
   id: string;
@@ -141,7 +142,7 @@ export default function DataPage() {
         
         {/* Storage Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Storage Used</p>
@@ -162,9 +163,9 @@ export default function DataPage() {
                 />
               </div>
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Documents</p>
@@ -174,9 +175,9 @@ export default function DataPage() {
               </div>
               <FileText size={24} className="text-green-500" />
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Entities</p>
@@ -186,9 +187,9 @@ export default function DataPage() {
               </div>
               <Users size={24} className="text-purple-500" />
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Indices</p>
@@ -198,7 +199,7 @@ export default function DataPage() {
               </div>
               <BarChart3 size={24} className="text-orange-500" />
             </div>
-          </div>
+          </Panel>
         </div>
 
         {/* Main Content Grid */}
@@ -206,7 +207,7 @@ export default function DataPage() {
           
           {/* Data Sources */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <Panel>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold">Data Sources</h3>
                 <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm">
@@ -255,53 +256,53 @@ export default function DataPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Panel>
           </div>
 
           {/* Quick Actions */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <Panel>
               <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 p-3 text-left bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 text-left bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors dark:bg-gray-800 dark:text-slate-200 dark:hover:bg-gray-700">
                   <Upload size={16} />
                   <div>
                     <div className="font-medium">Import Data</div>
-                    <div className="text-xs text-blue-600">Upload documents or CSV</div>
+                    <div className="text-xs text-blue-600 dark:text-slate-400">Upload documents or CSV</div>
                   </div>
                 </button>
                 
                 <button 
                   onClick={handleExportData}
-                  className="w-full flex items-center gap-3 p-3 text-left bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                  className="w-full flex items-center gap-3 p-3 text-left bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors dark:bg-gray-800 dark:text-slate-200 dark:hover:bg-gray-700"
                 >
                   <Download size={16} />
                   <div>
                     <div className="font-medium">Export Data</div>
-                    <div className="text-xs text-green-600">Download as JSON/CSV</div>
+                    <div className="text-xs text-green-600 dark:text-slate-400">Download as JSON/CSV</div>
                   </div>
                 </button>
                 
-                <button className="w-full flex items-center gap-3 p-3 text-left bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 text-left bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors dark:bg-gray-800 dark:text-slate-200 dark:hover:bg-gray-700">
                   <RefreshCw size={16} />
                   <div>
                     <div className="font-medium">Sync All</div>
-                    <div className="text-xs text-purple-600">Refresh all data sources</div>
+                    <div className="text-xs text-purple-600 dark:text-slate-400">Refresh all data sources</div>
                   </div>
                 </button>
                 
-                <button className="w-full flex items-center gap-3 p-3 text-left bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 text-left bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors dark:bg-gray-800 dark:text-slate-200 dark:hover:bg-gray-700">
                   <BarChart3 size={16} />
                   <div>
                     <div className="font-medium">Rebuild Index</div>
-                    <div className="text-xs text-orange-600">Reindex search data</div>
+                    <div className="text-xs text-orange-600 dark:text-slate-400">Reindex search data</div>
                   </div>
                 </button>
               </div>
-            </div>
+            </Panel>
 
             {/* Data Health */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <Panel>
               <h3 className="text-lg font-semibold mb-4">Data Health</h3>
               
               <div className="space-y-3">
@@ -338,17 +339,17 @@ export default function DataPage() {
                 </div>
               </div>
               
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
                 <button className="w-full px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
                   View Detailed Report
                 </button>
               </div>
-            </div>
+            </Panel>
           </div>
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <Panel>
           <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
           
           <div className="space-y-3">
@@ -373,7 +374,7 @@ export default function DataPage() {
               <span>Automated backup completed: 2.4 GB backed up</span>
             </div>
           </div>
-        </div>
+        </Panel>
       </div>
     </DashboardLayout>
   );

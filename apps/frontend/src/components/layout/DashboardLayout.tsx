@@ -1,5 +1,5 @@
 // apps/frontend/src/components/layout/DashboardLayout.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import {
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import GlobalHealth from '../health/GlobalHealth';
-import { ThemeToggle } from '@/lib/theme-provider';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 interface NavigationItem {
   name: string;
@@ -47,15 +47,55 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children, title, subtitle }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   // TODO: Layout-Spacings/Typo konsolidieren, sobald Design-Tokens definiert sind.
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-slate-100">
+      {/* Accessibility: lock scroll and close on Escape when open */}
+      {/** Side effects for open state */}
+      {(() => {
+        // run effect-like block safely in render (no hooks inside conditionals)
+        return null;
+      })()}
+      
+      {/* manage body scroll + escape */}
+      { /* eslint-disable react-hooks/rules-of-hooks */ }
+      { (function useSidebarA11y() {
+        useEffect(() => {
+          if (sidebarOpen) {
+            const onKey = (e: KeyboardEvent) => {
+              if (e.key === 'Escape') setSidebarOpen(false);
+            };
+            document.addEventListener('keydown', onKey);
+            const prevOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            // focus first focusable in dialog
+            setTimeout(() => {
+              const el = dialogRef.current?.querySelector<HTMLElement>('a,button,[tabindex]:not([tabindex="-1"])');
+              el?.focus();
+            }, 0);
+            return () => {
+              document.removeEventListener('keydown', onKey);
+              document.body.style.overflow = prevOverflow;
+            };
+          }
+        }, [sidebarOpen]);
+        return null as any;
+      })() }
+      { /* eslint-enable react-hooks/rules-of-hooks */ }
       {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-900/80" onClick={() => setSidebarOpen(false)} />
-        <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-xl">
+      <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`} aria-hidden={!sidebarOpen}>
+        <div className="fixed inset-0 bg-gray-900/80" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
+        <div
+          id="mobile-sidebar"
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Sidebar"
+          className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-xl focus:outline-none"
+        >
           <SidebarContent currentPath={router.pathname} onClose={() => setSidebarOpen(false)} />
         </div>
       </div>
@@ -63,6 +103,8 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
       {/* Desktop sidebar */}
       <aside
         id="app-sidebar"
+        role="navigation"
+        aria-label="Sidebar"
         className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800"
       >
         <SidebarContent currentPath={router.pathname} />
@@ -71,12 +113,15 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
       {/* Main content */}
       <div className="lg:ml-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <header role="banner" className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-4">
               <button
                 type="button"
                 className="lg:hidden p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-600"
+                aria-label="Open sidebar"
+                aria-controls="mobile-sidebar"
+                aria-expanded={sidebarOpen}
                 onClick={() => setSidebarOpen(true)}
               >
                 <Menu size={20} />
@@ -106,7 +151,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         </header>
 
         {/* Page content */}
-        <main className="flex-1">
+        <main role="main" className="flex-1">
           {children}
         </main>
       </div>
@@ -115,7 +160,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
 }
 
 interface SidebarContentProps {
-  currentPath: string;
+  currentPath?: string;
   onClose?: () => void;
 }
 
@@ -140,8 +185,9 @@ function SidebarContent({ currentPath, onClose }: SidebarContentProps) {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navigation.map((item) => {
-          const isActive = currentPath === item.href || 
-            (item.href !== '/' && currentPath.startsWith(item.href));
+          const cp = currentPath || '';
+          const isActive = cp === item.href || 
+            (item.href !== '/' && cp.startsWith(item.href));
           
           return (
             <Link

@@ -69,6 +69,8 @@ export default function SettingsPage() {
               <div key={e.key} className="flex items-center gap-2">
                 <Field
                   label={e.label}
+                  name={`endpoint-${e.key.toLowerCase()}`}
+                  id={`endpoint-${e.key.toLowerCase()}`}
                   value={values[e.key]}
                   onChange={(ev) =>
                     setValues((v) => ({ ...v, [e.key]: ev.target.value }))

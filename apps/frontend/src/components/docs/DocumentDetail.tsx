@@ -127,7 +127,10 @@ export default function DocumentDetailPage() {
           <div className="xl:col-span-3 space-y-6">
             
             {/* Document Header */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="rounded-xl shadow-sm p-6
+                 bg-white dark:bg-gray-900
+                 border border-gray-200 dark:border-gray-800
+                 text-gray-900 dark:text-gray-100">
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-primary-50 rounded-lg">
@@ -161,7 +164,11 @@ export default function DocumentDetailPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => copyToClipboard(window.location.href)}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg
+            text-gray-700 dark:text-gray-200
+            bg-white dark:bg-gray-800
+            border border-gray-300 dark:border-gray-600
+            hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     {copied ? <Check size={16} /> : <Copy size={16} />}
                     {copied ? 'Copied!' : 'Share'}
@@ -181,7 +188,7 @@ export default function DocumentDetailPage() {
               </div>
 
               {/* AI Summary Section */}
-              <div className="border-t border-gray-200 pt-6">
+              <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">AI Summary</h3>
                   <button
@@ -199,7 +206,10 @@ export default function DocumentDetailPage() {
                     <p className="text-gray-800 leading-relaxed">{summary}</p>
                   </div>
                 ) : (
-                  <div className="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300">
+                  <div className="rounded-lg p-4 border-2 border-dashed
+                 bg-gray-50 dark:bg-gray-800
+                 border-gray-300 dark:border-gray-700
+                 text-gray-600 dark:text-gray-300">
                     <p className="text-gray-500 text-center">
                       Click "Generate Summary" to create an AI-powered summary of this document
                     </p>
@@ -209,7 +219,10 @@ export default function DocumentDetailPage() {
             </div>
 
             {/* Document Content */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="rounded-xl shadow-sm p-6
+                 bg-white dark:bg-gray-900
+                 border border-gray-200 dark:border-gray-800
+                 text-gray-900 dark:text-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Document Content</h3>
               <div className="prose max-w-none">
                 <HighlightedText text={doc.text} entities={doc.entities} />
@@ -221,7 +234,10 @@ export default function DocumentDetailPage() {
           <div className="space-y-6">
             
             {/* Entities Panel */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="rounded-xl shadow-sm p-6
+                 bg-white dark:bg-gray-900
+                 border border-gray-200 dark:border-gray-800
+                 text-gray-900 dark:text-gray-100">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Entities</h3>
                 <span className="text-sm text-gray-500">{entities.length} found</span>
@@ -260,25 +276,34 @@ export default function DocumentDetailPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="rounded-xl shadow-sm p-6
+                 bg-white dark:bg-gray-900
+                 border border-gray-200 dark:border-gray-800
+                 text-gray-900 dark:text-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
+            bg-gray-50 dark:bg-gray-800 rounded-lg
+            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-center gap-3">
                     <Network size={16} className="text-gray-500" />
                     <span>Explore Graph</span>
                   </div>
                 </button>
                 
-                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
+            bg-gray-50 dark:bg-gray-800 rounded-lg
+            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-center gap-3">
                     <FileText size={16} className="text-gray-500" />
                     <span>Find Similar</span>
                   </div>
                 </button>
                 
-                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
+            bg-gray-50 dark:bg-gray-800 rounded-lg
+            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-center gap-3">
                     <Download size={16} className="text-gray-500" />
                     <span>Export Data</span>

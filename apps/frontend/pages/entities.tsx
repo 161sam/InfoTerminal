@@ -16,6 +16,7 @@ import {
   Trash2
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import Panel from '@/components/layout/Panel';
 import { DataTable, Column, TableAction } from '@/components/ui/DataTable';
 import EntityBadge from '@/components/entities/EntityBadge';
 import { EntityLabel, normalizeLabel } from '@/lib/entities';
@@ -105,8 +106,8 @@ export default function EntitiesPage() {
         <div className="flex items-center gap-3">
           <EntityBadge label={row.type} size="sm" />
           <div>
-            <div className="font-medium text-gray-900">{value}</div>
-            <div className="text-sm text-gray-500">{row.type}</div>
+            <div className="font-medium text-gray-900 dark:text-slate-100">{value}</div>
+            <div className="text-sm text-gray-500 dark:text-slate-400">{row.type}</div>
           </div>
         </div>
       )
@@ -137,7 +138,7 @@ export default function EntitiesPage() {
               style={{ width: `${value * 100}%` }}
             />
           </div>
-          <span className="text-sm text-gray-600">{Math.round(value * 100)}%</span>
+          <span className="text-sm text-gray-600 dark:text-slate-300">{Math.round(value * 100)}%</span>
         </div>
       )
     },
@@ -161,7 +162,7 @@ export default function EntitiesPage() {
       header: 'Sources',
       align: 'center',
       render: (value) => (
-        <span className="text-sm text-gray-600">{value.length}</span>
+        <span className="text-sm text-gray-600 dark:text-slate-300">{value.length}</span>
       )
     },
     {
@@ -255,66 +256,66 @@ export default function EntitiesPage() {
         
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Entities</p>
-                <p className="text-2xl font-bold text-gray-900">{entityStats.total}</p>
+                <p className="text-sm text-gray-600 dark:text-slate-300">Total Entities</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{entityStats.total}</p>
               </div>
               <User size={24} className="text-blue-500" />
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Verified</p>
+                <p className="text-sm text-gray-600 dark:text-slate-300">Verified</p>
                 <p className="text-2xl font-bold text-green-600">{entityStats.verified}</p>
               </div>
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Pending</p>
+                <p className="text-sm text-gray-600 dark:text-slate-300">Pending</p>
                 <p className="text-2xl font-bold text-yellow-600">{entityStats.pending}</p>
               </div>
               <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Organizations</p>
+                <p className="text-sm text-gray-600 dark:text-slate-300">Organizations</p>
                 <p className="text-2xl font-bold text-purple-600">{entityStats.types.Organization}</p>
               </div>
               <Building2 size={24} className="text-purple-500" />
             </div>
-          </div>
+          </Panel>
           
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <Panel padded>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">People</p>
+                <p className="text-sm text-gray-600 dark:text-slate-300">People</p>
                 <p className="text-2xl font-bold text-indigo-600">{entityStats.types.Person}</p>
               </div>
               <User size={24} className="text-indigo-500" />
             </div>
-          </div>
+          </Panel>
         </div>
 
         {/* Filters */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Filter size={16} className="text-gray-500" />
+              <Filter size={16} className="text-gray-500 dark:text-slate-400" />
               <select 
                 value={selectedType} 
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               >
                 <option value="all">All Types</option>
                 <option value="Person">Person</option>
@@ -336,8 +337,7 @@ export default function EntitiesPage() {
         </div>
 
         {/* Entity Type Distribution */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Entity Distribution</h3>
+        <Panel title="Entity Distribution">
           <div className="flex flex-wrap gap-3">
             {Object.entries(entityStats.types).map(([type, count]) => (
               <EntityBadge 
@@ -349,7 +349,7 @@ export default function EntitiesPage() {
               />
             ))}
           </div>
-        </div>
+        </Panel>
 
         {/* Entities Table */}
         <DataTable
@@ -366,9 +366,9 @@ export default function EntitiesPage() {
           }}
           emptyState={
             <div className="text-center py-8">
-              <User size={48} className="mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No entities found</h3>
-              <p className="text-gray-500">
+              <User size={48} className="mx-auto text-gray-400 dark:text-slate-500 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-2">No entities found</h3>
+              <p className="text-gray-500 dark:text-slate-400">
                 {selectedType === 'all' 
                   ? 'Upload some documents to start detecting entities.'
                   : `No ${selectedType.toLowerCase()} entities found.`

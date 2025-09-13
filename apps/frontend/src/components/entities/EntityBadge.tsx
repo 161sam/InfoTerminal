@@ -50,7 +50,11 @@ export default function EntityBadge({
       })()}
       {value ? `${label}: ${value}` : label}
       {countBadge !== undefined && (
-        <span className="ml-1 rounded-full bg-white px-1 text-xs text-black">{countBadge}</span>
+        <span className="ml-1 rounded-full px-1 text-xs
+                  bg-gray-100 text-gray-900
+                  dark:bg-gray-800 dark:text-gray-100">
+          {countBadge}
+        </span>
       )}
     </span>
   );
@@ -67,4 +71,3 @@ export default function EntityBadge({
     </button>
   );
 }
-

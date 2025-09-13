@@ -26,7 +26,10 @@ export const GlobalHealth: React.FC<{ pollIntervalMs?: number }> = ({ pollInterv
         <StatusDot state={aggState} />
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 bg-white shadow-lg rounded z-50">
+        <div className="absolute right-0 mt-2 rounded z-50 shadow-lg
+                        bg-white dark:bg-gray-900
+                        border border-gray-200 dark:border-gray-800
+                        text-gray-900 dark:text-gray-100">
           <HealthPopover data={data} onRefresh={refresh} />
         </div>
       )}

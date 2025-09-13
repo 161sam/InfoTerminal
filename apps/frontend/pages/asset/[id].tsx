@@ -6,6 +6,7 @@ import { GraphSnippet } from '@/components/analytics/GraphSnippet';
 import { NewsTimeline } from '@/components/analytics/NewsTimeline';
 import { EntityHeader } from '@/components/analytics/EntityHeader';
 import { fetchAsset, fetchAssetPrices, fetchGraph, fetchNews } from '@/lib/api';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export default function AssetPage() {
   const router = useRouter();
@@ -26,21 +27,23 @@ export default function AssetPage() {
   }, [id, from, to]);
 
   return (
-    <div data-testid="asset-page">
-      {asset && <EntityHeader title={asset.name || id} type="Asset" />}
-      <nav>
-        <button onClick={() => router.push({ query: { id, tab: 'chart', from, to } })}>Kurs</button>
-        <button onClick={() => router.push({ query: { id, tab: 'graph', from, to } })}>Graph</button>
-        <button onClick={() => router.push({ query: { id, tab: 'news', from, to } })}>News</button>
-      </nav>
-      {tab === 'chart' && (
-        <>
-          <TimeSeriesChart data={prices.map(p => ({ ts: p.ts, value: p.close }))} />
-          <OHLCChart data={prices.map(p => ({ ts: p.ts, open: p.open, high: p.high, low: p.low, close: p.close }))} />
-        </>
-      )}
-      {tab === 'graph' && <GraphSnippet data={graph} />}
-      {tab === 'news' && <NewsTimeline items={news} />}
-    </div>
+    <DashboardLayout title={asset?.name || id || 'Asset'}>
+      <div data-testid="asset-page" className="space-y-4">
+        {asset && <EntityHeader title={asset.name || id} type="Asset" />}
+        <nav className="flex gap-2">
+          <button className="btn btn-secondary" onClick={() => router.push({ query: { id, tab: 'chart', from, to } })}>Kurs</button>
+          <button className="btn btn-secondary" onClick={() => router.push({ query: { id, tab: 'graph', from, to } })}>Graph</button>
+          <button className="btn btn-secondary" onClick={() => router.push({ query: { id, tab: 'news', from, to } })}>News</button>
+        </nav>
+        {tab === 'chart' && (
+          <>
+            <TimeSeriesChart data={prices.map(p => ({ ts: p.ts, value: p.close }))} />
+            <OHLCChart data={prices.map(p => ({ ts: p.ts, open: p.open, high: p.high, low: p.low, close: p.close }))} />
+          </>
+        )}
+        {tab === 'graph' && <GraphSnippet data={graph} />}
+        {tab === 'news' && <NewsTimeline items={news} />}
+      </div>
+    </DashboardLayout>
   );
 }

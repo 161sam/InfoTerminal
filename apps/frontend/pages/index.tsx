@@ -15,6 +15,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import Panel from '@/components/layout/Panel';
 import { useHealth } from '@/hooks/useHealth';
 
 interface DashboardStats {
@@ -93,19 +94,18 @@ export default function Dashboard() {
           </div>
 
           {/* System Health */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <Panel>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">System Health</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">System Health</h3>
               <Activity size={20} className="text-gray-400" />
             </div>
-            
             {healthData && (
               <div className="space-y-3">
                 {Object.entries(healthData.services).map(([name, service]: [string, any]) => (
                   <div key={name} className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700 capitalize">{name}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300 capitalize">{name}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-slate-400">
                         {service.latencyMs ? `${service.latencyMs}ms` : '–'}
                       </span>
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -120,19 +120,18 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
-          </div>
+          </Panel>
         </div>
 
         {/* Recent Activity & Quick Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Recent Activity */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <Panel title="Recent Activity">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+              <span />
               <Clock size={20} className="text-gray-400" />
             </div>
-            
             <div className="space-y-4">
               <ActivityItem
                 type="search"
@@ -163,12 +162,10 @@ export default function Dashboard() {
                 icon={AlertTriangle}
               />
             </div>
-          </div>
+          </Panel>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
-            
+          <Panel title="Quick Actions">
             <div className="grid grid-cols-2 gap-4">
               <QuickActionCard
                 title="Advanced Search"
@@ -199,7 +196,7 @@ export default function Dashboard() {
                 color="orange"
               />
             </div>
-          </div>
+          </Panel>
         </div>
       </div>
     </DashboardLayout>
@@ -221,11 +218,11 @@ function StatsCard({ title, value, icon: Icon, trend, color }: {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <Panel>
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-gray-600 dark:text-slate-400">{title}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{value}</p>
         </div>
         <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
           <Icon size={24} />
@@ -241,7 +238,7 @@ function StatsCard({ title, value, icon: Icon, trend, color }: {
           <span className="text-sm text-gray-500 ml-2">vs last week</span>
         </div>
       )}
-    </div>
+    </Panel>
   );
 }
 
@@ -249,8 +246,7 @@ function QuickSearchWidget() {
   const [query, setQuery] = useState('');
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Search</h3>
+    <Panel title="Quick Search">
       
       <div className="relative mb-4">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -261,7 +257,7 @@ function QuickSearchWidget() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search across all data sources..."
-          className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          className="block w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-slate-400"
         />
       </div>
       
@@ -270,13 +266,13 @@ function QuickSearchWidget() {
           <button
             key={suggestion}
             onClick={() => setQuery(suggestion)}
-            className="px-3 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-3 py-2 text-sm text-gray-600 dark:text-slate-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             {suggestion}
           </button>
         ))}
       </div>
-    </div>
+    </Panel>
   );
 }
 
@@ -318,11 +314,11 @@ function QuickActionCard({ title, description, href, icon: Icon, color }: {
   return (
     <a
       href={href}
-      className={`block p-4 rounded-lg transition-colors ${colorClasses[color]}`}
+      className={`block p-4 rounded-lg transition-colors ${colorClasses[color]} dark:bg-gray-800 dark:text-slate-200 dark:hover:bg-gray-700`}
     >
       <Icon size={20} className="mb-2" />
-      <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
-      <p className="text-xs text-gray-600">{description}</p>
+      <h4 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{title}</h4>
+      <p className="text-xs text-gray-600 dark:text-slate-400">{description}</p>
     </a>
   );
 }

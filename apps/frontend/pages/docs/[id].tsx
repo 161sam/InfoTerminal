@@ -5,6 +5,8 @@ import DocCard from '@/components/docs/DocCard';
 import { DocRecord } from '@/types/docs';
 import EntityBadgeList, { BadgeItem } from '@/components/entities/EntityBadgeList';
 import { uniqueEntities } from '@/lib/entities';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import Panel from '@/components/layout/Panel';
 
 export default function DocPage() {
   const router = useRouter();
@@ -24,8 +26,16 @@ export default function DocPage() {
       .catch(() => setError('Dokument nicht gefunden'));
   }, [id]);
 
-  if (error) return <main>{error}</main>;
-  if (!doc) return <main>Lade...</main>;
+  if (error) return (
+    <DashboardLayout title="Document">
+      <div className="max-w-5xl text-red-600 dark:text-red-400">{error}</div>
+    </DashboardLayout>
+  );
+  if (!doc) return (
+    <DashboardLayout title="Document">
+      <div className="max-w-5xl">Lade...</div>
+    </DashboardLayout>
+  );
 
   const badges: BadgeItem[] = uniqueEntities(
     doc.entities.map((e) => ({ label: e.label, value: e.text || '' })),
@@ -37,15 +47,22 @@ export default function DocPage() {
   };
 
   return (
-    <main style={{ maxWidth: 800, margin: '1rem auto', display: 'flex', gap: '1rem' }}>
-      <div style={{ flex: 1 }}>
-        <DocCard doc={doc} />
-        <EntityHighlighter text={doc.text} entities={doc.entities} />
+    <DashboardLayout title="Document">
+      <div className="max-w-6xl grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3 space-y-6">
+          <Panel>
+            <DocCard doc={doc} />
+          </Panel>
+          <Panel title="Content">
+            <EntityHighlighter text={doc.text} entities={doc.entities} />
+          </Panel>
+        </div>
+        <aside className="lg:col-span-1 space-y-4">
+          <Panel title="Entitäten">
+            <EntityBadgeList items={badges} onBadgeClick={handleBadgeClick} />
+          </Panel>
+        </aside>
       </div>
-      <aside style={{ width: 200 }}>
-        <h4>Entitäten</h4>
-        <EntityBadgeList items={badges} onBadgeClick={handleBadgeClick} />
-      </aside>
-    </main>
+    </DashboardLayout>
   );
 }

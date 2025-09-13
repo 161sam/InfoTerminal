@@ -386,7 +386,9 @@ export default function GraphExplorer() {
     <div className="flex flex-col h-screen bg-gray-50">
       
       {/* Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="px-6 py-4 border-b
+                 bg-white dark:bg-gray-900
+                 border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between">
           
           {/* Left Controls */}
@@ -481,7 +483,9 @@ export default function GraphExplorer() {
         
         {/* Settings Panel */}
         {showSettings && (
-          <div className="w-80 bg-white border-r border-gray-200 p-6 overflow-y-auto">
+          <div className="w-80 p-6 overflow-y-auto border-r
+                 bg-white dark:bg-gray-900
+                 border-gray-200 dark:border-gray-800">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Graph Settings</h3>
             
             {/* Layout */}
@@ -591,7 +595,7 @@ export default function GraphExplorer() {
         )}
 
         {/* Main Graph Area */}
-        <div className="flex-1 relative bg-white">
+        <div className="flex-1 relative bg-white dark:bg-gray-950">
           <CytoscapeComponent
             cy={(cy: any) => {
               cyRef.current = cy;
@@ -610,7 +614,9 @@ export default function GraphExplorer() {
           />
           
           {/* Graph Controls Overlay */}
-          <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg border border-gray-200 p-2 flex flex-col gap-2">
+          <div className="absolute top-4 right-4 rounded-lg shadow-lg p-2 border
+                 bg-white dark:bg-gray-900
+                 border-gray-200 dark:border-gray-800 flex flex-col gap-2">
             <button
               onClick={() => cyRef.current?.fit()}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
@@ -637,7 +643,9 @@ export default function GraphExplorer() {
 
           {/* Node Info Panel */}
           {selectedNode && (
-            <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg border border-gray-200 p-4 min-w-64">
+            <div className="absolute bottom-4 left-4 rounded-lg shadow-lg p-4 border
+                 bg-white dark:bg-gray-900
+                 border-gray-200 dark:border-gray-800 min-w-64">
               <h4 className="font-medium text-gray-900 mb-2">Node Information</h4>
               <div className="text-sm space-y-1">
                 <div><span className="text-gray-600">ID:</span> <span className="font-mono">{selectedNode}</span></div>

@@ -27,12 +27,12 @@ export function useHealth(pollIntervalMs = 15000) {
 
   const stateAggregate = error
     ? 'unreachable'
-    : data
-    ? Object.values(data.services).some(
-        (s) => s.state === 'down' || s.state === 'unreachable'
+    : data && (data as any).services
+    ? Object.values((data as any).services).some(
+        (s: any) => s.state === 'down' || s.state === 'unreachable'
       )
       ? 'unreachable'
-      : Object.values(data.services).some((s) => s.state === 'degraded')
+      : Object.values((data as any).services).some((s: any) => s.state === 'degraded')
       ? 'degraded'
       : 'ok'
     : 'ok';
