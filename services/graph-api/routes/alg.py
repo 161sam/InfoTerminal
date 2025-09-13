@@ -31,6 +31,38 @@ def degree(inp: DegreeIn):
                 q = "MATCH (n) OPTIONAL MATCH (n)-[r]-() RETURN id(n) AS id, coalesce(count(r),0) AS degree"
             return {"items": s.run(q).data()}
 
+
+class BetweennessIn(BaseModel):
+    nodeLabel: str | None = None
+
+
+@router.post("/betweenness")
+def betweenness(inp: BetweennessIn):
+    with driver.session() as s:
+        if USE_GDS:
+            q = (
+                "CALL gds.betweenness.stream({nodeProjection: $label}) "
+                "YIELD nodeId, score RETURN gds.util.asNode(nodeId).id AS id, score"
+            )
+            return {"items": s.run(q, label=inp.nodeLabel or "*").data()}
+        raise HTTPException(501, "Betweenness requires GDS")
+
+
+class CommunitiesIn(BaseModel):
+    nodeLabel: str | None = None
+
+
+@router.post("/communities")
+def communities(inp: CommunitiesIn):
+    with driver.session() as s:
+        if USE_GDS:
+            q = (
+                "CALL gds.louvain.stream({nodeProjection:$label, relationshipProjection:'*'}) "
+                "YIELD nodeId, communityId RETURN id(gds.util.asNode(nodeId)) AS id, communityId"
+            )
+            return {"items": s.run(q, label=inp.nodeLabel or "*").data()}
+        raise HTTPException(501, "Communities not available without GDS")
+
 class ShortestIn(BaseModel):
     sourceId: int
     targetId: int

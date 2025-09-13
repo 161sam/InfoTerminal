@@ -8,16 +8,15 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
-  # doc-entities:
-  #   # TODO: add Dockerfile and enable this service
-  #   build: ./services/doc-entities
-  #   ports: ["8006:8006"]
-  #   env_file: .env
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-fsS", "http://localhost:8006/healthz"]
-  #     interval: 10s
-  #     timeout: 3s
-  #     retries: 10
-  #   depends_on:
-  #     nlp-service:
-  #       condition: service_healthy
+  doc-entities:
+    build: ./services/doc-entities
+    ports: ["${IT_PORT_DOC_ENTITIES:-8613}:8000"]
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      nlp-service:
+        condition: service_healthy

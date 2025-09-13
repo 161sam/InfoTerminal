@@ -8,6 +8,7 @@ import config from "@/lib/config";
 import { getEgo, loadPeople, getShortestPath, exportDossier } from "@/lib/api";
 import { toast } from "@/components/ui/toast";
 import DossierButton from "@/components/DossierButton";
+import AnalysisPanel from "@/components/graph/AnalysisPanel";
 
 function DevPanel() {
   if (process.env.NODE_ENV === "production") return null;
@@ -299,6 +300,7 @@ export default function GraphXPage() {
           )}
         </Panel>
       </div>
+      <AnalysisPanel />
       <DevPanel />
     </DashboardLayout>
   );

@@ -2,3 +2,6 @@ fastapi
 uvicorn[standard]
 pydantic
 starlette-exporter
+spacy
+transformers
+torch
