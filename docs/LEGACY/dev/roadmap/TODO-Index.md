@@ -1,7 +1,13 @@
+
+
+> **Legacy Notice (v0.1)**  
+> This document describes pre-v0.2 behavior and is kept for historical reference.  
+> See the updated docs in `docs/` and the v0.2 roadmap for current guidance.
+
 # 📝 InfoTerminal TODO-Index (v0.1.9.1 → v0.2)
 
-> Checkliste aller Tickets / Features für den Weg von v0.1.9.1 bis v0.2  
-> Inspiriert von Palantir Gotham, erweitert durch eigene Differenzierungsfeatures.
+> Master-Checkliste aller Tickets / Features für den Weg von v0.1.9.1 bis v0.2  
+> Enthält Core, Gotham-Gap, Security-Layer, Verification-Layer
 
 ---
 
@@ -41,6 +47,8 @@
 - [ ] **[FE-6]** Dossier-Lite: Report-Builder (Export PDF/MD)
 - [ ] **[FE-7]** Collaboration: Notes/Comments (Yjs CRDT)
 - [ ] **[FE-8]** Audit-Overlay (zeige Logs/Aktionen pro User)
+- [ ] **[FE-9]** Verification-Badges & Evidence-Panel (Veracity Scores)
+- [ ] **[FE-10]** Review-UI für Claims/Evidence (Overrides, History)
 
 ## 6. Gateway & OPA
 - [ ] **[GATE-1]** OAuth2/OIDC Support (JWT Validation)
@@ -55,6 +63,7 @@
 - [ ] **[NIFI-4]** Streaming/Kafka Pipeline (Sensor/CDR)
 - [ ] **[NIFI-5]** Video-Pipeline (NiFi → FFmpeg → ML inference)
 - [ ] **[NIFI-6]** Geospatial Enrichment (Geocoding via Nominatim/Photon)
+- [ ] **[NIFI-7]** Verification-Pipeline: Claim Extract, Retrieval, RTE, Geo/Time/Media Checks, Aggregation
 
 ## 8. n8n Playbooks
 - [ ] **[N8N-1]** Investigation Assistant Flow (search+graph queries)
@@ -62,6 +71,8 @@
 - [ ] **[N8N-3]** Cross-Source Correlation (news+social+plugins)
 - [ ] **[N8N-4]** Case Dossier Creation (auto-PDF + Graph snapshot)
 - [ ] **[N8N-5]** Plugin Integration Flows (z. B. nmap → Graph)
+- [ ] **[N8N-6]** Veracity Alerts (false/manipulative → escalate)
+- [ ] **[N8N-7]** Escalation Flow (hoher Widerspruchsgrad → Senior Review)
 
 ## 9. CLI (infoterminal-cli)
 - [ ] **[CLI-1]** Lifecycle Commands (up/down/start/stop/restart/status/logs)
@@ -79,9 +90,47 @@
 
 ---
 
-### 📌 Hinweis
-- **Prio Muss**: Ontologie-Layer, Graph-Algorithmen, NLP v1, OAuth2, Observability Profile, Dossier-Lite  
-- **Prio Soll**: Geospatial-Layer, NiFi Pipelines, Export/Offboarding  
-- **Prio Kann**: Video-Pipeline Demo, Collaboration Features
+## 11. Security-Layer
+- [ ] **[SEC-EGRESS-1]** Egress-Gateway (Tor+VPN+Proxy-Chain, Kill-Switch, DNS-Sinkhole)
+- [ ] **[SEC-EGRESS-2]** NetworkPolicy: Services nur via Egress-Gateway
+- [ ] **[SEC-EGRESS-3]** UI-Schalter `IT_MODE/IT_EGRESS`, Proxy-Injektion
+- [ ] **[SEC-EGRESS-4]** DNS-Hardening: DoH/Tor-DNS, blockiere Port 53
+- [ ] **[SEC-STORE-1]** Ephemeral FS (Incognito Sessions, Auto-Wipe)
+- [ ] **[SEC-STORE-2]** Vault-Integration + per-Tenant Keys
+- [ ] **[SEC-STORE-3]** Hash+Sign-Pipeline für Forensics-Exporte
+- [ ] **[SEC-BROWSER-1]** Remote Browser Pool (Profile, WebRTC-Off, Cookie-Jar per Case)
+- [ ] **[SEC-BROWSER-2]** Identity Profiles (UA/Locale/Timezone)
+- [ ] **[SEC-BROWSER-3]** robots.txt-Enforcer + Quell-Whitelist
+- [ ] **[SEC-AUDIT-1]** Dual-Plane Logging (persistent vs. in-memory)
+- [ ] **[SEC-AUDIT-2]** UI-Warnungen (Export enthält Metadaten)
+- [ ] **[SEC-SBX-1]** Plugin-Sandbox (gVisor/Kata/Firecracker, default no-net)
+- [ ] **[SEC-SBX-2]** OPA-Validierung `plugin.yaml` (CAPs/Secrets)
+- [ ] **[SEC-SBX-3]** SBOM/Cosign/Trivy-Scans in CI
 
 ---
+
+## 12. Verification-Layer
+- [ ] **[VERIF-1]** Source Reputation & Bot-Likelihood Modul
+- [ ] **[VERIF-2]** Claim-Extractor + MinHash Cluster + Claim IDs
+- [ ] **[VERIF-3]** Evidence Retrieval (Hybrid BM25+Dense)
+- [ ] **[VERIF-4]** RTE/Stance Classifier + Aggregation
+- [ ] **[VERIF-5]** Temporal/Geo Checks (Mordecai + Heuristiken)
+- [ ] **[VERIF-6]** Media Forensics (pHash, EXIF, Reverse Search, ELA)
+- [ ] **[VERIF-7]** Schema/Mappings/Constraints für Verification (OpenSearch + Neo4j)
+- [ ] **[VERIF-8]** Review-UI (Evidence Panel, Overrides, History)
+- [ ] **[VERIF-9]** Active Learning Loop (Label-Store, Re-Training)
+- [ ] **[VERIF-10]** n8n Alerts/Escalations (Watchlists, kontrovers)
+- [ ] **[VERIF-11]** Dossier-Integration (Claim-basierte Reports mit Evidenz-Anhang)
+
+---
+
+## 📌 Priorisierung
+- **Prio Muss:** Core APIs, Ontologie, Graph-Algorithmen, NLP v1, OAuth2/OIDC, Observability, Dossier-Lite, Geospatial, NiFi Pipelines, n8n Playbooks, Security-Egress, Verification Basics (VERIF-1..4)
+- **Prio Soll:** Collaboration v1, Video-Pipeline, Security Sandbox/Browser, Verification Geo/Media (VERIF-5..6)
+- **Prio Kann:** Active Learning, Review-UI, Dossier-Verifikation, Forensics Hash+Sign, Ethical AI
+
+---
+
+# TODO-Index
+
+<!-- merged:20250913-101006 -->
