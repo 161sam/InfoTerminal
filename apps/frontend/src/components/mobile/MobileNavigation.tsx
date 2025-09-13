@@ -11,10 +11,13 @@ import {
   Menu,
   X,
   Bell,
-  User
+  User,
+  MessageSquare,
+  Sparkles
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useNotifications } from '@/lib/notifications';
+import { extraNav, isEnabled } from '@/components/navItems';
 
 interface MobileNavItem {
   name: string;
@@ -30,6 +33,15 @@ const navigationItems: MobileNavItem[] = [
   { name: 'Documents', href: '/documents', icon: FileText },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
 ];
+
+extraNav.filter(isEnabled).forEach(item => {
+  if (!navigationItems.find(n => n.href === item.href)) {
+    let icon = MessageSquare as LucideIcon;
+    if (item.icon === 'Sparkles') icon = Sparkles;
+    if (item.icon === 'MessageSquare') icon = MessageSquare;
+    navigationItems.push({ name: item.label, href: item.href, icon });
+  }
+});
 
 export function MobileNavigation() {
   const router = useRouter();
@@ -113,7 +125,7 @@ export function MobileNavigation() {
                 return (
                   <button
                     key={item.name}
-                    onClick={() => router.push(item.href)}
+                    onClick={() => { router.push(item.href); setIsMenuOpen(false); }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left ${
                       isActive
                         ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
