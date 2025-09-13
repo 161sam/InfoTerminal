@@ -1,18 +1,20 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
+import config from "@/lib/config";
 
 export default function NLPPage() {
   const [text, setText] = useState("");
   const [ner, setNer] = useState<any | null>(null);
   const [summary, setSummary] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const docEntitiesApiConfigured = Boolean(process.env.NEXT_PUBLIC_DOC_ENTITIES_API || process.env.NEXT_PUBLIC_DOCENTITIES_API);
 
   const callNer = async () => {
     setError("");
     setSummary("");
     try {
-      const r = await fetch("http://127.0.0.1:8003/ner", {
+      const r = await fetch(`${config.DOCENTITIES_API}/ner`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })
@@ -29,7 +31,7 @@ export default function NLPPage() {
     setError("");
     setNer(null);
     try {
-      const r = await fetch("http://127.0.0.1:8003/summarize", {
+      const r = await fetch(`${config.DOCENTITIES_API}/summary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })
@@ -41,6 +43,14 @@ export default function NLPPage() {
       setError("NLP-Service nicht verfügbar");
     }
   };
+
+  if (!docEntitiesApiConfigured) {
+    return (
+      <DashboardLayout title="NLP">
+        <div className="p-4">DOC-Entities-API nicht konfiguriert. Bitte NEXT_PUBLIC_DOC_ENTITIES_API setzen oder Feature-Flag deaktivieren.</div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title="NLP">
