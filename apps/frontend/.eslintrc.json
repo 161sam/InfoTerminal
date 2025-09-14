@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "NewExpression[callee.name='URLSearchParams'] ObjectExpression",
+        "message": "Use toSearchParams(...) instead of direct object initialization."
+      }
+    ]
+  }
+}
