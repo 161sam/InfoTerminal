@@ -27,6 +27,10 @@ const withExistingRewrites = (rewrites = []) => {
     source: "/api/plugins/:path*",
     destination: `${PLUGINS}/plugins/:path*`,
   });
+  out = add(out, {
+    source: "/api/ops/:path*",
+    destination: `${GATEWAY}/ops/:path*`,
+  });
   return out;
 };
 
