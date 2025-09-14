@@ -33,6 +33,10 @@ const withExistingRewrites = (rewrites = []) => {
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  eslint: {
+    // Skip ESLint during builds to avoid requiring eslint in CI/containers
+    ignoreDuringBuilds: true,
+  },
 };
 
 const originalRewrites = config.rewrites;
@@ -52,4 +56,3 @@ config.rewrites = async function rewrites() {
 };
 
 module.exports = config;
-

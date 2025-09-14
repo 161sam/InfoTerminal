@@ -17,8 +17,10 @@ import {
   Shield,
   Palette,
   Bell,
-  User
+  User,
+  Download
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import Button from "@/components/ui/Button";
@@ -41,7 +43,7 @@ interface ServiceEndpoint {
   key: keyof EndpointSettings;
   label: string;
   description: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: LucideIcon;
   required: boolean;
   defaultPort?: string;
 }
@@ -241,7 +243,7 @@ export default function SettingsPage() {
     toast(`Theme changed to ${theme}`, { variant: 'success' });
   };
 
-  const TabButton = ({ id, label, icon: Icon }: { id: SettingsTab; label: string; icon: React.ComponentType<any> }) => (
+  const TabButton = ({ id, label, icon: Icon }: { id: SettingsTab; label: string; icon: LucideIcon }) => (
     <button
       onClick={() => setActiveTab(id)}
       className={`inline-flex items-center gap-2 px-4 py-3 text-sm rounded-lg transition-colors ${
