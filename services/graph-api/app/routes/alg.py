@@ -48,12 +48,12 @@ def betweenness(inp: BetweennessIn):
         raise HTTPException(501, "Betweenness requires GDS")
 
 
-class CommunitiesIn(BaseModel):
+class LouvainIn(BaseModel):
     nodeLabel: str | None = None
 
 
-@router.post("/communities")
-def communities(inp: CommunitiesIn):
+@router.post("/louvain")
+def louvain(inp: LouvainIn):
     with driver.session() as s:
         if USE_GDS:
             q = (
@@ -61,7 +61,7 @@ def communities(inp: CommunitiesIn):
                 "YIELD nodeId, communityId RETURN id(gds.util.asNode(nodeId)) AS id, communityId"
             )
             return {"items": s.run(q, label=inp.nodeLabel or "*").data()}
-        raise HTTPException(501, "Communities not available without GDS")
+        raise HTTPException(501, "Louvain requires GDS")
 
 class ShortestIn(BaseModel):
     sourceId: int

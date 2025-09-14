@@ -1,10 +1,17 @@
 import { useState } from 'react';
 import config from '@/lib/config';
 
-export default function AnalysisPanel() {
-  const [result, setResult] = useState<any>(null);
+interface Props {
+  onResult?: (alg: string, items: any[]) => void;
+}
+
+export default function AnalysisPanel({ onResult }: Props) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [lastAlg, setLastAlg] = useState<string | null>(null);
 
   const run = async (alg: string) => {
+    setStatus('loading');
+    setLastAlg(alg);
     try {
       const r = await fetch(`${config.GRAPH_API}/alg/${alg}`, {
         method: 'POST',
@@ -12,10 +19,18 @@ export default function AnalysisPanel() {
         body: '{}',
       });
       const data = await r.json();
-      setResult(data);
+      onResult?.(alg, data.items || []);
+      setStatus('done');
     } catch (e) {
-      setResult({ error: String(e) });
+      setStatus('error');
     }
+  };
+
+  const badge = () => {
+    if (status === 'loading') return <span className="text-xs text-blue-600">{lastAlg}…</span>;
+    if (status === 'done') return <span className="text-xs text-green-600">{lastAlg} ✓</span>;
+    if (status === 'error') return <span className="text-xs text-red-600">{lastAlg} ✗</span>;
+    return null;
   };
 
   return (
@@ -23,11 +38,9 @@ export default function AnalysisPanel() {
       <div className="flex gap-2">
         <button onClick={() => run('degree')} className="px-2 py-1 border rounded">Degree</button>
         <button onClick={() => run('betweenness')} className="px-2 py-1 border rounded">Betweenness</button>
-        <button onClick={() => run('communities')} className="px-2 py-1 border rounded">Communities</button>
+        <button onClick={() => run('louvain')} className="px-2 py-1 border rounded">Louvain</button>
+        {badge()}
       </div>
-      {result && (
-        <pre className="bg-gray-100 p-2 text-xs overflow-auto">{JSON.stringify(result, null, 2)}</pre>
-      )}
     </div>
   );
 }
