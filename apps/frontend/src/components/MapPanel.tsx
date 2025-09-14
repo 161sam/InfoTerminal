@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import config from '@/lib/config';
+import config, { GRAPH_DEEPLINK_FALLBACK } from '@/lib/config';
 
 export default function MapPanel() {
   const [layers, setLayers] = useState<any[]>([]);
@@ -73,7 +73,7 @@ export default function MapPanel() {
                 const props: any = feature.properties || {};
                 const id = props.id || '';
                 const name = props.name || id;
-                const link = `${config.GRAPH_DEEPLINK_FALLBACK}${encodeURIComponent(id)}`;
+                const link = `${GRAPH_DEEPLINK_FALLBACK}${encodeURIComponent(id)}`;
                 layer.bindPopup(`<a href="${link}">${name}</a>`);
               }}
             />
