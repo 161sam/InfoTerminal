@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 
@@ -62,4 +62,35 @@ def query_geo(bbox: str, name: str):
         lon, lat = coords
         if minLon <= lon <= maxLon and minLat <= lat <= maxLat:
             features.append(feat)
+    return {"type": "FeatureCollection", "features": features}
+
+
+@router.get("/entities")
+def geo_entities(bbox: Optional[str] = None):
+    """Return a small set of sample entities as GeoJSON."""
+    sample = [
+        {"id": "1", "name": "Berlin", "lat": 52.52, "lon": 13.405},
+        {"id": "2", "name": "Munich", "lat": 48.137, "lon": 11.575},
+    ]
+    features: List[dict] = []
+    bounds = None
+    if bbox:
+        try:
+            bounds = tuple(map(float, bbox.split(",")))
+        except Exception:
+            raise HTTPException(400, "bad bbox")
+    for ent in sample:
+        lon = ent["lon"]
+        lat = ent["lat"]
+        if bounds:
+            min_lon, min_lat, max_lon, max_lat = bounds
+            if not (min_lon <= lon <= max_lon and min_lat <= lat <= max_lat):
+                continue
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                "properties": {"id": ent["id"], "name": ent["name"]},
+            }
+        )
     return {"type": "FeatureCollection", "features": features}
