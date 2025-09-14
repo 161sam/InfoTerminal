@@ -1,0 +1,21 @@
+# {{ title }}
+
+{% if options.summary %}
+## Summary
+_TBD_
+
+{% endif %}
+## Documents
+{% for d in items.docs %}
+- {{ d }}
+{% endfor %}
+
+## Nodes
+{% for n in items.nodes %}
+- {{ n }}
+{% endfor %}
+
+## Edges
+{% for e in items.edges %}
+- {{ e }}
+{% endfor %}
