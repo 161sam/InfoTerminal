@@ -1,0 +1,20 @@
+version: 1
+stacks:
+  core:
+    title: Core Stack
+    files: ["docker-compose.yml", "docker-compose.gateway.yml"]
+  graph:
+    title: Graph & Neo4j
+    files: ["docker-compose.neo.yml", "docker-compose.graph-views.yml"]
+  nlp:
+    title: NLP & Doc Entities
+    files: ["docker-compose.nlp.yml"]
+  observability:
+    title: Observability
+    files: ["docker-compose.observability.yml"]
+  opa:
+    title: OPA/Policy
+    files: ["docker-compose.opa.yml"]
+  agents:
+    title: Agents (Flowise, etc.)
+    files: ["docker-compose.agents.yml"]

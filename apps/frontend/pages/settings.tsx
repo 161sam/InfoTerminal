@@ -36,8 +36,10 @@ import {
 } from "@/lib/endpoints";
 import SettingsGateway from "@/components/settings/SettingsGateway";
 import SettingsGraphDeepLink from "@/components/settings/SettingsGraphDeepLink";
+import OpsTab from "@/components/settings/OpsTab";
+import { useAuth } from "@/components/auth/AuthProvider";
 
-type SettingsTab = 'endpoints' | 'gateway' | 'appearance' | 'notifications' | 'security' | 'about';
+type SettingsTab = 'endpoints' | 'ops' | 'gateway' | 'appearance' | 'notifications' | 'security' | 'about';
 
 interface ServiceEndpoint {
   key: keyof EndpointSettings;
@@ -143,6 +145,11 @@ export default function SettingsPage() {
     systemAlerts: true,
     graphUpdates: false
   });
+
+  const { user } = useAuth();
+  const roles = user?.roles || [];
+  const FEATURE_OPS = process.env.NEXT_PUBLIC_FEATURE_OPS === "1";
+  const hasOpsRole = roles.includes("admin") || roles.includes("ops");
 
   const handleEndpointTest = async (endpoint: ServiceEndpoint) => {
     const url = sanitizeUrl(endpointValues[endpoint.key] || '');
@@ -328,6 +335,9 @@ export default function SettingsPage() {
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg">
           <TabButton id="endpoints" label="API Endpoints" icon={Server} />
+          {FEATURE_OPS && hasOpsRole && (
+            <TabButton id="ops" label="Ops" icon={Monitor} />
+          )}
           <TabButton id="gateway" label="Gateway" icon={Network} />
           <TabButton id="appearance" label="Appearance" icon={Palette} />
           <TabButton id="notifications" label="Notifications" icon={Bell} />
@@ -455,6 +465,9 @@ export default function SettingsPage() {
           )}
 
           {/* Gateway Tab */}
+          {FEATURE_OPS && hasOpsRole && activeTab === 'ops' && (
+            <OpsTab />
+          )}
           {activeTab === 'gateway' && (
             <Panel>
               <div className="space-y-4">

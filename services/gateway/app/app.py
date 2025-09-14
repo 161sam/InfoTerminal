@@ -140,3 +140,45 @@ async def readyz():
 @app.get("/metrics")
 async def metrics():
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+def _extract_roles(request: Request) -> list[str]:
+    claims = getattr(request.state, "claims", {}) or {}
+    roles = []
+    if isinstance(claims.get("roles"), list):
+        roles.extend(claims.get("roles", []))
+    ra = claims.get("realm_access", {}).get("roles")
+    if isinstance(ra, list):
+        roles.extend(ra)
+    return roles
+
+
+if os.getenv("IT_OPS_ENABLE", "0") == "1":
+
+    @app.api_route("/ops/{path:path}", methods=["GET", "POST"])
+    async def ops_proxy(path: str, request: Request):
+        roles = ",".join(_extract_roles(request))
+        headers = {
+            "X-Roles": roles,
+            "X-Request-Id": request.headers.get("X-Request-Id", ""),
+            "X-User-Id": getattr(request.state, "user_id", ""),
+            "X-Tenant-Id": request.state.tenant_id,
+        }
+        url = f"http://ops-controller:8000/ops/{path}"
+        audit_log(
+            "ops.proxy",
+            getattr(request.state, "user_id", ""),
+            request.state.tenant_id,
+            path=path,
+            method=request.method,
+            roles=roles,
+        )
+        async with httpx.AsyncClient(timeout=30) as c:
+            r = await c.request(
+                request.method,
+                url,
+                headers=headers,
+                params=request.query_params,
+                content=await request.body(),
+            )
+        return Response(content=r.content, status_code=r.status_code, headers=dict(r.headers))
