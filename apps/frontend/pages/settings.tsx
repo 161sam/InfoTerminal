@@ -147,9 +147,6 @@ export default function SettingsPage() {
   });
 
   const { user } = useAuth();
-  const roles = user?.roles || [];
-  const FEATURE_OPS = process.env.NEXT_PUBLIC_FEATURE_OPS === "1";
-  const hasOpsRole = roles.includes("admin") || roles.includes("ops");
 
   const handleEndpointTest = async (endpoint: ServiceEndpoint) => {
     const url = sanitizeUrl(endpointValues[endpoint.key] || '');
@@ -282,7 +279,7 @@ export default function SettingsPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Settings Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-900/30">
             <div className="flex items-center gap-3">
               <Server size={20} className="text-blue-600 dark:text-blue-400" />
@@ -307,6 +304,18 @@ export default function SettingsPage() {
             </div>
           </div>
           
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-900/30">
+            <div className="flex items-center gap-3">
+              <Monitor size={20} className="text-amber-600 dark:text-amber-400" />
+              <div>
+                <div className="text-sm text-amber-600 dark:text-amber-400 font-medium">Operations</div>
+                <div className="text-lg font-bold text-amber-800 dark:text-amber-300">
+                  Active
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-900/30">
             <div className="flex items-center gap-3">
               <Palette size={20} className="text-purple-600 dark:text-purple-400" />
@@ -321,7 +330,7 @@ export default function SettingsPage() {
           
           <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-900/30">
             <div className="flex items-center gap-3">
-              <Monitor size={20} className="text-orange-600 dark:text-orange-400" />
+              <Globe size={20} className="text-orange-600 dark:text-orange-400" />
               <div>
                 <div className="text-sm text-orange-600 dark:text-orange-400 font-medium">Runtime</div>
                 <div className="text-lg font-bold text-orange-800 dark:text-orange-300">
@@ -335,9 +344,7 @@ export default function SettingsPage() {
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg">
           <TabButton id="endpoints" label="API Endpoints" icon={Server} />
-          {FEATURE_OPS && hasOpsRole && (
-            <TabButton id="ops" label="Ops" icon={Monitor} />
-          )}
+          <TabButton id="ops" label="Operations" icon={Monitor} />
           <TabButton id="gateway" label="Gateway" icon={Network} />
           <TabButton id="appearance" label="Appearance" icon={Palette} />
           <TabButton id="notifications" label="Notifications" icon={Bell} />
@@ -464,10 +471,20 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* Gateway Tab */}
-          {FEATURE_OPS && hasOpsRole && activeTab === 'ops' && (
-            <OpsTab />
+          {/* Operations Tab */}
+          {activeTab === 'ops' && (
+            <Panel>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">Operations Dashboard</h3>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Monitor system performance and manage operational tasks</p>
+                </div>
+                <OpsTab />
+              </div>
+            </Panel>
           )}
+
+          {/* Gateway Tab */}
           {activeTab === 'gateway' && (
             <Panel>
               <div className="space-y-4">
