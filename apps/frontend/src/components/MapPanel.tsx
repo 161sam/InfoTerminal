@@ -6,6 +6,8 @@ export default function MapPanel() {
   const [layers, setLayers] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [entities, setEntities] = useState<any | null>(null);
+  const [showEntities, setShowEntities] = useState<boolean>(true);
 
   useEffect(() => {
     const load = async () => {
@@ -36,6 +38,14 @@ export default function MapPanel() {
           }
         }
         setLayers(loaded);
+        try {
+          const entRes = await fetch(`${config.VIEWS_API}/geo/entities`);
+          if (entRes.ok) {
+            setEntities(await entRes.json());
+          }
+        } catch {
+          // ignore entity layer errors
+        }
         setError(null);
       } catch (e: any) {
         // Show a concise error but keep the UI usable
@@ -56,6 +66,18 @@ export default function MapPanel() {
       <div className="h-96 w-full rounded border border-gray-200 overflow-hidden">
         <MapContainer center={[0, 0]} zoom={2} style={{ height: '100%', width: '100%' }}>
           <TileLayer url={tiles} />
+          {showEntities && entities && (
+            <GeoJSON
+              data={entities}
+              onEachFeature={(feature, layer) => {
+                const props: any = feature.properties || {};
+                const id = props.id || '';
+                const name = props.name || id;
+                const link = `${config.GRAPH_DEEPLINK_FALLBACK}${encodeURIComponent(id)}`;
+                layer.bindPopup(`<a href="${link}">${name}</a>`);
+              }}
+            />
+          )}
           {layers.map((geo, i) => (
             <GeoJSON
               key={i}
@@ -73,6 +95,14 @@ export default function MapPanel() {
       </div>
 
       <div className="mt-2 text-xs text-gray-600 dark:text-gray-300">
+        <label className="mr-2">
+          <input
+            type="checkbox"
+            checked={showEntities}
+            onChange={(e) => setShowEntities(e.target.checked)}
+          />{' '}
+          Entities
+        </label>
         {loading && <span>Loading layers…</span>}
         {!loading && error && <span className="text-red-600">{error}</span>}
         {!loading && !error && layers.length === 0 && <span>No layers found.</span>}
