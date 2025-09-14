@@ -94,11 +94,19 @@ export default function SearchPage() {
     const searchTerm = searchQuery || query;
     if (!searchTerm.trim()) return;
 
+    // URLSearchParams requires string values; stringify numeric filters
+    const filterParams: Record<string, string> = {
+      type: filters.type,
+      dateRange: filters.dateRange,
+      source: filters.source,
+      minScore: String(filters.minScore)
+    };
+
     const params = new URLSearchParams({ 
       q: searchTerm, 
       sort, 
       limit: "20",
-      ...filters 
+      ...filterParams 
     });
     
     setIsLoading(true);

@@ -198,8 +198,10 @@ export default function OpsTab() {
         const chunk = decoder.decode(value);
         setLogText(prev => prev + chunk);
       }
-    } catch (error) {
-      if (error.name !== 'AbortError') {
+    } catch (error: unknown) {
+      const isAbortError = (err: unknown): boolean =>
+        typeof err === 'object' && err !== null && 'name' in err && (err as any).name === 'AbortError';
+      if (!isAbortError(error)) {
         toast('Log streaming failed', { variant: 'error' });
       }
     }
@@ -528,7 +530,7 @@ export default function OpsTab() {
                         <Button
                           size="sm"
                           onClick={() => handleScale(stackName)}
-                          disabled={!scaleService || isLoading}
+                          disabled={!scaleService || !!isLoading}
                         >
                           <BarChart3 size={14} className="mr-1" />
                           Scale
