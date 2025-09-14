@@ -1,5 +1,6 @@
 import { ParsedUrlQuery } from 'querystring';
 import { EntityLabel } from './entities';
+import { toSearchParams } from './url';
 
 export function buildSearchUrl(
   currentQuery: ParsedUrlQuery,
@@ -36,12 +37,7 @@ export function buildSearchUrl(
     if (list.length) q.value = list;
     else delete q.value;
   }
-  const search = new URLSearchParams();
-  Object.entries(q).forEach(([k, v]) => {
-    if (v === undefined) return;
-    if (Array.isArray(v)) v.forEach((val) => search.append(k, String(val)));
-    else search.set(k, String(v));
-  });
-  return `/search?${search.toString()}`;
+  const params = toSearchParams(q as Record<string, any>);
+  return `/search?${params.toString()}`;
 }
 

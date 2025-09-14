@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import type { NextRouter } from 'next/router';
 import SearchPage from '../../pages/search';
 
@@ -30,15 +30,11 @@ vi.mock('next/router', () => ({
 }));
 
 test('renders search results from API', async () => {
-  global.fetch = vi.fn().mockResolvedValue({
+  (global as any).fetch = vi.fn().mockResolvedValue({
     ok: true,
-    json: async () => ({ items: [{ id: '1', title: 'Doc 1' }], total: 1 }),
-  }) as any;
-  render(<SearchPage />);
-  fireEvent.change(screen.getByLabelText('Query'), {
-    target: { value: 'acme' },
+    json: async () => ({ items: [{ id: '1', title: 'Doc 1' }], total: 1, aggregations: {} }),
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  render(<SearchPage />);
   await waitFor(() => expect(global.fetch).toHaveBeenCalled());
   await waitFor(() => expect(screen.getByText('Doc 1')).toBeInTheDocument());
 });

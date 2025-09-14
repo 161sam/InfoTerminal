@@ -191,6 +191,9 @@ export default function Search() {
             {data.total > 0 ? (
               <>
                 Found <span className="font-medium text-gray-900">{data.total.toLocaleString()}</span> results
+                {typeof data.tookMs === 'number' && (
+                  <> in <span className="font-medium text-gray-900">{data.tookMs}</span> ms</>
+                )}
                 {query && <> for "<span className="font-medium text-gray-900">{query}</span>"</>}
               </>
             ) : (

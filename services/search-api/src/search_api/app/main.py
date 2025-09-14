@@ -4,6 +4,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+from pydantic import BaseModel
 
 from fastapi import FastAPI, Depends, HTTPException, Header, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -105,6 +106,78 @@ def _aggs():
             "nested": {"path": "entities"},
             "aggs": {"types": {"terms": {"field": "entities.type", "size": 20}}},
         }
+    }
+
+
+class QueryRequest(BaseModel):
+    q: Optional[str] = None
+    filters: Dict[str, List[str]] = {}
+    facets: List[str] = []
+    sort: Optional[Dict[str, str]] = None
+    knn: Optional[Dict[str, Any]] = None
+    limit: int = 20
+    offset: int = 0
+
+
+@app.post("/query")
+def query_endpoint(body: QueryRequest, response: Response, x_rerank: Optional[int] = Header(None, alias="X-Rerank"), user=Depends(oidc_user)):
+    if not allow(user, "read", {"classification": "public", "type": "search"}):
+        raise HTTPException(403, "forbidden")
+
+    must = []
+    if body.q:
+        must.append({"multi_match": {"query": body.q, "fields": ["title^2", "body", "entities.name^3"]}})
+
+    filters = []
+    for field, values in (body.filters or {}).items():
+        if values:
+            filters.append({"terms": {field: values}})
+
+    if must or filters:
+        bool_q: Dict[str, Any] = {}
+        if must:
+            bool_q["must"] = must
+        if filters:
+            bool_q["filter"] = filters
+        query: Dict[str, Any] = {"bool": bool_q}
+    else:
+        query = {"match_all": {}}
+
+    body_os: Dict[str, Any] = {"query": query, "size": body.limit, "from": body.offset}
+
+    if body.facets:
+        body_os["aggs"] = {f: {"terms": {"field": f, "size": 20}} for f in body.facets}
+
+    if body.sort and body.sort.get("field"):
+        body_os["sort"] = [{body.sort["field"]: {"order": body.sort.get("order", "asc")}}]
+
+    if settings.knn_enabled and body.knn:
+        body_os["knn"] = {
+            "field": body.knn.get("field"),
+            "query_vector": body.knn.get("vector"),
+            "k": body.knn.get("k", 10),
+            "num_candidates": body.knn.get("k", 10),
+        }
+
+    res = client.search(index=settings.os_index, body=body_os)
+    hits = res.get("hits", {})
+    raw_hits = hits.get("hits", [])
+    items = [{"id": h.get("_id"), "score": h.get("_score"), **(h.get("_source") or {})} for h in raw_hits]
+
+    raw_aggs = res.get("aggregations", {}) or {}
+    facets: Dict[str, List[Dict[str, Any]]] = {}
+    for f in body.facets or []:
+        buckets = raw_aggs.get(f, {}).get("buckets", [])
+        facets[f] = [{"key": b.get("key"), "doc_count": b.get("doc_count", 0)} for b in buckets]
+
+    total = hits.get("total", {})
+    total_val = total.get("value") if isinstance(total, dict) else total
+
+    return {
+        "items": items,
+        "total": total_val or 0,
+        "aggregations": facets,
+        "tookMs": res.get("took", 0),
     }
 
 @app.get("/search")
