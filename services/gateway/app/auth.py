@@ -11,6 +11,7 @@ ISSUER = os.getenv("IT_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("IT_OIDC_AUDIENCE", "")
 JWKS_URL = os.getenv("IT_OIDC_JWKS_URL", "")
 AUTH_REQUIRED = os.getenv("IT_AUTH_REQUIRED", "0") == "1"
+SKEW = int(os.getenv("IT_OIDC_SKEW", "60"))
 
 _JWKS_CACHE: Dict[str, Any] = {"keys": [], "ts": 0}
 _CACHE_TTL = 300
@@ -43,6 +44,7 @@ async def validate_bearer(token: str) -> Optional[Dict[str, Any]]:
             audience=AUDIENCE,
             issuer=ISSUER,
             options={"verify_at_hash": False},
+            leeway=SKEW,
         )
         return claims
     except Exception as e:
