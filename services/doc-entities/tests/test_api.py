@@ -14,6 +14,8 @@ def test_api_endpoints():
         assert r2.status_code == 200 and "Hello world" in r2.json()["summary"]
         r3 = c.post("/relations", json={"text": "Alice"})
         assert r3.status_code == 200 and r3.json()["relations"] == []
+        r4 = c.post("/link-entities", json={"doc_id": "1", "entities": []})
+        assert r4.status_code == 200 and r4.json()["status"] in {"disabled", "ok"}
         r5 = c.get("/metrics")
         assert r5.status_code == 200
 

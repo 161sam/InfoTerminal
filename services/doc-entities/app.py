@@ -83,9 +83,16 @@ setup_otel(app)
 
 class AnnotReq(BaseModel):
     text: str
+    lang: str = "en"
     doc_id: Optional[str] = None
     title: Optional[str] = None
     meta: Optional[Dict[str, Any]] = None
+    do_summary: bool = False
+
+
+class LinkReq(BaseModel):
+    doc_id: str
+    entities: List[Dict[str, Any]]
 
 
 @app.get("/healthz")
@@ -117,10 +124,16 @@ def relations(inp: RelIn):
 
 @app.post("/annotate")
 def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks = None):
+    """Combine NER, relation extraction and optional summary.
+
+    Returns HTML with highlighted entities alongside the raw entity and
+    relation lists. In non-test mode the document and entities are
+    persisted just like the legacy implementation."""
+
     doc_id = req.doc_id or str(uuid.uuid4())
     meta = req.meta or {}
     if ALLOW_TEST:
-        ents = []
+        ents: List[Dict[str, Any]] = []
         if req.text.split():
             ent_id = str(uuid.uuid4())
             word = req.text.split()[0]
@@ -176,7 +189,31 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
             db.commit()
     if resolve and entity_ids and background_tasks:
         background_tasks.add_task(resolve_entities, entity_ids)
-    return {"doc_id": doc_id, "entities": ents, "aleph_id": meta.get("aleph_id")}
+
+    html_out = _highlight(req.text, ents)
+    summary_text = summarize(req.text, req.lang) if req.do_summary else None
+    return {
+        "doc_id": doc_id,
+        "html": html_out,
+        "entities": ents,
+        "relations": [],
+        "summary": summary_text,
+    }
+
+
+@app.post("/link-entities")
+def link_entities(req: LinkReq):
+    """Forward entities to graph-views when configured."""
+    url = os.getenv("GRAPH_VIEWS_LINK_URL")
+    if not url:
+        return {"status": "disabled"}
+    try:
+        import requests
+
+        r = requests.post(url, json=req.dict())
+        return {"status": "ok", "upstream": r.status_code}
+    except Exception as exc:  # pragma: no cover - network issues
+        raise HTTPException(status_code=502, detail=f"link hook failed: {exc}")
 
 
 @app.get("/docs/{doc_id}")
@@ -259,6 +296,34 @@ def _decorate(text: str, entities: List[Dict[str, Any]]):
         out.append(html.escape(text[cur:s]))
         out.append(
             f'<a class="ent" href="{GRAPH_URL}?focus={html.escape(nid)}" title="open in graph">{html.escape(text[s:e])}</a>'
+        )
+        cur = e
+    out.append(html.escape(text[cur:]))
+    return "".join(out)
+
+
+def _highlight(text: str, entities: List[Dict[str, Any]]):
+    """Render entities as HTML spans without requiring resolution."""
+    spans = sorted(
+        [
+            (
+                e.get("span_start"),
+                e.get("span_end"),
+                e.get("label"),
+                e.get("value"),
+            )
+            for e in entities
+            if e.get("span_start") is not None and e.get("span_end") is not None
+        ],
+        key=lambda x: x[0],
+    )
+    out, cur = [], 0
+    for s, e, label, val in spans:
+        s = max(0, s)
+        e = min(len(text), e)
+        out.append(html.escape(text[cur:s]))
+        out.append(
+            f"<span class=\"ent\" data-label=\"{html.escape(label or '')}\">{html.escape(text[s:e])}</span>"
         )
         cur = e
     out.append(html.escape(text[cur:]))
