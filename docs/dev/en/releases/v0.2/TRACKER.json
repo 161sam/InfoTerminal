@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "326ec3c5",
+      "category": "Docs/Build",
+      "source": "docs/dev/frontend_modernization_guide.md#Responsive Navigation",
+      "title": "- Swipe Gestures für Sidebar",
+      "status": "done",
+      "tags": ["wip"],
+      "acceptance": ""
+    },
+    {
+      "id": "ff000e7d",
+      "category": "Docs/Build",
+      "source": "docs/dev/Datenquellen-Cluster.md#1) **News & Social Media**",
+      "title": "- **Social Media**: Mastodon, Reddit, Telegram, Twitter/X (Scraper), TikTok, Instagram",
+      "status": "done",
+      "tags": ["todo"],
+      "acceptance": ""
+    },
+    {
+      "id": "2729c006",
+      "category": "Docs/Build",
+      "source": "docs/dev/testing.md#Coverage",
+      "title": "- Tests must be repeatable and idempotent; rerunning them should not create additional files or require manual cleanup.",
+      "status": "done",
+      "tags": ["Must"],
+      "acceptance": ""
+    }
+  ]
+}
