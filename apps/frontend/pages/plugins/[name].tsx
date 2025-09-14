@@ -256,8 +256,9 @@ export default function PluginDetailPage() {
       const parsedPayload = JSON.parse(payload);
       const result = await invokeTool(name, toolName, parsedPayload);
       setTestResults(prev => ({ ...prev, [toolName]: result }));
-    } catch (error) {
-      setTestResults(prev => ({ ...prev, [toolName]: { error: error.toString() } }));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setTestResults(prev => ({ ...prev, [toolName]: { error: message } }));
     }
   };
 

@@ -156,8 +156,11 @@ export default function SettingsPage() {
       return;
     }
 
-    setTestingEndpoint(endpoint.key);
-    setEndpointStatus(prev => ({ ...prev, [endpoint.key]: { status: "loading" } }));
+    setTestingEndpoint(String(endpoint.key));
+    setEndpointStatus((prev) => ({
+      ...prev,
+      [String(endpoint.key)]: { status: "loading" as Status },
+    }));
 
     try {
       const result = await testEndpoint(url);
@@ -169,7 +172,10 @@ export default function SettingsPage() {
         toast(`${endpoint.label} connection failed`, { variant: 'error' });
       }
     } catch (error) {
-      setEndpointStatus(prev => ({ ...prev, [endpoint.key]: { status: "fail" } }));
+      setEndpointStatus((prev) => ({
+        ...prev,
+        [String(endpoint.key)]: { status: "fail" as Status },
+      }));
       toast(`${endpoint.label} test failed`, { variant: 'error' });
     } finally {
       setTestingEndpoint(null);
@@ -396,8 +402,8 @@ export default function SettingsPage() {
                         <div className="flex items-center gap-2">
                           <Field
                             label=""
-                            name={`endpoint-${endpoint.key.toLowerCase()}`}
-                            id={`endpoint-${endpoint.key.toLowerCase()}`}
+                            name={`endpoint-${String(endpoint.key).toLowerCase()}`}
+                            id={`endpoint-${String(endpoint.key).toLowerCase()}`}
                             value={endpointValues[endpoint.key] || ''}
                             onChange={(e) => setEndpointValues(prev => ({ 
                               ...prev, 
@@ -413,7 +419,7 @@ export default function SettingsPage() {
                             onClick={() => handleEndpointTest(endpoint)}
                             disabled={testingEndpoint !== null || !endpointValues[endpoint.key]}
                           >
-                            {testingEndpoint === endpoint.key ? (
+                            {testingEndpoint === String(endpoint.key) ? (
                               <RefreshCw size={14} className="animate-spin" />
                             ) : (
                               'Test'
