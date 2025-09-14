@@ -24,6 +24,7 @@ from starlette_exporter import PrometheusMiddleware, handle_metrics
 from common.request_id import RequestIdMiddleware
 from _shared.obs.otel_boot import setup_otel
 from .routes.alg import router as alg_router
+from .routes.export import router as export_router
 from utils.neo4j_client import get_driver, neo_session
 
 
@@ -57,6 +58,7 @@ if os.getenv("IT_ENABLE_METRICS") == "1":
     app.add_middleware(PrometheusMiddleware)
     app.add_route("/metrics", handle_metrics)
 app.include_router(alg_router)
+app.include_router(export_router)
 
 @app.get("/healthz")
 def healthz():

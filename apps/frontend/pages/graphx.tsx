@@ -160,6 +160,8 @@ export default function GraphExplorerPage() {
   const [selectedEntityType, setSelectedEntityType] = useState("Person");
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], edges: [] });
   const [isLoadingGraph, setIsLoadingGraph] = useState(false);
+  const [metrics, setMetrics] = useState<Record<string, any[]>>({});
+  const [selectedNode, setSelectedNode] = useState<any | null>(null);
   
   // Path finding state
   const [pathConfig, setPathConfig] = useState({
@@ -192,6 +194,22 @@ export default function GraphExplorerPage() {
     
     setGraphStatus(graphHealth);
     setViewsStatus(viewsHealth);
+  };
+
+  const handleAnalysisResult = (alg: string, items: any[]) => {
+    setMetrics(m => ({ ...m, [alg]: items }));
+  };
+
+  const exportGraph = async (fmt: string) => {
+    if (!config?.GRAPH_API) return;
+    const r = await fetch(`${config.GRAPH_API}/export/${fmt}`);
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fmt === 'json' ? 'graph.json' : 'graph.graphml';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const runCustomQuery = async () => {
@@ -605,7 +623,7 @@ export default function GraphExplorerPage() {
             {/* Analysis Tab */}
             {activeTab === 'analysis' && (
               <div className="space-y-6">
-                <AnalysisPanel />
+                <AnalysisPanel onResult={handleAnalysisResult} />
               </div>
             )}
 
@@ -648,23 +666,43 @@ export default function GraphExplorerPage() {
                     <div className="text-sm text-gray-600 dark:text-slate-400">
                       {graphData.nodes.length} nodes, {graphData.edges.length} edges
                     </div>
-                    <DossierButton 
-                      getPayload={() => ({ 
-                        query: customQuery, 
-                        entities: [], 
-                        graphSelection: { nodes: graphData.nodes, edges: graphData.edges } 
-                      })} 
-                    />
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="secondary" onClick={() => exportGraph('json')}>JSON</Button>
+                      <Button size="sm" variant="secondary" onClick={() => exportGraph('graphml')}>GraphML</Button>
+                      <DossierButton
+                        getPayload={() => ({
+                          query: customQuery,
+                          entities: [],
+                          graphSelection: { nodes: graphData.nodes, edges: graphData.edges }
+                        })}
+                      />
+                    </div>
                   </div>
-                  
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <GraphViewerCytoscape 
+
+                  <div className="relative border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <GraphViewerCytoscape
                       elements={[
                         ...graphData.nodes.map(node => ({ data: node })),
                         ...graphData.edges.map(edge => ({ data: edge }))
-                      ]} 
+                      ]}
                       directed={pathConfig.directed}
+                      onNodeClick={(d) => {
+                        setSelectedNode({
+                          id: d.id,
+                          degree: metrics.degree?.find(i => String(i.id) === String(d.id))?.degree,
+                          betweenness: metrics.betweenness?.find(i => String(i.id) === String(d.id))?.score,
+                          community: metrics.louvain?.find(i => String(i.id) === String(d.id))?.communityId,
+                        });
+                      }}
                     />
+                    {selectedNode && (
+                      <div className="absolute top-2 right-2 bg-white dark:bg-gray-800 p-2 text-xs border rounded shadow">
+                        <div>ID: {selectedNode.id}</div>
+                        {selectedNode.degree !== undefined && <div>Degree: {selectedNode.degree}</div>}
+                        {selectedNode.betweenness !== undefined && <div>Betweenness: {selectedNode.betweenness}</div>}
+                        {selectedNode.community !== undefined && <div>Community: {selectedNode.community}</div>}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Panel>

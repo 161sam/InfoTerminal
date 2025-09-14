@@ -4,7 +4,7 @@ from .models import EntityType, RelationType, EntityInstance
 
 router = APIRouter(prefix="/ontology", tags=["ontology"])
 
-BASE = pathlib.Path(__file__).resolve().parent.parent / "schema" / "ontology"
+BASE = pathlib.Path(__file__).resolve().parent
 
 def _load_entities():
     with open(BASE / "entities.yaml", "r", encoding="utf-8") as f:
