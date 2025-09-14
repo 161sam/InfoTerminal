@@ -8,6 +8,8 @@ import {
   Menu,
   X,
   Activity,
+  Plug,
+  ChevronDown,
 } from 'lucide-react';
 import GlobalHealth from '../health/GlobalHealth';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
@@ -142,6 +144,22 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
+  const router = useRouter();
+  const [plugins, setPlugins] = useState<{ name: string }[]>([]);
+  const [open, setOpen] = useState(() => currentPath?.startsWith('/plugins'));
+
+  useEffect(() => {
+    fetch('/api/plugins/state')
+      .then((r) => r.json())
+      .then((d) => {
+        const active = (d.items || []).filter((p: any) => p.enabled !== false);
+        setPlugins(active);
+      })
+      .catch(() => setPlugins([]));
+  }, []);
+
+  const cp = currentPath || '';
+
   return (
     <div className="flex h-full flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
       {/* Logo */}
@@ -162,11 +180,9 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
         {items.map((item) => {
-          const cp = currentPath || '';
-          const isActive = cp === item.href || 
-            (item.href !== '/' && cp.startsWith(item.href));
-          
-          return (
+          const isActive = cp === item.href || (item.href !== '/' && cp.startsWith(item.href));
+
+          const link = (
             <Link
               key={item.name}
               href={item.href}
@@ -179,9 +195,9 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
                 }
               `}
             >
-              <item.icon 
-                size={20} 
-                className={`mr-3 ${isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500'}`} 
+              <item.icon
+                size={20}
+                className={`mr-3 ${isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500'}`}
               />
               {item.name}
               {item.badge && (
@@ -191,6 +207,63 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
               )}
             </Link>
           );
+
+          if (item.key === 'security') {
+            return (
+              <React.Fragment key={item.key}>
+                {link}
+                <div className="mt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(!open);
+                      router.push('/plugins');
+                      onClose?.();
+                    }}
+                    className={`
+                      w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                      ${cp.startsWith('/plugins')
+                        ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }
+                    `}
+                  >
+                    <Plug size={20} className="mr-3" />
+                    <span className="flex-1 text-left">Plugins</span>
+                    <ChevronDown
+                      size={16}
+                      className={`ml-auto transition-transform ${open ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  {open && (
+                    <div className="mt-1 ml-6 space-y-1">
+                      {plugins.map((p) => {
+                        const childActive = cp === `/plugins/${p.name}`;
+                        return (
+                          <Link
+                            key={p.name}
+                            href={`/plugins/${p.name}`}
+                            onClick={onClose}
+                            className={`
+                              block px-3 py-1.5 text-sm rounded-lg transition-colors
+                              ${childActive
+                                ? 'bg-primary-50 text-primary-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                              }
+                            `}
+                          >
+                            {p.name}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </React.Fragment>
+            );
+          }
+
+          return link;
         })}
       </nav>
 
