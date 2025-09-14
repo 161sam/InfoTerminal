@@ -8,6 +8,11 @@ const DOCENTS =
   (process.env.IT_PORT_DOC_ENTITIES
     ? `http://localhost:${process.env.IT_PORT_DOC_ENTITIES}`
     : "http://localhost:8613");
+const PLUGINS =
+  process.env.NEXT_PROXY_PLUGINS ||
+  (process.env.IT_PORT_GATEWAY
+    ? `http://localhost:${process.env.IT_PORT_GATEWAY}`
+    : "http://localhost:8610");
 
 const withExistingRewrites = (rewrites = []) => {
   const add = (arr, item) =>
@@ -17,6 +22,10 @@ const withExistingRewrites = (rewrites = []) => {
   out = add(out, {
     source: "/api/doc-entities/:path*",
     destination: `${DOCENTS}/:path*`,
+  });
+  out = add(out, {
+    source: "/api/plugins/:path*",
+    destination: `${PLUGINS}/plugins/:path*`,
   });
   return out;
 };

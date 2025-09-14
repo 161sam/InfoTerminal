@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from services.common.tenancy import tenant_context_middleware
 from .plugins.loader import router as plugins_loader_router
+from .plugins.api import router as plugins_api_router
 
 app = FastAPI(title="agent-connector")
 
@@ -18,3 +19,4 @@ async def readyz():
 
 
 app.include_router(plugins_loader_router)
+app.include_router(plugins_api_router)
