@@ -15,9 +15,9 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
             {item.id ? (
-              <Link 
+              <Link
                 href={`/documents/${item.id}`}
                 className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
@@ -25,6 +25,11 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
               </Link>
             ) : (
               item.title || item.id
+            )}
+            {item.score !== undefined && (
+              <span className="px-2 py-0.5 text-xs rounded bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300">
+                {item.score.toFixed(2)}
+              </span>
             )}
           </h3>
           

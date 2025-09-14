@@ -17,4 +17,5 @@ export type SearchResponse = {
   items: SearchHit[];
   total: number;
   aggregations?: Aggregations;
+  tookMs?: number;
 };

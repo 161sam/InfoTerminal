@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     rerank_timeout_ms: int = Field(800, alias="RERANK_TIMEOUT_MS")
     rerank_cache_ttl_s: int = Field(1800, alias="RERANK_CACHE_TTL_S")
 
+    knn_enabled: bool = Field(False, alias="KNN_ENABLED")
+
     class Config:
         env_file = ".env"
         case_sensitive = False

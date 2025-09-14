@@ -3,6 +3,8 @@ import type { SearchResponse } from '../types/search';
 import useEndpoints from './useEndpoints';
 import { sanitizeUrl } from '@/lib/endpoints';
 
+const DEFAULT_FACETS = ['entity_types', 'source'];
+
 export interface UseSearchInput {
   q?: string;
   filters?: Record<string, string[]>;
@@ -26,21 +28,37 @@ export function useSearch(params: UseSearchInput) {
       setLoading(true);
       setError(null);
       try {
-        const query = new URLSearchParams();
-        if (params.q) query.set('q', params.q);
-        if (params.sort) query.set('sort', params.sort);
-        if (params.rerank) query.set('rerank', '1');
         const page = params.page ?? 1;
         const pageSize = params.pageSize ?? 20;
-        query.set('limit', String(pageSize));
-        query.set('offset', String((page - 1) * pageSize));
-        if (params.entity) params.entity.forEach((e) => query.append('entity_type', e));
-        if (params.value) params.value.forEach((v) => query.append('value', v));
-        if (params.filters && Object.keys(params.filters).length) {
-          query.set('filters', JSON.stringify(params.filters));
+
+        const filters: Record<string, string[]> = { ...(params.filters || {}) };
+        if (params.entity) filters['entity_type'] = params.entity;
+        if (params.value) filters['value'] = params.value;
+
+        let sort: any = undefined;
+        if (params.sort && params.sort !== 'relevance') {
+            sort = { field: 'meta.created_at', order: params.sort === 'date_desc' ? 'desc' : 'asc' };
         }
+
+        const body: any = {
+          q: params.q,
+          filters,
+          facets: DEFAULT_FACETS,
+          limit: pageSize,
+          offset: (page - 1) * pageSize,
+        };
+        if (sort) body.sort = sort;
+
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (params.rerank) headers['X-Rerank'] = '1';
+
         const base = sanitizeUrl(SEARCH_API);
-        const res = await fetch(`${base}/search?${query.toString()}`, { signal: controller.signal });
+        const res = await fetch(`${base}/query`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
         if (!res.ok) throw new Error(await res.text());
         const json = (await res.json()) as SearchResponse;
         setData(json);
