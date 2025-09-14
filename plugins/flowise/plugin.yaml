@@ -1,0 +1,15 @@
+apiVersion: v1
+name: flowise
+version: 0.1.0
+provider: Flowise
+capabilities:
+  tools:
+    - name: agent.chat
+      description: Chat with Flowise flow
+      argsSchema:
+        type: object
+        properties: { messages: { type: array, items: { type: object } } }
+        required: [messages]
+endpoints:
+  baseUrl: ${AGENT_BASE_URL:-http://localhost:3417}
+  health: healthz

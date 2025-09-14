@@ -1,6 +1,4 @@
 packages:
   - "apps/*"
   - "services/*"
-  # falls ihr später libs habt:
-  # - "packages/*"
-
+  - "packages/*"

@@ -1,0 +1,15 @@
+apiVersion: v1
+name: openbb
+version: 0.1.0
+provider: OpenBB
+capabilities:
+  tools:
+    - name: finance.company_profile
+      description: Company profile
+      argsSchema:
+        type: object
+        properties: { ticker: { type: string } }
+        required: [ticker]
+endpoints:
+  baseUrl: http://localhost:8800
+  health: healthz

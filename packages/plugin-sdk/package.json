@@ -1,0 +1,7 @@
+{
+  "name": "@infoterminal/plugin-sdk",
+  "private": true,
+  "version": "0.1.0",
+  "main": "src/types.ts",
+  "type": "module"
+}
