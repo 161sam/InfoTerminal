@@ -1,6 +1,6 @@
-# NLP Service
+# NLP Service (Legacy)
 
-Provides basic NLP features for documents.
+This service is deprecated. Use `doc-entities` for active NLP features.
 
 ## Endpoints
 - `POST /ner` — spaCy NER with models selected via environment variables.

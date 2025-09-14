@@ -1,0 +1,23 @@
+apiVersion: v1
+name: n8n
+version: 0.1.0
+provider: n8n
+capabilities:
+  tools:
+    - name: workflow.investigate_person
+      description: Search→Graph→NER via n8n
+      argsSchema:
+        type: object
+        properties: { q: { type: string } }
+        required: [q]
+      timeoutMs: 30000
+    - name: workflow.financial_risk_assistant
+      description: FRA workflow
+      argsSchema:
+        type: object
+        properties: { accountId: { type: string }, period: { type: string } }
+        required: [accountId]
+      timeoutMs: 60000
+endpoints:
+  baseUrl: ${N8N_BASE_URL:-http://localhost:5678}
+  health: healthz

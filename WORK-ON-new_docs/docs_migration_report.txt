@@ -107,3 +107,6 @@
 [OK] Userdoc rename: /mnt/data/InfoTerminal-docs-clean/docs/user/7.CLI-Handbuch.md -> /mnt/data/InfoTerminal-docs-clean/docs/user/07-cli-handbuch.md
 [OK] Userdoc rename: /mnt/data/InfoTerminal-docs-clean/docs/user/4.Kernfunktionen.md -> /mnt/data/InfoTerminal-docs-clean/docs/user/04-kernfunktionen.md
 [OK] Userdoc rename: /mnt/data/InfoTerminal-docs-clean/docs/user/1.Einführung.md -> /mnt/data/InfoTerminal-docs-clean/docs/user/01-einfuehrung.md
+[TODO] Frontend Tool-Calls → /api/plugins
+[TODO] grep direkte Hosts
+[TODO] Legacy NLP prüfen

@@ -22,4 +22,9 @@ Kurzanleitung für ein lokales End-to-End Setup von InfoTerminal (MVP).
 5. **Optional: dbt Modelle ausführen**
    - `make dbt-all`
 
+6. **Legacy NLP prüfen**
+   - Sucht/ersetzt alte nlp-service Aufrufe
+   - Frontend Tool-Calls → /api/plugins
+   - grep direkte Hosts
+
 Weitere Details siehe [TODO-Index](docs/dev/roadmap/TODO-Index.md).

@@ -41,11 +41,15 @@
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-local-rules": "^3.0.2"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "prettier --write"
   },
+  "eslintConfig": { "plugins": ["local-rules"] },
+  "eslintConfigLocalRules": { "no-direct-host-fetch": "../../tools/eslint-rules/no-direct-host-fetch.js" },
   "name": "@infoterminal/frontend",
   "private": true,
   "scripts": {
@@ -54,7 +58,7 @@
     "dev": "next dev -p 3411",
     "e2e": "playwright test",
     "e2e:install": "npx playwright install --with-deps",
-    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\" && next lint",
     "prebuild": "bash ../../scripts/tailwind_v4_guard.sh",
     "predev": "bash ../../scripts/tailwind_v4_guard.sh",
     "prepare": "husky",

@@ -1,14 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
+import { invokeTool } from '../../lib/plugins';
 import Link from 'next/link';
-import { 
-  Puzzle, 
-  Search, 
-  Filter, 
-  Plus, 
-  Settings, 
-  Play, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Puzzle,
+  Search,
+  Filter,
+  Plus,
+  Settings,
+  Play,
+  CheckCircle,
+  XCircle,
   AlertTriangle,
   Clock,
   Download,
@@ -33,7 +34,7 @@ interface PluginItem {
   provider?: string;
   description?: string;
   category?: string;
-  capabilities?: { 
+  capabilities?: {
     tools?: any[];
     permissions?: string[];
     dependencies?: string[];
@@ -137,7 +138,7 @@ function PluginCard({
   return (
     <Panel className="hover:shadow-md transition-shadow">
       <div className="space-y-4">
-        
+
         {/* Plugin Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -155,7 +156,7 @@ function PluginCard({
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               onClick={onRefreshHealth}
@@ -225,7 +226,7 @@ function PluginCard({
                   disabled={isUpdating}
                   className="sr-only"
                 />
-                <div 
+                <div
                   onClick={() => !isUpdating && handleToggle(!enabled)}
                   className={`w-11 h-6 rounded-full cursor-pointer transition-colors ${
                     enabled ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'
@@ -240,7 +241,7 @@ function PluginCard({
                 {enabled ? 'Enabled' : 'Disabled'}
               </span>
             </div>
-            
+
             {isAdmin && (
               <select
                 value={scope}
@@ -252,7 +253,7 @@ function PluginCard({
               </select>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               onClick={onQuickTest}
@@ -261,7 +262,7 @@ function PluginCard({
               <Play size={12} />
               Test
             </button>
-            
+
             <button
               onClick={() => onConfig(scope)}
               className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
@@ -269,7 +270,7 @@ function PluginCard({
               <Settings size={12} />
               Config
             </button>
-            
+
             <Link
               href={`/plugins/${plugin.name}`}
               className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-primary-700 bg-primary-100 rounded-lg hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50"
@@ -291,7 +292,7 @@ export default function PluginsPage() {
   const [health, setHealth] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const [filters, setFilters] = useState<PluginFilter>({
     search: '',
     category: 'all',
@@ -378,7 +379,7 @@ export default function PluginsPage() {
       }));
 
       setItems(merged);
-      
+
       // Load health for all plugins
       await refreshAllHealth(merged);
     } catch (error) {
@@ -429,7 +430,7 @@ export default function PluginsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ enabled, scope }),
       });
-      
+
       setItems(prev => prev.map(p => p.name === name ? { ...p, enabled } : p));
     } catch (error) {
       console.error('Failed to toggle plugin:', error);
@@ -439,9 +440,9 @@ export default function PluginsPage() {
   const openConfig = async (plugin: PluginItem, scope: 'user' | 'global') => {
     const current = plugin.config || {};
     const text = prompt('Plugin Configuration (JSON):', JSON.stringify(current, null, 2));
-    
+
     if (!text) return;
-    
+
     try {
       const config = JSON.parse(text);
       await fetch(`/api/plugins/${plugin.name}/config`, {
@@ -449,9 +450,9 @@ export default function PluginsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ config, scope }),
       });
-      
+
       // Update local state
-      setItems(prev => prev.map(p => 
+      setItems(prev => prev.map(p =>
         p.name === plugin.name ? { ...p, config } : p
       ));
     } catch {
@@ -462,10 +463,10 @@ export default function PluginsPage() {
   const quickTest = async (plugin: PluginItem) => {
     const tool = prompt('Tool name:');
     if (!tool) return;
-    
+
     let payload: any = {};
     const payloadText = prompt('JSON payload:', '{}');
-    
+
     if (payloadText) {
       try {
         payload = JSON.parse(payloadText);
@@ -474,15 +475,9 @@ export default function PluginsPage() {
         return;
       }
     }
-    
+
     try {
-      const response = await fetch(`/api/plugins/invoke/${plugin.name}/${tool}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      
-      const result = await response.json();
+      const result = await invokeTool(plugin.name, tool, payload);
       alert(`Result:\n${JSON.stringify(result, null, 2)}`);
     } catch (error) {
       alert(`Test failed: ${error}`);
@@ -525,7 +520,7 @@ export default function PluginsPage() {
   return (
     <DashboardLayout title="Plugin Marketplace" subtitle="Extend your platform with powerful integrations">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-900/30">
@@ -537,7 +532,7 @@ export default function PluginsPage() {
               <Puzzle size={24} className="text-blue-500" />
             </div>
           </div>
-          
+
           <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/30">
             <div className="flex items-center justify-between">
               <div>
@@ -547,7 +542,7 @@ export default function PluginsPage() {
               <CheckCircle size={24} className="text-green-500" />
             </div>
           </div>
-          
+
           <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-900/30">
             <div className="flex items-center justify-between">
               <div>
@@ -557,7 +552,7 @@ export default function PluginsPage() {
               <Server size={24} className="text-purple-500" />
             </div>
           </div>
-          
+
           <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-900/30">
             <div className="flex items-center justify-between">
               <div>
@@ -584,7 +579,7 @@ export default function PluginsPage() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
-            
+
             <select
               value={filters.category}
               onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
@@ -594,7 +589,7 @@ export default function PluginsPage() {
                 <option key={category.value} value={category.value}>{category.label}</option>
               ))}
             </select>
-            
+
             <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
@@ -605,7 +600,7 @@ export default function PluginsPage() {
               ))}
             </select>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => refreshAllHealth()}
@@ -615,7 +610,7 @@ export default function PluginsPage() {
               <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
               Refresh
             </button>
-            
+
             <button
               onClick={exportConfig}
               className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
@@ -623,7 +618,7 @@ export default function PluginsPage() {
               <Download size={14} />
               Export
             </button>
-            
+
             <button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">
               <Plus size={14} />
               Add Plugin
@@ -632,7 +627,7 @@ export default function PluginsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          
+
           {/* Main Content */}
           <div className="lg:col-span-3">
             <div className="space-y-4">
@@ -641,7 +636,7 @@ export default function PluginsPage() {
                   Showing {filteredPlugins.length} of {items.length} plugins
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredPlugins.map((plugin) => (
                   <PluginCard
@@ -655,7 +650,7 @@ export default function PluginsPage() {
                     onRefreshHealth={() => refreshPluginHealth(plugin.name)}
                   />
                 ))}
-                
+
                 {filteredPlugins.length === 0 && (
                   <div className="col-span-2 text-center py-12">
                     <Puzzle size={48} className="mx-auto text-gray-400 dark:text-slate-500 mb-4" />
@@ -676,20 +671,20 @@ export default function PluginsPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            
+
             {/* Categories */}
             <Panel title="Categories">
               <div className="space-y-2">
                 {PLUGIN_CATEGORIES.filter(c => c.value !== 'all').map((category) => {
                   const count = pluginStats.categories[category.value] || 0;
                   const Icon = category.icon;
-                  
+
                   return (
                     <button
                       key={category.value}
-                      onClick={() => setFilters(prev => ({ 
-                        ...prev, 
-                        category: category.value === filters.category ? 'all' : category.value 
+                      onClick={() => setFilters(prev => ({
+                        ...prev,
+                        category: category.value === filters.category ? 'all' : category.value
                       }))}
                       className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
                         filters.category === category.value
@@ -722,7 +717,7 @@ export default function PluginsPage() {
                     </div>
                   </div>
                 </button>
-                
+
                 <button className="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex items-center gap-3">
                     <Zap size={16} className="text-green-500" />
@@ -732,7 +727,7 @@ export default function PluginsPage() {
                     </div>
                   </div>
                 </button>
-                
+
                 <button className="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex items-center gap-3">
                     <BarChart3 size={16} className="text-purple-500" />
@@ -751,7 +746,7 @@ export default function PluginsPage() {
                 {Object.entries(['up', 'down', 'degraded', 'unknown']).map(([_, status]) => {
                   const count = Object.values(health).filter(h => h === status).length;
                   if (count === 0) return null;
-                  
+
                   return (
                     <div key={status} className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
