@@ -1,0 +1,5 @@
+fastapi
+httpx
+pydantic
+pyyaml
+jsonschema    # optional; wenn nicht installierbar, Validierung überspringen
