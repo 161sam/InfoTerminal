@@ -1,21 +1,147 @@
 {
   "tasks": [
     {
-      "id": "326ec3c5",
-      "category": "Docs/Build",
-      "source": "docs/dev/frontend_modernization_guide.md#Responsive Navigation",
-      "title": "- Swipe Gestures für Sidebar",
-      "status": "done",
-      "tags": ["wip"],
+      "id": "698ddeb0",
+      "category": "Automation/Agent",
+      "source": "docs/dev/v0.2/FlowiseAI-Agents-integration.md#TODO:",
+      "title": "* `TODO-Index.md` (FLOWISE-Tickets anhängen)",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
       "acceptance": ""
     },
     {
-      "id": "ff000e7d",
+      "id": "01a1dc79",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/preset-profiles.md#Ziele",
+      "title": "- docs/dev/v0.2/Preset-Profile.md#L114-L118",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "0222241c",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#1) Zielbild",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L17-L22",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "08108402",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Feature-Priorisierung.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "0bba29af",
       "category": "Docs/Build",
       "source": "docs/dev/Datenquellen-Cluster.md#1) **News & Social Media**",
       "title": "- **Social Media**: Mastodon, Reddit, Telegram, Twitter/X (Scraper), TikTok, Instagram",
-      "status": "done",
-      "tags": ["todo"],
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "0dda2328",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/TODO-Index.md",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "0f3be031",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#5. „Beyond Gotham“ – Visionäre Features",
+      "title": "* **v0.2 = Gotham-Level erreichen.**",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "10293868",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#11. **AI-ETHICS-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Bias in Datensätzen, Compliance mit AI-Acts (EU/US), Missbrauch von KI.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "116a5091",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/dev_progress/summary-planning-20250910T080739Z.md#Tasks",
+      "title": "- Generated `workplan.json` from `WORK-ON-new_docs/out/todo_index.md`.",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "129d3d75",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧭 Ablauf (idempotent)",
+      "title": "* `git tag v0.2.0` (oder `-rc.X`), Release-Notes **append-only** nach",
+      "status": "todo",
+      "tags": [
+        "v0.2.0"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "1c9c8cf4",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/preset-profiles.md#Plugin-Whitelist (Kali/Tools)",
+      "title": "- docs/dev/v0.2/Preset-Profile.md#L170-L176",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "221379c0",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/Datenquellen-Cluster.md#4) **Wissenschaft & Forschung**",
+      "title": "* **Patente** (WIPO, DEPATISnet)",
+      "status": "todo",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "24f74a29",
+      "category": "Docs/Build",
+      "source": "docs/dev/testing.md#Coverage",
+      "title": "- Tests must be repeatable and idempotent; rerunning them should not create additional files or require manual cleanup.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
       "acceptance": ""
     },
     {
@@ -24,7 +150,1376 @@
       "source": "docs/dev/testing.md#Coverage",
       "title": "- Tests must be repeatable and idempotent; rerunning them should not create additional files or require manual cleanup.",
       "status": "done",
-      "tags": ["Must"],
+      "tags": [
+        "Must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "27f0d7be",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/DEVELOPMENT-PLAN.md#Deliverables",
+      "title": "* v0.2 Release (Gotham-Gap Closed)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "2dc7afb4",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#5. **Geopolitische Bewegungsmuster**",
+      "title": "* Muster: Anomalien im Verkehr, Häufung von Events an Orten.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "2f52b781",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧭 Ablauf (idempotent)",
+      "title": "* Finde betroffene Pfade aus dem TODO-Eintrag (Quellangabe in der Tabelle)",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "2fb12323",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#3. **Illegale Finanzflüsse & Geldwäsche**",
+      "title": "* Muster: zyklische Transfers, Offshore-Nodes, Layering (Smurfing).",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "326ec3c5",
+      "category": "Docs/Build",
+      "source": "docs/dev/frontend_modernization_guide.md#Responsive Navigation",
+      "title": "- Swipe Gestures für Sidebar",
+      "status": "done",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "342ce426",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#Context",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L3-L14",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "36ad33eb",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Feature-Mapping.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "3701ffd1",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#10. **HEALTH-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Ausbrüche, Lieferengpässe Medikamente, Impfquoten.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "394892c6",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Architektur-Live-Datenquellen.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "395120a3",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/DEVELOPMENT-PLAN.md#Aufgaben",
+      "title": "* Incognito Mode (Ephemeral FS, Auto-Wipe)",
+      "status": "todo",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "3ae16e90",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/preset-profiles.md#NiFi Pipelines (aktiviert)",
+      "title": "- docs/dev/v0.2/Preset-Profile.md#L139-L145",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "3b3ecbdf",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/Datenquellen-Cluster.md#1) **News & Social Media**",
+      "title": "* **Social Media**: Mastodon, Reddit, Telegram, Twitter/X (Scraper), TikTok, Instagram",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "3e5b2c86",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧭 Ablauf (idempotent)",
+      "title": "* Parse `WORK-ON_new_docs/out/todo_index.md`",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "3e8444c1",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#14. **CULTURAL-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Trend-Cluster (Memes, Hashtags), Diskurs-Dynamiken.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "40da9c1a",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🚀 Codex Entwickler Prompt — Produkt-Weiterentwicklung bis v0.5.0 (idempotent, konfliktfrei zur Docs-Konsolidierung)",
+      "title": "* `docs/dev/roadmap/v0.3-plus/master-todo.md` → Häkchen setzen/kurze Statuszeile **am Ende** eines Listeneintrags",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "430b0dae",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/TODO-Index.md",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "43bf82ee",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Datenquellen-Cluster.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "44c1d6ad",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Roadmap.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "4a341e48",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/Master-TODO-Index.md",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "54a5ea1a",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/Preset-Profile_ideen.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "5c1eac35",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧭 Ablauf (idempotent)",
+      "title": "* Body: Liste der erledigten TODO-IDs, Test-Protokoll, SBOM-Pfad, evtl. bekannte Limitierungen",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "5cad550a",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#Beispiel A – Politiker & Firmen",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L47-L58",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "69f99eda",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🎯 Ziele (bis maximal v0.5.0)",
+      "title": "* **v0.2**: NLP v1, Geo-Layer, NiFi/n8n Flows, Superset Dashboards, OIDC Auth, minimale Collaboration",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "6b655733",
+      "category": "Docs/Build",
+      "source": "docs/user/8.Integrationen&Erweiterbarkeit.md#Beispiele",
+      "title": "- markiert verdächtige Muster",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "6d491bf5",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/Roadmap_Gotham-Gaps_Beyond-Gotham.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "7079fc39",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#4. **Desinformationskampagnen**",
+      "title": "* Zeitliche Muster: viele Posts in kurzer Zeit, Copy-Paste-Narrative",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "768e0863",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Release-Plan.md#🗂 Roadmap Übersicht",
+      "title": "* v0.2 = Stabilität + Gotham-Level",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "777e9f4f",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#2. Neue Datenquellen & Flows",
+      "title": "* Erweiterung: RSSHub, Mastodon/ActivityPub, Telegram, GitHub, HackerNews.",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "78e8824b",
+      "category": "Docs/Build",
+      "source": "docs/dev/en/architecture/adr/ADR-0004-single-invocation-path.md#ADR-0004: Single Invocation Path for Tools",
+      "title": "- **Decision**: All user-facing tool invocations MUST go through `agent-connector /plugins` (`/plugins/tools`, `/plugins/invoke/{plugin}/{tool}`).",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "7fd1fc7d",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "874cef76",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/FlowiseAI-Agents-integration.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "89be6dff",
+      "category": "Docs/Build",
+      "source": "docs/user/5.Erweiterte-Funktionen.md#5.3 🧠 Erweiterte AI/ML/DL-Funktionen",
+      "title": "- **Graph Neural Networks (GNNs)** für tiefe Mustererkennung in Graphdaten",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "917cb880",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/preset-profiles.md#Preset Profiles",
+      "title": "- docs/dev/v0.2/Preset-Profile.md#L15-L17",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "92ed6a7f",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#12. **MEDIA-FORENSICS-BLUEPRINT**",
+      "title": "* **Muster:** Wiederverwendete Bilder, inkonsistente Metadaten, KI-generierte Artefakte.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "94c19fed",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Preset-Profile.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "971b5393",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/Blueprint-Ideen.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "9a8ec053",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🚀 Codex Entwickler Prompt — Produkt-Weiterentwicklung bis v0.5.0 (idempotent, konfliktfrei zur Docs-Konsolidierung)",
+      "title": "* Die **Docs** dienen als Spezifikation (Roadmaps, Guides, TODO-IDs)",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "9ed09d8d",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/DEVELOPMENT-PLAN.md#📅 Zeitliche Struktur (empfohlen)",
+      "title": "* **Phase 1 (v0.2):** 2–3 Monate",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "a00857bb",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#Beispiel A – Politiker & Firmen",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L59-L72",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "a2437ec0",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#📌 Fazit",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L6-L11",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "a6f668f6",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#8. **TECHNOLOGY-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Innovation Hotspots, disruptive Technologien, Patent-Clustering.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "b595638e",
+      "category": "Docs/Build",
+      "source": "docs/dev/Datenquellen-Cluster.md#4) **Wissenschaft & Forschung**",
+      "title": "- **Patente** (WIPO, DEPATISnet)",
+      "status": "todo",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "b782fc5a",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#8. **TECHNOLOGY-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Daten:** Patente (WIPO, DEPATISnet), arXiv, Semantic Scholar, Venture Funding.",
+      "status": "todo",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "bb5e98dc",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/roadmap/v0.2-overview.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "bbb12bae",
+      "category": "Docs/Build",
+      "source": "docs/user/4.Kernfunktionen.md#Nutzen",
+      "title": "- Geografische Analysen (z. B. Bewegungsmuster)",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "bd2e70f0",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Preset-Profile_ideen.md#4. **Disinformation Watchdog**",
+      "title": "* `ingest_social` (Telegram, Reddit, Mastodon, ggf. Twitter-Scraper)",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c2a0abae",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/preset-profiles.md#NiFi Pipelines (aktiviert)",
+      "title": "- docs/dev/v0.2/Preset-Profile.md#L119-L124",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c5f3c73a",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧭 Ablauf (idempotent)",
+      "title": "* `WORK-ON_new_docs/out/todo_index.md` **nicht** erzeugen – nur **lesen** (kommt von der anderen Instanz)",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c6781c0a",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#8. **Humanitarian & Crisis Response**",
+      "title": "* Muster: Kombination von Events (Dürre + Preisanstieg + Migration).",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "cb95c4dc",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧨 Rollback",
+      "title": "**Los geht’s:** Führe diese Anweisungen **idempotent** aus. Achte streng auf die *Konfliktvermeidung mit `docs/`*. Implementiere Tasks gemäß TODO-IDs und liefere bis **v0.5.0** incrementell in Feature-Branches mit Tests, CI-Gates und SBOMs.",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "cec91e47",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/beyond-gotham.md#6. **Supply-Chain Risiken**",
+      "title": "* Muster: Engpässe, Single-Point-of-Failure, Sanktionen auf Knoten.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d066bea5",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/TODO-Index-cli-ergänzung.md",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d203285d",
+      "category": "Docs/Build",
+      "source": "docs/dev/frontend_modernization_guide.md#Responsive Navigation",
+      "title": "- Swipe Gestures für Sidebar",
+      "status": "todo",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d6369ad8",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#1) Zielbild",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L23-L34",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d9c3572c",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧭 Ablauf (idempotent)",
+      "title": "* Für jeden TODO-Eintrag (z. B. `T0123-abcd1234`):",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d9da7130",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/rag-systems.md#Beispiel A – Politiker & Firmen",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md#L35-L44",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "dc0af1fd",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#13. **ECONOMIC-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Branchen-Trends, Handelsströme, Risiko-Indikatoren.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "de7dcdda",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#9. **TERRORISM-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Netzwerke von Personen ↔ Finanzquellen ↔ Reise-/Event-Daten.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "e73cefd7",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/v0.3+/RAG-Systeme.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "ed417ffb",
+      "category": "Docs/Build",
+      "source": "docs/dev/dev-prompts/Produkt-Weiterentwicklung.md#🧾 Output an mich (je Lauf)",
+      "title": "* Anzahl verarbeiteter TODO-IDs (done/refused/blocked)",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "f40b8018",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/Ticket-Checkliste.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "f47df156",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/DEVELOPMENT-PLAN.md",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "f4814b9d",
+      "category": "Docs/Build",
+      "source": "docs/dev/v0.2/v0.3+/Blueprint-Ideen.md#7. **CLIMATE-INTELLIGENCE-BLUEPRINT**",
+      "title": "* **Muster:** Temperatur-/CO₂-Trends, Extremwetter, Dürre vs. Landwirtschaft.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "f7e2f808",
+      "category": "Docs/Build",
+      "source": "WORK-ON-new_docs/out/naming_issues.md#Naming issues",
+      "title": "- docs/dev/v0.2/To-Build-Liste_v0.1.9.1-v0.2.md",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2.md"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "ff000e7d",
+      "category": "Docs/Build",
+      "source": "docs/dev/Datenquellen-Cluster.md#1) **News & Social Media**",
+      "title": "- **Social Media**: Mastodon, Reddit, Telegram, Twitter/X (Scraper), TikTok, Instagram",
+      "status": "done",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "ff35f755",
+      "category": "Docs/Build",
+      "source": "docs/dev/guides/preset-profiles.md#Frontend Defaults",
+      "title": "- docs/dev/v0.2/Preset-Profile.md#L41-L47",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "0d0c4611",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L47-L52 (6. Gateway & OPA) <-> docs/dev/v0.2/Ticket-Checkliste.md#L45-L50 (6. Gateway & OPA)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "1ac34a11",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/blueprints/SECURITY-BLUEPRINT.md#L120-L137 (✅ Tickets (Erweiterung zum TODO-Index)) <-> docs/dev/SECURITY-BLUEPRINT.md#L120-L137 (✅ Tickets (Erweiterung zum TODO-Index))",
+      "status": "todo",
+      "tags": [
+        "todo",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "29ddfcd6",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L106-L120 (12. Verification-Layer) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L104-L118 (12. Verification-Layer)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "382a64bd",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L3-L30 (1) Datenfluss (End-to-End)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L3-L31 (1) Datenfluss (End-to-End))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "403bdbb5",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L167-L174 (8) Collaboration & Dossier (Live-Kontext)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L169-L176 (8) Collaboration & Dossier (Live-Kontext))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "421f36ff",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md#L77-L95 (🗂 Roadmap Übersicht) <-> docs/dev/roadmap/v0.2-overview.md#L82-L101 (🗂 Roadmap Übersicht)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "4932eb14",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L152-L158 (NiFi (robust ingest)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L154-L160 (NiFi (robust ingest))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "4d644614",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L204-L210 (v0.1.9.1–.9.4 (MVP Live-Quellen)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L207-L213 (v0.1.9.1–.9.4 (MVP Live-Quellen))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "58a58448",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Datenquellen-Cluster.md#L68-L89 (📊 Zusammenfassung (Priorisierung)) <-> docs/dev/v0.2/Datenquellen-Cluster.md#L68-L89 (📊 Zusammenfassung (Priorisierung))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "5c50eeb6",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L78-L86 (10. Infra & Observability) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L78-L86 (10. Infra & Observability)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "5d7889fa",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Datenquellen-Cluster.md#L54-L67 (5) **Sensor & Realwelt**) <-> docs/dev/v0.2/Datenquellen-Cluster.md#L54-L67 (5) **Sensor & Realwelt**)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "61747526",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L140-L149 (6) Scraping – rechtssicher & robust) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L142-L151 (6) Scraping – rechtssicher & robust)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "61a4121a",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Datenquellen-Cluster.md#L16-L28 (2) **Open Data & Behörden**) <-> docs/dev/v0.2/Datenquellen-Cluster.md#L16-L28 (2) **Open Data & Behörden**)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "6f930194",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L15-L21 (2. Graph-API (Neo4j)) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L15-L21 (2. Graph-API (Neo4j))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "7488b096",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md#L45-L60 (📦 v0.5 (Beyond Gotham – Advanced Intelligence)) <-> docs/dev/roadmap/v0.2-overview.md#L50-L65 (📦 v0.5 (Beyond Gotham – Advanced Intelligence))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "750914ac",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L211-L216 (v0.1.9.5–.9.7 (Geo + Scraping kontrolliert)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L214-L219 (v0.1.9.5–.9.7 (Geo + Scraping kontrolliert))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "788c61d2",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L87-L105 (11. Security-Layer) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L87-L103 (11. Security-Layer)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "78d0bcc3",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L175-L190 (9) Plugin-System (auch für Kali-Tools)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L177-L193 (9) Plugin-System (auch für Kali-Tools))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "843e28b6",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L217-L221 (v0.1.9.8–.9.9 (Collab + Alerts)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L220-L224 (v0.1.9.8–.9.9 (Collab + Alerts))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "8891a7fb",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L33-L41 (A. „Schnell & breit“ (MVP <— v0.1.9.x)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L34-L42 (A. „Schnell & breit“ (MVP <— v0.1.9.x))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "922c673a",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L71-L77 (9. CLI (infoterminal-cli)) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L71-L77 (9. CLI (infoterminal-cli))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "985cea5e",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L8-L14 (1. Core APIs (FastAPI Services)) <-> docs/dev/v0.2/Ticket-Checkliste.md#L8-L14 (1. Core APIs (FastAPI Services))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "9875ec7e",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L78-L86 (10. Infra & Observability) <-> docs/dev/v0.2/Ticket-Checkliste.md#L73-L81 (10. Infra & Observability)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "99fc7827",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L126-L139 (5) Geospatial-Layer (Live)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L127-L141 (5) Geospatial-Layer (Live))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "a0b3602b",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md#L29-L44 (📦 v0.3 (Agents & Live Data)) <-> docs/dev/roadmap/v0.2-overview.md#L34-L49 (📦 v0.3 (Agents & Live Data))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "a52e102c",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L29-L34 (4. Graph-Views (Postgres)) <-> docs/dev/v0.2/Ticket-Checkliste.md#L29-L34 (4. Graph-Views (Postgres))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "add2d002",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L29-L34 (4. Graph-Views (Postgres)) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L29-L34 (4. Graph-Views (Postgres))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "aeea91c4",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/blueprints/HUMANITARIAN-INTELLIGENCE-BLUEPRINT.md#L48-L54 (✅ Tickets) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L161-L170 (18. Humanitarian-Intelligence)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "b2fb8091",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/blueprints/VERIFICATION-BLUEPRINT.md#L504-L519 (✅ Tickets (zum TODO-Index ergänzen)) <-> docs/dev/VERIFICATION-BLUEPRINT.md#L360-L375 (✅ Tickets (zum TODO-Index ergänzen))",
+      "status": "todo",
+      "tags": [
+        "todo",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "b59158aa",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Datenquellen-Cluster.md#L42-L53 (4) **Wissenschaft & Forschung**) <-> docs/dev/v0.2/Datenquellen-Cluster.md#L42-L53 (4) **Wissenschaft & Forschung**)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "b642362b",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L47-L52 (6. Gateway & OPA) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L47-L52 (6. Gateway & OPA)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c3282f93",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md#L3-L8 (🎯 Ziel) <-> docs/dev/roadmap/v0.2-overview.md#L8-L13 (🎯 Ziel)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c4cc3828",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Datenquellen-Cluster.md#L29-L41 (3) **Cyber Threat Intelligence**) <-> docs/dev/v0.2/Datenquellen-Cluster.md#L29-L41 (3) **Cyber Threat Intelligence**)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c62850f2",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L112-L125 (4) Anreicherungen (AI/ML/DL) – sofort nutzbare Bausteine) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L113-L126 (4) Anreicherungen (AI/ML/DL) – sofort nutzbare Bausteine)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c83614f7",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L15-L21 (2. Graph-API (Neo4j)) <-> docs/dev/v0.2/Ticket-Checkliste.md#L15-L21 (2. Graph-API (Neo4j))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "c920bf3e",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L22-L28 (3. Search-API (OpenSearch)) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L22-L28 (3. Search-API (OpenSearch))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "ce6290e4",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L22-L28 (3. Search-API (OpenSearch)) <-> docs/dev/v0.2/Ticket-Checkliste.md#L22-L28 (3. Search-API (OpenSearch))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d07b686f",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Datenquellen-Cluster.md#L3-L15 (1) **News & Social Media**) <-> docs/dev/v0.2/Datenquellen-Cluster.md#L3-L15 (1) **News & Social Media**)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d0c49d06",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L8-L14 (1. Core APIs (FastAPI Services)) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L8-L14 (1. Core APIs (FastAPI Services))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "d177cba2",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/blueprints/SUPPLYCHAIN-INTELLIGENCE-BLUEPRINT.md#L48-L54 (✅ Tickets) <-> docs/dev/v0.2/v0.3+/Master-TODO-Index.md#L135-L142 (15. Supply-Chain-Intelligence)",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "db4f6f73",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L42-L51 (B. „Optional/Reguliert“) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L43-L52 (B. „Optional/Reguliert“)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "e43c002f",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L230-L239 (12) Konkrete Technik-Blöcke (sofort baubar)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L233-L240 (12) Konkrete Technik-Blöcke (sofort baubar))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "e96ac373",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md#L9-L28 (📦 v0.2 (Release Candidate – Gotham-Gap Closed)) <-> docs/dev/roadmap/v0.2-overview.md#L14-L33 (📦 v0.2 (Release Candidate – Gotham-Gap Closed))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2",
+        "v0.2",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "e9ad7821",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/TODO-Index.md#L71-L77 (9. CLI (infoterminal-cli)) <-> docs/dev/v0.2/Ticket-Checkliste.md#L66-L72 (9. CLI (infoterminal-cli))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "todo",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "ebc4ce29",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L159-L166 (n8n (Analyst Playbooks)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L161-L168 (n8n (Analyst Playbooks))",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "f83d2125",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L191-L201 (10) Governance, Recht, Sicherheit) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L194-L204 (10) Governance, Recht, Sicherheit)",
+      "status": "todo",
+      "tags": [
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "fce0f96a",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/v0.2/v0.3+/Release-Plan.md#L61-L76 (📦 v1.0 (Production-Ready & Differenzierung)) <-> docs/dev/roadmap/v0.2-overview.md#L66-L81 (📦 v1.0 (Production-Ready & Differenzierung))",
+      "status": "todo",
+      "tags": [
+        "v0.2",
+        "v0.2"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "fd2fcb3e",
+      "category": "Dossier",
+      "source": "WORK-ON-new_docs/out/duplicates_report.md#Potential duplicate sections",
+      "title": "- docs/dev/Architektur-für-Live-Datenquellen.md#L222-L229 (v0.2.0 (Härtung + Plugins)) <-> docs/dev/v0.2/Architektur-Live-Datenquellen.md#L225-L232 (v0.2.0 (Härtung + Plugins))",
+      "status": "todo",
+      "tags": [
+        "v0.2.0",
+        "v0.2",
+        "v0.2.0"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "5fbdef21",
+      "category": "Security/Ops",
+      "source": "docs/SECURITY_SWEEP.md#Security Sweep (Dev)",
+      "title": "- TODO: Secrets rotieren (Keycloak admin, oauth2-proxy cookie, DB-Passwörter).",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "88ebf786",
+      "category": "Security/Ops",
+      "source": "docs/dev/SECURITY-BLUEPRINT.md#🔒 Speicher & Kryptografie",
+      "title": "- **Incognito-Speicher**: tmpfs/overlayfs, Auto-Wipe nach Session.",
+      "status": "todo",
+      "tags": [
+        "wip"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "b89ac728",
+      "category": "Security/Ops",
+      "source": "docs/dev/SECURITY-BLUEPRINT.md#🚨 Limitierungen",
+      "title": "- Dritte (CDNs/Analytics) können Muster erkennen.",
+      "status": "todo",
+      "tags": [
+        "must"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "e07df6f9",
+      "category": "Security/Ops",
+      "source": "docs/SECURITY_SWEEP.md#Security Sweep (Dev)",
+      "title": "- TODO: TLS/Ingress für Prod (Cert-Manager).",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
+      "acceptance": ""
+    },
+    {
+      "id": "fe1c78b3",
+      "category": "Security/Ops",
+      "source": "docs/SECURITY_SWEEP.md#Security Sweep (Dev)",
+      "title": "- TODO: Backups für PG/OpenSearch/Neo4j.",
+      "status": "todo",
+      "tags": [
+        "todo"
+      ],
       "acceptance": ""
     }
   ]
