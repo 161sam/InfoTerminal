@@ -1,10 +1,14 @@
 import os
+from datetime import datetime
 from fastapi import FastAPI, Request, Response
+from fastapi.responses import JSONResponse, RedirectResponse
 from .auth import auth_context
 
 AUTH_REQUIRED = os.getenv("IT_AUTH_REQUIRED", "0") == "1"
 TENANCY_MODE = os.getenv("IT_TENANCY_MODE", "single")
 TENANT_CLAIM = os.getenv("IT_TENANT_CLAIM", "tenant")
+LEGACY_PREFIXES = ["/nlp-service", "/api/nlp-service"]
+CUTOFF = os.getenv("IT_DEPRECATION_CUTOFF_DATE", "")
 
 app = FastAPI(title="gateway")
 
@@ -12,6 +16,18 @@ app = FastAPI(title="gateway")
 @app.middleware("http")
 async def oidc_middleware(request: Request, call_next):
     path = request.url.path
+    if any(path.startswith(p) for p in LEGACY_PREFIXES):
+        if CUTOFF:
+            try:
+                cutoff_dt = datetime.fromisoformat(CUTOFF)
+                if datetime.utcnow() < cutoff_dt:
+                    new_path = path.replace("nlp-service", "doc-entities", 1)
+                    return RedirectResponse(url=new_path, status_code=308)
+            except ValueError:
+                pass
+        return JSONResponse(
+            {"error": "gone", "hint": "use /doc-entities"}, status_code=410
+        )
     if path in ("/healthz", "/readyz"):
         return await call_next(request)
 

@@ -74,7 +74,7 @@ it fe test    # Vitest (dot reporter)
 - **search-api (OpenSearch)**: Volltext, Embeddings, Ranking
 - **graph-api (Neo4j)**: Entitäten, Relationen, Algorithmen
 - **graph-views (Postgres)**: SQL-Views für BI (Superset, Grafana)
-- **nlp-verif (FastAPI)**: NER, Relation Extraction, Summarization, RTE
+- **doc-entities (FastAPI)**: NER, Relation Extraction, Summarization (replaces legacy `nlp-service`)
 
 ### 3. **Verification-Layer**
 

@@ -1,0 +1,4 @@
+{
+  "workflow.investigate_person": { "mode": "webhook", "webhookPath": "/webhook/investigate-person", "method": "POST" },
+  "workflow.financial_risk_assistant": { "mode": "rest", "workflowId": "FRA-123" }
+}

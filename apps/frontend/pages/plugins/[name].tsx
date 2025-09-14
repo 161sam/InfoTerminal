@@ -1,15 +1,16 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { 
-  ArrowLeft, 
-  Settings, 
-  Play, 
-  Code, 
-  BarChart3, 
-  Shield, 
+import { invokeTool } from '../../lib/plugins';
+import {
+  ArrowLeft,
+  Settings,
+  Play,
+  Code,
+  BarChart3,
+  Shield,
   ExternalLink,
-  CheckCircle, 
-  XCircle, 
+  CheckCircle,
+  XCircle,
   AlertTriangle,
   Clock,
   RefreshCw,
@@ -36,7 +37,7 @@ interface PluginItem {
   provider?: string;
   description?: string;
   category?: string;
-  capabilities?: { 
+  capabilities?: {
     tools?: Array<{ name: string; description?: string; parameters?: any[] }>;
     permissions?: string[];
     dependencies?: string[];
@@ -102,7 +103,7 @@ export default function PluginDetailPage() {
   const { hasRole } = useAuth();
   const isAdmin = hasRole('admin');
   const { name } = router.query as { name?: string };
-  
+
   const [activeTab, setActiveTab] = useState<PluginTab>('overview');
   const [plugin, setPlugin] = useState<PluginItem | null>(null);
   const [health, setHealth] = useState<PluginHealth | null>(null);
@@ -118,9 +119,9 @@ export default function PluginDetailPage() {
 
   useEffect(() => {
     if (!name) return;
-    
+
     let cancelled = false;
-    
+
     const loadPlugin = async () => {
       setLoading(true);
       try {
@@ -128,13 +129,13 @@ export default function PluginDetailPage() {
           fetch('/api/plugins/registry').then((r) => r.json()),
           fetch('/api/plugins/state').then((r) => r.json()),
         ]);
-        
+
         const base = (reg.items || []).find((p: any) => p.name === name);
         const st = (state.items || []).find((p: any) => p.name === name);
-        
+
         if (!cancelled && base) {
-          const pluginData = { 
-            ...base, 
+          const pluginData = {
+            ...base,
             ...st,
             description: base.description || `${base.name} plugin by ${base.provider}`,
             category: base.category || 'integration',
@@ -144,7 +145,7 @@ export default function PluginDetailPage() {
           setPlugin(pluginData);
           setConfigJson(JSON.stringify(pluginData.config || {}, null, 2));
         }
-        
+
         // Load health
         const healthResponse = await fetch(`/api/plugins/${name}/health`);
         if (!cancelled && healthResponse.ok) {
@@ -157,7 +158,7 @@ export default function PluginDetailPage() {
             errors: []
           });
         }
-        
+
         // Mock metrics data
         if (!cancelled) {
           setMetrics({
@@ -166,7 +167,7 @@ export default function PluginDetailPage() {
             errorRate: Math.random() * 5,
             lastUsed: new Date(Date.now() - Math.random() * 86400000).toISOString()
           });
-          
+
           // Mock logs
           setPluginLogs([
             { timestamp: new Date().toISOString(), level: 'info', message: 'Plugin initialized successfully' },
@@ -174,7 +175,7 @@ export default function PluginDetailPage() {
             { timestamp: new Date(Date.now() - 120000).toISOString(), level: 'warn', message: 'Rate limit approaching threshold' }
           ]);
         }
-        
+
       } catch (error) {
         console.error('Failed to load plugin:', error);
       } finally {
@@ -183,7 +184,7 @@ export default function PluginDetailPage() {
     };
 
     loadPlugin();
-    
+
     return () => {
       cancelled = true;
     };
@@ -191,18 +192,18 @@ export default function PluginDetailPage() {
 
   useEffect(() => {
     if (!plugin?.endpoints?.baseUrl) return;
-    
+
     setReady(false);
     setShowFallback(false);
     const timer = setTimeout(() => setShowFallback(true), 2000);
-    
+
     function handler(ev: MessageEvent) {
       if (ev.data === 'plugin:ready') {
         setReady(true);
         clearTimeout(timer);
       }
     }
-    
+
     window.addEventListener('message', handler);
     return () => {
       window.removeEventListener('message', handler);
@@ -212,14 +213,14 @@ export default function PluginDetailPage() {
 
   const togglePlugin = async (enabled: boolean) => {
     if (!name || !plugin) return;
-    
+
     try {
       await fetch(`/api/plugins/${name}/enable`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ enabled, scope }),
       });
-      
+
       setPlugin(prev => prev ? { ...prev, enabled } : prev);
     } catch (error) {
       console.error('Failed to toggle plugin:', error);
@@ -228,17 +229,17 @@ export default function PluginDetailPage() {
 
   const saveConfig = async () => {
     if (!name) return;
-    
+
     try {
       const config = JSON.parse(configJson);
       setConfigError(null);
-      
+
       await fetch(`/api/plugins/${name}/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ config, scope }),
       });
-      
+
       setPlugin(prev => prev ? { ...prev, config } : prev);
     } catch (error) {
       setConfigError('Invalid JSON configuration');
@@ -247,19 +248,13 @@ export default function PluginDetailPage() {
 
   const testTool = async (toolName: string) => {
     if (!name) return;
-    
+
     const payload = prompt(`JSON payload for ${toolName}:`, '{}');
     if (!payload) return;
-    
+
     try {
       const parsedPayload = JSON.parse(payload);
-      const response = await fetch(`/api/plugins/invoke/${name}/${toolName}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsedPayload),
-      });
-      
-      const result = await response.json();
+      const result = await invokeTool(name, toolName, parsedPayload);
       setTestResults(prev => ({ ...prev, [toolName]: result }));
     } catch (error) {
       setTestResults(prev => ({ ...prev, [toolName]: { error: error.toString() } }));
@@ -268,7 +263,7 @@ export default function PluginDetailPage() {
 
   const refreshHealth = async () => {
     if (!name) return;
-    
+
     try {
       const response = await fetch(`/api/plugins/${name}/health`);
       const data = await response.json();
@@ -325,7 +320,7 @@ export default function PluginDetailPage() {
   return (
     <DashboardLayout title={plugin.name} subtitle={`by ${plugin.provider} • v${plugin.version}`}>
       <div className="max-w-6xl mx-auto space-y-6">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <button
@@ -335,7 +330,7 @@ export default function PluginDetailPage() {
             <ArrowLeft size={16} />
             Back to Plugins
           </button>
-          
+
           <div className="flex items-center gap-4">
             {health && (
               <div className="flex items-center gap-2">
@@ -351,7 +346,7 @@ export default function PluginDetailPage() {
                 </div>
               </div>
             )}
-            
+
             <div className="flex items-center gap-2">
               <div className="relative">
                 <input
@@ -360,7 +355,7 @@ export default function PluginDetailPage() {
                   onChange={(e) => togglePlugin(e.target.checked)}
                   className="sr-only"
                 />
-                <div 
+                <div
                   onClick={() => togglePlugin(plugin.enabled === false)}
                   className={`w-11 h-6 rounded-full cursor-pointer transition-colors ${
                     plugin.enabled !== false ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'
@@ -375,7 +370,7 @@ export default function PluginDetailPage() {
                 {plugin.enabled !== false ? 'Enabled' : 'Disabled'}
               </span>
             </div>
-            
+
             {isAdmin && (
               <select
                 value={scope}
@@ -399,7 +394,7 @@ export default function PluginDetailPage() {
                 <Puzzle size={32} className="text-gray-600 dark:text-slate-400" />
               )}
             </div>
-            
+
             <div className="flex-1">
               <div className="flex items-start justify-between">
                 <div>
@@ -411,7 +406,7 @@ export default function PluginDetailPage() {
                     {plugin.rating && <span>Rating: {plugin.rating}/5</span>}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   {plugin.repository && (
                     <a
@@ -423,7 +418,7 @@ export default function PluginDetailPage() {
                       <ExternalLink size={16} />
                     </a>
                   )}
-                  
+
                   {plugin.documentation && (
                     <a
                       href={plugin.documentation}
@@ -449,7 +444,7 @@ export default function PluginDetailPage() {
 
         {/* Tab Content */}
         <div className="space-y-6">
-          
+
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -488,7 +483,7 @@ export default function PluginDetailPage() {
                   </Panel>
                 )}
               </div>
-              
+
               <div className="space-y-6">
                 {/* Quick Stats */}
                 {health && (
@@ -501,14 +496,14 @@ export default function PluginDetailPage() {
                           {health.status}
                         </div>
                       </div>
-                      
+
                       {health.responseTime && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600 dark:text-slate-400">Response Time</span>
                           <span className="text-sm font-medium text-gray-900 dark:text-slate-100">{health.responseTime}ms</span>
                         </div>
                       )}
-                      
+
                       {health.uptime !== undefined && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600 dark:text-slate-400">Uptime</span>
@@ -528,14 +523,14 @@ export default function PluginDetailPage() {
                         {plugin.capabilities?.tools?.length || 0}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-slate-400">Permissions</span>
                       <span className="text-sm font-medium text-gray-900 dark:text-slate-100">
                         {plugin.capabilities?.permissions?.length || 0}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-slate-400">Dependencies</span>
                       <span className="text-sm font-medium text-gray-900 dark:text-slate-100">
@@ -566,7 +561,7 @@ export default function PluginDetailPage() {
                       <p className="mt-1 text-sm text-red-600 dark:text-red-400">{configError}</p>
                     )}
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <button
                       onClick={saveConfig}
@@ -591,13 +586,13 @@ export default function PluginDetailPage() {
                   </div>
                 </div>
               </Panel>
-              
+
               <Panel title="Configuration Schema">
                 <div className="space-y-4">
                   <p className="text-sm text-gray-600 dark:text-slate-400">
                     Plugin configuration options and their descriptions:
                   </p>
-                  
+
                   <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                     <pre className="text-sm text-gray-800 dark:text-slate-200">
 {`{
@@ -630,11 +625,11 @@ export default function PluginDetailPage() {
                           Test
                         </button>
                       </div>
-                      
+
                       {tool.description && (
                         <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">{tool.description}</p>
                       )}
-                      
+
                       {tool.parameters && tool.parameters.length > 0 && (
                         <div className="text-xs">
                           <strong>Parameters:</strong>
@@ -647,7 +642,7 @@ export default function PluginDetailPage() {
                           </ul>
                         </div>
                       )}
-                      
+
                       {testResults[tool.name] && (
                         <div className="mt-3 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
                           <strong>Last Test Result:</strong>
@@ -677,21 +672,21 @@ export default function PluginDetailPage() {
                   <div className="text-sm text-gray-600 dark:text-slate-400">Total Requests</div>
                 </div>
               </Panel>
-              
+
               <Panel padded>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">{metrics.avgResponseTime}ms</div>
                   <div className="text-sm text-gray-600 dark:text-slate-400">Avg Response Time</div>
                 </div>
               </Panel>
-              
+
               <Panel padded>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">{metrics.errorRate.toFixed(1)}%</div>
                   <div className="text-sm text-gray-600 dark:text-slate-400">Error Rate</div>
                 </div>
               </Panel>
-              
+
               <Panel padded>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-600">
@@ -720,7 +715,7 @@ export default function PluginDetailPage() {
                   )}
                 </div>
               </Panel>
-              
+
               <Panel title="Dependencies">
                 <div className="space-y-2">
                   {plugin.capabilities?.dependencies?.length ? (
@@ -758,7 +753,7 @@ export default function PluginDetailPage() {
                     <span className="flex-1 text-gray-900 dark:text-slate-100">{log.message}</span>
                   </div>
                 ))}
-                
+
                 {pluginLogs.length === 0 && (
                   <div className="text-center py-8 text-gray-500 dark:text-slate-400">
                     <FileText size={32} className="mx-auto mb-2" />

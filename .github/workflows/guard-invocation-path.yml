@@ -1,0 +1,19 @@
+name: guard-invocation-path
+on: [push, pull_request]
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with: { version: 9 }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -w -C apps/frontend lint
+      - name: Block direct provider hosts in frontend
+        run: |
+          set -e
+          BAD=$(grep -RInE "http(s)?://localhost:(3417|8800)|flowise-connector|openbb-connector" apps/frontend || true)
+          if [ -n "$BAD" ]; then
+            echo "::error::Direct provider host references detected:\n$BAD"
+            exit 1
+          fi
