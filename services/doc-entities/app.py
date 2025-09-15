@@ -264,13 +264,120 @@ def get_doc(doc_id: str):
 
 
 @app.post("/resolve/{doc_id}")
-def resolve_doc(doc_id: str):
-    raise HTTPException(status_code=501, detail="resolver not implemented")
+def resolve_doc(doc_id: str, background_tasks: BackgroundTasks):
+    """Trigger entity resolution for all entities in document."""
+    if ALLOW_TEST:
+        # Test mode - use in-memory data
+        if doc_id not in MEM_ENTS:
+            raise HTTPException(404, "Document not found")
+        
+        entity_ids = [e["id"] for e in MEM_ENTS[doc_id]]
+        if entity_ids and background_tasks:
+            background_tasks.add_task(resolve_entities, entity_ids)
+        
+        return {
+            "doc_id": doc_id,
+            "status": "resolution_started", 
+            "entity_count": len(entity_ids),
+            "message": "Background resolution initiated"
+        }
+    else:
+        # Database mode
+        with SessionLocal() as db:
+            doc = db.get(Document, uuid.UUID(doc_id))
+            if not doc:
+                raise HTTPException(404, "Document not found")
+            
+            # Get all entities for this document
+            entities = db.query(Entity).filter_by(doc_id=doc.id).all()
+            entity_ids = [str(e.id) for e in entities]
+            
+            # Update status to processing
+            for entity in entities:
+                resolution = db.get(EntityResolution, entity.id)
+                if resolution:
+                    resolution.status = "processing"
+                else:
+                    resolution = EntityResolution(entity_id=entity.id, status="processing")
+                    db.add(resolution)
+            db.commit()
+            
+            # Trigger background resolution
+            if entity_ids and background_tasks:
+                background_tasks.add_task(resolve_entities, entity_ids)
+            
+            return {
+                "doc_id": doc_id,
+                "status": "resolution_started", 
+                "entity_count": len(entity_ids),
+                "message": "Background resolution initiated"
+            }
 
 
 @app.post("/resolve/entity/{entity_id}")
 def resolve_entity(entity_id: str):
-    raise HTTPException(status_code=501, detail="resolver not implemented")
+    """Resolve single entity against knowledge graph."""
+    if ALLOW_TEST:
+        # Test mode - find entity in memory
+        entity_found = None
+        for doc_id, entities in MEM_ENTS.items():
+            for entity in entities:
+                if entity["id"] == entity_id:
+                    entity_found = entity
+                    break
+            if entity_found:
+                break
+        
+        if not entity_found:
+            raise HTTPException(404, "Entity not found")
+        
+        # Mock resolution result for test mode
+        return {
+            "entity_id": entity_id,
+            "value": entity_found["value"],
+            "label": entity_found["label"],
+            "resolution": {
+                "status": "resolved",
+                "node_id": f"test:node:{entity_id[:8]}",
+                "score": 0.85,
+                "candidates": [
+                    {
+                        "node_id": f"test:node:{entity_id[:8]}",
+                        "score": 0.85,
+                        "name": entity_found["value"],
+                        "type": entity_found["label"]
+                    }
+                ]
+            }
+        }
+    else:
+        # Database mode - use actual resolver
+        from resolver import resolve_single_entity
+        
+        with SessionLocal() as db:
+            entity = db.get(Entity, uuid.UUID(entity_id))
+            if not entity:
+                raise HTTPException(404, "Entity not found")
+            
+            # Perform resolution
+            resolution_result = resolve_single_entity(entity_id)
+            if not resolution_result:
+                raise HTTPException(500, "Resolution failed")
+            
+            # Get updated resolution from database
+            resolution = db.get(EntityResolution, entity.id)
+            
+            return {
+                "entity_id": entity_id,
+                "value": entity.value,
+                "label": entity.label,
+                "resolution": {
+                    "status": resolution.status if resolution else "unknown",
+                    "node_id": resolution.node_id if resolution else None,
+                    "score": resolution.score if resolution else None,
+                    "candidates": resolution.candidates if resolution else []
+                }
+            }
 
 
 def _decorate(text: str, entities: List[Dict[str, Any]]):

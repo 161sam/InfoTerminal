@@ -100,18 +100,27 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
   ops-controller:
     build:
       context: ./services/ops-controller
     image: infoterminal/ops-controller:0.1
+    ports: ["${IT_PORT_OPS_CONTROLLER:-8614}:8000"]
     environment:
-      - IT_OPS_ENABLE=${IT_OPS_ENABLE:-0}
+      - IT_OPS_ENABLE=${IT_OPS_ENABLE:-1}
       - IT_OPS_MODE=${IT_OPS_MODE:-docker}
       - IT_DOCKER_SOCKET=${IT_DOCKER_SOCKET:-/var/run/docker.sock}
       - IT_OPS_COMPOSE_BIN=${IT_OPS_COMPOSE_BIN:-docker compose}
       - IT_OPS_STACKS_FILE=${IT_OPS_STACKS_FILE:-infra/ops/stacks.yaml}
       - IT_OPS_LOG_TAIL_LINES=${IT_OPS_LOG_TAIL_LINES:-300}
       - IT_OPS_LOCK_TIMEOUT_SEC=${IT_OPS_LOCK_TIMEOUT_SEC:-120}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/ops/stacks"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/workspace:ro
