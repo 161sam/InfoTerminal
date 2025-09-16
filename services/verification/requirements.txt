@@ -41,8 +41,8 @@ numpy==1.24.4
 scikit-learn==1.3.2
 pandas==2.1.3
 
-# Caching
-redis==5.0.1
+# Caching (v0.3.0+)
+redis[hiredis]==5.0.1
 
 # Date/Time
 python-dateutil==2.8.2

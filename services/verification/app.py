@@ -4,6 +4,8 @@ Provides claim extraction, evidence retrieval, and stance classification.
 """
 
 import asyncio
+import hashlib
+import json
 import time
 from typing import Dict, List, Optional, Any
 import logging
@@ -11,6 +13,7 @@ import logging
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 import structlog
+import redis.asyncio as redis
 
 from claim_extractor import ClaimExtractor
 from evidence_retrieval import EvidenceRetriever
@@ -39,6 +42,67 @@ app = FastAPI(
 claim_extractor = None
 evidence_retriever = None
 stance_classifier = None
+redis_client = None
+
+# Cache configuration
+CACHE_ENABLED = True
+CACHE_TTL_SECONDS = 300  # 5 minutes default
+CACHE_PREFIX = "verification:"
+
+class CacheManager:
+    """Redis cache manager for verification service."""
+    
+    def __init__(self, redis_client):
+        self.redis = redis_client
+        self.enabled = CACHE_ENABLED
+    
+    def _get_cache_key(self, prefix: str, data: str) -> str:
+        """Generate cache key from data hash."""
+        hash_obj = hashlib.sha256(data.encode('utf-8'))
+        return f"{CACHE_PREFIX}{prefix}:{hash_obj.hexdigest()[:16]}"
+    
+    async def get(self, key: str) -> Optional[Dict]:
+        """Get cached data."""
+        if not self.enabled or not self.redis:
+            return None
+        
+        try:
+            cached = await self.redis.get(key)
+            if cached:
+                logger.info("Cache hit", cache_key=key)
+                return json.loads(cached)
+            else:
+                logger.debug("Cache miss", cache_key=key)
+                return None
+        except Exception as e:
+            logger.warning("Cache get error", error=str(e), cache_key=key)
+            return None
+    
+    async def set(self, key: str, data: Dict, ttl: int = CACHE_TTL_SECONDS):
+        """Set cached data."""
+        if not self.enabled or not self.redis:
+            return
+        
+        try:
+            await self.redis.setex(key, ttl, json.dumps(data))
+            logger.debug("Cache set", cache_key=key, ttl=ttl)
+        except Exception as e:
+            logger.warning("Cache set error", error=str(e), cache_key=key)
+    
+    async def invalidate_pattern(self, pattern: str):
+        """Invalidate cache keys matching pattern."""
+        if not self.enabled or not self.redis:
+            return
+        
+        try:
+            keys = await self.redis.keys(f"{CACHE_PREFIX}{pattern}*")
+            if keys:
+                await self.redis.delete(*keys)
+                logger.info("Cache invalidated", pattern=pattern, keys_count=len(keys))
+        except Exception as e:
+            logger.warning("Cache invalidation error", error=str(e), pattern=pattern)
+
+cache_manager = None
 
 class ExtractClaimsRequest(BaseModel):
     text: str
@@ -99,9 +163,27 @@ class CredibilityResponse(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     """Initialize verification components on startup."""
-    global claim_extractor, evidence_retriever, stance_classifier
+    global claim_extractor, evidence_retriever, stance_classifier, redis_client, cache_manager
     
     logger.info("Starting InfoTerminal Verification Service")
+    
+    # Initialize Redis client
+    try:
+        redis_client = redis.Redis(
+            host='redis',
+            port=6379,
+            decode_responses=True,
+            retry_on_timeout=True,
+            socket_connect_timeout=5
+        )
+        # Test connection
+        await redis_client.ping()
+        cache_manager = CacheManager(redis_client)
+        logger.info("Redis cache initialized successfully")
+    except Exception as e:
+        logger.warning("Redis cache initialization failed, continuing without cache", error=str(e))
+        redis_client = None
+        cache_manager = CacheManager(None)
     
     # Initialize claim extractor
     claim_extractor = ClaimExtractor()
@@ -120,6 +202,8 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown."""
+    global redis_client
+    
     logger.info("Shutting down Verification Service")
     
     if claim_extractor:
@@ -130,6 +214,11 @@ async def shutdown_event():
     
     if stance_classifier:
         await stance_classifier.cleanup()
+    
+    # Close Redis connection
+    if redis_client:
+        await redis_client.close()
+        logger.info("Redis connection closed")
 
 @app.get("/healthz")
 async def health_check():
@@ -164,6 +253,20 @@ async def extract_claims(
         if not claim_extractor:
             raise HTTPException(status_code=503, detail="Claim extractor not available")
         
+        # Check cache first
+        cache_data = f"{request.text}_{request.confidence_threshold}_{request.max_claims}"
+        cache_key = cache_manager._get_cache_key("claims", cache_data) if cache_manager else None
+        
+        if cache_manager and cache_key:
+            cached_result = await cache_manager.get(cache_key)
+            if cached_result:
+                logger.info(
+                    "Claims extracted from cache",
+                    text_length=len(request.text),
+                    claims_count=len(cached_result.get('claims', []))
+                )
+                return [ClaimResponse(**claim) for claim in cached_result['claims']]
+        
         claims = await claim_extractor.extract_claims(
             text=request.text,
             confidence_threshold=request.confidence_threshold,
@@ -185,6 +288,14 @@ async def extract_claims(
                 location=claim.location
             )
             claim_responses.append(claim_response)
+        
+        # Cache the result
+        if cache_manager and cache_key:
+            await cache_manager.set(
+                cache_key, 
+                {'claims': [response.dict() for response in claim_responses]},
+                ttl=CACHE_TTL_SECONDS
+            )
         
         # Log for analytics (background task)
         background_tasks.add_task(
@@ -224,6 +335,16 @@ async def find_evidence(
         if not evidence_retriever:
             raise HTTPException(status_code=503, detail="Evidence retriever not available")
         
+        # Check cache first
+        cache_data = f"{request.claim}_{request.max_sources}_{','.join(request.source_types)}_{request.language}"
+        cache_key = cache_manager._get_cache_key("evidence", cache_data) if cache_manager else None
+        
+        if cache_manager and cache_key:
+            cached_result = await cache_manager.get(cache_key)
+            if cached_result:
+                logger.info("Evidence retrieved from cache", claim_length=len(request.claim))
+                return [EvidenceResponse(**evidence) for evidence in cached_result['evidence']]
+        
         evidence_list = await evidence_retriever.find_evidence(
             claim=request.claim,
             max_sources=request.max_sources,
@@ -246,6 +367,14 @@ async def find_evidence(
                 author=evidence.author
             )
             evidence_responses.append(evidence_response)
+        
+        # Cache the result
+        if cache_manager and cache_key:
+            await cache_manager.set(
+                cache_key,
+                {'evidence': [response.dict() for response in evidence_responses]},
+                ttl=CACHE_TTL_SECONDS
+            )
         
         # Log for analytics
         background_tasks.add_task(

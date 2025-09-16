@@ -27,12 +27,15 @@
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
+    "@types/eslint": "^8.56.12",
     "@types/leaflet": "^1.9.20",
     "@types/node": "24.3.0",
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.7",
     "@vitest/coverage-v8": "^1.6.1",
     "autoprefixer": "^10.4.21",
+    "eslint": "^8.57.0",
+    "eslint-plugin-local-rules": "^3.0.2",
     "husky": "^9.1.7",
     "install": "^0.13.0",
     "jsdom": "^24.1.3",
@@ -43,15 +46,19 @@
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-local-rules": "^3.0.2"
+    "vitest": "^1.6.1"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "prettier --write"
   },
-  "eslintConfig": { "plugins": ["local-rules"] },
-  "eslintConfigLocalRules": { "no-direct-host-fetch": "../../tools/eslint-rules/no-direct-host-fetch.js" },
+  "eslintConfig": {
+    "plugins": [
+      "local-rules"
+    ]
+  },
+  "eslintConfigLocalRules": {
+    "no-direct-host-fetch": "../../tools/eslint-rules/no-direct-host-fetch.js"
+  },
   "name": "@infoterminal/frontend",
   "private": true,
   "scripts": {

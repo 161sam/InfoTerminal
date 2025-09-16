@@ -10,14 +10,21 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY services/verification/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Download spaCy model
 RUN python -m spacy download en_core_web_sm || echo "spaCy model download failed, will use fallback"
 
+# Copy shared libraries first (for better caching)
+COPY services/_shared/ /app/_shared/
+COPY services/common/ /app/common/
+
 # Copy application code
-COPY . .
+COPY services/verification/ .
+
+# Set Python path to include shared modules
+ENV PYTHONPATH="/app:$PYTHONPATH"
 
 # Create non-root user for security
 RUN useradd -m -u 1000 appuser && \

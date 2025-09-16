@@ -1,6 +1,8 @@
 services:
   search-api:
-    build: ./services/search-api
+    build:
+      context: .
+      dockerfile: services/search-api/Dockerfile
     ports: ["${IT_PORT_SEARCH_API:-8611}:8080"]
     env_file: .env
     healthcheck:
@@ -12,7 +14,9 @@ services:
       opensearch:
         condition: service_healthy
   graph-api:
-    build: ./services/graph-api
+    build:
+      context: .
+      dockerfile: services/graph-api/Dockerfile
     ports: ["${IT_PORT_GRAPH_API:-8612}:8080"]
     env_file: .env
     healthcheck:
@@ -24,7 +28,9 @@ services:
       neo4j:
         condition: service_healthy
   graph-views:
-    build: ./services/graph-views
+    build:
+      context: .
+      dockerfile: services/graph-views/Dockerfile
     env_file: .env
     environment:
       - IT_ENABLE_METRICS=${IT_ENABLE_METRICS:-0}
@@ -40,7 +46,9 @@ services:
       postgres:
         condition: service_healthy
   web:
-    build: ./apps/frontend
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
     ports: ["${IT_PORT_FRONTEND:-3411}:3000"]
     env_file: .env
     depends_on:
