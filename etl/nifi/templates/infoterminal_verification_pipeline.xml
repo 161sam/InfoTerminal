@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <name>InfoTerminal Verification Pipeline</name>
+    <description>End-to-end fact-checking and claim verification workflow for InfoTerminal v0.2.0</description>
+    <groupId>InfoTerminal</groupId>
+    <date>2025-09-16</date>
+    <author>InfoTerminal Development Team</author>
+    <tags>verification,fact-checking,claims,evidence,nlp</tags>
+    
+    <snippet>
+        <processGroups>
+            <!-- Main Verification Process Group -->
+            <processGroup>
+                <id>verification-main</id>
+                <name>Verification Pipeline</name>
+                <position x="100" y="100"/>
+                <comment>Main verification workflow orchestrating all verification steps</comment>
+                
+                <!-- Input Processors -->
+                <processors>
+                    <!-- Text Input Listener -->
+                    <processor>
+                        <id>text-input-listener</id>
+                        <name>Text Input Listener</name>
+                        <type>org.apache.nifi.processors.standard.ListenHTTP</type>
+                        <position x="200" y="200"/>
+                        <properties>
+                            <property name="Listening Port">8090</property>
+                            <property name="Base Path">verification</property>
+                            <property name="HTTP Request Maximum Size">50MB</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <penalizationPeriod>30 sec</penalizationPeriod>
+                        <yieldPeriod>1 sec</yieldPeriod>
+                        <bulletinLevel>WARN</bulletinLevel>
+                        <runDurationMillis>0</runDurationMillis>
+                        <autoTerminatedRelationships>
+                            <autoTerminatedRelationship>success</autoTerminatedRelationship>
+                        </autoTerminatedRelationships>
+                    </processor>
+
+                    <!-- Document File Watcher -->
+                    <processor>
+                        <id>document-watcher</id>
+                        <name>Document File Watcher</name>
+                        <type>org.apache.nifi.processors.standard.GetFile</type>
+                        <position x="200" y="350"/>
+                        <properties>
+                            <property name="Input Directory">/opt/nifi/verification/input</property>
+                            <property name="File Filter">[^\.].*\.(txt|pdf|doc|docx|html)$</property>
+                            <property name="Keep Source File">false</property>
+                            <property name="Minimum File Age">0 sec</property>
+                            <property name="Maximum File Age"></property>
+                            <property name="Minimum File Size">0 B</property>
+                            <property name="Maximum File Size">100 MB</property>
+                            <property name="Ignore Hidden Files">true</property>
+                        </properties>
+                        <schedulingPeriod>10 sec</schedulingPeriod>
+                        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- URL Source Processor -->
+                    <processor>
+                        <id>url-source</id>
+                        <name>URL Content Fetcher</name>
+                        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+                        <position x="200" y="500"/>
+                        <properties>
+                            <property name="HTTP Method">GET</property>
+                            <property name="Remote URL">${url}</property>
+                            <property name="Connection Timeout">30 sec</property>
+                            <property name="Read Timeout">30 sec</property>
+                            <property name="Include Date Header">true</property>
+                            <property name="Follow Redirects">true</property>
+                            <property name="Attributes to Send"></property>
+                            <property name="Use Chunked Encoding">false</property>
+                            <property name="Penalize on "No Retry"">false</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Content Merger -->
+                    <processor>
+                        <id>content-merger</id>
+                        <name>Content Merger</name>
+                        <type>org.apache.nifi.processors.standard.MergeContent</type>
+                        <position x="400" y="350"/>
+                        <properties>
+                            <property name="Merge Strategy">Bin-Packing Algorithm</property>
+                            <property name="Merge Format">Binary Concatenation</property>
+                            <property name="Attribute Strategy">Keep Only Common Attributes</property>
+                            <property name="Correlation Attribute Name"></property>
+                            <property name="Minimum Number of Entries">1</property>
+                            <property name="Maximum Number of Entries">1000</property>
+                            <property name="Minimum Group Size">0 B</property>
+                            <property name="Maximum Group Size">1 GB</property>
+                            <property name="Max Bin Age">10 min</property>
+                        </properties>
+                        <schedulingPeriod>1 sec</schedulingPeriod>
+                        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Step 1: Claim Extraction -->
+                    <processor>
+                        <id>claim-extractor</id>
+                        <name>Claim Extraction</name>
+                        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+                        <position x="600" y="200"/>
+                        <properties>
+                            <property name="HTTP Method">POST</property>
+                            <property name="Remote URL">http://verification-service:8617/verify/extract-claims</property>
+                            <property name="Connection Timeout">60 sec</property>
+                            <property name="Read Timeout">120 sec</property>
+                            <property name="Include Date Header">true</property>
+                            <property name="Follow Redirects">true</property>
+                            <property name="Content-Type">application/json</property>
+                            <property name="Send Body">true</property>
+                            <property name="Form Body Form Name"></property>
+                            <property name="Set Form Body Form Name"></property>
+                            <property name="Attributes to Send"></property>
+                            <property name="Penalize on "No Retry"">false</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>5</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- JSON Claims Parser -->
+                    <processor>
+                        <id>claims-parser</id>
+                        <name>Claims JSON Parser</name>
+                        <type>org.apache.nifi.processors.standard.EvaluateJsonPath</type>
+                        <position x="800" y="200"/>
+                        <properties>
+                            <property name="Destination">flowfile-attribute</property>
+                            <property name="Return Type">auto-detect</property>
+                            <property name="claims.count">$.length</property>
+                            <property name="claims.all">$</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>2</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Claims Splitter -->
+                    <processor>
+                        <id>claims-splitter</id>
+                        <name>Split Claims</name>
+                        <type>org.apache.nifi.processors.standard.SplitJson</type>
+                        <position x="1000" y="200"/>
+                        <properties>
+                            <property name="JsonPath Expression">$.*</property>
+                            <property name="Null Value Representation">empty string</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>2</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Step 2: Evidence Retrieval -->
+                    <processor>
+                        <id>evidence-retriever</id>
+                        <name>Evidence Retrieval</name>
+                        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+                        <position x="1200" y="200"/>
+                        <properties>
+                            <property name="HTTP Method">POST</property>
+                            <property name="Remote URL">http://verification-service:8617/verify/find-evidence</property>
+                            <property name="Connection Timeout">60 sec</property>
+                            <property name="Read Timeout">180 sec</property>
+                            <property name="Content-Type">application/json</property>
+                            <property name="Send Body">true</property>
+                            <property name="Include Date Header">true</property>
+                            <property name="Follow Redirects">true</property>
+                            <property name="Penalize on "No Retry"">false</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>3</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Evidence Parser -->
+                    <processor>
+                        <id>evidence-parser</id>
+                        <name>Evidence JSON Parser</name>
+                        <type>org.apache.nifi.processors.standard.EvaluateJsonPath</type>
+                        <position x="1400" y="200"/>
+                        <properties>
+                            <property name="Destination">flowfile-attribute</property>
+                            <property name="Return Type">auto-detect</property>
+                            <property name="evidence.count">$.length</property>
+                            <property name="evidence.all">$</property>
+                            <property name="evidence.high_quality">$[?(@.relevance_score > 0.7 && @.credibility_score > 0.7)]</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>2</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Step 3: Stance Classification -->
+                    <processor>
+                        <id>stance-classifier</id>
+                        <name>Stance Classification</name>
+                        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+                        <position x="1600" y="200"/>
+                        <properties>
+                            <property name="HTTP Method">POST</property>
+                            <property name="Remote URL">http://verification-service:8617/verify/classify-stance</property>
+                            <property name="Connection Timeout">60 sec</property>
+                            <property name="Read Timeout">120 sec</property>
+                            <property name="Content-Type">application/json</property>
+                            <property name="Send Body">true</property>
+                            <property name="Include Date Header">true</property>
+                            <property name="Follow Redirects">true</property>
+                            <property name="Penalize on "No Retry"">false</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>3</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Step 4: Credibility Assessment -->
+                    <processor>
+                        <id>credibility-assessor</id>
+                        <name>Source Credibility Assessment</name>
+                        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+                        <position x="1800" y="200"/>
+                        <properties>
+                            <property name="HTTP Method">GET</property>
+                            <property name="Remote URL">http://verification-service:8617/verify/credibility/${evidence.source_url}</property>
+                            <property name="Connection Timeout">60 sec</property>
+                            <property name="Read Timeout">90 sec</property>
+                            <property name="Include Date Header">true</property>
+                            <property name="Follow Redirects">true</property>
+                            <property name="Penalize on "No Retry"">false</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>2</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Results Aggregator -->
+                    <processor>
+                        <id>results-aggregator</id>
+                        <name>Results Aggregator</name>
+                        <type>org.apache.nifi.processors.standard.ExecuteScript</type>
+                        <position x="2000" y="200"/>
+                        <properties>
+                            <property name="Script Engine">python</property>
+                            <property name="Script Body">
+import json
+import traceback
+from org.apache.commons.io import IOUtils
+from java.nio.charset import StandardCharsets
+from org.apache.nifi.processor.io import StreamCallback
+
+class PyStreamCallback(StreamCallback):
+    def __init__(self):
+        pass
+    def process(self, inputStream, outputStream):
+        try:
+            # Read the input
+            input_text = IOUtils.toString(inputStream, StandardCharsets.UTF_8)
+            
+            # Parse verification results
+            data = json.loads(input_text)
+            
+            # Aggregate verification results
+            verification_report = {
+                "timestamp": "${now():format('yyyy-MM-dd HH:mm:ss')}",
+                "source_text": data.get("original_text", ""),
+                "claims_extracted": data.get("claims", []),
+                "evidence_found": data.get("evidence", []),
+                "stance_analysis": data.get("stance", {}),
+                "credibility_scores": data.get("credibility", {}),
+                "overall_assessment": {
+                    "total_claims": len(data.get("claims", [])),
+                    "verified_claims": len([c for c in data.get("claims", []) if c.get("verified", False)]),
+                    "avg_confidence": sum([c.get("confidence", 0) for c in data.get("claims", [])]) / max(len(data.get("claims", [])), 1),
+                    "credibility_rating": data.get("credibility", {}).get("credibility_score", 0)
+                },
+                "recommendations": self.generate_recommendations(data)
+            }
+            
+            # Write aggregated results
+            output_text = json.dumps(verification_report, indent=2)
+            outputStream.write(output_text.encode('utf-8'))
+            
+        except Exception as e:
+            traceback.print_exc()
+            error_response = {"error": str(e), "traceback": traceback.format_exc()}
+            outputStream.write(json.dumps(error_response).encode('utf-8'))
+    
+    def generate_recommendations(self, data):
+        recommendations = []
+        
+        claims = data.get("claims", [])
+        evidence = data.get("evidence", [])
+        credibility = data.get("credibility", {})
+        
+        # High-confidence claims
+        high_conf_claims = [c for c in claims if c.get("confidence", 0) > 0.8]
+        if high_conf_claims:
+            recommendations.append("Focus verification efforts on high-confidence claims")
+        
+        # Low credibility sources
+        if credibility.get("credibility_score", 1) < 0.6:
+            recommendations.append("Source has low credibility - seek additional verification")
+        
+        # Insufficient evidence
+        if len(evidence) < 3:
+            recommendations.append("Limited evidence found - expand search parameters")
+        
+        # Contradictory evidence
+        stances = [e.get("stance") for e in evidence if "stance" in e]
+        if "support" in stances and "contradict" in stances:
+            recommendations.append("Contradictory evidence found - manual review recommended")
+        
+        return recommendations
+
+flowFile = session.get()
+if flowFile != None:
+    flowFile = session.write(flowFile, PyStreamCallback())
+    session.transfer(flowFile, REL_SUCCESS)
+                            </property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Data Storage Processors -->
+                    <processor>
+                        <id>elasticsearch-indexer</id>
+                        <name>Index to Elasticsearch</name>
+                        <type>org.apache.nifi.processors.elasticsearch.PutElasticsearch</type>
+                        <position x="2200" y="100"/>
+                        <properties>
+                            <property name="ElasticSearch Client Service">elasticsearch-client-service</property>
+                            <property name="Index">infoterminal-verification</property>
+                            <property name="Type">verification-result</property>
+                            <property name="Identifier Attribute">verification.id</property>
+                            <property name="Index Operation">index</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>2</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <processor>
+                        <id>postgres-writer</id>
+                        <name>Store in PostgreSQL</name>
+                        <type>org.apache.nifi.processors.standard.PutSQL</type>
+                        <position x="2200" y="200"/>
+                        <properties>
+                            <property name="JDBC Connection Pool">postgres-connection-pool</property>
+                            <property name="SQL Statement">
+                                INSERT INTO verification_results (
+                                    id, timestamp, source_text, claims_count, 
+                                    evidence_count, avg_confidence, credibility_score,
+                                    verification_data, recommendations
+                                ) VALUES (
+                                    '${verification.id}', '${verification.timestamp}',
+                                    '${verification.source_text}', ${claims.count},
+                                    ${evidence.count}, ${verification.avg_confidence},
+                                    ${verification.credibility_score}, '${verification.data}',
+                                    '${verification.recommendations}'
+                                )
+                            </property>
+                            <property name="Support Fragmented Transactions">true</property>
+                            <property name="Transaction Timeout">0 seconds</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Output Processors -->
+                    <processor>
+                        <id>webhook-notifier</id>
+                        <name>Webhook Notification</name>
+                        <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+                        <position x="2200" y="300"/>
+                        <properties>
+                            <property name="HTTP Method">POST</property>
+                            <property name="Remote URL">http://ops-controller:8618/api/verification/completed</property>
+                            <property name="Connection Timeout">30 sec</property>
+                            <property name="Read Timeout">30 sec</property>
+                            <property name="Content-Type">application/json</property>
+                            <property name="Send Body">true</property>
+                            <property name="Include Date Header">true</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <processor>
+                        <id>results-publisher</id>
+                        <name>Results File Output</name>
+                        <type>org.apache.nifi.processors.standard.PutFile</type>
+                        <position x="2200" y="400"/>
+                        <properties>
+                            <property name="Directory">/opt/nifi/verification/results</property>
+                            <property name="Conflict Resolution Strategy">replace</property>
+                            <property name="Create Missing Directories">true</property>
+                            <property name="Maximum File Count">-1</property>
+                            <property name="Last Modified Time">1234567890</property>
+                            <property name="Permissions">rw-rw-r--</property>
+                            <property name="Owner">nifi</property>
+                            <property name="Group">nifi</property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+
+                    <!-- Error Handling -->
+                    <processor>
+                        <id>error-handler</id>
+                        <name>Error Handler</name>
+                        <type>org.apache.nifi.processors.standard.LogAttribute</type>
+                        <position x="1200" y="500"/>
+                        <properties>
+                            <property name="Log Level">ERROR</property>
+                            <property name="Log Payload">true</property>
+                            <property name="Attributes to Log"></property>
+                            <property name="Attributes to Ignore"></property>
+                            <property name="Log prefix">VERIFICATION_ERROR: </property>
+                        </properties>
+                        <schedulingPeriod>0 sec</schedulingPeriod>
+                        <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                        <maxConcurrentTasks>1</maxConcurrentTasks>
+                        <runDurationMillis>0</runDurationMillis>
+                    </processor>
+                </processors>
+
+                <!-- Connections -->
+                <connections>
+                    <!-- Input Sources to Content Merger -->
+                    <connection>
+                        <id>text-to-merger</id>
+                        <name>text-to-merger</name>
+                        <sourceId>text-input-listener</sourceId>
+                        <destinationId>content-merger</destinationId>
+                        <sourceRelationships>success</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>file-to-merger</id>
+                        <name>file-to-merger</name>
+                        <sourceId>document-watcher</sourceId>
+                        <destinationId>content-merger</destinationId>
+                        <sourceRelationships>success</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>url-to-merger</id>
+                        <name>url-to-merger</name>
+                        <sourceId>url-source</sourceId>
+                        <destinationId>content-merger</destinationId>
+                        <sourceRelationships>Response</sourceRelationships>
+                    </connection>
+
+                    <!-- Verification Pipeline -->
+                    <connection>
+                        <id>merger-to-claims</id>
+                        <name>merger-to-claims</name>
+                        <sourceId>content-merger</sourceId>
+                        <destinationId>claim-extractor</destinationId>
+                        <sourceRelationships>merged</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>claims-to-parser</id>
+                        <name>claims-to-parser</name>
+                        <sourceId>claim-extractor</sourceId>
+                        <destinationId>claims-parser</destinationId>
+                        <sourceRelationships>Response</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>parser-to-splitter</id>
+                        <name>parser-to-splitter</name>
+                        <sourceId>claims-parser</sourceId>
+                        <destinationId>claims-splitter</destinationId>
+                        <sourceRelationships>matched</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>splitter-to-evidence</id>
+                        <name>splitter-to-evidence</name>
+                        <sourceId>claims-splitter</sourceId>
+                        <destinationId>evidence-retriever</destinationId>
+                        <sourceRelationships>split</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>evidence-to-parser</id>
+                        <name>evidence-to-parser</name>
+                        <sourceId>evidence-retriever</sourceId>
+                        <destinationId>evidence-parser</destinationId>
+                        <sourceRelationships>Response</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>evidence-parser-to-stance</id>
+                        <name>evidence-parser-to-stance</name>
+                        <sourceId>evidence-parser</sourceId>
+                        <destinationId>stance-classifier</destinationId>
+                        <sourceRelationships>matched</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>stance-to-credibility</id>
+                        <name>stance-to-credibility</name>
+                        <sourceId>stance-classifier</sourceId>
+                        <destinationId>credibility-assessor</destinationId>
+                        <sourceRelationships>Response</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>credibility-to-aggregator</id>
+                        <name>credibility-to-aggregator</name>
+                        <sourceId>credibility-assessor</sourceId>
+                        <destinationId>results-aggregator</destinationId>
+                        <sourceRelationships>Response</sourceRelationships>
+                    </connection>
+
+                    <!-- Output Connections -->
+                    <connection>
+                        <id>aggregator-to-elasticsearch</id>
+                        <name>aggregator-to-elasticsearch</name>
+                        <sourceId>results-aggregator</sourceId>
+                        <destinationId>elasticsearch-indexer</destinationId>
+                        <sourceRelationships>success</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>aggregator-to-postgres</id>
+                        <name>aggregator-to-postgres</name>
+                        <sourceId>results-aggregator</sourceId>
+                        <destinationId>postgres-writer</destinationId>
+                        <sourceRelationships>success</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>aggregator-to-webhook</id>
+                        <name>aggregator-to-webhook</name>
+                        <sourceId>results-aggregator</sourceId>
+                        <destinationId>webhook-notifier</destinationId>
+                        <sourceRelationships>success</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>aggregator-to-file</id>
+                        <name>aggregator-to-file</name>
+                        <sourceId>results-aggregator</sourceId>
+                        <destinationId>results-publisher</destinationId>
+                        <sourceRelationships>success</sourceRelationships>
+                    </connection>
+
+                    <!-- Error Handling Connections -->
+                    <connection>
+                        <id>claims-error</id>
+                        <name>claims-error</name>
+                        <sourceId>claim-extractor</sourceId>
+                        <destinationId>error-handler</destinationId>
+                        <sourceRelationships>No Retry,Retry,Failure</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>evidence-error</id>
+                        <name>evidence-error</name>
+                        <sourceId>evidence-retriever</sourceId>
+                        <destinationId>error-handler</destinationId>
+                        <sourceRelationships>No Retry,Retry,Failure</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>stance-error</id>
+                        <name>stance-error</name>
+                        <sourceId>stance-classifier</sourceId>
+                        <destinationId>error-handler</destinationId>
+                        <sourceRelationships>No Retry,Retry,Failure</sourceRelationships>
+                    </connection>
+                    
+                    <connection>
+                        <id>credibility-error</id>
+                        <name>credibility-error</name>
+                        <sourceId>credibility-assessor</sourceId>
+                        <destinationId>error-handler</destinationId>
+                        <sourceRelationships>No Retry,Retry,Failure</sourceRelationships>
+                    </connection>
+                </connections>
+
+                <!-- Controller Services -->
+                <controllerServices>
+                    <controllerService>
+                        <id>elasticsearch-client-service</id>
+                        <name>ElasticSearch Client Service</name>
+                        <type>org.apache.nifi.elasticsearch.ElasticSearchClientServiceImpl</type>
+                        <properties>
+                            <property name="HTTP Hosts">http://opensearch:9200</property>
+                            <property name="Username"></property>
+                            <property name="Password"></property>
+                            <property name="Connection Timeout">5 seconds</property>
+                            <property name="Socket Timeout">60 seconds</property>
+                            <property name="Retry Timeout">60 seconds</property>
+                        </properties>
+                    </controllerService>
+                    
+                    <controllerService>
+                        <id>postgres-connection-pool</id>
+                        <name>Postgres Connection Pool</name>
+                        <type>org.apache.nifi.dbcp.DBCPConnectionPool</type>
+                        <properties>
+                            <property name="Database Connection URL">jdbc:postgresql://postgres:5432/infoterminal</property>
+                            <property name="Database Driver Class Name">org.postgresql.Driver</property>
+                            <property name="Database User">infoterminal</property>
+                            <property name="Password">infoterminal</property>
+                            <property name="Max Wait Time">500 millis</property>
+                            <property name="Max Total Connections">8</property>
+                            <property name="Minimum Idle Connections">0</property>
+                            <property name="Maximum Idle Connections">8</property>
+                        </properties>
+                    </controllerService>
+                </controllerServices>
+            </processGroup>
+        </processGroups>
+    </snippet>
+</template>

@@ -1,0 +1,115 @@
+# Proxy Pool Configuration for InfoTerminal Egress Gateway
+
+# VPN Proxy Pools
+vpn_pools:
+  - name: "vpn_us_east"
+    url: "${VPN_US_EAST_URL}"  # e.g., "http://user:pass@vpn-us-east.example.com:8080"
+    country: "US"
+    region: "East Coast"
+    anonymity_level: "medium"
+    max_concurrent: 10
+    rotation_interval: 3600  # 1 hour
+    enabled: false  # Enable when VPN is configured
+
+  - name: "vpn_eu_central"
+    url: "${VPN_EU_CENTRAL_URL}"
+    country: "DE"
+    region: "Central Europe"
+    anonymity_level: "medium"
+    max_concurrent: 10
+    rotation_interval: 3600
+    enabled: false
+
+  - name: "vpn_asia_pacific"
+    url: "${VPN_ASIA_PACIFIC_URL}"
+    country: "SG"
+    region: "Asia Pacific"
+    anonymity_level: "medium"
+    max_concurrent: 5
+    rotation_interval: 3600
+    enabled: false
+
+# HTTP Proxy Pools
+http_proxies:
+  - name: "http_residential_1"
+    url: "${HTTP_PROXY_1_URL}"  # e.g., "http://user:pass@proxy1.example.com:8080"
+    type: "residential"
+    anonymity_level: "low"
+    country: "mixed"
+    enabled: false
+
+  - name: "http_datacenter_1"
+    url: "${HTTP_PROXY_2_URL}"
+    type: "datacenter"
+    anonymity_level: "low"
+    country: "US"
+    enabled: false
+
+# SOCKS Proxies
+socks_proxies:
+  - name: "socks5_proxy_1"
+    url: "${SOCKS5_PROXY_1_URL}"  # e.g., "socks5://user:pass@proxy.example.com:1080"
+    type: "socks5"
+    anonymity_level: "medium"
+    enabled: false
+
+# Tor Configuration
+tor:
+  enabled: true
+  socks_port: 9050
+  control_port: 9051
+  anonymity_level: "high"
+  auto_rotate: true
+  rotation_interval: 600  # 10 minutes
+  max_circuits: 3
+
+# Rotation Strategy
+rotation:
+  strategy: "round_robin"  # round_robin, random, performance_based
+  auto_rotate: true
+  rotate_on_failure: true
+  max_failures_before_rotation: 3
+  rotation_interval: 1800  # 30 minutes default
+
+# Request Settings
+requests:
+  timeout: 30
+  max_retries: 3
+  retry_delay: 5
+  user_agent_rotation: true
+  header_sanitization: true
+
+# Health Check Settings
+health_check:
+  enabled: true
+  interval: 300  # 5 minutes
+  timeout: 10
+  test_url: "http://httpbin.org/ip"
+  failure_threshold: 3
+
+# Logging
+logging:
+  audit_requests: true
+  anonymize_urls: true  # Only log domains, not full URLs
+  log_level: "info"
+
+# Security
+security:
+  require_auth: true
+  allowed_domains: []  # Empty = allow all, specify domains to restrict
+  blocked_domains:
+    - "facebook.com"
+    - "twitter.com"
+    # Add domains to block if needed
+  
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+    burst_size: 10
+
+# Performance
+performance:
+  connection_pool_size: 100
+  connection_timeout: 10
+  read_timeout: 30
+  max_concurrent_requests: 50

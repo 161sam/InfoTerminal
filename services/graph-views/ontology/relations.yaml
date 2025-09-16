@@ -1,6 +1,257 @@
+# Intelligence Relations Ontology for InfoTerminal v0.2
+# Comprehensive relationship types for professional OSINT analysis
+
+# Personal/Social Relations
 - name: KNOWS
   type: KNOWS
   from: Person
   to: Person
   properties:
     - { name: since, type: date, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+    - { name: relationship_type, type: string, required: false }  # family, friend, colleague, acquaintance
+
+- name: FAMILY_OF
+  type: FAMILY_OF
+  from: Person
+  to: Person
+  properties:
+    - { name: relationship, type: string, required: true }  # spouse, child, parent, sibling
+    - { name: confirmed, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: MARRIED_TO
+  type: MARRIED_TO
+  from: Person
+  to: Person
+  properties:
+    - { name: marriage_date, type: date, required: false }
+    - { name: divorce_date, type: date, required: false }
+    - { name: status, type: string, required: false }  # married, divorced, separated
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Professional/Organizational Relations
+- name: WORKS_FOR
+  type: WORKS_FOR
+  from: Person
+  to: Organization
+  properties:
+    - { name: position, type: string, required: false }
+    - { name: start_date, type: date, required: false }
+    - { name: end_date, type: date, required: false }
+    - { name: salary, type: decimal, required: false }
+    - { name: status, type: string, required: false }  # current, former, suspended
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: OWNS
+  type: OWNS
+  from: Person
+  to: Organization
+  properties:
+    - { name: percentage, type: float, required: false }
+    - { name: stake_type, type: string, required: false }  # shares, partnership, sole_ownership
+    - { name: since, type: date, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: BOARD_MEMBER
+  type: BOARD_MEMBER
+  from: Person
+  to: Organization
+  properties:
+    - { name: role, type: string, required: false }  # chairman, director, advisor
+    - { name: start_date, type: date, required: false }
+    - { name: end_date, type: date, required: false }
+    - { name: compensation, type: decimal, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Location Relations
+- name: LOCATED_AT
+  type: LOCATED_AT
+  from: [Person, Organization, Event]
+  to: Location
+  properties:
+    - { name: address_type, type: string, required: false }  # home, work, temporary, registered
+    - { name: since, type: date, required: false }
+    - { name: until, type: date, required: false }
+    - { name: verified, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: VISITED
+  type: VISITED
+  from: Person
+  to: Location
+  properties:
+    - { name: visit_date, type: datetime, required: false }
+    - { name: duration, type: string, required: false }
+    - { name: purpose, type: string, required: false }
+    - { name: frequency, type: string, required: false }  # once, occasional, regular
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Communication Relations
+- name: COMMUNICATES_WITH
+  type: COMMUNICATES_WITH
+  from: Person
+  to: Person
+  properties:
+    - { name: method, type: string, required: false }  # phone, email, messaging, meeting
+    - { name: frequency, type: string, required: false }  # daily, weekly, monthly, rare
+    - { name: first_contact, type: datetime, required: false }
+    - { name: last_contact, type: datetime, required: false }
+    - { name: encrypted, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: HAS_CONTACT
+  type: HAS_CONTACT
+  from: Person
+  to: Communication
+  properties:
+    - { name: is_primary, type: boolean, required: false }
+    - { name: verified, type: boolean, required: false }
+    - { name: active, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Financial Relations
+- name: OWNS_ACCOUNT
+  type: OWNS_ACCOUNT
+  from: Person
+  to: Financial
+  properties:
+    - { name: account_type, type: string, required: false }  # primary, secondary, beneficial
+    - { name: opened_date, type: date, required: false }
+    - { name: closed_date, type: date, required: false }
+    - { name: status, type: string, required: false }  # active, frozen, closed
+    - { name: balance, type: decimal, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: TRANSACTION
+  type: TRANSACTION
+  from: Financial
+  to: Financial
+  properties:
+    - { name: amount, type: decimal, required: true }
+    - { name: currency, type: string, required: false }
+    - { name: date, type: datetime, required: false }
+    - { name: purpose, type: string, required: false }
+    - { name: suspicious, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Document Relations
+- name: MENTIONED_IN
+  type: MENTIONED_IN
+  from: [Person, Organization, Location]
+  to: Document
+  properties:
+    - { name: context, type: text, required: false }
+    - { name: sentiment, type: string, required: false }  # positive, negative, neutral
+    - { name: relevance, type: string, required: false }  # high, medium, low
+    - { name: page_number, type: integer, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: AUTHORED
+  type: AUTHORED
+  from: Person
+  to: Document
+  properties:
+    - { name: role, type: string, required: false }  # author, co-author, editor, reviewer
+    - { name: date, type: date, required: false }
+    - { name: verified, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Event Relations
+- name: PARTICIPATED_IN
+  type: PARTICIPATED_IN
+  from: Person
+  to: Event
+  properties:
+    - { name: role, type: string, required: false }  # organizer, speaker, attendee, security
+    - { name: confirmed_attendance, type: boolean, required: false }
+    - { name: arrival_time, type: datetime, required: false }
+    - { name: departure_time, type: datetime, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: ORGANIZED
+  type: ORGANIZED
+  from: [Person, Organization]
+  to: Event
+  properties:
+    - { name: role, type: string, required: false }  # primary, co-organizer, sponsor
+    - { name: budget, type: decimal, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Asset Relations
+- name: OWNS_VEHICLE
+  type: OWNS_VEHICLE
+  from: Person
+  to: Vehicle
+  properties:
+    - { name: ownership_type, type: string, required: false }  # owner, lessee, user
+    - { name: purchase_date, type: date, required: false }
+    - { name: purchase_price, type: decimal, required: false }
+    - { name: registration_date, type: date, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Digital Relations  
+- name: HAS_ACCOUNT
+  type: HAS_ACCOUNT
+  from: Person
+  to: Digital_Identity
+  properties:
+    - { name: verified, type: boolean, required: false }
+    - { name: created_date, type: datetime, required: false }
+    - { name: last_active, type: datetime, required: false }
+    - { name: activity_level, type: string, required: false }  # high, medium, low, inactive
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Organizational Relations
+- name: SUBSIDIARY_OF
+  type: SUBSIDIARY_OF
+  from: Organization
+  to: Organization
+  properties:
+    - { name: ownership_percentage, type: float, required: false }
+    - { name: relationship_type, type: string, required: false }  # subsidiary, affiliate, joint_venture
+    - { name: established_date, type: date, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: COMPETES_WITH
+  type: COMPETES_WITH
+  from: Organization
+  to: Organization
+  properties:
+    - { name: market_sector, type: string, required: false }
+    - { name: competition_level, type: string, required: false }  # direct, indirect, potential
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+# Investigative Relations
+- name: CONNECTED_TO
+  type: CONNECTED_TO
+  from: [Person, Organization, Event, Document]
+  to: [Person, Organization, Event, Document]
+  properties:
+    - { name: connection_type, type: string, required: false }
+    - { name: strength, type: string, required: false }  # strong, medium, weak
+    - { name: first_observed, type: datetime, required: false }
+    - { name: last_observed, type: datetime, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+    - { name: investigation_notes, type: text, required: false }

@@ -22,7 +22,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import Panel from '@/components/layout/Panel';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import {
   listStacks,

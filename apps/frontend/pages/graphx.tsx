@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/button";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
 import GraphViewerCytoscape from "@/components/GraphViewerCytoscape";
 import config from "@/lib/config";

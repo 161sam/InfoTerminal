@@ -1,221 +1,354 @@
-// apps/frontend/pages/security.tsx - Security Settings Page
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  AlertTriangle, 
   Shield, 
-  Key, 
-  Users, 
-  Activity, 
-  Lock,
+  Globe, 
+  EyeOff, 
+  Container,
+  AlertTriangle,
   CheckCircle,
-  XCircle,
-  Clock
+  Activity,
+  RefreshCw
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Panel from '@/components/layout/Panel';
+import { IncognitoMode } from '@/components/security/IncognitoMode';
+import { EphemeralSession } from '@/components/security/EphemeralSession';
+import { DataWipeControls } from '@/components/security/DataWipeControls';
+
+interface SecurityStatus {
+  egressGateway: {
+    status: 'healthy' | 'degraded' | 'offline';
+    torAvailable: boolean;
+    vpnCount: number;
+    proxyCount: number;
+    anonymityLevel: string;
+  };
+  incognitoMode: {
+    active: boolean;
+    sessionId?: string;
+    timeRemaining?: number;
+  };
+  dataProtection: {
+    ephemeralContainers: number;
+    memoryOnlyMode: boolean;
+    autoWipeEnabled: boolean;
+  };
+}
+
 export default function SecurityPage() {
-  const [auditLogs, setAuditLogs] = useState([
-    { id: 1, action: 'User login', user: 'admin', timestamp: '2024-03-01 10:30:00', status: 'success' },
-    { id: 2, action: 'Document access', user: 'john.doe', timestamp: '2024-03-01 10:25:00', status: 'success' },
-    { id: 3, action: 'Failed login', user: 'unknown', timestamp: '2024-03-01 10:20:00', status: 'failed' },
-  ]);
+  const [activeTab, setActiveTab] = useState<'overview' | 'incognito' | 'containers' | 'wipe'>('overview');
+  const [securityStatus, setSecurityStatus] = useState<SecurityStatus | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
+
+  useEffect(() => {
+    loadSecurityStatus();
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(loadSecurityStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadSecurityStatus = async () => {
+    try {
+      const response = await fetch('/api/security/status');
+      if (response.ok) {
+        const status = await response.json();
+        setSecurityStatus(status);
+      } else {
+        // Fallback mock data for development
+        setSecurityStatus({
+          egressGateway: {
+            status: 'healthy',
+            torAvailable: true,
+            vpnCount: 3,
+            proxyCount: 5,
+            anonymityLevel: 'high'
+          },
+          incognitoMode: {
+            active: false
+          },
+          dataProtection: {
+            ephemeralContainers: 0,
+            memoryOnlyMode: false,
+            autoWipeEnabled: true
+          }
+        });
+      }
+      setLastRefresh(Date.now());
+    } catch (error) {
+      console.error('Failed to load security status:', error);
+      // Fallback mock data
+      setSecurityStatus({
+        egressGateway: {
+          status: 'offline',
+          torAvailable: false,
+          vpnCount: 0,
+          proxyCount: 0,
+          anonymityLevel: 'none'
+        },
+        incognitoMode: {
+          active: false
+        },
+        dataProtection: {
+          ephemeralContainers: 0,
+          memoryOnlyMode: false,
+          autoWipeEnabled: false
+        }
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    await loadSecurityStatus();
+    setIsLoading(false);
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'healthy': return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'degraded': return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case 'offline': return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      default: return <Activity className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'healthy': return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-300';
+      case 'degraded': return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'offline': return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-300';
+      default: return 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-900/30 text-gray-800 dark:text-gray-300';
+    }
+  };
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: Shield },
+    { id: 'incognito', label: 'Incognito Mode', icon: EyeOff },
+    { id: 'containers', label: 'Ephemeral Sessions', icon: Container },
+    { id: 'wipe', label: 'Data Wipe', icon: Shield }
+  ];
+
+  if (isLoading && !securityStatus) {
+    return (
+      <DashboardLayout title="Security Dashboard" subtitle="Anonymous research and data protection controls">
+        <div className="p-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <DashboardLayout title="Security" subtitle="Manage security settings and access control">
+    <DashboardLayout title="Security Dashboard" subtitle="Anonymous research and data protection controls">
       <div className="p-6">
-        <div className="max-w-6xl space-y-6">
+        <div className="max-w-7xl space-y-6">
           
-          {/* Security Overview */}
-          <Panel>
-            <div className="flex items-center gap-3 mb-6">
-              <Shield size={24} className="text-blue-500" />
-              <h3 className="text-lg font-semibold">Security Overview</h3>
-            </div>
+          {/* Tab Navigation */}
+          <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-800">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+                    activeTab === tab.id
+                      ? 'text-blue-600 border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                      : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/30">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-green-600 font-medium">System Status</div>
-                  <CheckCircle size={16} className="text-green-600" />
-                </div>
-                <div className="text-lg font-bold text-green-800 dark:text-green-300">Secure</div>
-              </div>
-              
-              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-900/30">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-blue-600 font-medium">Active Sessions</div>
-                  <Users size={16} className="text-blue-600" />
-                </div>
-                <div className="text-lg font-bold text-blue-800 dark:text-blue-300">3</div>
-              </div>
-              
-              <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-900/30">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-orange-600 font-medium">Failed Attempts</div>
-                  <AlertTriangle size={16} className="text-orange-600" />
-                </div>
-                <div className="text-lg font-bold text-orange-800 dark:text-orange-300">2</div>
-              </div>
-              
-              <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-900/30">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-sm text-purple-600 font-medium">Last Audit</div>
-                  <Clock size={16} className="text-purple-600" />
-                </div>
-                <div className="text-lg font-bold text-purple-800 dark:text-purple-300">2 days ago</div>
-              </div>
-            </div>
-          </Panel>
-
-          {/* Security Settings Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            {/* Authentication Settings */}
-            <Panel>
-              <div className="flex items-center gap-3 mb-4">
-                <Key size={20} className="text-indigo-500" />
-                <h3 className="text-lg font-semibold">Authentication</h3>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Two-Factor Authentication</label>
-                    <p className="text-sm text-gray-500">Add an extra layer of security</p>
-                  </div>
-                  <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700">
-                    Enable
-                  </button>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Session Timeout</label>
-                    <p className="text-sm text-gray-500">Auto logout after inactivity</p>
-                  </div>
-                  <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded">
-                    <option>30 minutes</option>
-                    <option>1 hour</option>
-                    <option>2 hours</option>
-                    <option>Never</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Password Policy</label>
-                    <p className="text-sm text-gray-500">Minimum 8 characters, mixed case</p>
-                  </div>
-                  <span className="text-green-600 text-sm">✓ Active</span>
-                </div>
-              </div>
-            </Panel>
-
-            {/* Access Control */}
-            <Panel>
-              <div className="flex items-center gap-3 mb-4">
-                <Lock size={20} className="text-red-500" />
-                <h3 className="text-lg font-semibold">Access Control</h3>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">IP Whitelisting</label>
-                    <p className="text-sm text-gray-500">Restrict access to specific IPs</p>
-                  </div>
-                  <button className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50">
-                    Configure
-                  </button>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">API Rate Limiting</label>
-                    <p className="text-sm text-gray-500">Limit requests per minute</p>
-                  </div>
-                  <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded">
-                    <option>100/min</option>
-                    <option>500/min</option>
-                    <option>1000/min</option>
-                    <option>Unlimited</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Document Encryption</label>
-                    <p className="text-sm text-gray-500">Encrypt sensitive documents</p>
-                  </div>
-                  <span className="text-green-600 text-sm">✓ Enabled</span>
-                </div>
-              </div>
-            </Panel>
-          </div>
-
-          {/* Audit Log */}
-          <Panel>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <Activity size={20} className="text-gray-500" />
-                  <h3 className="text-lg font-semibold">Security Audit Log</h3>
-                </div>
-              <button className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
-                Export Log
+            <div className="ml-auto flex items-center gap-2">
+              <span className="text-sm text-gray-500">
+                Last updated: {new Date(lastRefresh).toLocaleTimeString()}
+              </span>
+              <button
+                onClick={handleRefresh}
+                disabled={isLoading}
+                className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
-              </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 dark:bg-gray-800">
-                  <tr className="border-b border-gray-200 dark:border-gray-800">
-                    <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-slate-300">Action</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-slate-300">User</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-slate-300">Timestamp</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-slate-300">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
-                  {auditLogs.map(log => (
-                    <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className="py-3 px-4 text-gray-900 dark:text-slate-100">{log.action}</td>
-                      <td className="py-3 px-4 text-gray-900 dark:text-slate-100">{log.user}</td>
-                      <td className="py-3 px-4 text-gray-900 dark:text-slate-100">{log.timestamp}</td>
-                      <td className="py-3 px-4">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          log.status === 'success' 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
-                          {log.status === 'success' ? (
-                            <CheckCircle size={12} />
-                          ) : (
-                            <XCircle size={12} />
-                          )}
-                          {log.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
-          </Panel>
-
-          {/* Security Alerts */}
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle size={20} className="text-yellow-600 dark:text-yellow-400" />
-              <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-300">Security Recommendations</h3>
-            </div>
-            
-            <ul className="space-y-2 text-sm text-yellow-700 dark:text-yellow-300/90">
-              <li>• Enable two-factor authentication for admin accounts</li>
-              <li>• Review and update API access permissions</li>
-              <li>• Consider implementing IP whitelisting for production</li>
-              <li>• Schedule regular security audits</li>
-            </ul>
           </div>
+
+          {/* Overview Tab */}
+          {activeTab === 'overview' && securityStatus && (
+            <div className="space-y-6">
+              {/* Security Status Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Egress Gateway Status */}
+                <Panel>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-blue-500" />
+                      <h3 className="text-lg font-semibold">Egress Gateway</h3>
+                    </div>
+                    <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(securityStatus.egressGateway.status)}`}>
+                      {getStatusIcon(securityStatus.egressGateway.status)}
+                      {securityStatus.egressGateway.status}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Tor Available</span>
+                      <span>{securityStatus.egressGateway.torAvailable ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">VPN Pools</span>
+                      <span>{securityStatus.egressGateway.vpnCount}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Proxy Pools</span>
+                      <span>{securityStatus.egressGateway.proxyCount}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Anonymity Level</span>
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+                        {securityStatus.egressGateway.anonymityLevel}
+                      </span>
+                    </div>
+                  </div>
+                </Panel>
+
+                {/* Incognito Mode Status */}
+                <Panel>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <EyeOff className="h-5 w-5 text-purple-500" />
+                      <h3 className="text-lg font-semibold">Incognito Mode</h3>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      securityStatus.incognitoMode.active 
+                        ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                    }`}>
+                      {securityStatus.incognitoMode.active ? 'Active' : 'Inactive'}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {securityStatus.incognitoMode.active ? (
+                      <>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Session ID</span>
+                          <span className="font-mono text-xs">
+                            {securityStatus.incognitoMode.sessionId?.slice(0, 8)}...
+                          </span>
+                        </div>
+                        {securityStatus.incognitoMode.timeRemaining && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-500">Time Remaining</span>
+                            <span>
+                              {Math.floor(securityStatus.incognitoMode.timeRemaining / 60000)}m
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        No active incognito session
+                      </p>
+                    )}
+                  </div>
+                </Panel>
+
+                {/* Data Protection Status */}
+                <Panel>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Container className="h-5 w-5 text-green-500" />
+                      <h3 className="text-lg font-semibold">Data Protection</h3>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      securityStatus.dataProtection.memoryOnlyMode 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                    }`}>
+                      {securityStatus.dataProtection.memoryOnlyMode ? 'Secured' : 'Standard'}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Ephemeral Containers</span>
+                      <span>{securityStatus.dataProtection.ephemeralContainers}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Memory-Only Mode</span>
+                      <span>{securityStatus.dataProtection.memoryOnlyMode ? 'Enabled' : 'Disabled'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Auto-Wipe</span>
+                      <span>{securityStatus.dataProtection.autoWipeEnabled ? 'Enabled' : 'Disabled'}</span>
+                    </div>
+                  </div>
+                </Panel>
+              </div>
+
+              {/* Security Features Overview */}
+              <Panel>
+                <div className="flex items-center gap-3 mb-6">
+                  <Shield className="h-6 w-6 text-blue-500" />
+                  <h3 className="text-xl font-semibold">InfoTerminal v0.2.0 Security Features</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="h-5 w-5 text-blue-500" />
+                      <h4 className="font-medium">Anonymous Egress</h4>
+                    </div>
+                    <p className="text-sm text-gray-600">Tor, VPN, and proxy routing for anonymous OSINT research</p>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <EyeOff className="h-5 w-5 text-purple-500" />
+                      <h4 className="font-medium">Incognito Mode</h4>
+                    </div>
+                    <p className="text-sm text-gray-600">Ephemeral sessions with automatic data wiping</p>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Container className="h-5 w-5 text-green-500" />
+                      <h4 className="font-medium">Isolated Containers</h4>
+                    </div>
+                    <p className="text-sm text-gray-600">Secure, ephemeral containers for sensitive operations</p>
+                  </div>
+                </div>
+              </Panel>
+            </div>
+          )}
+
+          {/* Incognito Mode Tab */}
+          {activeTab === 'incognito' && (
+            <IncognitoMode />
+          )}
+
+          {/* Containers Tab */}
+          {activeTab === 'containers' && (
+            <EphemeralSession 
+              sessionId={securityStatus?.incognitoMode.sessionId} 
+            />
+          )}
+
+          {/* Data Wipe Tab */}
+          {activeTab === 'wipe' && (
+            <DataWipeControls 
+              sessionId={securityStatus?.incognitoMode.sessionId} 
+            />
+          )}
+
         </div>
       </div>
     </DashboardLayout>

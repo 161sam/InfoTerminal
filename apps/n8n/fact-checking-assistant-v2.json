@@ -1,0 +1,632 @@
+{
+  "name": "InfoTerminal Fact-Checking Assistant v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "verify",
+        "options": { 
+          "responseCode": 200, 
+          "responseData": "allEntries",
+          "allowedOrigins": "http://localhost:3000,https://infoterminal.local"
+        }
+      },
+      "id": "webhook-verify",
+      "name": "Webhook /verify",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [-300, 0]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "keepOnlySet": false,
+        "values": {
+          "object": {
+            "sessionId": "={{ $json.sessionId || ('session-' + Date.now()) }}",
+            "sourceText": "={{ $json.text || $json.content || '' }}",
+            "sourceUrl": "={{ $json.url || '' }}",
+            "priority": "={{ $json.priority || 'normal' }}",
+            "timestamp": "={{ new Date().toISOString() }}",
+            "workflow": {
+              "stage": "initialization",
+              "totalSteps": 4,
+              "currentStep": 0
+            }
+          }
+        }
+      },
+      "id": "set-initial-data",
+      "name": "Set Initial Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [-100, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.sourceText }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-input-data",
+      "name": "Check Input Data",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [100, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:3000/api/verification/extract-claims",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 60000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={ \n  \"text\": $json.sourceText,\n  \"confidence_threshold\": 0.7,\n  \"max_claims\": 10\n}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"X-Session-ID\": $json.sessionId\n}"
+      },
+      "id": "extract-claims",
+      "name": "Extract Claims",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [300, -100]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "keepOnlySet": false,
+        "values": {
+          "object": {
+            "sessionId": "={{ $json.sessionId }}",
+            "sourceText": "={{ $json.sourceText }}",
+            "sourceUrl": "={{ $json.sourceUrl }}",
+            "claims": "={{ $('extract-claims').item.json }}",
+            "workflow": {
+              "stage": "claims-extracted",
+              "totalSteps": 4,
+              "currentStep": 1,
+              "claimsFound": "={{ $('extract-claims').item.json.length }}"
+            },
+            "timestamp": "={{ new Date().toISOString() }}"
+          }
+        }
+      },
+      "id": "set-claims-data",
+      "name": "Set Claims Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [500, -100]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "claims",
+        "options": {}
+      },
+      "id": "split-claims",
+      "name": "Split Claims",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [700, -100]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:3000/api/verification/find-evidence",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 120000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"claim\": $json.text,\n  \"max_sources\": 5,\n  \"source_types\": [\"web\", \"wikipedia\", \"news\"],\n  \"language\": \"en\"\n}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"X-Session-ID\": $json.sessionId,\n  \"X-Claim-ID\": $json.id\n}"
+      },
+      "id": "find-evidence",
+      "name": "Find Evidence",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [900, -100]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "keepOnlySet": false,
+        "values": {
+          "object": {
+            "sessionId": "={{ $json.sessionId }}",
+            "claimId": "={{ $json.id }}",
+            "claimText": "={{ $json.text }}",
+            "evidence": "={{ $('find-evidence').item.json }}",
+            "workflow": {
+              "stage": "evidence-found",
+              "totalSteps": 4,
+              "currentStep": 2,
+              "evidenceCount": "={{ $('find-evidence').item.json.length }}"
+            },
+            "timestamp": "={{ new Date().toISOString() }}"
+          }
+        }
+      },
+      "id": "set-evidence-data",
+      "name": "Set Evidence Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1100, -100]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "evidence",
+        "options": {}
+      },
+      "id": "split-evidence",
+      "name": "Split Evidence",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [1300, -100]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:3000/api/verification/classify-stance",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"claim\": $json.claimText,\n  \"evidence\": $json.snippet,\n  \"context\": $json.source_title\n}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"X-Session-ID\": $json.sessionId,\n  \"X-Claim-ID\": $json.claimId,\n  \"X-Evidence-ID\": $json.id\n}"
+      },
+      "id": "classify-stance",
+      "name": "Classify Stance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1500, -100]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:3000/api/verification/credibility",
+        "options": {
+          "timeout": 60000
+        },
+        "queryParametersUi": {
+          "parameter": [
+            {
+              "name": "url",
+              "value": "={{ $json.source_url }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"X-Session-ID\": $json.sessionId,\n  \"X-Evidence-ID\": $json.id\n}"
+      },
+      "id": "assess-credibility",
+      "name": "Assess Source Credibility",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1700, -100]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "keepOnlySet": false,
+        "values": {
+          "object": {
+            "sessionId": "={{ $json.sessionId }}",
+            "claimId": "={{ $json.claimId }}",
+            "evidenceId": "={{ $json.id }}",
+            "verificationResult": {
+              "claim": {
+                "id": "={{ $json.claimId }}",
+                "text": "={{ $json.claimText }}"
+              },
+              "evidence": {
+                "id": "={{ $json.id }}",
+                "source_url": "={{ $json.source_url }}",
+                "source_title": "={{ $json.source_title }}",
+                "snippet": "={{ $json.snippet }}",
+                "relevance_score": "={{ $json.relevance_score }}",
+                "domain": "={{ $json.domain }}"
+              },
+              "stance": "={{ $('classify-stance').item.json }}",
+              "credibility": "={{ $('assess-credibility').item.json }}",
+              "analysis": {
+                "overall_score": "={{ Math.round(($('classify-stance').item.json.confidence * $('assess-credibility').item.json.credibility_score + $json.relevance_score) / 3 * 100) / 100 }}",
+                "recommendation": "={{ \n  $('classify-stance').item.json.stance === 'support' && $('assess-credibility').item.json.credibility_score > 0.7 \n    ? 'Evidence supports claim from credible source' \n    : $('classify-stance').item.json.stance === 'contradict' && $('assess-credibility').item.json.credibility_score > 0.7 \n    ? 'Evidence contradicts claim from credible source' \n    : 'Additional verification needed'\n}}",
+                "confidence_level": "={{ \n  $('classify-stance').item.json.confidence > 0.8 && $('assess-credibility').item.json.credibility_score > 0.8 \n    ? 'high' \n    : $('classify-stance').item.json.confidence > 0.6 && $('assess-credibility').item.json.credibility_score > 0.6 \n    ? 'medium' \n    : 'low'\n}}"
+              }
+            },
+            "workflow": {
+              "stage": "verification-complete",
+              "totalSteps": 4,
+              "currentStep": 3
+            },
+            "timestamp": "={{ new Date().toISOString() }}"
+          }
+        }
+      },
+      "id": "set-verification-result",
+      "name": "Set Verification Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1900, -100]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8612/api/graph/entities",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"entities\": [\n    {\n      \"type\": \"claim\",\n      \"properties\": {\n        \"text\": $json.verificationResult.claim.text,\n        \"id\": $json.verificationResult.claim.id,\n        \"session_id\": $json.sessionId,\n        \"extracted_at\": $json.timestamp\n      }\n    },\n    {\n      \"type\": \"evidence\",\n      \"properties\": {\n        \"source_url\": $json.verificationResult.evidence.source_url,\n        \"source_title\": $json.verificationResult.evidence.source_title,\n        \"snippet\": $json.verificationResult.evidence.snippet,\n        \"relevance_score\": $json.verificationResult.evidence.relevance_score,\n        \"credibility_score\": $json.verificationResult.credibility.credibility_score,\n        \"id\": $json.verificationResult.evidence.id,\n        \"session_id\": $json.sessionId\n      }\n    }\n  ],\n  \"relationships\": [\n    {\n      \"from\": $json.verificationResult.claim.id,\n      \"to\": $json.verificationResult.evidence.id,\n      \"type\": $json.verificationResult.stance.stance,\n      \"properties\": {\n        \"confidence\": $json.verificationResult.stance.confidence,\n        \"reasoning\": $json.verificationResult.stance.reasoning,\n        \"overall_score\": $json.verificationResult.analysis.overall_score,\n        \"session_id\": $json.sessionId,\n        \"verified_at\": $json.timestamp\n      }\n    }\n  ]\n}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"X-Session-ID\": $json.sessionId\n}"
+      },
+      "id": "store-in-graph",
+      "name": "Store in Knowledge Graph",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2100, -100]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8001/api/search/index",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"document\": {\n    \"id\": ($json.sessionId + '-verification-' + $json.verificationResult.claim.id),\n    \"type\": \"verification-result\",\n    \"title\": (\"Verification: \" + $json.verificationResult.claim.text.substring(0, 60) + \"...\"),\n    \"content\": $json.verificationResult.claim.text,\n    \"metadata\": {\n      \"session_id\": $json.sessionId,\n      \"claim_id\": $json.verificationResult.claim.id,\n      \"evidence_count\": 1,\n      \"stance\": $json.verificationResult.stance.stance,\n      \"confidence\": $json.verificationResult.stance.confidence,\n      \"credibility_score\": $json.verificationResult.credibility.credibility_score,\n      \"overall_score\": $json.verificationResult.analysis.overall_score,\n      \"recommendation\": $json.verificationResult.analysis.recommendation,\n      \"confidence_level\": $json.verificationResult.analysis.confidence_level,\n      \"source_url\": $json.verificationResult.evidence.source_url,\n      \"source_domain\": $json.verificationResult.evidence.domain,\n      \"verified_at\": $json.timestamp\n    }\n  }\n}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"X-Session-ID\": $json.sessionId\n}"
+      },
+      "id": "index-in-search",
+      "name": "Index in Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2100, 0]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "merge-verification-results",
+      "name": "Merge Verification Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [2300, -50]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate all verification results\nconst allResults = [];\nconst sessionData = {\n  sessionId: '',\n  sourceText: '',\n  workflow: {\n    stage: 'aggregation',\n    totalSteps: 4,\n    currentStep: 4\n  },\n  summary: {\n    totalClaims: 0,\n    totalEvidence: 0,\n    averageConfidence: 0,\n    averageCredibility: 0,\n    highConfidenceResults: 0,\n    supportingEvidence: 0,\n    contradictingEvidence: 0,\n    neutralEvidence: 0,\n    recommendations: []\n  },\n  results: [],\n  timestamp: new Date().toISOString()\n};\n\nfor (const item of $input.all()) {\n  if (item.json.verificationResult) {\n    const result = item.json.verificationResult;\n    allResults.push(result);\n    \n    // Set session data from first item\n    if (!sessionData.sessionId) {\n      sessionData.sessionId = item.json.sessionId;\n      sessionData.sourceText = item.json.sourceText || '';\n    }\n  }\n}\n\n// Calculate summary statistics\nsessionData.summary.totalClaims = new Set(allResults.map(r => r.claim.id)).size;\nsessionData.summary.totalEvidence = allResults.length;\n\nif (allResults.length > 0) {\n  sessionData.summary.averageConfidence = allResults.reduce((sum, r) => sum + r.stance.confidence, 0) / allResults.length;\n  sessionData.summary.averageCredibility = allResults.reduce((sum, r) => sum + r.credibility.credibility_score, 0) / allResults.length;\n  \n  // Count by stance\n  sessionData.summary.supportingEvidence = allResults.filter(r => r.stance.stance === 'support').length;\n  sessionData.summary.contradictingEvidence = allResults.filter(r => r.stance.stance === 'contradict').length;\n  sessionData.summary.neutralEvidence = allResults.filter(r => r.stance.stance === 'neutral').length;\n  \n  // High confidence results\n  sessionData.summary.highConfidenceResults = allResults.filter(r => r.analysis.confidence_level === 'high').length;\n  \n  // Generate recommendations\n  if (sessionData.summary.averageCredibility < 0.5) {\n    sessionData.summary.recommendations.push('Low average source credibility - seek additional verification');\n  }\n  \n  if (sessionData.summary.contradictingEvidence > sessionData.summary.supportingEvidence) {\n    sessionData.summary.recommendations.push('More contradicting than supporting evidence found - claims may be questionable');\n  } else if (sessionData.summary.supportingEvidence > sessionData.summary.contradictingEvidence) {\n    sessionData.summary.recommendations.push('More supporting than contradicting evidence found - claims appear credible');\n  }\n  \n  if (sessionData.summary.highConfidenceResults / allResults.length > 0.7) {\n    sessionData.summary.recommendations.push('High confidence in verification results');\n  } else {\n    sessionData.summary.recommendations.push('Mixed confidence levels - manual review recommended');\n  }\n  \n  if (sessionData.summary.totalEvidence < sessionData.summary.totalClaims * 2) {\n    sessionData.summary.recommendations.push('Limited evidence per claim - consider expanding search');\n  }\n}\n\nsessionData.results = allResults;\n\nreturn [{ json: sessionData }];"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2500, -50]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8618/api/verification/session-complete",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\",\n  \"X-Session-ID\": $json.sessionId\n}"
+      },
+      "id": "notify-completion",
+      "name": "Notify Completion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2700, -50]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"sessionId\": $json.sessionId,\n  \"workflow\": $json.workflow,\n  \"summary\": $json.summary,\n  \"message\": \"Verification completed successfully\",\n  \"resultsCount\": $json.results.length,\n  \"timestamp\": $json.timestamp,\n  \"dashboardUrl\": (\"http://localhost:3000/verification/dashboard?session=\" + $json.sessionId)\n}"
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2900, -50]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"Invalid input data\",\n  \"message\": \"Text content is required for verification\",\n  \"timestamp\": (new Date().toISOString())\n}"
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [300, 100]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "no-operation-1",
+      "name": "NoOp",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2100, -200]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:3000/api/demo/load",
+        "options": {
+          "bodyContentType": "json",
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "bodyParametersJson": "={\n  \"type\": \"verification-demo\",\n  \"sessionId\": $json.sessionId,\n  \"summary\": $json.summary,\n  \"sampleResults\": $json.results.slice(0, 3)\n}",
+        "sendHeaders": true,
+        "headerParametersJson": "={\n  \"Content-Type\": \"application/json\"\n}"
+      },
+      "id": "update-demo-data",
+      "name": "Update Demo Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2700, 50]
+    }
+  ],
+  "connections": {
+    "webhook-verify": {
+      "main": [
+        [
+          {
+            "node": "set-initial-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-initial-data": {
+      "main": [
+        [
+          {
+            "node": "check-input-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-input-data": {
+      "main": [
+        [
+          {
+            "node": "extract-claims",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "error-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract-claims": {
+      "main": [
+        [
+          {
+            "node": "set-claims-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-claims-data": {
+      "main": [
+        [
+          {
+            "node": "split-claims",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-claims": {
+      "main": [
+        [
+          {
+            "node": "find-evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find-evidence": {
+      "main": [
+        [
+          {
+            "node": "set-evidence-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-evidence-data": {
+      "main": [
+        [
+          {
+            "node": "split-evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-evidence": {
+      "main": [
+        [
+          {
+            "node": "classify-stance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "classify-stance": {
+      "main": [
+        [
+          {
+            "node": "assess-credibility",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "assess-credibility": {
+      "main": [
+        [
+          {
+            "node": "set-verification-result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-verification-result": {
+      "main": [
+        [
+          {
+            "node": "store-in-graph",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "index-in-search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-in-graph": {
+      "main": [
+        [
+          {
+            "node": "merge-verification-results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "index-in-search": {
+      "main": [
+        [
+          {
+            "node": "merge-verification-results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "merge-verification-results": {
+      "main": [
+        [
+          {
+            "node": "aggregate-results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "aggregate-results": {
+      "main": [
+        [
+          {
+            "node": "notify-completion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "update-demo-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notify-completion": {
+      "main": [
+        [
+          {
+            "node": "webhook-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "error-handler-workflow"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2025-09-16T12:00:00.000Z",
+      "updatedAt": "2025-09-16T12:00:00.000Z",
+      "id": "1",
+      "name": "infoterminal"
+    },
+    {
+      "createdAt": "2025-09-16T12:00:00.000Z",
+      "updatedAt": "2025-09-16T12:00:00.000Z",
+      "id": "2",
+      "name": "verification"
+    },
+    {
+      "createdAt": "2025-09-16T12:00:00.000Z", 
+      "updatedAt": "2025-09-16T12:00:00.000Z",
+      "id": "3",
+      "name": "fact-checking"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-09-16T12:00:00.000Z",
+  "versionId": "d0f8b0c2-4c66-4c0b-9c9a-1234567890ab"
+}

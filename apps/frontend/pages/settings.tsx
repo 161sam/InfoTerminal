@@ -23,7 +23,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/button";
 import Field from "@/components/ui/Field";
 import StatusPill, { Status } from "@/components/ui/StatusPill";
 import { toast } from "@/components/ui/toast";

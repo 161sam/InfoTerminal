@@ -1,6 +1,134 @@
+# Intelligence Ontology Extension for InfoTerminal v0.2
+# Comprehensive entity types for professional OSINT analysis
+
+# Core Intelligence Entities
 - name: Person
-  label: Person
+  label: Person/Individual
   properties:
-    - { name: id,   type: string, required: true }
-    - { name: name, type: text,   required: true }
+    - { name: id, type: string, required: true }
+    - { name: name, type: text, required: true }
+    - { name: aliases, type: array, required: false }
     - { name: birthDate, type: date, required: false }
+    - { name: nationality, type: string, required: false }
+    - { name: occupation, type: text, required: false }
+    - { name: biometrics, type: object, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+    - { name: lastSeen, type: datetime, required: false }
+
+- name: Organization
+  label: Organization/Entity
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: name, type: text, required: true }
+    - { name: legalName, type: text, required: false }
+    - { name: type, type: string, required: true }  # corporate, government, ngo, criminal
+    - { name: jurisdiction, type: string, required: false }
+    - { name: registrationNumber, type: string, required: false }
+    - { name: industry, type: string, required: false }
+    - { name: website, type: url, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+    - { name: status, type: string, required: false }  # active, dissolved, sanctioned
+
+- name: Location
+  label: Geographic Location
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: name, type: text, required: true }
+    - { name: type, type: string, required: true }  # country, city, address, coordinates
+    - { name: coordinates, type: geopoint, required: false }
+    - { name: address, type: text, required: false }
+    - { name: country, type: string, required: false }
+    - { name: region, type: string, required: false }
+    - { name: significance, type: string, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: Communication
+  label: Communication/Contact
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: type, type: string, required: true }  # email, phone, social, messaging
+    - { name: value, type: string, required: true }
+    - { name: platform, type: string, required: false }
+    - { name: verified, type: boolean, required: false }
+    - { name: active, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+    - { name: firstSeen, type: datetime, required: false }
+    - { name: lastSeen, type: datetime, required: false }
+
+- name: Document
+  label: Document/Intelligence
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: title, type: text, required: true }
+    - { name: type, type: string, required: true }  # report, image, video, audio, data
+    - { name: classification, type: string, required: false }
+    - { name: source, type: string, required: false }
+    - { name: dateCreated, type: datetime, required: false }
+    - { name: dateAcquired, type: datetime, required: false }
+    - { name: hash, type: string, required: false }
+    - { name: size, type: integer, required: false }
+    - { name: language, type: string, required: false }
+    - { name: confidence, type: float, required: false }
+
+- name: Event
+  label: Intelligence Event
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: title, type: text, required: true }
+    - { name: type, type: string, required: true }  # meeting, transaction, communication, movement
+    - { name: description, type: text, required: false }
+    - { name: startTime, type: datetime, required: false }
+    - { name: endTime, type: datetime, required: false }
+    - { name: location, type: string, required: false }
+    - { name: significance, type: string, required: false }  # low, medium, high, critical
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+    - { name: verified, type: boolean, required: false }
+
+- name: Financial
+  label: Financial Instrument
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: type, type: string, required: true }  # account, transaction, asset, liability
+    - { name: identifier, type: string, required: false }  # IBAN, account number, etc.
+    - { name: currency, type: string, required: false }
+    - { name: amount, type: decimal, required: false }
+    - { name: institution, type: string, required: false }
+    - { name: country, type: string, required: false }
+    - { name: suspicious, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: Vehicle
+  label: Vehicle/Asset
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: type, type: string, required: true }  # car, plane, ship, train
+    - { name: identifier, type: string, required: false }  # license, registration, IMO
+    - { name: make, type: string, required: false }
+    - { name: model, type: string, required: false }
+    - { name: year, type: integer, required: false }
+    - { name: color, type: string, required: false }
+    - { name: country, type: string, required: false }
+    - { name: owner, type: string, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }
+
+- name: Digital_Identity
+  label: Digital Identity/Account
+  properties:
+    - { name: id, type: string, required: true }
+    - { name: platform, type: string, required: true }
+    - { name: username, type: string, required: true }
+    - { name: displayName, type: text, required: false }
+    - { name: verified, type: boolean, required: false }
+    - { name: followers, type: integer, required: false }
+    - { name: createdDate, type: datetime, required: false }
+    - { name: lastActive, type: datetime, required: false }
+    - { name: suspicious, type: boolean, required: false }
+    - { name: confidence, type: float, required: false }
+    - { name: source, type: string, required: false }

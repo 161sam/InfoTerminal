@@ -3,3 +3,10 @@ uvicorn
 pydantic
 pyyaml
 anyio
+
+# Security and Docker management
+docker>=6.1.0
+structlog>=23.1.0
+
+# Additional dependencies for security features
+asyncio-extras

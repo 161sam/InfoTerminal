@@ -103,6 +103,33 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+  egress-gateway:
+    build: ./services/egress-gateway
+    ports: ["${IT_PORT_EGRESS_GATEWAY:-8615}:8615"]
+    env_file: .env
+    environment:
+      - EGRESS_BASIC_USER=${EGRESS_BASIC_USER:-dev}
+      - EGRESS_BASIC_PASS=${EGRESS_BASIC_PASS:-devpass}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8615/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    restart: unless-stopped
+  verification:
+    build: ./services/verification
+    ports: ["${IT_PORT_VERIFICATION:-8617}:8617"]
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8617/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
   ops-controller:
     build:
       context: ./services/ops-controller

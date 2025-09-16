@@ -144,3 +144,7 @@ tools/installers/
 **/uv.lock
 
 services/graph-views/.coverage
+
+# lokal dev
+sd.config.yaml
+.sdignore
