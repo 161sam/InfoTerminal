@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from .opensearch_client import OSClient
 from .neo4j_client import Neo4jClient
 import re
+from typing import Optional
 
 
 logger = structlog.get_logger()
@@ -106,6 +107,57 @@ def retrieve_laws(q: str = Query(..., min_length=2), top_k: int = 10, rerank: in
 def retrieve_laws_knn(q: str = Query(..., min_length=2), k: int = 10):
     res = os_client.knn_search(q, k)
     return {"total": res["total"], "items": res["items"]}
+
+
+class KNNVectorRequest(BaseModel):
+    vector: list[float]
+    k: int = 10
+    filters: Optional[dict] = None
+
+
+@app.post("/law/knn_vector", response_model=RetrieveResponse)
+def knn_by_vector(body: KNNVectorRequest):
+    res = os_client.knn_search_vector(body.vector, body.k, body.filters)
+    return {"total": res["total"], "items": res["items"]}
+
+
+class HybridRequest(BaseModel):
+    q: str
+    top_k: int = 10
+    k: int = 10
+    alpha: float = 0.5  # weight for BM25 vs kNN
+    filters: Optional[dict] = None
+
+
+@app.post("/law/hybrid", response_model=RetrieveResponse)
+def hybrid_search(req: HybridRequest):
+    # text search
+    s = os_client.search(req.q, top_k=req.top_k, filters=req.filters)
+    # knn
+    k = os_client.knn_search(req.q, k=req.k, filters=req.filters)
+    # normalize and combine
+    bm = {it['id']: (it.get('score') or 0.0, it) for it in s['items']}
+    km = {it['id']: (it.get('score') or 0.0, it) for it in k['items']}
+    max_b = max((v[0] for v in bm.values()), default=1.0)
+    max_k = max((v[0] for v in km.values()), default=1.0)
+    combined = {}
+    for id_, (sc, it) in bm.items():
+        combined.setdefault(id_, {'doc': it, 'b': 0.0, 'k': 0.0})
+        combined[id_]['b'] = sc / (max_b or 1.0)
+    for id_, (sc, it) in km.items():
+        combined.setdefault(id_, {'doc': it, 'b': 0.0, 'k': 0.0})
+        combined[id_]['k'] = sc / (max_k or 1.0)
+    alpha = max(0.0, min(1.0, req.alpha))
+    items = []
+    for id_, comp in combined.items():
+        score = alpha * comp['b'] + (1 - alpha) * comp['k']
+        doc = comp['doc']
+        doc = dict(doc)
+        doc['hybrid_score'] = score
+        items.append(doc)
+    items.sort(key=lambda x: x.get('hybrid_score', 0.0), reverse=True)
+    items = items[: req.top_k]
+    return {"total": len(items), "items": items}
 
 
 @app.get("/law/context", response_model=ContextResponse)
