@@ -102,6 +102,12 @@ def retrieve_laws(q: str = Query(..., min_length=2), top_k: int = 10, rerank: in
     return {"total": res["total"], "items": items}
 
 
+@app.get("/law/knn", response_model=RetrieveResponse)
+def retrieve_laws_knn(q: str = Query(..., min_length=2), k: int = 10):
+    res = os_client.knn_search(q, k)
+    return {"total": res["total"], "items": res["items"]}
+
+
 @app.get("/law/context", response_model=ContextResponse)
 def law_context(entity: str = Query(..., min_length=2), top_k: int = 10):
     """Return relevant laws for an entity. Tries graph links; falls back to text retrieval by entity name."""

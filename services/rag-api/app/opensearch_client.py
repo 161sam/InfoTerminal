@@ -8,6 +8,7 @@ class OSClient:
     def __init__(self, url: str, index: str):
         self.index = index
         self.client = OpenSearch(hosts=[url], http_compress=True)
+        self.use_knn = bool(int(os.getenv('OS_KNN', os.getenv('RAG_OS_KNN', '0'))))
         self._ensure_index()
 
     def ping(self) -> Dict[str, Any]:
@@ -30,7 +31,7 @@ class OSClient:
                         "domain": {"type": "keyword"},
                         "source": {"type": "keyword"},
                         "effective_date": {"type": "date", "ignore_malformed": True},
-                        "vector": {"type": "dense_vector", "dims": 64}
+                        "vector": self._vector_mapping()
                     }
                 },
             }
@@ -42,10 +43,15 @@ class OSClient:
                 props = m[self.index]['mappings'].get('properties', {})
                 if 'vector' not in props:
                     self.client.indices.put_mapping(index=self.index, body={
-                        'properties': { 'vector': { 'type': 'dense_vector', 'dims': 64 } }
+                        'properties': { 'vector': self._vector_mapping() }
                     })
             except Exception:
                 pass
+
+    def _vector_mapping(self):
+        if self.use_knn:
+            return {"type": "knn_vector", "dimension": 64}
+        return {"type": "dense_vector", "dims": 64}
 
     def _embed(self, text: str, dims: int = 64) -> List[float]:
         """Deterministic bag-of-words hash embedding (placeholder)."""
@@ -73,6 +79,32 @@ class OSClient:
                 "text": h.get("_source", {}).get("text", "")[:500],
                 "score": h.get("_score"),
                 "vector": h.get("_source", {}).get("vector"),
+            }
+            for h in hits
+        ]
+        total = resp.get("hits", {}).get("total", {}).get("value", len(items))
+        return {"total": total, "items": items}
+
+    def knn_search(self, q: str, k: int = 10) -> Dict[str, Any]:
+        if not self.use_knn:
+            # fallback to text + embedding rerank client-side at API
+            return self.search(q, top_k=k)
+        qvec = self._embed(q)
+        body = {
+            "size": k,
+            "query": {
+                "knn": {"vector": {"vector": qvec, "k": k}}
+            }
+        }
+        resp = self.client.search(index=self.index, body=body)
+        hits = resp.get("hits", {}).get("hits", [])
+        items = [
+            {
+                "id": h.get("_source", {}).get("id"),
+                "title": h.get("_source", {}).get("title"),
+                "paragraph": h.get("_source", {}).get("paragraph"),
+                "text": h.get("_source", {}).get("text", "")[:500],
+                "score": h.get("_score"),
             }
             for h in hits
         ]

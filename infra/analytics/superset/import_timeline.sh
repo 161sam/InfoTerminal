@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+retry() {
+  local n=0 max=${2:-8} delay=${3:-2}
+  until [ $n -ge $max ]; do
+    eval "$1" && return 0 || true
+    n=$((n+1)); sleep $delay
+  done
+  eval "$1"  # final attempt (let it fail)
+}
+
 # Minimal Superset importer: creates a dashboard and a basic chart referencing an existing dataset
 # Prereq: Create dataset from CSV (timeline_events.csv) via UI or API.
 # Env: SUPERSET_URL (default http://localhost:8644), SUP_USER, SUP_PASS
@@ -16,7 +25,7 @@ login() {
 }
 
 echo "→ Logging in to $URL as $USER"
-TOK=$(login | jq -r '.access_token // empty')
+TOK=$(retry "login" 5 2 | jq -r '.access_token // empty')
 if [ -z "$TOK" ]; then echo "❌ Login failed"; exit 1; fi
 AUTH="Authorization: Bearer $TOK"
 
@@ -33,21 +42,21 @@ else
 fi
 
 echo "→ Ensure Superset Database connection to Postgres"
-DBS=$(curl -sS -H "$AUTH" "$URL/api/v1/database/" )
+DBS=$(retry "curl -sS -H \"$AUTH\" \"$URL/api/v1/database/\"" 5 2)
 DB_ID=$(echo "$DBS" | jq -r '.result[] | select(.database_name=="it_postgres") | .id' | head -n1)
 if [ -z "$DB_ID" ] || [ "$DB_ID" = "null" ]; then
   NEWDB='{ "database_name":"it_postgres", "sqlalchemy_uri":"postgresql+psycopg2://'"${POSTGRES_USER:-it_user}"':'"${POSTGRES_PASSWORD:-it_pass}"'@postgres:5432/'"${POSTGRES_DB:-it_graph}"'", "expose_in_sqllab":true, "allow_csv_upload":true }'
-  RESP=$(curl -sS -H "$AUTH" -H 'Content-Type: application/json' -d "$NEWDB" "$URL/api/v1/database/")
+  RESP=$(retry "curl -sS -H \"$AUTH\" -H 'Content-Type: application/json' -d \"$NEWDB\" \"$URL/api/v1/database/\"" 5 2)
   DB_ID=$(echo "$RESP" | jq -r '.id // .result.id // empty')
 fi
 if [ -z "$DB_ID" ] || [ "$DB_ID" = "null" ]; then echo "❌ Could not create/find Superset DB"; exit 1; fi
 
 echo "→ Creating/Fetching dataset 'timeline_events'"
-DS_JSON=$(curl -sS -H "$AUTH" "$URL/api/v1/dataset/?q=(filters:!((col:table_name,opr:eq,value:timeline_events)))")
+DS_JSON=$(retry "curl -sS -H \"$AUTH\" \"$URL/api/v1/dataset/?q=(filters:!((col:table_name,opr:eq,value:timeline_events)))\"" 5 2)
 DS_ID=$(echo "$DS_JSON" | jq -r '.result[]?.id' | head -n1)
 if [ -z "$DS_ID" ] || [ "$DS_ID" = "null" ]; then
   PAY='{ "database": '"$DB_ID"', "schema": "public", "table_name": "timeline_events" }'
-  RESP=$(curl -sS -H "$AUTH" -H 'Content-Type: application/json' -d "$PAY" "$URL/api/v1/dataset/")
+  RESP=$(retry "curl -sS -H \"$AUTH\" -H 'Content-Type: application/json' -d \"$PAY\" \"$URL/api/v1/dataset/\"" 5 2)
   DS_ID=$(echo "$RESP" | jq -r '.id // .result.id // empty')
 fi
 if [ -z "$DS_ID" ] || [ "$DS_ID" = "null" ]; then echo "❌ Could not create dataset"; exit 1; fi
@@ -55,13 +64,13 @@ if [ -z "$DS_ID" ] || [ "$DS_ID" = "null" ]; then echo "❌ Could not create dat
 # Create charts
 echo "→ Creating chart 'Timeline Table'"
 CHART_PAY='{ "slice_name": "Timeline Table", "viz_type": "table", "datasource_id": '"$DS_ID"', "datasource_type": "table", "params": "{\"all_columns\":[\"timestamp\",\"entity\",\"type\",\"details\"]}" }'
-CHART=$(curl -sS -H "$AUTH" -H 'Content-Type: application/json' -d "$CHART_PAY" "$URL/api/v1/chart/" )
+CHART=$(retry "curl -sS -H \"$AUTH\" -H 'Content-Type: application/json' -d \"$CHART_PAY\" \"$URL/api/v1/chart/\"" 5 2)
 CH_ID=$(echo "$CHART" | jq -r '.id // .result.id // empty')
 if [ -z "$CH_ID" ]; then echo "❌ Chart create failed: $CHART"; exit 1; fi
 
 echo "→ Creating chart 'Timeline Series'"
 SERIES_PAY='{ "slice_name": "Timeline Series", "viz_type": "echarts_timeseries_line", "datasource_id": '"$DS_ID"', "datasource_type": "table", "params": "{\"time_grain_sqla\":null,\"time_range\":\"No filter\",\"x_axis\":\"timestamp\",\"metrics\":[{\"label\":\"count\"}],\"query_mode\":\"aggregate\",\"groupby\":[\"type\"]}" }'
-SERIES=$(curl -sS -H "$AUTH" -H 'Content-Type: application/json' -d "$SERIES_PAY" "$URL/api/v1/chart/")
+SERIES=$(retry "curl -sS -H \"$AUTH\" -H 'Content-Type: application/json' -d \"$SERIES_PAY\" \"$URL/api/v1/chart/\"" 5 2)
 SERIES_ID=$(echo "$SERIES" | jq -r '.id // .result.id // empty')
 if [ -z "$SERIES_ID" ]; then echo "❌ Series chart create failed: $SERIES"; exit 1; fi
 
@@ -92,6 +101,6 @@ JSON
 )
 
 echo "→ Updating dashboard layout"
-curl -sS -H "$AUTH" -H 'Content-Type: application/json' -X PUT -d '{"position_json": '"$POS"'}' "$URL/api/v1/dashboard/$DASH_ID" >/dev/null
+retry "curl -sS -H \"$AUTH\" -H 'Content-Type: application/json' -X PUT -d '{\\\"position_json\\\": '\"$POS\"'}' \"$URL/api/v1/dashboard/$DASH_ID\" >/dev/null" 5 2
 
 echo "✅ Done. Open $URL/superset/dashboard/$DASH_ID/"
