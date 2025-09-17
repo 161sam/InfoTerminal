@@ -1,0 +1,20 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "guid": "id",
+      "title": "title",
+      "link": "link",
+      "pubDate": "ts",
+      "description": "text"
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "source": "rss",
+      "type": "item"
+    }
+  }
+]
+

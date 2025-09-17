@@ -1,0 +1,23 @@
+{
+  "revision": { "version": 0 },
+  "component": {
+    "name": "feeds_generic",
+    "description": "Parameters for feed → Jolt → OpenSearch",
+    "parameters": [
+      { "parameter": { "name": "opensearch.url", "value": "http://opensearch:9200", "sensitive": false }},
+      { "parameter": { "name": "index.name", "value": "feeds_generic", "sensitive": false }},
+      { "parameter": { "name": "json.path", "value": "$.[*]", "sensitive": false }},
+      { "parameter": { "name": "jolt.spec", "value": "", "sensitive": false }},
+      { "parameter": { "name": "mastodon.base.url", "value": "https://mastodon.social", "sensitive": false }},
+      { "parameter": { "name": "mastodon.token", "value": "", "sensitive": true }},
+      { "parameter": { "name": "github.token", "value": "", "sensitive": true }},
+      { "parameter": { "name": "telegram.bot.token", "value": "", "sensitive": true }},
+      { "parameter": { "name": "rsshub.url", "value": "https://rsshub.app/hn/top", "sensitive": false }},
+      { "parameter": { "name": "shodan.api.url", "value": "https://api.shodan.io/shodan/host/search?key=${shodan.api.key}&query=org:ACME", "sensitive": false }},
+      { "parameter": { "name": "shodan.api.key", "value": "", "sensitive": true }},
+      { "parameter": { "name": "otx.api.url", "value": "https://otx.alienvault.com/api/v1/pulses/subscribed", "sensitive": false }},
+      { "parameter": { "name": "otx.api.key", "value": "", "sensitive": true }}
+    ]
+  }
+}
+

@@ -1,0 +1,23 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "id": "id",
+      "name": "name",
+      "modified": "ts",
+      "indicators": {
+        "*": {
+          "indicator": "indicator"
+        }
+      }
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "source": "otx",
+      "type": "pulse_indicator"
+    }
+  }
+]
+

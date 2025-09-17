@@ -1,0 +1,21 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "host": "host",
+      "port": "port",
+      "ip_str": "ip",
+      "org": "org",
+      "_id": "id",
+      "timestamp": "ts"
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "source": "shodan",
+      "type": "host"
+    }
+  }
+]
+
