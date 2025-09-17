@@ -1,0 +1,83 @@
+name: nmap
+version: "1.0.0"
+description: "Network exploration tool and security scanner"
+category: "network_reconnaissance"
+author: "InfoTerminal Team"
+risk_level: "medium"
+requires_network: true
+requires_root: false
+
+parameters:
+  - name: target
+    type: string
+    description: "Target IP address, hostname, or network range"
+    required: true
+    validation: "^[\\w\\.-]+(/\\d{1,2})?$"
+    example: "192.168.1.1"
+  
+  - name: scan_type
+    type: string
+    description: "Type of scan to perform"
+    required: false
+    default: "basic"
+    choices: ["basic", "stealth", "service_version", "os_detection", "aggressive"]
+    
+  - name: port_range
+    type: string  
+    description: "Port range to scan"
+    required: false
+    default: "1-1000"
+    validation: "^\\d+(-\\d+)?(,\\d+(-\\d+)?)*$"
+    example: "1-1000,8080,9090-9100"
+    
+  - name: timing
+    type: integer
+    description: "Timing template (0=paranoid, 5=insane)"
+    required: false
+    default: 3
+    min: 0
+    max: 5
+
+docker_image: "instrumentisto/nmap:latest"
+output_format: ["json", "xml", "text"]
+
+command_templates:
+  basic: "nmap -sS -T{timing} -p {port_range} {target} -oX /tmp/nmap_output.xml"
+  stealth: "nmap -sS -f -T{timing} -p {port_range} {target} -oX /tmp/nmap_output.xml" 
+  service_version: "nmap -sV -T{timing} -p {port_range} {target} -oX /tmp/nmap_output.xml"
+  os_detection: "nmap -O -T{timing} -p {port_range} {target} -oX /tmp/nmap_output.xml"
+  aggressive: "nmap -A -T{timing} -p {port_range} {target} -oX /tmp/nmap_output.xml"
+
+security:
+  sandbox: docker
+  network_isolation: false  # Nmap needs network access
+  read_only_filesystem: true
+  no_new_privileges: true
+  timeout: 300  # 5 minutes
+  memory_limit: "256m"
+  cpu_limit: "1.0"
+
+output_parsing:
+  format: xml
+  parser: nmap_xml_parser
+  extract_fields:
+    - hosts
+    - ports
+    - services
+    - os_info
+
+integration:
+  graph_entities:
+    - type: "Host"
+      id_field: "ip_address"
+      properties: ["hostname", "status", "os"]
+    - type: "Service" 
+      id_field: "port_service"
+      properties: ["port", "protocol", "service", "version"]
+      relationships:
+        - target: "Host"
+          type: "RUNS_ON"
+
+  search_indexing:
+    enabled: true
+    fields: ["ip_address", "hostname", "ports", "services"]

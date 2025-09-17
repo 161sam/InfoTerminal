@@ -1,0 +1,102 @@
+{
+  "name": "Lobbying Report",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://rag-api:8000/law/retrieve",
+        "options": {
+          "queryParameters": [
+            { "name": "q", "value": "Lobbying" }
+          ]
+        }
+      },
+      "id": "http1",
+      "name": "HTTP Request (Retrieve)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [520, 180]
+    },
+    {
+      "parameters": {
+        "url": "http://graph-api:8080/analytics/centrality/degree"
+      },
+      "id": "http2",
+      "name": "HTTP Request (Graph Degree)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [520, 340]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            { "name": "summary", "value": "Found {{$json.items ? $json.items.length : 0}} relevant law paragraphs; degree centrality computed separately" }
+          ]
+        }
+      },
+      "id": "set1",
+      "name": "Set Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [780, 260]
+    },
+    {
+      "parameters": {
+        "text": "{{ $json.summary }}"
+      },
+      "id": "slack1",
+      "name": "Slack (disabled)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [1040, 220],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "reports@example.com",
+        "toEmail": "you@example.com",
+        "subject": "Lobbying Report",
+        "text": "{{ $json.summary }}"
+      },
+      "id": "email1",
+      "name": "Email (disabled)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1040, 300],
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          { "node": "HTTP Request (Retrieve)", "type": "main", "index": 0 },
+          { "node": "HTTP Request (Graph Degree)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "HTTP Request (Retrieve)": {
+      "main": [ [ { "node": "Set Summary", "type": "main", "index": 0 } ] ]
+    },
+    "HTTP Request (Graph Degree)": {
+      "main": [ [ { "node": "Set Summary", "type": "main", "index": 0 } ] ]
+    },
+    "Set Summary": {
+      "main": [
+        [
+          { "node": "Slack (disabled)", "type": "main", "index": 0 },
+          { "node": "Email (disabled)", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  }
+}

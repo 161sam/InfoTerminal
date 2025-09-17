@@ -1,0 +1,6 @@
+remotes:
+  - name: partner-graph-a
+    type: graph-api
+    url: https://partner-a.example.com/graph
+    auth: bearer
+    notes: "example placeholder"

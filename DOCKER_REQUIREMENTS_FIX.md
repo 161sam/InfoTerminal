@@ -111,4 +111,4 @@ docker compose -f docker-compose.verification.yml up -d
 - **Apache NiFi**: http://localhost:8619
 - **n8n**: http://localhost:5678
 - **Neo4j**: http://localhost:7474
-- **OpenSearch**: http://localhost:9200
+- **OpenSearch**: internal only (no host port)

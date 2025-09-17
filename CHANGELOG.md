@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 - fix: add PyYAML dependency to CLI to prevent ModuleNotFoundError for 'yaml'
+- cleanup: archived migration artifacts and backup files to .archive-cleanup/ for improved code hygiene
 
 ## [0.2.0] - 2025-09-08
 ### Added

@@ -28,6 +28,7 @@ ensure_uv() {
 
 # ---- Infra: Neo4j + Postgres via Docker -----------------------------------
 log "Starting Docker infra (Neo4j + Postgres)"
+EXPORT_HOST_PORTS="${EXPORT_HOST_PORTS:-0}"
 docker network inspect infoterminal-dev >/dev/null 2>&1 || docker network create infoterminal-dev
 
 docker rm -f it-neo4j >/dev/null 2>&1 || true
@@ -38,15 +39,27 @@ docker run -d --name it-neo4j --network infoterminal-dev \
   neo4j:5.22 >/dev/null
 
 docker rm -f it-postgres >/dev/null 2>&1 || true
-docker run -d --name it-postgres --network infoterminal-dev \
-  -p 5432:5432 \
-  -e POSTGRES_USER=it_user \
-  -e POSTGRES_PASSWORD=it_pass \
-  -e POSTGRES_DB=it_graph \
-  postgres:16 >/dev/null
+if [ "$EXPORT_HOST_PORTS" = "1" ]; then
+  docker run -d --name it-postgres --network infoterminal-dev \
+    -p 5432:5432 \
+    -e POSTGRES_USER=it_user \
+    -e POSTGRES_PASSWORD=it_pass \
+    -e POSTGRES_DB=it_graph \
+    postgres:16 >/dev/null
+else
+  docker run -d --name it-postgres --network infoterminal-dev \
+    -e POSTGRES_USER=it_user \
+    -e POSTGRES_PASSWORD=it_pass \
+    -e POSTGRES_DB=it_graph \
+    postgres:16 >/dev/null
+fi
 
-log "Waiting for Postgres@5432 and Neo4j@7687"
-for i in {1..30}; do (echo >/dev/tcp/127.0.0.1/5432) >/dev/null 2>&1 && break || sleep 1; done
+log "Waiting for Postgres and Neo4j"
+if [ "$EXPORT_HOST_PORTS" = "1" ]; then
+  for i in {1..30}; do (echo >/dev/tcp/127.0.0.1/5432) >/dev/null 2>&1 && break || sleep 1; done
+else
+  for i in {1..30}; do docker exec -T it-postgres pg_isready -U it_user -d it_graph >/dev/null 2>&1 && break || sleep 1; done
+fi
 for i in {1..30}; do (echo >/dev/tcp/127.0.0.1/7687) >/dev/null 2>&1 && break || sleep 1; done
 
 # ---- Frontend env ----------------------------------------------------------

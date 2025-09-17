@@ -1,0 +1,5 @@
+timestamp,entity,type,details
+2025-08-01T10:00:00Z,Firma A,Verstoß,"Bericht X nennt §23 ArbSchG"
+2025-08-03T12:00:00Z,Politiker P,Lobbytreffen,"Gespräch mit Firma A"
+2025-08-10T09:00:00Z,Gesetz Y,Entwurf,"Erste Lesung im Parlament"
+2025-08-15T15:00:00Z,Firma A,Audit,"Interne Prüfung gestartet"

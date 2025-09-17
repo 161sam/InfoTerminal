@@ -7,18 +7,27 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy package files
-COPY apps/frontend/package.json apps/frontend/pnpm-lock.yaml* ./
+# Use monorepo workspace manifests (root-level lockfile)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Ensure workspace layout exists for the frontend package.json
+RUN mkdir -p apps/frontend
+COPY apps/frontend/package.json apps/frontend/package.json
 # Install pnpm
 RUN npm install -g pnpm
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install only the frontend's dependencies using the workspace lockfile
+RUN pnpm install --filter @infoterminal/frontend... --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY apps/frontend/ .
+# Keep monorepo layout during build so prebuild scripts with relative paths work
+WORKDIR /app/apps/frontend
+# Install bash for prebuild scripts invoked via npm lifecycle
+RUN apk add --no-cache bash
+COPY --from=deps /app/node_modules /app/node_modules
+# Copy only what is needed for building the frontend
+COPY apps/frontend/ /app/apps/frontend
+# Copy shared scripts referenced by prebuild hooks (../../scripts)
+COPY scripts /app/scripts
 
 # Environment variables for build
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -38,7 +47,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy public assets
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/apps/frontend/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
@@ -46,8 +55,8 @@ RUN chown nextjs:nodejs .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/.next/static ./.next/static
 
 USER nextjs
 
@@ -60,4 +69,4 @@ CMD ["node", "server.js"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:3000/api/health || exit 1
+    CMD wget -qO- http://localhost:3000/api/health >/dev/null 2>&1 || exit 1

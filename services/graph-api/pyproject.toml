@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "graph-api"
 version = "0.1.0"
@@ -25,6 +29,11 @@ dev = [
   "pytest-cov",
   "httpx",
 ]
+
+[tool.setuptools]
+# Explicitly declare packages to avoid flat-layout auto-discovery errors
+packages = ["app"]
+include-package-data = true
 
 [tool.pytest.ini_options]
 addopts = "-q --strict-markers --disable-warnings --cov=. --cov-report=term-missing --cov-fail-under=92"

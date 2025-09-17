@@ -1,0 +1,167 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-gateway
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.gateway }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.config.observability.metrics.enabled }}
+    - port: {{ .Values.config.observability.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-frontend
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.frontend }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-feedback-aggregator
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+    app.kubernetes.io/component: feedback-aggregator
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.feedbackAggregator }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.config.observability.metrics.enabled }}
+    - port: {{ .Values.config.observability.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: feedback-aggregator
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-performance-monitor
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+    app.kubernetes.io/component: performance-monitor
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.performanceMonitor }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.config.observability.metrics.enabled }}
+    - port: {{ .Values.config.observability.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: performance-monitor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-cache-manager
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cache-manager
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.cacheManager }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.config.observability.metrics.enabled }}
+    - port: {{ .Values.config.observability.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cache-manager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-websocket-manager
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+    app.kubernetes.io/component: websocket-manager
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.websocketManager }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.config.observability.metrics.enabled }}
+    - port: {{ .Values.config.observability.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: websocket-manager
+{{- if .Values.service.headless.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-headless
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: {{ .Values.service.ports.gateway }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "infoterminal.selectorLabels" . | nindent 4 }}
+{{- end }}

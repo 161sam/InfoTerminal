@@ -107,3 +107,21 @@ docs.dedupe:
 
 docs.all:
 	python3 scripts/docs_pipeline.py analyze consolidate dedupe
+
+.PHONY: kc.import kc.import.dry sso.smoke
+
+# Import/Update Keycloak realm via kcadm (in Docker). Idempotent.
+kc.import:
+	bash scripts/keycloak_kcadm_import.sh
+
+# Dry-run: print commands only
+kc.import.dry:
+	DRY_RUN=1 bash scripts/keycloak_kcadm_import.sh
+
+# Smoke test oauth2-proxy SSO in front of Superset/Airflow
+sso.smoke:
+	bash scripts/sso_smoke.sh
+
+.PHONY: rag.seed
+rag.seed:
+	bash scripts/seed_rag_laws.sh

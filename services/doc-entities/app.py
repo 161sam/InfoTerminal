@@ -54,6 +54,8 @@ class TextIn(BaseModel):
 class RelIn(BaseModel):
     text: str
     lang: str = "en"
+    doc_id: Optional[str] = None
+    extract_new: bool = True
 
 
 ALLOW_TEST = os.getenv("ALLOW_TEST_MODE")
@@ -62,14 +64,16 @@ if str(SERVICE_DIR) not in sys.path:
     sys.path.insert(0, str(SERVICE_DIR))
 
 from db import SessionLocal, engine  # type: ignore
-from models import Base, Document, Entity, EntityResolution  # type: ignore
+from models import Base, Document, Entity, EntityResolution, Relation, RelationResolution  # type: ignore
 from resolver import resolve_entities  # type: ignore
 from nlp_client import ner as nlp_ner
+from relation_extractor import extract_relations  # type: ignore
 
 if not ALLOW_TEST:
     Base.metadata.create_all(engine)
 
 GRAPH_URL = os.getenv("GRAPH_UI", "http://localhost:3000/graphx")
+GRAPH_WRITE_RELATIONS = os.getenv("GRAPH_WRITE_RELATIONS", "0") == "1"
 
 app = FastAPI(title="Doc Entities", version="0.1.0")
 app.add_middleware(RequestIdMiddleware)
@@ -88,6 +92,7 @@ class AnnotReq(BaseModel):
     title: Optional[str] = None
     meta: Optional[Dict[str, Any]] = None
     do_summary: bool = False
+    extract_relations: bool = True
 
 
 class LinkReq(BaseModel):
@@ -119,7 +124,101 @@ def summary(inp: TextIn):
 
 @app.post("/relations")
 def relations(inp: RelIn):
-    return {"relations": []}
+    """Extract relations from text or retrieve stored relations for a document."""
+    if inp.doc_id and not inp.extract_new:
+        # Retrieve stored relations for existing document
+        if ALLOW_TEST:
+            # Return test data
+            return {"relations": [
+                {
+                    "subject": "John Smith",
+                    "predicate": "WORKS_AT", 
+                    "object": "Apple Inc",
+                    "confidence": 0.85,
+                    "extraction_method": "pattern_match"
+                }
+            ]}
+        else:
+            with SessionLocal() as db:
+                doc = db.get(Document, uuid.UUID(inp.doc_id))
+                if not doc:
+                    raise HTTPException(404, "Document not found")
+                
+                relations = db.query(Relation).filter_by(doc_id=doc.id).all()
+                result = []
+                
+                for relation in relations:
+                    # Get entity details
+                    subject_entity = db.get(Entity, relation.subject_entity_id)
+                    object_entity = db.get(Entity, relation.object_entity_id)
+                    
+                    if subject_entity and object_entity:
+                        result.append({
+                            "id": str(relation.id),
+                            "subject": subject_entity.value,
+                            "subject_label": subject_entity.label,
+                            "subject_entity_id": str(relation.subject_entity_id),
+                            "predicate": relation.predicate,
+                            "predicate_text": relation.predicate_text,
+                            "object": object_entity.value,
+                            "object_label": object_entity.label,
+                            "object_entity_id": str(relation.object_entity_id),
+                            "confidence": relation.confidence,
+                            "span_start": relation.span_start,
+                            "span_end": relation.span_end,
+                            "context": relation.context,
+                            "extraction_method": relation.extraction_method,
+                            "created_at": relation.created_at.isoformat() if relation.created_at else None
+                        })
+                
+                return {"relations": result}
+    
+    else:
+        # Extract relations from provided text
+        # First extract entities if not provided with text
+        ner_result = ner_spacy(inp.text, inp.lang)
+        entities = [
+            {
+                "id": str(uuid.uuid4()),
+                "text": ent["text"],
+                "label": ent["label"],
+                "span_start": ent["start"],
+                "span_end": ent["end"],
+                "value": ent["text"]
+            }
+            for ent in ner_result
+        ]
+        
+        if len(entities) < 2:
+            return {"relations": []}
+        
+        # Extract relations
+        extracted_relations = extract_relations(inp.text, entities)
+        
+        # Format for response
+        result = []
+        for rel in extracted_relations:
+            # Find entity details
+            subject_entity = next((e for e in entities if e["id"] == rel["subject_entity_id"]), None)
+            object_entity = next((e for e in entities if e["id"] == rel["object_entity_id"]), None)
+            
+            if subject_entity and object_entity:
+                result.append({
+                    "subject": subject_entity["value"],
+                    "subject_label": subject_entity["label"],
+                    "predicate": rel["predicate"],
+                    "predicate_text": rel.get("predicate_text", ""),
+                    "object": object_entity["value"],
+                    "object_label": object_entity["label"],
+                    "confidence": rel.get("confidence", 0.5),
+                    "span_start": rel.get("span_start"),
+                    "span_end": rel.get("span_end"),
+                    "context": rel.get("context", ""),
+                    "extraction_method": rel.get("extraction_method", "unknown"),
+                    "metadata": rel.get("metadata", {})
+                })
+        
+        return {"relations": result}
 
 
 @app.post("/annotate")
@@ -132,6 +231,7 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
 
     doc_id = req.doc_id or str(uuid.uuid4())
     meta = req.meta or {}
+    
     if ALLOW_TEST:
         ents: List[Dict[str, Any]] = []
         if req.text.split():
@@ -151,6 +251,20 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
             )
         MEM_TEXTS[doc_id] = {"title": req.title, "text": req.text, "meta": meta}
         MEM_ENTS[doc_id] = ents
+        
+        # Extract relations in test mode
+        relations = []
+        if req.extract_relations and len(ents) >= 2:
+            extracted_relations = extract_relations(req.text, ents)
+            for rel in extracted_relations:
+                relations.append({
+                    "subject": rel.get("subject_entity_id", ""),
+                    "predicate": rel.get("predicate", "RELATED_TO"),
+                    "object": rel.get("object_entity_id", ""),
+                    "confidence": rel.get("confidence", 0.5),
+                    "extraction_method": rel.get("extraction_method", "test")
+                })
+        
         entity_ids = [e["id"] for e in ents]
     else:
         with SessionLocal() as db:
@@ -159,6 +273,7 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
             ner_res = nlp_ner(req.text)
             ents = []
             entity_ids = []
+            
             for e in ner_res:
                 context = _context(req.text, e.get("start"), e.get("end"))
                 ent = Entity(
@@ -186,19 +301,115 @@ def annotate(req: AnnotReq, resolve: int = 0, background_tasks: BackgroundTasks 
                     }
                 )
                 entity_ids.append(str(ent.id))
+            
+            # Extract and store relations
+            relations = []
+            if req.extract_relations and len(ents) >= 2:
+                extracted_relations = extract_relations(req.text, ents)
+                
+                for rel in extracted_relations:
+                    # Create relation record
+                    relation_obj = Relation(
+                        doc_id=doc.id,
+                        subject_entity_id=uuid.UUID(rel["subject_entity_id"]),
+                        object_entity_id=uuid.UUID(rel["object_entity_id"]),
+                        predicate=rel["predicate"],
+                        predicate_text=rel.get("predicate_text"),
+                        confidence=rel.get("confidence"),
+                        span_start=rel.get("span_start"),
+                        span_end=rel.get("span_end"),
+                        context=rel.get("context"),
+                        extraction_method=rel.get("extraction_method"),
+                        metadata=rel.get("metadata")
+                    )
+                    db.add(relation_obj)
+                    db.flush()
+                    
+                    # Create relation resolution record
+                    rel_resolution = RelationResolution(
+                        relation_id=relation_obj.id,
+                        status="pending"
+                    )
+                    db.add(rel_resolution)
+                    
+                    # Format for response
+                    subject_entity = next((e for e in ents if e["id"] == rel["subject_entity_id"]), None)
+                    object_entity = next((e for e in ents if e["id"] == rel["object_entity_id"]), None)
+                    
+                    if subject_entity and object_entity:
+                        relations.append({
+                            "id": str(relation_obj.id),
+                            "subject": subject_entity["value"],
+                            "subject_label": subject_entity["label"],
+                            "predicate": rel["predicate"],
+                            "predicate_text": rel.get("predicate_text", ""),
+                            "object": object_entity["value"],
+                            "object_label": object_entity["label"],
+                            "confidence": rel.get("confidence", 0.5),
+                            "extraction_method": rel.get("extraction_method", "unknown")
+                        })
+                
+                # Optionally write relations to graph
+                if GRAPH_WRITE_RELATIONS:
+                    background_tasks.add_task(_write_relations_to_graph, doc_id, relations)
+            
             db.commit()
+    
     if resolve and entity_ids and background_tasks:
         background_tasks.add_task(resolve_entities, entity_ids)
 
     html_out = _highlight(req.text, ents)
     summary_text = summarize(req.text, req.lang) if req.do_summary else None
+    
     return {
         "doc_id": doc_id,
         "html": html_out,
         "entities": ents,
-        "relations": [],
+        "relations": relations,
         "summary": summary_text,
     }
+
+
+def _write_relations_to_graph(doc_id: str, relations: List[Dict[str, Any]]):
+    """Write extracted relations to the knowledge graph."""
+    try:
+        import requests
+        graph_api_url = os.getenv("GRAPH_API_URL", "http://localhost:8612")
+        
+        for relation in relations:
+            # Create nodes and relationship in Neo4j
+            payload = {
+                "subject": {
+                    "name": relation["subject"],
+                    "type": relation["subject_label"],
+                    "doc_id": doc_id
+                },
+                "predicate": relation["predicate"],
+                "object": {
+                    "name": relation["object"],
+                    "type": relation["object_label"],
+                    "doc_id": doc_id
+                },
+                "metadata": {
+                    "confidence": relation.get("confidence", 0.5),
+                    "extraction_method": relation.get("extraction_method", "nlp"),
+                    "doc_id": doc_id
+                }
+            }
+            
+            response = requests.post(f"{graph_api_url}/relations", json=payload, timeout=10)
+            if response.status_code == 200:
+                # Update relation resolution status
+                with SessionLocal() as db:
+                    if relation.get("id"):
+                        rel_resolution = db.get(RelationResolution, uuid.UUID(relation["id"]))
+                        if rel_resolution:
+                            rel_resolution.status = "resolved"
+                            rel_resolution.graph_edge_id = response.json().get("edge_id")
+                            db.commit()
+    
+    except Exception as e:
+        print(f"Failed to write relations to graph: {e}")
 
 
 @app.post("/link-entities")
@@ -229,12 +440,15 @@ def get_doc(doc_id: str):
             "text": info.get("text"),
             "meta": info.get("meta"),
             "entities": ents,
+            "relations": [],  # TODO: Add test relations
             "aleph_id": (info.get("meta") or {}).get("aleph_id"),
         }
     with SessionLocal() as db:
         doc = db.get(Document, uuid.UUID(doc_id))
         if not doc:
             raise HTTPException(404, "not found")
+        
+        # Get entities
         ents = []
         for ent in db.query(Entity).filter_by(doc_id=doc.id).all():
             res = db.get(EntityResolution, ent.id)
@@ -253,12 +467,33 @@ def get_doc(doc_id: str):
                     },
                 }
             )
+        
+        # Get relations
+        relations = []
+        for relation in db.query(Relation).filter_by(doc_id=doc.id).all():
+            subject_entity = db.get(Entity, relation.subject_entity_id)
+            object_entity = db.get(Entity, relation.object_entity_id)
+            
+            if subject_entity and object_entity:
+                relations.append({
+                    "id": str(relation.id),
+                    "subject": subject_entity.value,
+                    "subject_label": subject_entity.label,
+                    "predicate": relation.predicate,
+                    "predicate_text": relation.predicate_text,
+                    "object": object_entity.value,
+                    "object_label": object_entity.label,
+                    "confidence": relation.confidence,
+                    "extraction_method": relation.extraction_method
+                })
+        
         return {
             "doc_id": doc_id,
             "title": doc.title,
             "text": None,
             "meta": None,
             "entities": ents,
+            "relations": relations,
             "aleph_id": doc.aleph_id,
         }
 
