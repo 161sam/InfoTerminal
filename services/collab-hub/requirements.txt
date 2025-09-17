@@ -1,0 +1,4 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.6
+structlog==24.4.0
+websockets==12.0

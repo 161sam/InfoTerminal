@@ -16,7 +16,7 @@ kill_port() {
 
 # -------- config --------
 # 1 = App-Services lokal via dev_run.sh; 0 = App-Services dockerisiert
-DEV_LOCAL="${DEV_LOCAL:-1}"
+DEV_LOCAL="${DEV_LOCAL:-0}"
 # Optional-Stacks
 OBS="${OBS:-0}"        # Observability (Grafana=3412, Prometheus=3415, Tempo=3414, Loki=3413, OTEL gRPC=3416)
 AGENTS="${AGENTS:-0}"  # Flowise-Connector (3417)
@@ -55,13 +55,17 @@ compose_up_if_present opensearch neo4j postgres
 
 # Health waits (nur für vorhandene)
 if compose_has opensearch; then
-  for i in {1..60}; do (echo >/dev/tcp/127.0.0.1/9200) >/dev/null 2>&1 && break || sleep 1; done
+  for i in {1..60}; do 
+    docker compose exec -T opensearch curl -fsS http://localhost:9200/_cluster/health >/dev/null 2>&1 && break || sleep 2; 
+  done
 fi
 if compose_has neo4j; then
   for i in {1..60}; do (echo >/dev/tcp/127.0.0.1/7687) >/dev/null 2>&1 && break || sleep 1; done
 fi
 if compose_has postgres; then
-  for i in {1..60}; do (echo >/dev/tcp/127.0.0.1/5432) >/dev/null 2>&1 && break || sleep 1; done
+  for i in {1..60}; do 
+    docker compose exec -T postgres pg_isready -U it_user -d it_graph >/dev/null 2>&1 && break || sleep 2;
+  done
 fi
 
 # -------- ensure free local/dev + docker host ports --------
@@ -153,4 +157,3 @@ fi
 
 log "Tailing logs… (Ctrl-C to stop)"
 tail -n +1 -f /tmp/it_*.log || true
-

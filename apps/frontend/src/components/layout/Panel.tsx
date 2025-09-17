@@ -43,7 +43,7 @@ function Panel({
       {!hasCompound && (title || actions || subtitle) ? (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            {title && <h2 className="text-base font-semibold text-gray-900 dark:text-slate-100">{title}</h2>}
+            {title && <h2 className="text-base font-semibold text-blue-600 dark:text-slate-100">{title}</h2>}
             {subtitle && <p className="text-sm text-gray-500 dark:text-slate-400">{subtitle}</p>}
           </div>
           {actions && <div className="shrink-0">{actions}</div>}

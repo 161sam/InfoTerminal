@@ -1,0 +1,178 @@
+# Production Environment Configuration for InfoTerminal
+
+aws_region     = "us-west-2"
+environment    = "production"
+owner          = "InfoTerminal Team"
+git_repository = "https://github.com/161sam/InfoTerminal"
+domain_name    = "infoterminal.com"
+
+# Network Configuration
+vpc_cidr = "10.0.0.0/16"
+allowed_cidr_blocks = [
+  "0.0.0.0/0"  # Restrict this in production to known IP ranges
+]
+
+# Kubernetes Configuration
+kubernetes_version = "1.27"
+aws_auth_users = [
+  {
+    userarn  = "arn:aws:iam::ACCOUNT_ID:user/admin"
+    username = "admin"
+    groups   = ["system:masters"]
+  }
+]
+
+# Database Configuration - Production Sizing
+postgres_instance_class     = "db.r6g.2xlarge"
+postgres_storage_size       = 500
+postgres_backup_retention   = 30
+
+# Redis Configuration - Production Sizing
+redis_node_type           = "cache.r6g.xlarge"
+redis_num_cache_clusters  = 3
+
+# OpenSearch Configuration - Production Sizing
+opensearch_instance_type  = "r6g.large.search"
+opensearch_instance_count = 3
+opensearch_storage_size   = 500
+opensearch_dedicated_master = true
+
+# Security Configuration
+enable_deletion_protection = true
+enable_encryption = true
+enable_waf = true
+waf_rate_limit = 5000
+
+# Backup Configuration
+enable_automated_backups = true
+backup_retention_period = 30
+backup_window = "03:00-06:00"
+maintenance_window = "Mon:00:00-Mon:03:00"
+
+# Cost Optimization
+enable_spot_instances = false  # Production should use on-demand
+enable_scheduled_scaling = true
+
+# Feature Flags
+enable_multi_az = true
+enable_cross_region_replication = true
+enable_vpc_flow_logs = true
+
+# Application Configuration
+application_config = {
+  max_concurrent_analyses = 100
+  data_retention_days     = 2555  # 7 years
+  api_rate_limit         = 5000
+  websocket_connections  = 50000
+}
+
+# External Integration Configuration
+external_integrations = {
+  enable_github_integration    = true
+  enable_slack_notifications = true
+  enable_email_alerts         = true
+  webhook_endpoints          = []
+}
+
+# Disaster Recovery Configuration
+disaster_recovery = {
+  enable_cross_region_backup = true
+  backup_region             = "us-east-1"
+  rpo_hours                 = 1
+  rto_hours                 = 2
+}
+
+# Compliance Configuration
+compliance = {
+  enable_config_rules        = true
+  enable_cloudtrail         = true
+  enable_guardduty          = true
+  enable_security_hub       = true
+  data_classification_tags  = ["public", "internal", "confidential", "restricted"]
+}
+
+# Development and Testing - Disabled for Production
+enable_development_features = false
+development_config = {
+  enable_ssh_access          = false
+  enable_debug_logging       = false
+  reduced_resource_limits    = false
+  mock_external_services     = false
+}
+
+# Enhanced Node Group Configuration for Production
+node_groups = {
+  system = {
+    instance_types = ["t3.large"]
+    capacity_type  = "ON_DEMAND"
+    min_size      = 2
+    max_size      = 4
+    desired_size  = 3
+    labels = {
+      "node-role.kubernetes.io/system" = "true"
+    }
+    taints = {
+      system = {
+        key    = "node-role.kubernetes.io/system"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }
+    }
+  }
+  
+  application = {
+    instance_types = ["m5.xlarge", "m5a.xlarge"]
+    capacity_type  = "ON_DEMAND"
+    min_size      = 3
+    max_size      = 15
+    desired_size  = 5
+    labels = {
+      "node-role.kubernetes.io/application" = "true"
+    }
+    taints = {}
+  }
+  
+  data_processing = {
+    instance_types = ["c5.2xlarge", "c5a.2xlarge"]
+    capacity_type  = "ON_DEMAND"  # Production should be stable
+    min_size      = 2
+    max_size      = 30
+    desired_size  = 5
+    labels = {
+      "node-role.kubernetes.io/processing" = "true"
+    }
+    taints = {
+      processing = {
+        key    = "node-role.kubernetes.io/processing"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }
+    }
+  }
+  
+  memory_intensive = {
+    instance_types = ["r5.xlarge", "r5a.xlarge"]
+    capacity_type  = "ON_DEMAND"
+    min_size      = 1
+    max_size      = 10
+    desired_size  = 2
+    labels = {
+      "node-role.kubernetes.io/memory-intensive" = "true"
+    }
+    taints = {
+      memory_intensive = {
+        key    = "node-role.kubernetes.io/memory-intensive"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }
+    }
+  }
+}
+
+# Logging Configuration
+enable_cloudwatch_logging = true
+log_retention_days = 90
+
+# Performance and Monitoring
+enable_performance_insights = true
+enable_enhanced_monitoring = true

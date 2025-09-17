@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-config
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+data:
+  # Service URLs
+  FEEDBACK_SERVICE_URL: "http://{{ include "infoterminal.fullname" . }}-feedback-aggregator:{{ .Values.service.ports.feedbackAggregator }}"
+  PERFORMANCE_SERVICE_URL: "http://{{ include "infoterminal.fullname" . }}-performance-monitor:{{ .Values.service.ports.performanceMonitor }}"
+  CACHE_SERVICE_URL: "http://{{ include "infoterminal.fullname" . }}-cache-manager:{{ .Values.service.ports.cacheManager }}"
+  WEBSOCKET_SERVICE_URL: "http://{{ include "infoterminal.fullname" . }}-websocket-manager:{{ .Values.service.ports.websocketManager }}"
+  
+  # API Configuration
+  API_RATE_LIMIT: {{ .Values.config.api.rateLimit | quote }}
+  API_TIMEOUT: {{ .Values.config.api.timeout | quote }}
+  CORS_ORIGINS: {{ .Values.config.api.corsOrigins | join "," | quote }}
+  SECURE_COOKIES: {{ .Values.config.api.secureCookies | quote }}
+  
+  # Feature Flags
+  ENABLE_CACHING: {{ .Values.config.features.caching | quote }}
+  ENABLE_PERFORMANCE_MONITORING: {{ .Values.config.features.performanceMonitoring | quote }}
+  ENABLE_WEBSOCKETS: {{ .Values.config.features.websockets | quote }}
+  ENABLE_USER_FEEDBACK: {{ .Values.config.features.userFeedback | quote }}
+  ENABLE_ADVANCED_ANALYTICS: {{ .Values.config.features.advancedAnalytics | quote }}
+  ENABLE_COLLABORATIVE_FEATURES: {{ .Values.config.features.collaborativeFeatures | quote }}
+  
+  # Logging Configuration
+  LOG_LEVEL: {{ .Values.config.logging.level | quote }}
+  LOG_FORMAT: {{ .Values.config.logging.format | quote }}
+  
+  # Observability Configuration
+  METRICS_ENABLED: {{ .Values.config.observability.metrics.enabled | quote }}
+  METRICS_PORT: {{ .Values.config.observability.metrics.port | quote }}
+  METRICS_PATH: {{ .Values.config.observability.metrics.path | quote }}
+  TRACING_ENABLED: {{ .Values.config.observability.tracing.enabled | quote }}
+  {{- if .Values.config.observability.tracing.enabled }}
+  JAEGER_ENDPOINT: {{ .Values.config.observability.tracing.jaeger.endpoint | quote }}
+  {{- end }}
+  HEALTH_CHECK_ENABLED: {{ .Values.config.observability.healthCheck.enabled | quote }}
+  HEALTH_CHECK_PATH: {{ .Values.config.observability.healthCheck.path | quote }}
+  HEALTH_CHECK_PORT: {{ .Values.config.observability.healthCheck.port | quote }}
+  
+  # Database Configuration
+  {{- if .Values.postgresql.enabled }}
+  POSTGRES_HOST: {{ include "infoterminal.postgresql.fullname" . | quote }}
+  POSTGRES_PORT: "5432"
+  POSTGRES_DATABASE: {{ .Values.postgresql.auth.database | quote }}
+  POSTGRES_USERNAME: {{ .Values.postgresql.auth.username | quote }}
+  {{- else }}
+  POSTGRES_HOST: {{ .Values.externalDatabase.host | quote }}
+  POSTGRES_PORT: {{ .Values.externalDatabase.port | quote }}
+  POSTGRES_DATABASE: {{ .Values.externalDatabase.database | quote }}
+  POSTGRES_USERNAME: {{ .Values.externalDatabase.user | quote }}
+  {{- end }}
+  
+  {{- if .Values.redis.enabled }}
+  REDIS_HOST: "{{ include "infoterminal.redis.fullname" . }}-master"
+  REDIS_PORT: "6379"
+  {{- else }}
+  REDIS_HOST: {{ .Values.externalRedis.host | quote }}
+  REDIS_PORT: {{ .Values.externalRedis.port | quote }}
+  {{- end }}
+  
+  {{- if .Values.neo4j.enabled }}
+  NEO4J_HOST: {{ include "infoterminal.neo4j.fullname" . | quote }}
+  NEO4J_PORT: "7687"
+  NEO4J_USERNAME: "neo4j"
+  {{- else }}
+  NEO4J_HOST: {{ .Values.externalNeo4j.host | quote }}
+  NEO4J_PORT: {{ .Values.externalNeo4j.port | quote }}
+  NEO4J_USERNAME: {{ .Values.externalNeo4j.user | quote }}
+  {{- end }}
+  
+  {{- if .Values.opensearch.enabled }}
+  OPENSEARCH_HOST: {{ include "infoterminal.opensearch.fullname" . | quote }}
+  OPENSEARCH_PORT: "9200"
+  {{- else }}
+  OPENSEARCH_HOST: {{ .Values.externalOpenSearch.host | quote }}
+  OPENSEARCH_PORT: {{ .Values.externalOpenSearch.port | quote }}
+  {{- end }}
+  
+  # JWT Configuration
+  JWT_EXPIRATION: {{ .Values.secrets.jwt.expiration | quote }}
+  
+  # Additional Configuration
+  {{- range $key, $value := .Values.config.additional }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-secrets
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+type: Opaque
+data:
+  # Database URLs
+  database-url: {{ include "infoterminal.postgresql.connectionString" . | b64enc }}
+  redis-url: {{ include "infoterminal.redis.connectionString" . | b64enc }}
+  neo4j-uri: {{ include "infoterminal.neo4j.connectionString" . | b64enc }}
+  opensearch-url: {{ include "infoterminal.opensearch.connectionString" . | b64enc }}
+  
+  # Database Passwords
+  {{- if .Values.postgresql.enabled }}
+  postgres-password: {{ .Values.postgresql.auth.password | b64enc }}
+  {{- else }}
+  postgres-password: {{ .Values.externalDatabase.password | b64enc }}
+  {{- end }}
+  
+  {{- if .Values.neo4j.enabled }}
+  neo4j-password: {{ .Values.neo4j.neo4j.password | b64enc }}
+  {{- else }}
+  neo4j-password: {{ .Values.externalNeo4j.password | b64enc }}
+  {{- end }}
+  
+  # JWT Secret
+  jwt-secret: {{ .Values.secrets.jwt.secret | b64enc }}
+  
+  # Encryption Key
+  encryption-key: {{ .Values.secrets.encryption.key | b64enc }}
+  
+  # External API Keys
+  {{- if .Values.secrets.external.githubToken }}
+  github-token: {{ .Values.secrets.external.githubToken | b64enc }}
+  {{- end }}
+  {{- if .Values.secrets.external.openaiApiKey }}
+  openai-api-key: {{ .Values.secrets.external.openaiApiKey | b64enc }}
+  {{- end }}
+  {{- if .Values.secrets.external.anthropicApiKey }}
+  anthropic-api-key: {{ .Values.secrets.external.anthropicApiKey | b64enc }}
+  {{- end }}
+  
+  # Backup Configuration (if enabled)
+  {{- if .Values.backup.enabled }}
+  {{- if eq .Values.backup.storage.type "s3" }}
+  s3-access-key-id: {{ .Values.backup.storage.s3.accessKeyId | b64enc }}
+  s3-secret-access-key: {{ .Values.backup.storage.s3.secretAccessKey | b64enc }}
+  {{- if .Values.backup.storage.encryption.enabled }}
+  backup-encryption-key: {{ .Values.backup.storage.encryption.key | b64enc }}
+  {{- end }}
+  {{- end }}
+  {{- end }}

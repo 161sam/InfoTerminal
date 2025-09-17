@@ -92,9 +92,9 @@ ops-controller:   localhost:8614   # Infrastructure Management
 
 ### Infrastructure Services
 ```yaml
-opensearch:       localhost:9200   # Full-text Search
+opensearch:       internal only     # No standard host port; use docker exec
 neo4j:           localhost:7474    # Graph Database UI
-postgres:        localhost:5432    # Relational Database
+postgres:        internal only     # No standard host port; use docker exec
 ```
 
 ### Observability Stack

@@ -1,3 +1,7 @@
+## KIND cluster for local development
+## Note: Host port mappings on 9200 (OpenSearch) and 5432 (Postgres) violate
+## the non-standard host ports policy. Prefer kubectl port-forward for ad-hoc
+## access, or map to non-standard host ports if absolutely needed.
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: infoterminal

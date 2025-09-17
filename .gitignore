@@ -148,3 +148,6 @@ services/graph-views/.coverage
 # lokal dev
 sd.config.yaml
 .sdignore
+
+# Archive cleanup directory
+.archive-cleanup/

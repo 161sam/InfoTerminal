@@ -37,6 +37,8 @@ const withExistingRewrites = (rewrites = []) => {
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  // Enable Next.js standalone output for slimmer Docker images
+  output: 'standalone',
   eslint: {
     // Skip ESLint during builds to avoid requiring eslint in CI/containers
     ignoreDuringBuilds: true,

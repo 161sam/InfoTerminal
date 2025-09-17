@@ -1,0 +1,78 @@
+name: whois
+version: "1.0.0"
+description: "Domain and IP address WHOIS lookup tool"
+category: "domain_intelligence"
+author: "InfoTerminal Team"
+risk_level: "low"
+requires_network: true
+requires_root: false
+
+parameters:
+  - name: target
+    type: string
+    description: "Domain name or IP address to lookup"
+    required: true
+    validation: "^[\\w\\.-]+$"
+    example: "example.com"
+    
+  - name: server
+    type: string
+    description: "Specific WHOIS server to query"
+    required: false
+    example: "whois.iana.org"
+    
+  - name: follow_referrals
+    type: boolean
+    description: "Follow WHOIS referrals to get complete information"
+    required: false
+    default: true
+
+docker_image: "alpine:latest"
+output_format: ["json", "text"]
+
+command_templates:
+  default: "apk add --no-cache whois && whois {target}"
+  with_server: "apk add --no-cache whois && whois -h {server} {target}"
+
+security:
+  sandbox: docker
+  network_isolation: false  # WHOIS needs network access
+  read_only_filesystem: true
+  no_new_privileges: true
+  timeout: 60  # 1 minute
+  memory_limit: "128m"
+  cpu_limit: "0.5"
+
+output_parsing:
+  format: text
+  parser: whois_text_parser
+  extract_fields:
+    - registrar
+    - creation_date
+    - expiration_date
+    - name_servers
+    - registrant_info
+    - admin_contact
+    - technical_contact
+
+integration:
+  graph_entities:
+    - type: "Domain"
+      id_field: "domain_name"
+      properties: ["registrar", "creation_date", "expiration_date", "status"]
+    - type: "Organization"
+      id_field: "registrar_name" 
+      properties: ["name", "contact_info"]
+      relationships:
+        - target: "Domain"
+          type: "REGISTERS"
+    - type: "Contact"
+      id_field: "contact_email"
+      properties: ["name", "email", "phone", "address"]
+      relationships:
+        - target: "Domain"
+          type: "ADMINISTERS"
+
+  search_indexing:
+    enabled: true
+    fields: ["domain_name", "registrar", "contacts", "name_servers"]

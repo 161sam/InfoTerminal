@@ -1,0 +1,57 @@
+services:
+  # Remove direct host ports for Superset when SSO profile is used
+  superset:
+    profiles: ["sso"]
+    ports: []
+
+  oauth2-proxy-superset:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+    profiles: ["sso"]
+    environment:
+      - OAUTH2_PROXY_PROVIDER=keycloak-oidc
+      - OAUTH2_PROXY_OIDC_ISSUER_URL=${IT_OIDC_ISSUER}
+      - OAUTH2_PROXY_CLIENT_ID=${OAUTH2_PROXY_SUPERSET_CLIENT_ID:-superset}
+      - OAUTH2_PROXY_CLIENT_SECRET=${OAUTH2_PROXY_SUPERSET_CLIENT_SECRET:-superset-secret}
+      - OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET:-c29tZS1kZXYtY29va2llLXNlY3JldC10ZXN0LXN0cmluZw==}
+      - OAUTH2_PROXY_HTTP_ADDRESS=0.0.0.0:4180
+      - OAUTH2_PROXY_EMAIL_DOMAINS=*
+      - OAUTH2_PROXY_COOKIE_SECURE=false
+      - OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY=true
+      - OAUTH2_PROXY_SET_AUTHORIZATION_HEADER=true
+      - OAUTH2_PROXY_PASS_ACCESS_TOKEN=true
+      - OAUTH2_PROXY_UPSTREAMS=http://superset:8088
+      - OAUTH2_PROXY_SKIP_PROVIDER_BUTTON=true
+    ports:
+      - "${IT_PORT_SUPERSET:-8644}:4180"
+    depends_on:
+      superset:
+        condition: service_started
+
+  # Remove direct host ports for Airflow when SSO profile is used
+  airflow:
+    profiles: ["sso"]
+    ports: []
+
+  oauth2-proxy-airflow:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+    profiles: ["sso"]
+    environment:
+      - OAUTH2_PROXY_PROVIDER=keycloak-oidc
+      - OAUTH2_PROXY_OIDC_ISSUER_URL=${IT_OIDC_ISSUER}
+      - OAUTH2_PROXY_CLIENT_ID=${OAUTH2_PROXY_AIRFLOW_CLIENT_ID:-airflow}
+      - OAUTH2_PROXY_CLIENT_SECRET=${OAUTH2_PROXY_AIRFLOW_CLIENT_SECRET:-airflow-secret}
+      - OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET:-c29tZS1kZXYtY29va2llLXNlY3JldC10ZXN0LXN0cmluZw==}
+      - OAUTH2_PROXY_HTTP_ADDRESS=0.0.0.0:4180
+      - OAUTH2_PROXY_EMAIL_DOMAINS=*
+      - OAUTH2_PROXY_COOKIE_SECURE=false
+      - OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY=true
+      - OAUTH2_PROXY_SET_AUTHORIZATION_HEADER=true
+      - OAUTH2_PROXY_PASS_ACCESS_TOKEN=true
+      - OAUTH2_PROXY_UPSTREAMS=http://airflow:8080
+      - OAUTH2_PROXY_SKIP_PROVIDER_BUTTON=true
+    ports:
+      - "${IT_PORT_AIRFLOW:-8642}:4180"
+    depends_on:
+      airflow:
+        condition: service_started
+

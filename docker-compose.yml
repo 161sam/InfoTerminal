@@ -62,7 +62,7 @@ services:
       - discovery.type=single-node
       - plugins.security.disabled=true
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m # adjust memory
-    ports: ["9200:9200"]
+    # No host port mapping (policy: avoid standard ports)
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:9200/_cluster/health"]
       interval: 15s
@@ -91,7 +91,7 @@ services:
       - POSTGRES_USER=it_user
       - POSTGRES_PASSWORD=it_pass
       - POSTGRES_DB=it_graph
-    ports: ['5432:5432']
+    # No host port mapping (policy: avoid standard ports)
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
       interval: 10s
@@ -128,6 +128,90 @@ services:
     security_opt:
       - seccomp:unconfined
     restart: unless-stopped
+  rag-api:
+    build:
+      context: .
+      dockerfile: services/rag-api/Dockerfile
+    ports: ["${IT_PORT_RAG_API:-8622}:8000"]
+    env_file: .env
+    environment:
+      - OS_URL=${OS_URL:-http://opensearch:9200}
+      - RAG_OS_INDEX=${RAG_OS_INDEX:-laws}
+      - NEO4J_URI=${NEO4J_URI:-bolt://neo4j:7687}
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-neo4j}
+    depends_on:
+      opensearch:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  plugin-runner:
+    build: ./services/plugin-runner
+    ports: ["${IT_PORT_PLUGIN_RUNNER:-8621}:8000"]
+    env_file: .env
+    environment:
+      - PLUGINS_DIR=/app/plugins
+      - RESULTS_DIR=/app/results
+      - PLUGIN_DOCKER_ENABLED=${PLUGIN_DOCKER_ENABLED:-1}
+      - PLUGIN_MAX_EXECUTION_TIME=${PLUGIN_MAX_EXECUTION_TIME:-300}
+      - PLUGIN_MAX_CONCURRENT=${PLUGIN_MAX_CONCURRENT:-5}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./plugins:/app/plugins:ro
+      - plugin_results:/app/results
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+  xai:
+    build:
+      context: .
+      dockerfile: services/xai/Dockerfile
+    ports: ["${IT_PORT_XAI:-8626}:8000"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  forensics:
+    build:
+      context: .
+      dockerfile: services/forensics/Dockerfile
+    ports: ["${IT_PORT_FORENSICS:-8627}:8000"]
+    volumes:
+      - ./data/forensics:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  collab-hub:
+    build:
+      context: .
+      dockerfile: services/collab-hub/Dockerfile
+    ports: ["${IT_PORT_COLLAB:-8625}:8000"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  federation-proxy:
+    build:
+      context: .
+      dockerfile: services/federation-proxy/Dockerfile
+    ports: ["${IT_PORT_FEDERATION:-8628}:8000"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
   verification:
     build: ./services/verification
     ports: ["${IT_PORT_VERIFICATION:-8617}:8617"]
@@ -162,25 +246,49 @@ services:
     networks:
       - default
     restart: unless-stopped
+  media-forensics:
+    build: ./services/media-forensics
+    ports: ["${IT_PORT_MEDIA_FORENSICS:-8618}:8000"]
+    env_file: .env
+    environment:
+      - MEDIA_MAX_FILE_SIZE=${MEDIA_MAX_FILE_SIZE:-52428800}
+      - REVERSE_SEARCH_ENABLED=${REVERSE_SEARCH_ENABLED:-0}
+      - BING_SEARCH_API_KEY=${BING_SEARCH_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
   # Optional modules --------------------------------------------------
   aleph:
     profiles: ["aleph"]
     image: alephdata/aleph:latest
-    ports: ['8613:8082', '8613:8080']
+    environment:
+      - ALEPH_DEBUG=true
+    ports:
+      - "${IT_PORT_ALEPH:-8641}:8080"
   superset:
     profiles: ["superset"]
     image: apache/superset:latest
-    ports: ['8644:8088']
+    ports:
+      - "${IT_PORT_SUPERSET:-8644}:8088"
   airflow:
     profiles: ["airflow"]
     image: apache/airflow:2
-    ports: ["8084:8080"]
+    ports:
+      - "${IT_PORT_AIRFLOW:-8642}:8080"
   nifi:
     profiles: ["nifi"]
-    image: apache/nifi:1.24.0
-    ports: ["8085:8080"]
+    image: apache/nifi:2.0.0
+    environment:
+      - NIFI_WEB_HTTPS_PORT=
+      - NIFI_WEB_HTTP_PORT=8080
+    ports:
+      - "${IT_PORT_NIFI:-8619}:8080"
 volumes:
   opensearch_data:
   neo4j_data:
   postgres_data:
   demo_data:
+  plugin_results:

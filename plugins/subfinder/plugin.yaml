@@ -1,0 +1,97 @@
+name: subfinder
+version: "1.0.0"
+description: "Fast passive subdomain discovery tool"
+category: "domain_intelligence"
+author: "InfoTerminal Team"
+risk_level: "low"
+requires_network: true
+requires_root: false
+
+parameters:
+  - name: domain
+    type: string
+    description: "Target domain for subdomain enumeration"
+    required: true
+    validation: "^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\\.[a-zA-Z]{2,}$"
+    example: "example.com"
+    
+  - name: sources
+    type: string
+    description: "Comma-separated list of sources to use"
+    required: false
+    example: "certspotter,crtsh,hackertarget"
+    
+  - name: threads
+    type: integer
+    description: "Number of concurrent threads"
+    required: false
+    default: 10
+    min: 1
+    max: 50
+    
+  - name: timeout
+    type: integer
+    description: "Timeout for each source in seconds"
+    required: false
+    default: 30
+    min: 10
+    max: 120
+    
+  - name: silent
+    type: boolean
+    description: "Show only subdomains in output"
+    required: false
+    default: false
+
+docker_image: "projectdiscovery/subfinder:latest"
+output_format: ["json", "text"]
+
+command_templates:
+  default: "subfinder -d {domain} -o /tmp/subdomains.txt -json"
+  with_sources: "subfinder -d {domain} -sources {sources} -t {threads} -timeout {timeout} -o /tmp/subdomains.txt -json"
+  silent: "subfinder -d {domain} -silent -o /tmp/subdomains.txt -json"
+
+security:
+  sandbox: docker
+  network_isolation: false  # Needs network for passive enumeration
+  read_only_filesystem: true
+  no_new_privileges: true
+  timeout: 180  # 3 minutes
+  memory_limit: "256m"
+  cpu_limit: "1.0"
+
+output_parsing:
+  format: jsonlines
+  parser: subfinder_json_parser
+  extract_fields:
+    - host
+    - source
+    - ip
+    - timestamp
+
+integration:
+  graph_entities:
+    - type: "Subdomain"
+      id_field: "host"
+      properties: ["domain", "source", "discovered_at"]
+      relationships:
+        - target: "Domain"
+          type: "SUBDOMAIN_OF"
+    - type: "Source"
+      id_field: "source_name"
+      properties: ["name", "type"]
+      relationships:
+        - target: "Subdomain"
+          type: "DISCOVERED_BY"
+
+  search_indexing:
+    enabled: true
+    fields: ["host", "domain", "source"]
+
+  alerts:
+    enabled: true
+    conditions:
+      - field: "host"
+        pattern: ".*admin.*|.*dev.*|.*test.*|.*staging.*"
+        severity: "medium"
+        message: "Potentially sensitive subdomain discovered"

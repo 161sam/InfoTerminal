@@ -105,7 +105,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                 <Menu size={20} />
               </button>
               <div>
-                {title && <h1 className="text-xl font-semibold text-gray-900">{title}</h1>}
+                {title && <h1 className="text-xl font-semibold text-blue-300">{title}</h1>}
                 {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
               </div>
             </div>
@@ -168,7 +168,7 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
           <div className="h-8 w-8 rounded-lg bg-primary-600 flex items-center justify-center">
             <Activity size={20} className="text-white" />
           </div>
-          <span className="text-xl font-bold text-gray-900">InfoTerminal</span>
+          <span className="text-xl font-bold text-blue-300">InfoTerminal</span>
         </Link>
         {onClose && (
           <button onClick={onClose} className="lg:hidden p-1 text-gray-500">
