@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+  <name>jolt_normalize_to_opensearch</name>
+  <description>SplitJson (optional) → JoltTransformJSON → PutElasticsearchHttp</description>
+  <snippet>
+    <processors>
+      <processor>
+        <id>sj1</id>
+        <name>SplitJson (optional)</name>
+        <class>org.apache.nifi.processors.standard.SplitJson</class>
+        <properties>
+          <property><name>JsonPath Expression</name><value>${json.path:-$.[*]}</value></property>
+        </properties>
+      </processor>
+      <processor>
+        <id>j1</id>
+        <name>JoltTransformJSON</name>
+        <class>org.apache.nifi.processors.standard.JoltTransformJSON</class>
+        <properties>
+          <property><name>Jolt Specification</name><value>${jolt.spec}</value></property>
+          <property><name>Transform DSL</name><value>jolt-defaultr</value></property>
+        </properties>
+      </processor>
+      <processor>
+        <id>e1</id>
+        <name>PutElasticsearchHttp</name>
+        <class>org.apache.nifi.processors.elasticsearch.PutElasticsearchHttp</class>
+        <properties>
+          <property><name>elasticsearch-http-url</name><value>${opensearch.url}</value></property>
+          <property><name>index</name><value>${index.name}</value></property>
+          <property><name>type</name><value>_doc</value></property>
+        </properties>
+      </processor>
+    </processors>
+    <connections>
+      <connection><id>c1</id><sourceId>sj1</sourceId><sourceRelationship>split</sourceRelationship><destinationId>j1</destinationId></connection>
+      <connection><id>c2</id><sourceId>j1</sourceId><sourceRelationship>success</sourceRelationship><destinationId>e1</destinationId></connection>
+    </connections>
+  </snippet>
+  <timestamp>2025-09-10T00:00:00Z</timestamp>
+  <description>Parameters: json.path (optional), jolt.spec, opensearch.url, index.name</description>
+</template>

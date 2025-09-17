@@ -6,7 +6,13 @@ export default function LegalPage() {
   const [q, setQ] = useState('§23 Arbeitsschutz');
   const [entity, setEntity] = useState('Automotive');
   const [results, setResults] = useState<any[]>([]);
+  const [hybrid, setHybrid] = useState(false);
+  const [alpha, setAlpha] = useState(0.6);
   const [rerank, setRerank] = useState(true);
+  const [domain, setDomain] = useState('');
+  const [source, setSource] = useState('');
+  const [dateGte, setDateGte] = useState('');
+  const [dateLte, setDateLte] = useState('');
   const [linkSector, setLinkSector] = useState<Record<string,string>>({});
   const [context, setContext] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -14,9 +20,20 @@ export default function LegalPage() {
   const search = async () => {
     setLoading(true);
     try {
-      const r = await fetch(`/api/rag/law/retrieve?q=${encodeURIComponent(q)}&rerank=${rerank ? '1' : '0'}`);
-      const data = await r.json();
-      setResults(data.items || []);
+      if (hybrid) {
+        const filters: any = {};
+        if (domain.trim()) filters.domain = domain.split(',').map(s => s.trim()).filter(Boolean);
+        if (source.trim()) filters.source = source.split(',').map(s => s.trim()).filter(Boolean);
+        if (dateGte) filters.date_gte = dateGte;
+        if (dateLte) filters.date_lte = dateLte;
+        const r = await fetch('/api/rag/law/hybrid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q, top_k: 20, k: 50, alpha, filters }) });
+        const data = await r.json();
+        setResults(data.items || []);
+      } else {
+        const r = await fetch(`/api/rag/law/retrieve?q=${encodeURIComponent(q)}&rerank=${rerank ? '1' : '0'}`);
+        const data = await r.json();
+        setResults(data.items || []);
+      }
     } finally { setLoading(false); }
   };
   const loadContext = async () => {
@@ -41,6 +58,22 @@ export default function LegalPage() {
               <input type="checkbox" checked={rerank} onChange={e => setRerank(e.target.checked)} />
               Rerank results (basic)
             </label>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={hybrid} onChange={e => setHybrid(e.target.checked)} />
+              Hybrid (BM25 + kNN)
+            </label>
+            {hybrid && (
+              <div className="flex items-center gap-2">
+                <span>alpha</span>
+                <input type="number" min={0} max={1} step={0.1} value={alpha} onChange={e => setAlpha(parseFloat(e.target.value || '0.6'))} className="w-20 border rounded px-2 py-1" />
+              </div>
+            )}
+          </div>
+          <div className="mt-2 grid grid-cols-1 md:grid-cols-4 gap-2 text-sm">
+            <input className="border rounded px-2 py-1" placeholder="domain (comma-separated)" value={domain} onChange={e => setDomain(e.target.value)} />
+            <input className="border rounded px-2 py-1" placeholder="source (comma-separated)" value={source} onChange={e => setSource(e.target.value)} />
+            <input type="date" className="border rounded px-2 py-1" value={dateGte} onChange={e => setDateGte(e.target.value)} />
+            <input type="date" className="border rounded px-2 py-1" value={dateLte} onChange={e => setDateLte(e.target.value)} />
           </div>
           <div className="mt-4 space-y-3">
             {results.map((it, idx) => (

@@ -51,7 +51,20 @@ class OSClient:
 
     def _vector_mapping(self):
         if self.use_knn:
-            return {"type": "knn_vector", "dimension": 64}
+            engine = os.getenv('RAG_OS_KNN_ENGINE', 'nmslib')  # faiss|nmslib
+            space = os.getenv('RAG_OS_KNN_SPACE', 'cosinesimil')
+            m = int(os.getenv('RAG_OS_KNN_M', '16'))
+            efc = int(os.getenv('RAG_OS_KNN_EF_CONSTRUCTION', '128'))
+            return {
+                "type": "knn_vector",
+                "dimension": 64,
+                "method": {
+                    "name": "hnsw",
+                    "engine": engine,
+                    "space_type": space,
+                    "parameters": {"ef_construction": efc, "m": m}
+                }
+            }
         return {"type": "dense_vector", "dims": 64}
 
     def _embed(self, text: str, dims: int = 64) -> List[float]:
