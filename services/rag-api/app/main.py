@@ -160,6 +160,17 @@ def hybrid_search(req: HybridRequest):
     return {"total": len(items), "items": items}
 
 
+class EfSearchRequest(BaseModel):
+    ef_search: int
+
+
+@app.post("/index/knn/ef_search")
+def update_ef_search(req: EfSearchRequest):
+    res = os_client.set_ef_search(req.ef_search)
+    code = 200 if res.get('status') == 'ok' else 500
+    return res, code
+
+
 @app.get("/law/context", response_model=ContextResponse)
 def law_context(entity: str = Query(..., min_length=2), top_k: int = 10):
     """Return relevant laws for an entity. Tries graph links; falls back to text retrieval by entity name."""

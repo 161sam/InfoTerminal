@@ -175,3 +175,12 @@ class OSClient:
         body['vector'] = self._embed(text)
         self.client.index(index=self.index, id=body.get("id"), body=body, refresh=True)
         return True
+
+    def set_ef_search(self, ef_search: int) -> Dict[str, Any]:
+        try:
+            resp = self.client.indices.put_settings(index=self.index, body={
+                "settings": {"index.knn.algo_param.ef_search": ef_search}
+            })
+            return {"status": "ok", "acknowledged": resp.get('acknowledged', False)}
+        except Exception as e:
+            return {"status": "fail", "error": str(e)}

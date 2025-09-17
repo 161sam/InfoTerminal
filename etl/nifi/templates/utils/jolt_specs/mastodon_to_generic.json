@@ -1,0 +1,21 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "id": "id",
+      "content": "text",            
+      "created_at": "ts",
+      "account": {
+        "acct": "author"
+      },
+      "url": "url"
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "type": "mastodon_status"
+    }
+  }
+]
+

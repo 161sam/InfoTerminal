@@ -66,6 +66,8 @@ export default function LegalPage() {
               <div className="flex items-center gap-2">
                 <span>alpha</span>
                 <input type="number" min={0} max={1} step={0.1} value={alpha} onChange={e => setAlpha(parseFloat(e.target.value || '0.6'))} className="w-20 border rounded px-2 py-1" />
+                <button className="px-2 py-1 bg-gray-200 rounded" title="Only Text (BM25)" onClick={() => { setAlpha(1); setHybrid(true); setTimeout(search, 0); }}>Only Text</button>
+                <button className="px-2 py-1 bg-gray-200 rounded" title="Only kNN" onClick={() => { setAlpha(0); setHybrid(true); setTimeout(search, 0); }}>Only kNN</button>
               </div>
             )}
           </div>
