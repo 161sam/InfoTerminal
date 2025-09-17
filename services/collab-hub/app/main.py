@@ -38,6 +38,7 @@ manager = ConnectionManager()
 TASKS_PATH = os.getenv("CH_TASKS_PATH", "/data/collab_tasks.json")
 os.makedirs(os.path.dirname(TASKS_PATH), exist_ok=True)
 TASKS: List[Dict] = []
+AUDIT_PATH = os.getenv("CH_AUDIT_PATH", "/data/collab_audit.jsonl")
 
 def load_tasks():
     global TASKS
@@ -134,6 +135,28 @@ async def update_task(task_id: str, body: TaskUpdate):
             await manager.broadcast({"type": "task_update", "task": t})
             return t
     raise HTTPException(404, "not found")
+
+
+@app.get("/labels")
+def list_labels():
+    counts: Dict[str, int] = {}
+    for t in TASKS:
+        for lb in t.get('labels', []) or []:
+            counts[lb] = counts.get(lb, 0) + 1
+    top = sorted(({"label": k, "count": v} for k, v in counts.items()), key=lambda x: -x["count"])[:50]
+    return {"items": top}
+
+
+@app.post("/audit")
+def write_audit(entry: Dict):
+    try:
+        os.makedirs(os.path.dirname(AUDIT_PATH), exist_ok=True)
+        entry = {"ts": __import__('time').time(), **entry}
+        with open(AUDIT_PATH, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+    return {"status": "ok"}
 
 
 @app.websocket("/ws")

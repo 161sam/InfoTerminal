@@ -17,6 +17,8 @@ export default function CollabPage() {
   const [history, setHistory] = useState<typeof tasks[]>([]);
   const [future, setFuture] = useState<typeof tasks[]>([]);
   const [labelEdit, setLabelEdit] = useState<{ id: string; open: boolean; value: string }>({ id: '', open: false, value: '' });
+  const [serverSync, setServerSync] = useState(true);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   useEffect(() => {
     const url = wsUrl();
@@ -41,9 +43,10 @@ export default function CollabPage() {
     return () => { ws.close(); };
   }, []);
 
-  // Fetch persisted tasks on mount
+  // Fetch persisted tasks and labels on mount
   useEffect(() => {
     fetch('/api/collab/tasks').then(r => r.json()).then(d => setTasks(d.items || [])).catch(() => {});
+    fetch('/api/collab/labels').then(r => r.json()).then(d => setSuggestions((d.items||[]).map((x:any)=>x.label))).catch(() => {});
   }, []);
 
   // Keyboard shortcuts: undo/redo
@@ -62,6 +65,7 @@ export default function CollabPage() {
 
   const snapshot = () => JSON.parse(JSON.stringify(tasks)) as typeof tasks;
   const pushHistory = () => setHistory(prev => [...prev, snapshot()]);
+  const audit = (entry: any) => { if (serverSync) fetch('/api/collab/audit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) }).catch(()=>{}); };
   const applySnapshot = (snap: typeof tasks) => setTasks(JSON.parse(JSON.stringify(snap)));
   const undo = () => {
     if (!history.length) return;
@@ -88,23 +92,27 @@ export default function CollabPage() {
     const t = text.trim();
     if (!t) return;
     pushHistory(); setFuture([]);
+    audit({ type: 'add', text: t });
     fetch('/api/collab/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: t }) })
       .then(r => r.json()).then(task => setTasks(prev => [...prev, task])).catch(() => {});
     setText('');
   };
   const moveTask = (id: string, to: 'todo'|'doing'|'done') => {
     pushHistory(); setFuture([]);
+    audit({ type: 'move', id, to });
     fetch(`/api/collab/tasks/${id}/move`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) })
       .then(() => setTasks(prev => prev.map(t => t.id === id ? { ...t, status: to } : t))).catch(() => {});
   };
   const deleteTask = (id: string) => {
     pushHistory(); setFuture([]);
+    audit({ type: 'delete', id });
     fetch(`/api/collab/tasks/${id}`, { method: 'DELETE' })
       .then(() => setTasks(prev => prev.filter(t => t.id !== id))).catch(() => {});
   };
 
   const updateTask = (id: string, patch: any) => {
     pushHistory(); setFuture([]);
+    audit({ type: 'update', id, patch });
     fetch(`/api/collab/tasks/${id}/update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) })
       .then(r => r.json()).then((t) => setTasks(prev => prev.map(x => x.id === id ? { ...x, ...t } : x))).catch(() => {});
   };
@@ -152,6 +160,9 @@ export default function CollabPage() {
             <button className="px-3 py-1 text-xs bg-gray-200 rounded" onClick={undo} disabled={!history.length}>Undo</button>
             <button className="px-3 py-1 text-xs bg-gray-200 rounded" onClick={redo} disabled={!future.length}>Redo</button>
             <span className="text-xs text-gray-500">Shortcuts: Ctrl/Cmd+Z, Ctrl+Y / Shift+Ctrl/Cmd+Z</span>
+            <label className="ml-auto text-xs flex items-center gap-1">
+              <input type="checkbox" checked={serverSync} onChange={e => setServerSync(e.target.checked)} /> Server Sync (audit)
+            </label>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {(['todo','doing','done'] as const).map(col => (
@@ -192,7 +203,7 @@ export default function CollabPage() {
                           <div className="flex items-center gap-2">
                             <input className="flex-1 border rounded p-1 text-xs" placeholder="Add label..." value={labelEdit.value} onChange={e => setLabelEdit(prev => ({...prev, value: e.target.value}))} list="labels-suggestions" />
                             <datalist id="labels-suggestions">
-                              {allLabels.map((l, i) => (<option key={i} value={l} />))}
+                              {Array.from(new Set([...allLabels, ...suggestions])).map((l, i) => (<option key={i} value={l} />))}
                             </datalist>
                             <button className="text-xs px-2 py-1 bg-gray-200 rounded" onClick={() => {
                               const v = (labelEdit.value||'').trim(); if (!v) return;
