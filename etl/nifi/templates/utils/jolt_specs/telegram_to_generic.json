@@ -1,0 +1,29 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "update_id": "id",
+      "message": {
+        "date": "ts",
+        "text": "text",
+        "from": {
+          "username": "author",
+          "id": "author_id"
+        },
+        "chat": {
+          "id": "chat_id",
+          "title": "chat_title",
+          "username": "chat_username"
+        }
+      }
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "type": "telegram_update",
+      "source": "telegram"
+    }
+  }
+]
+

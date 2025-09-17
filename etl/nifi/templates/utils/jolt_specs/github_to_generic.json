@@ -1,0 +1,27 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "id": "id",
+      "type": "type",
+      "created_at": "ts",
+      "actor": {
+        "login": "author",
+        "url": "author_url"
+      },
+      "repo": {
+        "name": "repo",
+        "url": "repo_url"
+      },
+      "payload": "payload"
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "source": "github",
+      "kind": "event"
+    }
+  }
+]
+

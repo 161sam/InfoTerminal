@@ -1,0 +1,18 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "*": {
+        "@": "id"
+      }
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "type": "hn_topstory",
+      "source": "hackernews"
+    }
+  }
+]
+
