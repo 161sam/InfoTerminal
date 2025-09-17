@@ -65,6 +65,8 @@ def healthz():
 
 class TaskCreate(BaseModel):
     text: str
+    priority: str | None = None  # low|normal|high|critical
+    labels: list[str] | None = None
 
 
 @app.get("/tasks")
@@ -74,7 +76,9 @@ def list_tasks():
 
 @app.post("/tasks")
 async def create_task(body: TaskCreate):
-    t = {"id": f"{int(__import__('time').time()*1000)}", "text": body.text, "status": "todo"}
+    prio = body.priority or "normal"
+    labels = body.labels or []
+    t = {"id": f"{int(__import__('time').time()*1000)}", "text": body.text, "status": "todo", "priority": prio, "labels": labels}
     TASKS.append(t)
     save_tasks()
     await manager.broadcast({"type": "task_add", "task": t})
@@ -108,6 +112,28 @@ async def delete_task(task_id: str):
     save_tasks()
     await manager.broadcast({"type": "task_delete", "id": task_id})
     return {"status": "ok"}
+
+
+class TaskUpdate(BaseModel):
+    text: str | None = None
+    priority: str | None = None
+    labels: list[str] | None = None
+
+
+@app.post("/tasks/{task_id}/update")
+async def update_task(task_id: str, body: TaskUpdate):
+    for t in TASKS:
+        if t["id"] == task_id:
+            if body.text is not None:
+                t["text"] = body.text
+            if body.priority is not None:
+                t["priority"] = body.priority
+            if body.labels is not None:
+                t["labels"] = body.labels
+            save_tasks()
+            await manager.broadcast({"type": "task_update", "task": t})
+            return t
+    raise HTTPException(404, "not found")
 
 
 @app.websocket("/ws")
