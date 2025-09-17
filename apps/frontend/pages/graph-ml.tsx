@@ -7,6 +7,8 @@ export default function GraphMLPage() {
   const [emb, setEmb] = useState<any>({ items: [] });
   const [loading, setLoading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [hover, setHover] = useState<{ name: string; x: number; y: number } | null>(null);
+  const pointsRef = useRef<{ name: string; x: number; y: number }[]>([]);
 
   const runPR = async () => {
     setLoading(true);
@@ -46,13 +48,16 @@ export default function GraphMLPage() {
     const scaleX = (x: number) => pad + (W - 2*pad) * ((x - minX) / (maxX - minX || 1));
     const scaleY = (y: number) => pad + (H - 2*pad) * (1 - (y - minY) / (maxY - minY || 1));
     ctx.fillStyle = '#e11d48';
+    const screenPts: { name: string; x: number; y: number }[] = [];
     for (const p of points) {
       const x = scaleX(p.x);
       const y = scaleY(p.y);
+      screenPts.push({ name: p.name, x, y });
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.fill();
     }
+    pointsRef.current = screenPts;
   }, [emb]);
 
   return (
@@ -76,8 +81,32 @@ export default function GraphMLPage() {
           <div className="flex items-center gap-2 mb-2">
             <button className="px-4 py-2 bg-gray-800 text-white rounded" onClick={runN2V} disabled={loading}>Run Node2Vec</button>
           </div>
-          <div className="mb-3 border rounded">
-            <canvas ref={canvasRef} style={{ width: '100%', height: 400 }} />
+          <div className="mb-3 border rounded relative" style={{ height: 400 }}>
+            <canvas
+              ref={canvasRef}
+              style={{ width: '100%', height: 400 }}
+              onMouseMove={(e) => {
+                const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+                let best: { name: string; x: number; y: number } | null = null;
+                let bestD = 1e9;
+                for (const p of pointsRef.current) {
+                  const dx = p.x - mx; const dy = p.y - my; const d = Math.sqrt(dx*dx + dy*dy);
+                  if (d < bestD) { bestD = d; best = p; }
+                }
+                if (best && bestD < 12) setHover({ ...best }); else setHover(null);
+              }}
+              onMouseLeave={() => setHover(null)}
+            />
+            {hover && (
+              <div
+                style={{ position: 'absolute', left: hover.x + 8, top: hover.y + 8 }}
+                className="text-xs bg-black/80 text-white px-2 py-1 rounded pointer-events-none"
+              >
+                {hover.name || '(node)'}
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-2">
             {(emb.items || []).slice(0, 20).map((e: any, i: number) => (
