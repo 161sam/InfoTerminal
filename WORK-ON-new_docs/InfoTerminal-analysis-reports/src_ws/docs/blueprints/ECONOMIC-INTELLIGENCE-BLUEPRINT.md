@@ -1,3 +1,0 @@
-# ECONOMIC-INTELLIGENCE-BLUEPRINT.md
-
-Summary placeholder.

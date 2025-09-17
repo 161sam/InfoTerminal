@@ -1,3 +1,0 @@
-# TECHNOLOGY-INTELLIGENCE-BLUEPRINT.md
-
-Summary placeholder.

@@ -1,5 +1,0 @@
-<svg width="400" height="40" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="40" fill="#f8f8f8" stroke="#ddd" />
-  <text x="16" y="25" font-size="16" font-family="sans-serif" fill="#111">InfoTerminal</text>
-  <circle cx="380" cy="20" r="8" fill="#22c55e" />
-</svg>

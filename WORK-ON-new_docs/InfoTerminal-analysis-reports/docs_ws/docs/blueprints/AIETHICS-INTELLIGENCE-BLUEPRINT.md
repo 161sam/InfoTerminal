@@ -1,3 +1,0 @@
-# AIETHICS-INTELLIGENCE-BLUEPRINT.md
-
-Summary placeholder.

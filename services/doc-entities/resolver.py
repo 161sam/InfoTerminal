@@ -1,9 +1,11 @@
-"""Enhanced entity resolver with basic entity matching logic."""
+"""Enhanced entity resolver with fuzzy matching integration."""
 import time
 import uuid
+import os
 from typing import Iterable, List, Dict, Any, Optional
 
 from metrics import RESOLVER_RUNS, RESOLVER_ENTS, RESOLVER_LAT
+from fuzzy_matcher import FuzzyMatcher
 
 
 def resolve_entities(entity_ids: Iterable[str], mode: str = "async") -> None:
@@ -68,8 +70,9 @@ def resolve_entities(entity_ids: Iterable[str], mode: str = "async") -> None:
 
 
 def _find_candidates(entity: Any) -> List[Dict[str, Any]]:
-    """Find potential matches for entity in knowledge graph."""
+    """Find potential matches for entity in knowledge graph with fuzzy fallback."""
     candidates = []
+    use_fuzzy_fallback = os.getenv("RESOLVE_FUZZY_FALLBACK", "1") == "1"
     
     # Simple heuristics for demo/testing
     entity_value = entity.value.lower() if entity.value else ""
@@ -189,7 +192,60 @@ def _find_candidates(entity: Any) -> List[Dict[str, Any]]:
             "description": f"{entity.label}: {entity.value}"
         })
     
+    # Fuzzy matching fallback if no good candidates found and enabled
+    if use_fuzzy_fallback and (not candidates or max(candidates, key=lambda x: x.get('score', 0)).get('score', 0) < 0.6):
+        fuzzy_candidates = _fuzzy_resolve_fallback(entity)
+        if fuzzy_candidates:
+            # Merge fuzzy candidates with existing ones, but mark them as fuzzy
+            for fuzzy_candidate in fuzzy_candidates:
+                fuzzy_candidate['fuzzy_match'] = True
+                fuzzy_candidate['source'] = 'fuzzy_fallback'
+            candidates.extend(fuzzy_candidates)
+    
     return candidates
+
+
+def _fuzzy_resolve_fallback(entity: Any) -> List[Dict[str, Any]]:
+    """Fuzzy matching fallback for entity resolution."""
+    if not entity or not entity.value:
+        return []
+        
+    # Mock knowledge base for fuzzy matching - in production this would be real KB
+    mock_knowledge_base = [
+        {"id": "person:barack-obama", "name": "Barack Obama", "type": "Person", "description": "44th President"},
+        {"id": "person:donald-trump", "name": "Donald Trump", "type": "Person", "description": "45th President"}, 
+        {"id": "org:apple-inc", "name": "Apple Inc", "type": "Organization", "description": "Technology company"},
+        {"id": "org:microsoft", "name": "Microsoft Corporation", "type": "Organization", "description": "Tech company"},
+        {"id": "org:google", "name": "Google LLC", "type": "Organization", "description": "Search company"},
+        {"id": "loc:new-york", "name": "New York City", "type": "Location", "description": "Major US city"},
+        {"id": "loc:london", "name": "London", "type": "Location", "description": "UK capital"},
+        {"id": "loc:paris", "name": "Paris", "type": "Location", "description": "French capital"}
+    ]
+    
+    try:
+        # Filter knowledge base by entity type if possible
+        filtered_kb = mock_knowledge_base
+        if entity.label == "PERSON":
+            filtered_kb = [kb for kb in mock_knowledge_base if kb["type"] == "Person"]
+        elif entity.label in ["ORG", "ORGANIZATION"]: 
+            filtered_kb = [kb for kb in mock_knowledge_base if kb["type"] == "Organization"]
+        elif entity.label in ["GPE", "LOCATION", "LOC"]:
+            filtered_kb = [kb for kb in mock_knowledge_base if kb["type"] == "Location"]
+        
+        # Use fuzzy matching to find candidates
+        fuzzy_threshold = float(os.getenv("RESOLVE_FUZZY_THRESHOLD", "65.0"))
+        fuzzy_results = FuzzyMatcher.fuzzy_resolve_entity(
+            entity.value,
+            filtered_kb, 
+            scorer="WRatio",
+            threshold=fuzzy_threshold
+        )
+        
+        return fuzzy_results
+        
+    except Exception as e:
+        print(f"Fuzzy fallback failed for entity {entity.value}: {e}")
+        return []
 
 
 def resolve_single_entity(entity_id: str) -> Optional[Dict[str, Any]]:

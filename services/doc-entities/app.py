@@ -28,6 +28,9 @@ RESOLVER_ENTS = _metrics.RESOLVER_ENTS
 RESOLVER_LAT = _metrics.RESOLVER_LAT
 from pydantic import BaseModel
 
+# Fuzzy matching integration
+from fuzzy_matcher import FuzzyMatcher, MatchRequest, DedupeRequest, EntityDeduplicator
+
 
 class NERIn(BaseModel):
     text: str
@@ -120,6 +123,62 @@ def ner(inp: NERIn):
 @app.post("/summary")
 def summary(inp: TextIn):
     return {"summary": summarize(inp.text, inp.lang)}
+
+
+@app.post("/match")
+def fuzzy_match(req: MatchRequest):
+    """
+    Fuzzy string matching using RapidFuzz.
+    Integrated from entity-resolution service.
+    """
+    try:
+        results = FuzzyMatcher.match(req)
+        return {
+            "query": req.query,
+            "matches": [{
+                "candidate": r.candidate,
+                "score": r.score,
+                "index": r.index
+            } for r in results],
+            "scorer": req.scorer,
+            "total_candidates": len(req.candidates),
+            "returned_matches": len(results)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Fuzzy matching failed: {str(e)}")
+
+
+@app.post("/dedupe")
+def fuzzy_dedupe(req: DedupeRequest):
+    """
+    String deduplication using fuzzy clustering.
+    Integrated from entity-resolution service.
+    """
+    try:
+        result = FuzzyMatcher.dedupe(req)
+        return {
+            "clusters": result.clusters,
+            "total_items": result.total_items,
+            "unique_clusters": result.unique_clusters,
+            "deduplication_ratio": result.deduplication_ratio,
+            "threshold": req.threshold,
+            "scorer": req.scorer
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Deduplication failed: {str(e)}")
+
+
+@app.post("/entities/dedupe")
+def dedupe_entities(entities: List[Dict[str, Any]], threshold: float = 85.0, key_field: str = "value"):
+    """
+    Deduplicate entity list using fuzzy matching.
+    Enhanced functionality combining NLP and fuzzy matching.
+    """
+    try:
+        result = EntityDeduplicator.dedupe_entities(entities, threshold, key_field)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Entity deduplication failed: {str(e)}")
 
 
 @app.post("/relations")
