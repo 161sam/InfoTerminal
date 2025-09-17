@@ -1,5 +1,46 @@
 apiVersion: v2
 name: infoterminal
-description: Minimal Helm chart for InfoTerminal
-version: 0.1.0
-appVersion: "v0.1.0"
+description: A comprehensive OSINT platform for intelligence gathering and analysis
+type: application
+version: 0.4.0
+appVersion: "0.4.0"
+home: https://github.com/161sam/InfoTerminal
+sources:
+- https://github.com/161sam/InfoTerminal
+maintainers:
+- name: InfoTerminal Team
+  email: team@infoterminal.io
+keywords:
+- osint
+- intelligence
+- security
+- investigation
+- analytics
+annotations:
+  category: Analytics
+  licenses: Apache-2.0
+dependencies:
+- name: postgresql
+  version: "12.1.6"
+  repository: "https://charts.bitnami.com/bitnami"
+  condition: postgresql.enabled
+- name: redis
+  version: "17.4.3"
+  repository: "https://charts.bitnami.com/bitnami"
+  condition: redis.enabled
+- name: neo4j
+  version: "4.4.19"
+  repository: "https://helm.neo4j.com/neo4j"
+  condition: neo4j.enabled
+- name: opensearch
+  version: "2.13.3"
+  repository: "https://opensearch-project.github.io/helm-charts"
+  condition: opensearch.enabled
+- name: prometheus
+  version: "25.2.0"
+  repository: "https://prometheus-community.github.io/helm-charts"
+  condition: monitoring.prometheus.enabled
+- name: grafana
+  version: "7.0.3"
+  repository: "https://grafana.github.io/helm-charts"
+  condition: monitoring.grafana.enabled

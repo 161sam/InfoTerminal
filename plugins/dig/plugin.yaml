@@ -1,0 +1,121 @@
+name: "dig"
+version: "1.0.0"
+description: "DNS lookup utility for querying DNS servers"
+category: "dns-reconnaissance"
+author: "InfoTerminal Team"
+docker_image: "alpine:latest"
+command_template: "apk add --no-cache bind-tools && dig {target} {record_type} {additional_options}"
+risk_level: "low"
+requires_network: true
+requires_root: false
+
+parameters:
+  - name: "target"
+    type: "string"
+    description: "Domain name to query"
+    required: true
+    pattern: "^[a-zA-Z0-9.-]+$"
+    example: "example.com"
+  
+  - name: "record_type"
+    type: "string"
+    description: "DNS record type to query"
+    required: false
+    default: "A"
+    choices:
+      - "A": "IPv4 address record"
+      - "AAAA": "IPv6 address record"
+      - "CNAME": "Canonical name record"
+      - "MX": "Mail exchange record"
+      - "NS": "Name server record"
+      - "TXT": "Text record"
+      - "SOA": "Start of authority record"
+      - "PTR": "Pointer record"
+      - "SRV": "Service record"
+      - "ANY": "All available records"
+    example: "A"
+  
+  - name: "dns_server"
+    type: "string"
+    description: "DNS server to query (default: system resolver)"
+    required: false
+    default: ""
+    pattern: "^[a-zA-Z0-9.-]*$"
+    example: "8.8.8.8"
+  
+  - name: "port"
+    type: "integer"
+    description: "Port to query (default: 53)"
+    required: false
+    default: 53
+    range: [1, 65535]
+  
+  - name: "short_output"
+    type: "boolean"
+    description: "Display short form answer only"
+    required: false
+    default: false
+  
+  - name: "trace"
+    type: "boolean"
+    description: "Trace delegation path from root servers"
+    required: false
+    default: false
+  
+  - name: "reverse_lookup"
+    type: "boolean"
+    description: "Perform reverse DNS lookup (for IP addresses)"
+    required: false
+    default: false
+  
+  - name: "tcp"
+    type: "boolean"
+    description: "Use TCP instead of UDP"
+    required: false
+    default: false
+
+additional_options_template: >
+  {%- if dns_server %} @{dns_server}{% endif %}
+  {%- if port != 53 %} -p {port}{% endif %}
+  {%- if short_output %} +short{% endif %}
+  {%- if trace %} +trace{% endif %}
+  {%- if reverse_lookup %} -x{% endif %}
+  {%- if tcp %} +tcp{% endif %}
+  +noall +answer
+
+output_format:
+  - "text"
+  - "json"
+
+usage_examples:
+  - description: "Basic A record lookup"
+    parameters:
+      target: "google.com"
+      record_type: "A"
+  
+  - description: "MX record lookup with specific DNS server"
+    parameters:
+      target: "example.com"
+      record_type: "MX"
+      dns_server: "8.8.8.8"
+  
+  - description: "Reverse DNS lookup"
+    parameters:
+      target: "8.8.8.8"
+      reverse_lookup: true
+  
+  - description: "Trace delegation path"
+    parameters:
+      target: "example.com"
+      trace: true
+  
+  - description: "Short output for automation"
+    parameters:
+      target: "cloudflare.com"
+      record_type: "A"
+      short_output: true
+
+security_notes:
+  - "DNS queries may be logged by DNS servers and network infrastructure"
+  - "Tracing queries can generate significant DNS traffic"
+  - "Some DNS servers may rate limit or block excessive queries"

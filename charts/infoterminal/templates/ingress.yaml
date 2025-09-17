@@ -1,36 +1,171 @@
-{{- if .Values.ingress.enabled }}
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "infoterminal.fullname" . -}}
+{{- $svcPort := .Values.service.ports -}}
+{{- if and .Values.ingress.className (not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class")) }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
-  name: infoterminal
-  {{- if .Values.ingress.className }}
+  name: {{ $fullName }}-ingress
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ .host }}
-      http:
-        paths:
-        {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: infoterminal-web
-                port:
-                  number: 3000
-        {{- end }}
+  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
-  {{- range .Values.ingress.tls }}
+    {{- range .Values.ingress.tls }}
     - hosts:
         {{- range .hosts }}
-          - {{ . }}
+        - {{ . | quote }}
         {{- end }}
       secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-{{ .service }}
+                port:
+                  number: {{ index $svcPort .service }}
+              {{- else }}
+              serviceName: {{ $fullName }}-{{ .service }}
+              servicePort: {{ index $svcPort .service }}
+              {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+{{- if .Values.serviceMesh.enabled }}
+---
+{{- if .Values.serviceMesh.istio.gateway.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-gateway
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  {{- range .Values.serviceMesh.istio.gateway.hosts }}
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - {{ . | quote }}
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: {{ $.Values.ingress.tls | first | get "secretName" }}
+    hosts:
+    - {{ . | quote }}
+  {{- end }}
+{{- end }}
+---
+{{- if .Values.serviceMesh.istio.virtualService.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-vs
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+spec:
+  hosts:
+  {{- range .Values.serviceMesh.istio.gateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
+  gateways:
+  - {{ include "infoterminal.fullname" . }}-gateway
+  http:
+  {{- range .Values.ingress.hosts }}
+  {{- range .paths }}
+  - match:
+    - uri:
+        prefix: {{ .path | quote }}
+    headers:
+      host:
+        exact: {{ $.host | quote }}
+    route:
+    - destination:
+        host: {{ include "infoterminal.fullname" $ }}-{{ .service }}
+        port:
+          number: {{ index $.Values.service.ports .service }}
+    {{- if $.Values.serviceMesh.istio.virtualService.timeout }}
+    timeout: {{ $.Values.serviceMesh.istio.virtualService.timeout }}
+    {{- end }}
+    {{- if $.Values.serviceMesh.istio.virtualService.retries }}
+    retries:
+      {{- toYaml $.Values.serviceMesh.istio.virtualService.retries | nindent 6 }}
+    {{- end }}
   {{- end }}
   {{- end }}
+{{- end }}
+---
+{{- if .Values.serviceMesh.istio.destinationRule.enabled }}
+{{- $services := list "gateway" "frontend" "feedback-aggregator" "performance-monitor" "cache-manager" "websocket-manager" }}
+{{- range $services }}
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "infoterminal.fullname" $ }}-{{ . }}-dr
+  namespace: {{ $.Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" $ | nindent 4 }}
+spec:
+  host: {{ include "infoterminal.fullname" $ }}-{{ . }}
+  {{- if $.Values.serviceMesh.istio.destinationRule.trafficPolicy }}
+  trafficPolicy:
+    {{- toYaml $.Values.serviceMesh.istio.destinationRule.trafficPolicy | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}
+---
+{{- if .Values.serviceMesh.istio.peerAuthentication.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: {{ include "infoterminal.fullname" . }}-peer-auth
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "infoterminal.selectorLabels" . | nindent 6 }}
+  mtls:
+    mode: {{ .Values.serviceMesh.istio.peerAuthentication.mode }}
+{{- end }}
 {{- end }}

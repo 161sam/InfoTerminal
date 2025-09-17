@@ -39,8 +39,30 @@
       "publicClient": false,
       "protocol": "openid-connect",
       "serviceAccountsEnabled": false,
-      "redirectUris": ["http://localhost:8088/oauth-authorized/keycloak"],
-      "webOrigins": ["http://localhost:8088"],
+      "redirectUris": [
+        "http://localhost:8088/oauth-authorized/keycloak",
+        "http://localhost:8644/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:8088",
+        "http://localhost:8644"
+      ],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "attributes": { "pkce.code.challenge.method": "S256" }
+    },
+    {
+      "clientId": "airflow",
+      "secret": "airflow-secret",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:8642/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:8642"
+      ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
       "attributes": { "pkce.code.challenge.method": "S256" }

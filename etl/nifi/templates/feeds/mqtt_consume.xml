@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+  <name>mqtt_consume</name>
+  <description>ConsumeMQTT → LogAttribute</description>
+  <snippet>
+    <processors>
+      <processor>
+        <id>mq-1</id>
+        <name>ConsumeMQTT</name>
+        <class>org.apache.nifi.processors.mqtt.ConsumeMQTT</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>1 sec</schedulingPeriod>
+        <properties>
+          <property><name>Broker URI</name><value>${mqtt.broker}</value></property>
+          <property><name>Topic Filter</name><value>${mqtt.topic}</value></property>
+        </properties>
+      </processor>
+      <processor>
+        <id>mq-2</id>
+        <name>LogAttribute</name>
+        <class>org.apache.nifi.processors.standard.LogAttribute</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>1 sec</schedulingPeriod>
+      </processor>
+    </processors>
+    <connections>
+      <connection>
+        <id>mq-c1</id>
+        <sourceId>mq-1</sourceId>
+        <sourceRelationship>success</sourceRelationship>
+        <destinationId>mq-2</destinationId>
+      </connection>
+    </connections>
+    <inputPorts/><outputPorts/><funnels/><labels/><controllerServices/>
+  </snippet>
+  <timestamp>2025-09-10T00:00:00Z</timestamp>
+  <description>Parameters: mqtt.broker, mqtt.topic</description>
+</template>

@@ -1,13 +1,34 @@
 FROM python:3.11-slim
 
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
-COPY . /app
+
+# Copy shared libraries first (for better caching)
+COPY services/_shared/ /app/_shared/
+COPY services/common/ /app/common/
+
+# Copy service files and install
+COPY services/graph-api/ /app
 RUN pip install --no-cache-dir -e .
 
-EXPOSE 8080
-HEALTHCHECK CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz')" || exit 1
+# Set Python path to include shared modules
+ENV PYTHONPATH="/app:$PYTHONPATH"
 
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=10s --timeout=3s --retries=10 \
+    CMD curl -fsS http://localhost:8080/healthz || exit 1
+
+# Run the application
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]

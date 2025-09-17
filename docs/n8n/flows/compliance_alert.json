@@ -1,0 +1,89 @@
+{
+  "name": "Compliance Alert",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://rag-api:8000/law/context",
+        "options": {
+          "queryParameters": [
+            { "name": "entity", "value": "Automotive" }
+          ]
+        }
+      },
+      "id": "http1",
+      "name": "HTTP Request (Context)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            { "name": "message", "value": "Compliance laws found for {{$json.entity || 'Automotive'}}: {{$json.laws && $json.laws.length}}" }
+          ]
+        }
+      },
+      "id": "set1",
+      "name": "Set Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [780, 300]
+    },
+    {
+      "parameters": {
+        "text": "{{ $json.message }}"
+      },
+      "id": "slack1",
+      "name": "Slack (disabled)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [1040, 260],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "alerts@example.com",
+        "toEmail": "you@example.com",
+        "subject": "Compliance Alert",
+        "text": "{{ $json.message }}"
+      },
+      "id": "email1",
+      "name": "Email (disabled)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1040, 340],
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [ [ { "node": "HTTP Request (Context)", "type": "main", "index": 0 } ] ]
+    },
+    "HTTP Request (Context)": {
+      "main": [ [ { "node": "Set Message", "type": "main", "index": 0 } ] ]
+    },
+    "Set Message": {
+      "main": [
+        [
+          { "node": "Slack (disabled)", "type": "main", "index": 0 },
+          { "node": "Email (disabled)", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {},
+  "staticData": {},
+  "meta": { "notes": "Add credentials and enable Slack/Email nodes to send alerts" }
+}

@@ -1,0 +1,903 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infoterminal
+  labels:
+    name: infoterminal
+    environment: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: infoterminal-config
+  namespace: infoterminal
+data:
+  # Database Configuration
+  DATABASE_URL: "postgresql://infoterminal:password@postgres:5432/infoterminal"
+  REDIS_URL: "redis://redis:6379"
+  NEO4J_URI: "bolt://neo4j:7687"
+  OPENSEARCH_URL: "https://opensearch:9200"
+  
+  # Service URLs
+  FEEDBACK_SERVICE_URL: "http://feedback-aggregator:8080"
+  PERFORMANCE_SERVICE_URL: "http://performance-monitor:8081"
+  CACHE_SERVICE_URL: "http://cache-manager:8082"
+  WEBSOCKET_SERVICE_URL: "http://websocket-manager:8083"
+  
+  # API Configuration
+  API_RATE_LIMIT: "100"
+  API_TIMEOUT: "30"
+  
+  # Security Configuration
+  CORS_ORIGINS: "https://infoterminal.example.com,https://app.infoterminal.example.com"
+  SECURE_COOKIES: "true"
+  
+  # Feature Flags
+  ENABLE_CACHING: "true"
+  ENABLE_PERFORMANCE_MONITORING: "true"
+  ENABLE_WEBSOCKETS: "true"
+  ENABLE_USER_FEEDBACK: "true"
+  
+  # Observability
+  LOG_LEVEL: "INFO"
+  METRICS_ENABLED: "true"
+  TRACING_ENABLED: "true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: infoterminal-secrets
+  namespace: infoterminal
+type: Opaque
+data:
+  # Database credentials (base64 encoded)
+  postgres-password: aW5mb3Rlcm1pbmFsX3Bhc3N3b3Jk
+  neo4j-password: bmVvNGpfcGFzc3dvcmQ=
+  
+  # JWT secrets
+  jwt-secret: eW91cl9qd3Rfc2VjcmV0X2tleQ==
+  
+  # External API keys
+  github-token: Z2hwX3lvdXJfZ2l0aHViX3Rva2Vu
+  
+  # Encryption keys
+  encryption-key: eW91cl9lbmNyeXB0aW9uX2tleQ==
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: infoterminal
+  labels:
+    app: gateway
+    component: api-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+        component: api-gateway
+    spec:
+      containers:
+      - name: gateway
+        image: infoterminal/gateway:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: REDIS_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: infoterminal-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: infoterminal-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: infoterminal
+  labels:
+    app: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: infoterminal
+  labels:
+    app: frontend
+    component: web-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        component: web-ui
+    spec:
+      containers:
+      - name: frontend
+        image: infoterminal/frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: "https://api.infoterminal.example.com"
+        - name: NEXT_PUBLIC_WS_URL
+          value: "wss://ws.infoterminal.example.com"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: infoterminal
+  labels:
+    app: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback-aggregator
+  namespace: infoterminal
+  labels:
+    app: feedback-aggregator
+    component: feedback-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feedback-aggregator
+  template:
+    metadata:
+      labels:
+        app: feedback-aggregator
+        component: feedback-service
+    spec:
+      containers:
+      - name: feedback-aggregator
+        image: infoterminal/feedback-aggregator:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: REDIS_URL
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: infoterminal-secrets
+              key: github-token
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feedback-aggregator
+  namespace: infoterminal
+  labels:
+    app: feedback-aggregator
+spec:
+  selector:
+    app: feedback-aggregator
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: performance-monitor
+  namespace: infoterminal
+  labels:
+    app: performance-monitor
+    component: monitoring-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: performance-monitor
+  template:
+    metadata:
+      labels:
+        app: performance-monitor
+        component: monitoring-service
+    spec:
+      containers:
+      - name: performance-monitor
+        image: infoterminal/performance-monitor:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: REDIS_URL
+        - name: SERVICE_NAME
+          value: "performance-monitor"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: performance-monitor
+  namespace: infoterminal
+  labels:
+    app: performance-monitor
+spec:
+  selector:
+    app: performance-monitor
+  ports:
+  - name: http
+    port: 8081
+    targetPort: 8081
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache-manager
+  namespace: infoterminal
+  labels:
+    app: cache-manager
+    component: caching-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cache-manager
+  template:
+    metadata:
+      labels:
+        app: cache-manager
+        component: caching-service
+    spec:
+      containers:
+      - name: cache-manager
+        image: infoterminal/cache-manager:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: REDIS_URL
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache-manager
+  namespace: infoterminal
+  labels:
+    app: cache-manager
+spec:
+  selector:
+    app: cache-manager
+  ports:
+  - name: http
+    port: 8082
+    targetPort: 8082
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-manager
+  namespace: infoterminal
+  labels:
+    app: websocket-manager
+    component: realtime-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: websocket-manager
+  template:
+    metadata:
+      labels:
+        app: websocket-manager
+        component: realtime-service
+    spec:
+      containers:
+      - name: websocket-manager
+        image: infoterminal/websocket-manager:latest
+        ports:
+        - containerPort: 8083
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infoterminal-config
+              key: REDIS_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: infoterminal-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8083
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8083
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-manager
+  namespace: infoterminal
+  labels:
+    app: websocket-manager
+spec:
+  selector:
+    app: websocket-manager
+  ports:
+  - name: http
+    port: 8083
+    targetPort: 8083
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: infoterminal
+  labels:
+    app: postgres
+    component: database
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        component: database
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: infoterminal
+        - name: POSTGRES_USER
+          value: infoterminal
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: infoterminal-secrets
+              key: postgres-password
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - infoterminal
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - infoterminal
+          initialDelaySeconds: 5
+          periodSeconds: 5
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: "fast-ssd"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: infoterminal
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: infoterminal
+  labels:
+    app: redis
+    component: cache
+spec:
+  serviceName: redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        command:
+        - redis-server
+        - --appendonly
+        - "yes"
+        - --maxmemory
+        - "1gb"
+        - --maxmemory-policy
+        - "allkeys-lru"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: redis-storage
+          mountPath: /data
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: "fast-ssd"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: infoterminal
+  labels:
+    app: redis
+spec:
+  selector:
+    app: redis
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: neo4j
+  namespace: infoterminal
+  labels:
+    app: neo4j
+    component: graph-database
+spec:
+  serviceName: neo4j
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo4j
+  template:
+    metadata:
+      labels:
+        app: neo4j
+        component: graph-database
+    spec:
+      containers:
+      - name: neo4j
+        image: neo4j:5
+        ports:
+        - containerPort: 7474
+        - containerPort: 7687
+        env:
+        - name: NEO4J_AUTH
+          value: "neo4j/neo4j_password"
+        - name: NEO4J_apoc_export_file_enabled
+          value: "true"
+        - name: NEO4J_apoc_import_file_enabled
+          value: "true"
+        - name: NEO4J_apoc_import_file_use__neo4j__config
+          value: "true"
+        - name: NEO4J_PLUGINS
+          value: '["apoc", "graph-data-science"]'
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: neo4j-data
+          mountPath: /data
+        - name: neo4j-logs
+          mountPath: /logs
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 7474
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 7474
+          initialDelaySeconds: 30
+          periodSeconds: 5
+  volumeClaimTemplates:
+  - metadata:
+      name: neo4j-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 50Gi
+      storageClassName: "fast-ssd"
+  - metadata:
+      name: neo4j-logs
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: "standard"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo4j
+  namespace: infoterminal
+  labels:
+    app: neo4j
+spec:
+  selector:
+    app: neo4j
+  ports:
+  - name: http
+    port: 7474
+    targetPort: 7474
+  - name: bolt
+    port: 7687
+    targetPort: 7687
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infoterminal-ingress
+  namespace: infoterminal
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - infoterminal.example.com
+    - api.infoterminal.example.com
+    - ws.infoterminal.example.com
+    secretName: infoterminal-tls
+  rules:
+  - host: infoterminal.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+  - host: api.infoterminal.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway
+            port:
+              number: 8000
+  - host: ws.infoterminal.example.com
+    http:
+      paths:
+      - path: /ws
+        pathType: Prefix
+        backend:
+          service:
+            name: websocket-manager
+            port:
+              number: 8083
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gateway-hpa
+  namespace: infoterminal
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gateway
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-hpa
+  namespace: infoterminal
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gateway-pdb
+  namespace: infoterminal
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: gateway
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend-pdb
+  namespace: infoterminal
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: frontend
+---
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: infoterminal-metrics
+  namespace: infoterminal
+  labels:
+    app: infoterminal
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

@@ -45,7 +45,8 @@ declare -A HOST_PORTS_COMPOSE=(
   # App services (dockerized mode)
   [search-api]=8611
   [graph-api]=8612
-  [aleph]=8613
+  [aleph]=8641
+  [airflow]=8642
 
   # Optional other apps
   [superset]=8644
@@ -58,6 +59,7 @@ declare -A CONTAINER_PORTS=(
   [graph-api]=8080
   [aleph]=8080
   [superset]=8088
+  [airflow]=8080
   [keycloak]=8080
 )
 
@@ -215,4 +217,3 @@ if [[ -f "$PKG" ]]; then
 fi
 
 echo "✅ Ports gepatcht. (Frontend 3411; Obs 3412–3416; Agents 3417; Apps dockerized 8611/8612/8613)"
-

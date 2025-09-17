@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+  <name>otx_iocs</name>
+  <description>InvokeHTTP OTX pulses → LogAttribute</description>
+  <snippet>
+    <processors>
+      <processor>
+        <id>otx-1</id>
+        <name>InvokeHTTP (OTX)</name>
+        <class>org.apache.nifi.processors.standard.InvokeHTTP</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>10 min</schedulingPeriod>
+        <properties>
+          <property>
+            <name>Remote URL</name><value>${otx.api.url}</value>
+          </property>
+          <property>
+            <name>add-headers-to-request</name><value>X-OTX-API-KEY: ${otx.api.key}</value>
+          </property>
+        </properties>
+        <autoTerminatedRelationships>
+          <relationship>failure</relationship>
+        </autoTerminatedRelationships>
+      </processor>
+      <processor>
+        <id>otx-2</id>
+        <name>LogAttribute</name>
+        <class>org.apache.nifi.processors.standard.LogAttribute</class>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>10 min</schedulingPeriod>
+      </processor>
+    </processors>
+    <connections>
+      <connection>
+        <id>otx-c1</id>
+        <sourceId>otx-1</sourceId>
+        <sourceRelationship>response</sourceRelationship>
+        <destinationId>otx-2</destinationId>
+      </connection>
+    </connections>
+    <inputPorts/><outputPorts/><funnels/><labels/><controllerServices/>
+  </snippet>
+  <timestamp>2025-09-10T00:00:00Z</timestamp>
+  <description>Parameters: otx.api.url, otx.api.key</description>
+</template>

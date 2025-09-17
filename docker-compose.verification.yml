@@ -1,13 +1,12 @@
 # docker-compose.verification.yml
 # InfoTerminal v0.2.0 - Complete Verification & Orchestration Stack
-version: '3.8'
 
 services:
   # Core Verification Service
   verification-service:
     build: 
-      context: ./services/verification
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/verification/Dockerfile
     container_name: infoterminal-verification
     ports:
       - "${IT_PORT_VERIFICATION:-8617}:8617"
@@ -20,11 +19,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - CACHE_ENABLED=true
       - CACHE_TTL_SECONDS=300
-    depends_on:
-      postgres:
-        condition: service_healthy
-      opensearch:
-        condition: service_healthy
+    # Single depends_on block defined below (includes postgres, opensearch, redis)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8617/health"]
       interval: 30s
@@ -37,12 +32,50 @@ services:
     volumes:
       - verification-models:/app/models
       - verification-cache:/app/cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Redis Cache Service (v0.3.0+)
+  redis:
+    image: redis:7.2-alpine
+    container_name: infoterminal-redis
+    ports:
+      - "${IT_PORT_REDIS:-6379}:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_MAXMEMORY=${REDIS_MAXMEMORY:-256mb}
+      - REDIS_MAXMEMORY_POLICY=${REDIS_MAXMEMORY_POLICY:-allkeys-lru}
+    command: >
+      sh -c "
+        redis-server 
+        --maxmemory $REDIS_MAXMEMORY 
+        --maxmemory-policy $REDIS_MAXMEMORY_POLICY 
+        --save 60 1 
+        --loglevel notice
+        ${REDIS_PASSWORD:+--requirepass $REDIS_PASSWORD}
+      "
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    networks:
+      - infoterminal
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
 
   # Enhanced Ops Controller with Verification Orchestration
   ops-controller:
     build:
-      context: ./services/ops-controller
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/ops-controller/Dockerfile
     container_name: infoterminal-ops-controller
     ports:
       - "${IT_PORT_OPS_CONTROLLER:-8618}:8000"
@@ -169,8 +202,8 @@ services:
   # Enhanced Frontend with Verification UI
   frontend:
     build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/frontend/Dockerfile
       args:
         - NODE_ENV=production
     container_name: infoterminal-frontend
@@ -229,8 +262,8 @@ services:
   # Existing core services (search-api, graph-api, etc.)
   search-api:
     build:
-      context: ./services/search-api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/search-api/Dockerfile
     container_name: infoterminal-search-api
     ports:
       - "${IT_PORT_SEARCH:-8001}:8001"
@@ -251,8 +284,8 @@ services:
 
   graph-api:
     build:
-      context: ./services/graph-api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/graph-api/Dockerfile
     container_name: infoterminal-graph-api
     ports:
       - "${IT_PORT_GRAPH:-8612}:8612"
@@ -379,3 +412,7 @@ volumes:
     name: infoterminal-neo4j-data
   neo4j-logs:
     name: infoterminal-neo4j-logs
+
+  # Cache (v0.3.0+)
+  redis-data:
+    name: infoterminal-redis-data

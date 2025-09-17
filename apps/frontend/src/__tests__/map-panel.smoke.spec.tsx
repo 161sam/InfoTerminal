@@ -5,18 +5,29 @@ import { vi } from 'vitest';
 
 describe('MapPanel', () => {
   it('renders and fetches layers', async () => {
-    global.fetch = vi.fn((url: string) =>
-      Promise.resolve({
-        ok: true,
-        status: 200,
-        json: async () =>
-          url.includes('/geo/entities')
-            ? { type: 'FeatureCollection', features: [] }
-            : { items: [] },
-      }) as any
+    const mockFetch = vi.fn(
+      async (input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
+        const url = typeof input === 'string'
+          ? input
+          : input instanceof URL
+          ? input.href
+          : (input as Request).url;
+
+        const body = url.includes('/geo/entities')
+          ? { type: 'FeatureCollection', features: [] }
+          : { items: [] };
+
+        return new Response(JSON.stringify(body), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
     );
 
+    // Assign with correct type
+    global.fetch = mockFetch as unknown as typeof fetch;
+
     render(<MapPanel />);
-    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled());
   });
 });

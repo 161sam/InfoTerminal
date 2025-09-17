@@ -415,6 +415,138 @@ async def emergency_shutdown(request: Request):
     except Exception as e:
         raise HTTPException(500, f"Emergency shutdown failed: {str(e)}")
 
+# ============================================================================
+# PERFORMANCE MONITORING ENDPOINTS (v0.3.0+)
+# ============================================================================
+
+@APP.get("/health/comprehensive")
+async def comprehensive_health_check(request: Request):
+    """Comprehensive health check with performance metrics."""
+    _require_enabled()
+    
+    import psutil
+    import time
+    
+    start_time = time.time()
+    
+    # System metrics
+    system_metrics = {
+        "cpu_usage_percent": psutil.cpu_percent(interval=1),
+        "memory_usage_percent": psutil.virtual_memory().percent,
+        "disk_usage_percent": psutil.disk_usage('/').percent,
+        "uptime_seconds": time.time() - psutil.boot_time()
+    }
+    
+    # Docker service status
+    service_status = {}
+    try:
+        import docker
+        client = docker.from_env()
+        containers = client.containers.list()
+        
+        for container in containers:
+            name = container.name
+            status = container.status
+            service_status[name] = {
+                "status": status,
+                "healthy": status == "running",
+                "created_at": container.attrs["Created"],
+                "restart_count": container.attrs["RestartCount"]
+            }
+    except Exception as e:
+        service_status["error"] = str(e)
+    
+    # Redis connection test (if available)
+    redis_status = {"available": False}
+    try:
+        import redis
+        r = redis.Redis(host='redis', port=6379, decode_responses=True)
+        r.ping()
+        redis_info = r.info()
+        redis_status = {
+            "available": True,
+            "connected_clients": redis_info.get("connected_clients", 0),
+            "used_memory_human": redis_info.get("used_memory_human", "N/A"),
+            "keyspace_hits": redis_info.get("keyspace_hits", 0),
+            "keyspace_misses": redis_info.get("keyspace_misses", 0)
+        }
+        if redis_status["keyspace_hits"] + redis_status["keyspace_misses"] > 0:
+            redis_status["hit_rate"] = redis_status["keyspace_hits"] / (redis_status["keyspace_hits"] + redis_status["keyspace_misses"])
+    except Exception:
+        pass
+    
+    response_time = time.time() - start_time
+    
+    health_data = {
+        "status": "healthy",
+        "timestamp": time.time(),
+        "response_time_ms": response_time * 1000,
+        "system_metrics": system_metrics,
+        "service_status": service_status,
+        "redis_status": redis_status,
+        "security_manager_active": security_manager is not None
+    }
+    
+    _audit("health_check_comprehensive", request, response_time_ms=response_time * 1000)
+    
+    return health_data
+
+@APP.get("/api/system/performance")
+async def get_system_performance(request: Request):
+    """Get detailed system performance metrics."""
+    _require_enabled(); _require_rbac(request)
+    
+    import psutil
+    import time
+    
+    # CPU metrics
+    cpu_metrics = {
+        "usage_percent": psutil.cpu_percent(interval=1),
+        "load_avg": psutil.getloadavg() if hasattr(psutil, 'getloadavg') else [0, 0, 0],
+        "core_count": psutil.cpu_count()
+    }
+    
+    # Memory metrics
+    memory = psutil.virtual_memory()
+    memory_metrics = {
+        "total_gb": round(memory.total / (1024**3), 2),
+        "used_gb": round(memory.used / (1024**3), 2),
+        "available_gb": round(memory.available / (1024**3), 2),
+        "usage_percent": memory.percent
+    }
+    
+    # Disk metrics
+    disk = psutil.disk_usage('/')
+    disk_metrics = {
+        "total_gb": round(disk.total / (1024**3), 2),
+        "used_gb": round(disk.used / (1024**3), 2),
+        "free_gb": round(disk.free / (1024**3), 2),
+        "usage_percent": round((disk.used / disk.total) * 100, 2)
+    }
+    
+    # Network metrics (basic)
+    try:
+        net_io = psutil.net_io_counters()
+        network_metrics = {
+            "bytes_sent": net_io.bytes_sent,
+            "bytes_recv": net_io.bytes_recv,
+            "packets_sent": net_io.packets_sent,
+            "packets_recv": net_io.packets_recv
+        }
+    except Exception:
+        network_metrics = {"error": "Network metrics unavailable"}
+    
+    performance_data = {
+        "timestamp": time.time(),
+        "cpu": cpu_metrics,
+        "memory": memory_metrics,
+        "disk": disk_metrics,
+        "network": network_metrics,
+        "uptime_hours": round((time.time() - psutil.boot_time()) / 3600, 2)
+    }
+    
+    return performance_data
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(APP, host="0.0.0.0", port=8000)

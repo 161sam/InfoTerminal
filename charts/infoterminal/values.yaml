@@ -1,31 +1,589 @@
+# Default values for InfoTerminal
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global configuration
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+  
+# Image configuration
 image:
-  registry: ghcr.io/ORG/infoterminal
-  tag: v0.1.0
+  registry: docker.io
+  repository: infoterminal
+  tag: "0.4.0"
   pullPolicy: IfNotPresent
+  pullSecrets: []
 
-env:
-  OPENSEARCH_URL: http://opensearch:9200
-  NEO4J_URI: bolt://neo4j:7687
-  NEO4J_USER: neo4j
-  NEO4J_PASS: neo4j
-  RERANK_ENABLED: "0"
+# Deployment configuration
+replicaCount:
+  gateway: 3
+  frontend: 2
+  feedbackAggregator: 2
+  performanceMonitor: 2
+  cacheManager: 2
+  websocketManager: 2
 
-web:
-  replicas: 1
-searchApi:
-  replicas: 1
-graphApi:
-  replicas: 1
-
+# Service configuration
 service:
   type: ClusterIP
+  ports:
+    gateway: 8000
+    frontend: 3000
+    feedbackAggregator: 8080
+    performanceMonitor: 8081
+    cacheManager: 8082
+    websocketManager: 8083
 
+# Ingress configuration
 ingress:
-  enabled: false
-  className: ""
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: infoterm.local
+    - host: infoterminal.example.com
       paths:
         - path: /
           pathType: Prefix
-  tls: []
+          service: frontend
+    - host: api.infoterminal.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: gateway
+    - host: ws.infoterminal.example.com
+      paths:
+        - path: /ws
+          pathType: Prefix
+          service: websocket-manager
+  tls:
+    - secretName: infoterminal-tls
+      hosts:
+        - infoterminal.example.com
+        - api.infoterminal.example.com
+        - ws.infoterminal.example.com
+
+# Resource configuration
+resources:
+  gateway:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  frontend:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  feedbackAggregator:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  performanceMonitor:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  cacheManager:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  websocketManager:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+# Autoscaling configuration
+autoscaling:
+  enabled: true
+  gateway:
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  frontend:
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  feedbackAggregator:
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70
+  performanceMonitor:
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+  cacheManager:
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70
+  websocketManager:
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70
+
+# Pod Disruption Budgets
+podDisruptionBudget:
+  enabled: true
+  gateway:
+    minAvailable: 2
+  frontend:
+    minAvailable: 1
+  services:
+    minAvailable: 1
+
+# Security configuration
+security:
+  podSecurityPolicy:
+    enabled: true
+  networkPolicy:
+    enabled: true
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+
+# Configuration
+config:
+  # API Configuration
+  api:
+    rateLimit: 100
+    timeout: 30
+    corsOrigins:
+      - "https://infoterminal.example.com"
+      - "https://app.infoterminal.example.com"
+    secureCookies: true
+  
+  # Feature Flags
+  features:
+    caching: true
+    performanceMonitoring: true
+    websockets: true
+    userFeedback: true
+    advancedAnalytics: true
+    collaborativeFeatures: true
+  
+  # Logging and Observability
+  logging:
+    level: INFO
+    format: json
+  
+  observability:
+    metrics:
+      enabled: true
+      port: 9090
+      path: /metrics
+    tracing:
+      enabled: true
+      jaeger:
+        endpoint: http://jaeger-collector:14268/api/traces
+    healthCheck:
+      enabled: true
+      path: /health
+      port: 8080
+
+# Secrets configuration
+secrets:
+  # Database credentials
+  database:
+    postgresPassword: "infoterminal_password"
+    neo4jPassword: "neo4j_password"
+  
+  # JWT secrets
+  jwt:
+    secret: "your_jwt_secret_key"
+    expiration: "24h"
+  
+  # External API keys
+  external:
+    githubToken: ""
+    openaiApiKey: ""
+    anthropicApiKey: ""
+  
+  # Encryption
+  encryption:
+    key: "your_encryption_key"
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "infoterminal_password"
+    username: "infoterminal"
+    password: "infoterminal_password"
+    database: "infoterminal"
+  architecture: standalone
+  primary:
+    persistence:
+      enabled: true
+      storageClass: ""
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    pgHBAConf: |
+      local all all trust
+      host all all 0.0.0.0/0 md5
+      host all all ::/0 md5
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Redis configuration
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      storageClass: ""
+      size: 10Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+    configuration: |
+      maxmemory 1gb
+      maxmemory-policy allkeys-lru
+      appendonly yes
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Neo4j configuration
+neo4j:
+  enabled: true
+  neo4j:
+    password: "neo4j_password"
+    edition: "community"
+  volumes:
+    data:
+      mode: "defaultStorageClass"
+      defaultStorageClass:
+        storage: "50Gi"
+    logs:
+      mode: "defaultStorageClass"
+      defaultStorageClass:
+        storage: "10Gi"
+  resources:
+    cpu: "1000m"
+    memory: "2Gi"
+  config:
+    dbms.security.procedures.unrestricted: "apoc.*,gds.*"
+    dbms.security.procedures.allowlist: "apoc.*,gds.*"
+  plugins:
+    - apoc
+    - graph-data-science
+  metrics:
+    enabled: true
+
+# OpenSearch configuration
+opensearch:
+  enabled: true
+  clusterName: "infoterminal-opensearch"
+  nodeGroup: "master"
+  masterService: "infoterminal-opensearch"
+  roles:
+    - master
+    - ingest
+    - data
+  replicas: 1
+  minimumMasterNodes: 1
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 30Gi
+  config:
+    opensearch.yml: |
+      cluster.name: infoterminal-opensearch
+      network.host: 0.0.0.0
+      plugins.security.disabled: true
+      discovery.type: single-node
+
+# Monitoring configuration
+monitoring:
+  prometheus:
+    enabled: true
+    server:
+      persistentVolume:
+        enabled: true
+        storageClass: ""
+        size: 20Gi
+      resources:
+        limits:
+          cpu: 2000m
+          memory: 4Gi
+        requests:
+          cpu: 500m
+          memory: 2Gi
+      retention: "30d"
+    alertmanager:
+      enabled: true
+      persistentVolume:
+        enabled: true
+        storageClass: ""
+        size: 5Gi
+    pushgateway:
+      enabled: true
+    nodeExporter:
+      enabled: true
+    kubeStateMetrics:
+      enabled: true
+  
+  grafana:
+    enabled: true
+    adminPassword: "admin_password"
+    persistence:
+      enabled: true
+      storageClass: ""
+      size: 10Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://prometheus-server
+          access: proxy
+          isDefault: true
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default:
+        infoterminal-overview:
+          gnetId: 15757
+          revision: 1
+          datasource: Prometheus
+
+# Backup and Disaster Recovery
+backup:
+  enabled: false
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention: "30d"
+  storage:
+    type: "s3"  # s3, gcs, azure
+    s3:
+      bucket: "infoterminal-backups"
+      region: "us-west-2"
+      accessKeyId: ""
+      secretAccessKey: ""
+    encryption:
+      enabled: true
+      key: ""
+
+# Network policies
+networkPolicy:
+  enabled: true
+  ingress: []
+  egress:
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgresql
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app: neo4j
+
+# Service Mesh (Istio) configuration
+serviceMesh:
+  enabled: false
+  istio:
+    gateway:
+      enabled: true
+      hosts:
+        - "infoterminal.example.com"
+        - "api.infoterminal.example.com"
+        - "ws.infoterminal.example.com"
+    virtualService:
+      enabled: true
+    destinationRule:
+      enabled: true
+      trafficPolicy:
+        loadBalancer:
+          simple: LEAST_CONN
+        connectionPool:
+          tcp:
+            maxConnections: 100
+          http:
+            http1MaxPendingRequests: 50
+            maxRequestsPerConnection: 10
+    peerAuthentication:
+      enabled: true
+      mode: STRICT
+
+# Node selector, tolerations and affinity
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchLabels:
+            app: infoterminal
+        topologyKey: kubernetes.io/hostname
+
+# Additional environment variables
+extraEnvVars: []
+
+# Additional volumes
+extraVolumes: []
+
+# Additional volume mounts
+extraVolumeMounts: []
+
+# Init containers
+initContainers: []
+
+# Sidecar containers
+sidecars: []
+
+# Lifecycle hooks
+lifecycleHooks: {}
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod labels
+podLabels: {}
+
+# Priority class
+priorityClassName: ""
+
+# Runtime class
+runtimeClassName: ""
+
+# Termination grace period
+terminationGracePeriodSeconds: 30
+
+# DNS configuration
+dnsPolicy: ClusterFirst
+dnsConfig: {}
+
+# Host aliases
+hostAliases: []
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+# Container security context
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Startup, liveness and readiness probes
+probes:
+  startup:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  liveness:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  readiness:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
