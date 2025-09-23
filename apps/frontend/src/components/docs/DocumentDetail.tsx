@@ -19,7 +19,7 @@ import {
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import EntityBadge from '@/components/entities/EntityBadge';
 import { DocRecord } from '@/types/docs';
-import { uniqueEntities } from '@/lib/entities';
+import { normalizeLabel } from '@/lib/entities';
 import HighlightedText from '@/components/HighlightedText';
 
 export default function DocumentDetailPage() {
@@ -34,23 +34,35 @@ export default function DocumentDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    
+
     const fetchDocument = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/docs/${encodeURIComponent(id as string)}`);
+        const baseUrl = process.env.NEXT_PUBLIC_DOC_ENTITIES_URL;
+        const response = await fetch(`${baseUrl}/v1/documents/${encodeURIComponent(id as string)}`);
         if (!response.ok) throw new Error('Document not found');
         const docData = await response.json();
-        try {
-          const nerRes = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/ner`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: docData.text, lang: 'en' })
-          });
-          const nerData = await nerRes.json();
-          setDoc({ ...docData, entities: nerData.entities });
-        } catch {
-          setDoc(docData);
-        }
+        const rawMeta = docData.metadata ?? {};
+        const meta = {
+          title: docData.title ?? rawMeta.title,
+          source: rawMeta.source,
+          aleph_id: rawMeta.aleph_id,
+          created_at: docData.created_at ?? rawMeta.created_at,
+          linking_status_counts: rawMeta.linking_status_counts,
+          linking_mean_score: rawMeta.linking_mean_score,
+          linking_resolved: rawMeta.linking_resolved,
+          linking_unmatched: rawMeta.linking_unmatched,
+          linking_pending: rawMeta.linking_pending,
+        };
+        setDoc({
+          id: docData.doc_id ?? (id as string),
+          doc_id: docData.doc_id ?? (id as string),
+          text: docData.text ?? '',
+          entities: docData.entities ?? [],
+          relations: docData.relations ?? [],
+          meta,
+          metadata: meta,
+          html_content: docData.html_content ?? null,
+        });
       } catch (err) {
         setError('Document not found or unavailable');
       } finally {
@@ -62,14 +74,14 @@ export default function DocumentDetailPage() {
   }, [id]);
 
   const generateSummary = async () => {
-    if (!doc) return;
-    
+    if (!doc || !doc.text) return;
+
     setSummaryLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/summary`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/v1/summarize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: doc.text, lang: 'en' })
+        body: JSON.stringify({ text: doc.text, language: 'en' })
       });
       const data = await response.json();
       setSummary(data.summary || '');
@@ -114,13 +126,12 @@ export default function DocumentDetailPage() {
     );
   }
 
-  const entities = uniqueEntities(
-    doc.entities.map(e => ({ label: e.label, value: e.text || '' }))
-  );
+  const entityItems = doc.entities ?? [];
 
   const handleEntityClick = (entity: any) => {
-    if (entity.value) {
-      router.push(`/search?value=${encodeURIComponent(entity.value)}`);
+    const value = entity.value || entity.text;
+    if (value) {
+      router.push(`/search?value=${encodeURIComponent(value)}`);
     } else {
       router.push(`/search?entity=${encodeURIComponent(entity.label)}`);
     }
@@ -204,14 +215,14 @@ export default function DocumentDetailPage() {
                   <h3 className="text-lg font-semibold text-gray-900">AI Summary</h3>
                   <button
                     onClick={generateSummary}
-                    disabled={summaryLoading}
+                    disabled={summaryLoading || !doc?.text}
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-50"
                   >
                     <Sparkles size={16} />
-                    {summaryLoading ? 'Generating...' : 'Generate Summary'}
+                    {summaryLoading ? 'Generating...' : doc?.text ? 'Generate Summary' : 'Summary unavailable'}
                   </button>
                 </div>
-                
+
                 {summary ? (
                   <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-100">
                     <p className="text-gray-800 leading-relaxed">{summary}</p>
@@ -236,7 +247,13 @@ export default function DocumentDetailPage() {
                  text-gray-900 dark:text-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Document Content</h3>
               <div className="prose max-w-none">
-                <HighlightedText text={doc.text} entities={doc.entities} />
+                {doc.html_content ? (
+                  <div dangerouslySetInnerHTML={{ __html: doc.html_content }} />
+                ) : doc.text ? (
+                  <HighlightedText text={doc.text} entities={doc.entities} />
+                ) : (
+                  <p className="text-gray-500 text-sm">Document text is not available for this record.</p>
+                )}
               </div>
             </div>
           </div>
@@ -251,32 +268,47 @@ export default function DocumentDetailPage() {
                  text-gray-900 dark:text-gray-100">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Entities</h3>
-                <span className="text-sm text-gray-500">{entities.length} found</span>
+                <span className="text-sm text-gray-500">{entityItems.length} found</span>
               </div>
-              
-              {entities.length > 0 ? (
+
+              {doc.meta?.linking_status_counts && (
+                <div className="mb-4 text-xs text-gray-600 dark:text-gray-400 flex flex-wrap gap-3">
+                  <span className="font-medium text-green-600 dark:text-green-400">
+                    Resolved: {doc.meta.linking_resolved ?? doc.meta.linking_status_counts.resolved ?? 0}
+                  </span>
+                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                    Pending: {doc.meta.linking_pending ?? doc.meta.linking_status_counts.pending ?? 0}
+                  </span>
+                  <span className="font-medium text-rose-600 dark:text-rose-400">
+                    Unmatched: {doc.meta.linking_unmatched ?? doc.meta.linking_status_counts.unmatched ?? 0}
+                  </span>
+                  {typeof doc.meta.linking_mean_score === 'number' && (
+                    <span>
+                      Avg. confidence: {(doc.meta.linking_mean_score * 100).toFixed(1)}%
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {entityItems.length > 0 ? (
                 <div className="space-y-4">
-                  {entities.slice(0, 20).map((entity, index) => (
+                  {entityItems.slice(0, 20).map((entity, index) => (
                     <div key={index} className="flex items-start justify-between">
                       <EntityBadge
-                        label={entity.label}
-                        value={entity.value}
-                        countBadge={entity.count}
+                        label={normalizeLabel(entity.label)}
+                        value={entity.text || entity.value || ''}
+                        resolutionStatus={entity.resolution_status}
+                        resolutionScore={entity.resolution_score}
                         clickable
                         onClick={() => handleEntityClick(entity)}
                       />
-                      {entity.count && entity.count > 1 && (
-                        <span className="text-xs text-gray-400 ml-2">
-                          {entity.count}x
-                        </span>
-                      )}
                     </div>
                   ))}
-                  
-                  {entities.length > 20 && (
+
+                  {entityItems.length > 20 && (
                     <div className="pt-2 border-t border-gray-100">
                       <span className="text-sm text-gray-500">
-                        +{entities.length - 20} more entities
+                        +{entityItems.length - 20} more entities
                       </span>
                     </div>
                   )}

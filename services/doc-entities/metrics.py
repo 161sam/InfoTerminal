@@ -1,12 +1,63 @@
-from prometheus_client import Counter, REGISTRY
+"""Prometheus metrics used by the doc-entities service."""
 
-def get_or_create_counter(name: str, doc: str) -> Counter:
-    # nutzt die (private) Registry-Map, ist für Dev/Reload absolut ok
+from __future__ import annotations
+
+from typing import Callable, TypeVar
+
+from prometheus_client import Counter, Histogram, REGISTRY
+
+T = TypeVar("T", Counter, Histogram)
+
+
+def _get_or_register(name: str, factory: Callable[[], T]) -> T:
+    """Return an existing collector from the global registry or create it.
+
+    In development the FastAPI reloader instantiates the module multiple times.
+    We therefore reuse registered collectors instead of raising duplicate-name
+    errors. The helper keeps the behaviour idempotent for tests and local runs.
+    """
+
     existing = REGISTRY._names_to_collectors.get(name)
-    if existing and isinstance(existing, Counter):
-        return existing
-    return Counter(name, doc)
+    if existing is not None:
+        return existing  # type: ignore[return-value]
+    collector = factory()
+    return collector
 
-RESOLVER_RUNS = get_or_create_counter("resolver_runs", "Number of resolver runs")
-RESOLVER_ENTS = get_or_create_counter("resolver_ents", "Number of entities resolved")
-RESOLVER_LAT  = get_or_create_counter("resolver_latency_ms", "Latency of resolver in ms")
+
+RESOLVER_RUNS = _get_or_register(
+    "doc_entities_resolver_runs_total",
+    lambda: Counter(
+        "doc_entities_resolver_runs_total",
+        "Total resolver executions grouped by mode",
+        ["mode"],
+    ),
+)
+
+RESOLVER_OUTCOMES = _get_or_register(
+    "doc_entities_resolver_outcomes_total",
+    lambda: Counter(
+        "doc_entities_resolver_outcomes_total",
+        "Resolver outcomes (resolved / unmatched / ambiguous / error)",
+        ["status"],
+    ),
+)
+
+RESOLVER_CONFIDENCE = _get_or_register(
+    "doc_entities_resolver_best_candidate_confidence",
+    lambda: Histogram(
+        "doc_entities_resolver_best_candidate_confidence",
+        "Confidence distribution for best resolver candidates",
+        buckets=[0.0, 0.25, 0.5, 0.65, 0.75, 0.85, 0.9, 0.95, 1.0],
+    ),
+)
+
+RESOLVER_LATENCY = _get_or_register(
+    "doc_entities_resolver_latency_seconds",
+    lambda: Histogram(
+        "doc_entities_resolver_latency_seconds",
+        "Resolver execution latency",
+        ["mode"],
+        buckets=(0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0),
+    ),
+)
+

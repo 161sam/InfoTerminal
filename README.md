@@ -45,9 +45,9 @@ Details und Reports: `build-stabilization/README.md`
 - **Observability:** Neue Prometheus-Metriken `graph_analysis_queries_total`, `graph_analysis_duration_seconds_bucket`, `graph_subgraph_exports_total`, `dossier_exports_total`, `collab_notes_total`.
 - **Gates:** Inventory/Policy, Health-Ready-Metrics, API/Docs und Smoke-E2E müssen nach jedem Merge grün bleiben (`scripts/generate_inventory.py`, `test_infoterminal_v030_features.sh --suite graph-dossier`).
 
-## 🧪 5-Minuten-Demo (offline, Wave 1)
+## 🧪 5-Minuten-Demo (offline, Wave 1 + 2)
 
-> Ziel: In fünf Minuten den End-to-End-Fluss **Search → Graph-Analyse → Dossier-Export** demonstrieren – komplett offline und reproduzierbar.
+> Ziel: In fünf Minuten den End-to-End-Fluss **Search → Graph-Analyse → Dossier-Export → NLP-Linking → Geo-Overlay** demonstrieren – komplett offline und reproduzierbar.
 
 1. **Services & Seed-Daten starten**
    ```bash
@@ -72,9 +72,39 @@ Details und Reports: `build-stabilization/README.md`
      -d '{"case_id":"demo-case","format":"pdf","source":"graph","template":"brief"}' \
      -o exports/demo-dossier.pdf
    ```
-5. **Observability & Dashboards kontrollieren**
+5. **NLP Linking & Resolver anstoßen**
+   ```bash
+   cat <<'JSON' > tmp/linking-input.json
+   {
+     "text": "Barack Obama met Donald Trump in Berlin to discuss cooperation with OpenAI.",
+     "language": "en",
+     "extract_entities": true,
+     "extract_relations": true,
+     "resolve_entities": true
+   }
+   JSON
+
+   curl -s -X POST "http://localhost:8613/v1/documents/annotate" \
+     -H 'Content-Type: application/json' \
+     -d @tmp/linking-input.json > tmp/linking-result.json
+
+   jq '.metadata.linking_status_counts' tmp/linking-result.json
+   DOC_ID=$(jq -r '.doc_id' tmp/linking-result.json)
+   curl -s -X POST "http://localhost:8613/v1/documents/${DOC_ID}/resolve" -H 'Content-Type: application/json' -d '{}'
+   sleep 1
+   curl -s "http://localhost:8613/v1/documents/${DOC_ID}" | jq '.entities[] | {text,label,resolution_status,resolution_target,resolution_score}'
+   ```
+6. **Geo-Overlay & Map Query prüfen**
+   ```bash
+   curl -s "http://localhost:8612/geo/entities?south=40&west=-75&north=41&east=-73" | jq '.count'
+   curl -s "http://localhost:8612/geo/entities?south=52&west=13&east=14&north=53" | jq '.entities[0]'
+   ```
+7. **Observability & Dashboards kontrollieren**
    - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `collab-hub` prüfen (neue Counter/Histograms).
+   - Prometheus: `doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_resolver_latency_seconds` beobachten.
+   - Prometheus: `graph_geo_queries_total`, `graph_geo_query_errors_total` auf der Graph-API.
    - Grafana: Dashboard **Graph Analytics MVP** (`grafana/dashboards/graph-analytics-mvp.json`).
+   - Grafana: neues Panel **NLP Resolver Outcomes** + **Geo Query Volume** (siehe `monitoring/grafana-dashboards/infoterminal-overview.json`).
    - Superset: Dashboard **Graph Analytics – MVP** (`apps/superset/assets/dashboard/graph_analytics_mvp.json`).
    - Smoke: `scripts/smoke_graph_analysis.sh` verifiziert Degree, Louvain, Shortest Path & Subgraph Export.
 

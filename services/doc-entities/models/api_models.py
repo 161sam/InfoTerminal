@@ -14,6 +14,9 @@ class EntityModel(BaseModel):
     end: int = Field(..., description="End character position")
     confidence: Optional[float] = Field(None, description="Confidence score")
     context: Optional[str] = Field(None, description="Context around entity")
+    resolution_status: Optional[str] = Field(None, description="Entity linking status")
+    resolution_score: Optional[float] = Field(None, description="Entity linking confidence")
+    resolution_target: Optional[str] = Field(None, description="Resolved graph node identifier")
 
 
 class RelationModel(BaseModel):

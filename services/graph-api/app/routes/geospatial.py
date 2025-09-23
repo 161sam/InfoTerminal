@@ -7,9 +7,12 @@ from pydantic import BaseModel
 # Import geospatial from parent directory
 import sys
 from pathlib import Path
+
 SERVICE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(SERVICE_DIR))
+
 from geospatial import GeospatialService, BoundingBox, GeocodeRequest, GeoEntity
+from metrics import GRAPH_GEO_QUERIES, GRAPH_GEO_QUERY_ERRORS
 
 router = APIRouter(prefix="/geo", tags=["geospatial"])
 
@@ -50,11 +53,12 @@ def get_geo_entities(
         bbox = BoundingBox(south=south, west=west, north=north, east=east)
         geo_service = GeospatialService(driver)
         entities = geo_service.get_entities_by_bbox(bbox, limit)
-        
+        GRAPH_GEO_QUERIES.labels(type="bbox").inc()
+
         return {
             "bbox": {
                 "south": south,
-                "west": west, 
+                "west": west,
                 "north": north,
                 "east": east
             },
@@ -62,6 +66,7 @@ def get_geo_entities(
             "count": len(entities)
         }
     except Exception as e:
+        GRAPH_GEO_QUERY_ERRORS.labels(type="bbox").inc()
         raise HTTPException(status_code=500, detail=f"Geospatial query error: {str(e)}")
 
 
@@ -80,7 +85,8 @@ def get_nearby_entities(request: Request, nearby_request: NearbyRequest):
             nearby_request.radius_km,
             nearby_request.limit
         )
-        
+        GRAPH_GEO_QUERIES.labels(type="nearby").inc()
+
         return {
             "center": {
                 "latitude": nearby_request.latitude,
@@ -91,6 +97,7 @@ def get_nearby_entities(request: Request, nearby_request: NearbyRequest):
             "count": len(entities)
         }
     except Exception as e:
+        GRAPH_GEO_QUERY_ERRORS.labels(type="nearby").inc()
         raise HTTPException(status_code=500, detail=f"Nearby query error: {str(e)}")
 
 
@@ -107,20 +114,23 @@ def geocode_location(request: Request, geocode_request: GeocodeRequest):
             geocode_request.location,
             geocode_request.country_code
         )
-        
+
         if result:
+            GRAPH_GEO_QUERIES.labels(type="geocode").inc()
             return {
                 "success": True,
                 "location": geocode_request.location,
                 **result
             }
         else:
+            GRAPH_GEO_QUERY_ERRORS.labels(type="geocode").inc()
             return {
                 "success": False,
                 "location": geocode_request.location,
                 "error": "Geocoding failed"
             }
     except Exception as e:
+        GRAPH_GEO_QUERY_ERRORS.labels(type="geocode").inc()
         raise HTTPException(status_code=500, detail=f"Geocoding error: {str(e)}")
 
 
@@ -137,9 +147,14 @@ def geocode_node(request: Request, geocode_node_request: GeocodeNodeRequest):
             geocode_node_request.node_id,
             geocode_node_request.location_field
         )
-        
+
+        if result.get("success"):
+            GRAPH_GEO_QUERIES.labels(type="node_geocode").inc()
+        else:
+            GRAPH_GEO_QUERY_ERRORS.labels(type="node_geocode").inc()
         return result
     except Exception as e:
+        GRAPH_GEO_QUERY_ERRORS.labels(type="node_geocode").inc()
         raise HTTPException(status_code=500, detail=f"Node geocoding error: {str(e)}")
 
 
@@ -164,7 +179,9 @@ def batch_geocode(
             batch_request.location_field,
             batch_request.limit
         )
-        
+
+        GRAPH_GEO_QUERIES.labels(type="batch_geocode").inc()
+
         return {
             "success": True,
             "message": "Batch geocoding started in background",
@@ -175,6 +192,7 @@ def batch_geocode(
             }
         }
     except Exception as e:
+        GRAPH_GEO_QUERY_ERRORS.labels(type="batch_geocode").inc()
         raise HTTPException(status_code=500, detail=f"Batch geocoding error: {str(e)}")
 
 
@@ -188,8 +206,10 @@ def geo_statistics(request: Request):
     try:
         geo_service = GeospatialService(driver)
         stats = geo_service.get_geo_statistics()
+        GRAPH_GEO_QUERIES.labels(type="statistics").inc()
         return stats
     except Exception as e:
+        GRAPH_GEO_QUERY_ERRORS.labels(type="statistics").inc()
         raise HTTPException(status_code=500, detail=f"Statistics error: {str(e)}")
 
 

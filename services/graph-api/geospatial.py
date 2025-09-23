@@ -1,9 +1,12 @@
 # Geospatial features for InfoTerminal Graph API
 
-from typing import Dict, List, Optional, Any, Tuple
-from pydantic import BaseModel
-import requests
+import os
 import time
+from typing import Any, Dict, List, Optional, Tuple
+
+import requests
+from pydantic import BaseModel
+
 from utils.neo4j_client import neo_session
 
 
@@ -31,13 +34,17 @@ class GeospatialService:
     def __init__(self, neo4j_driver):
         self.driver = neo4j_driver
         self.geocoding_cache = {}
+        self.enable_external_geocoding = os.getenv("GRAPH_ENABLE_GEOCODING", "0") == "1"
         
     def geocode_location(self, location: str, country_code: str = None) -> Optional[Dict[str, Any]]:
         """Geocode a location string using Nominatim API."""
         cache_key = f"{location}_{country_code or ''}"
-        
+
         if cache_key in self.geocoding_cache:
             return self.geocoding_cache[cache_key]
+
+        if not self.enable_external_geocoding:
+            return None
         
         try:
             # Use OpenStreetMap Nominatim for geocoding

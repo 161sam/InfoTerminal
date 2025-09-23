@@ -11,7 +11,14 @@ This package provides unified API standards for all InfoTerminal services:
 
 from .error_schemas import APIError, ErrorCodes, StandardError, ValidationError
 from .pagination import PaginatedResponse, PaginationParams
-from .health import HealthResponse, ReadyResponse, health_check, ready_check
+from .health import (
+    HealthChecker,
+    HealthResponse,
+    ReadyResponse,
+    check_database_connection,
+    health_check,
+    ready_check,
+)
 from .middleware import setup_standard_exception_handlers, setup_standard_middleware
 from .openapi import (
     get_service_tags_metadata,
@@ -28,6 +35,8 @@ __all__ = [
     "PaginationParams",
     "HealthResponse",
     "ReadyResponse",
+    "HealthChecker",
+    "check_database_connection",
     "health_check",
     "ready_check",
     "setup_standard_middleware",

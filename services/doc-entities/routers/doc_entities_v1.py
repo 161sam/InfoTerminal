@@ -4,6 +4,7 @@ from __future__ import annotations
 import html
 import time
 import uuid
+from collections import Counter
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
@@ -258,6 +259,9 @@ class DocEntitiesService:
                     end=len(ent_text),
                     confidence=0.5,
                     context=self._context(request.text, 0, len(ent_text)),
+                    resolution_status="pending",
+                    resolution_score=None,
+                    resolution_target=None,
                 )
                 entities.append(entity)
             if request.extract_relations and len(entities) >= 2:
@@ -309,6 +313,9 @@ class DocEntitiesService:
                                 end=ent.span_end,
                                 confidence=ent.confidence,
                                 context=context,
+                                resolution_status="pending",
+                                resolution_score=None,
+                                resolution_target=None,
                             )
                         )
 
@@ -337,7 +344,7 @@ class DocEntitiesService:
                             span_end=rel.get("span_end"),
                             context=rel.get("context"),
                             extraction_method=rel.get("extraction_method"),
-                            metadata=rel.get("metadata"),
+                            metadata_json=rel.get("metadata"),
                         )
                         db.add(relation_obj)
                         db.flush()
@@ -371,6 +378,9 @@ class DocEntitiesService:
             if entity_ids:
                 background_tasks.add_task(resolve_entities, entity_ids)
 
+        resolution_counts = Counter(ent.resolution_status or "unknown" for ent in entities)
+        score_values = [ent.resolution_score for ent in entities if ent.resolution_score is not None]
+
         html_content = self._highlight(request.text, entities)
         metadata_out = {
             "doc_id": doc_id,
@@ -380,6 +390,13 @@ class DocEntitiesService:
             "language": request.language,
             "processing_timestamp": time.time(),
         }
+        if resolution_counts:
+            metadata_out["linking_status_counts"] = dict(resolution_counts)
+            metadata_out["linking_resolved"] = resolution_counts.get("resolved", 0)
+            metadata_out["linking_unmatched"] = resolution_counts.get("unmatched", 0)
+            metadata_out["linking_pending"] = resolution_counts.get("pending", 0)
+        if score_values:
+            metadata_out["linking_mean_score"] = sum(score_values) / len(score_values)
 
         return DocumentAnnotationResponse(
             doc_id=doc_id,
@@ -419,18 +436,23 @@ class DocEntitiesService:
                     status_code=404,
                     details={"doc_id": doc_id},
                 )
-            entities = [
-                EntityModel(
-                    id=str(ent.id),
-                    text=ent.value,
-                    label=ent.label,
-                    start=ent.span_start,
-                    end=ent.span_end,
-                    confidence=ent.confidence,
-                    context=ent.context,
+            entities: List[EntityModel] = []
+            for ent in db.query(Entity).filter_by(doc_id=doc.id):
+                resolution = db.get(EntityResolution, ent.id)
+                entities.append(
+                    EntityModel(
+                        id=str(ent.id),
+                        text=ent.value,
+                        label=ent.label,
+                        start=ent.span_start,
+                        end=ent.span_end,
+                        confidence=ent.confidence,
+                        context=ent.context,
+                        resolution_status=resolution.status if resolution else None,
+                        resolution_score=resolution.score if resolution else None,
+                        resolution_target=resolution.node_id if resolution else None,
+                    )
                 )
-                for ent in db.query(Entity).filter_by(doc_id=doc.id)
-            ]
             relations = []
             for relation in db.query(Relation).filter_by(doc_id=doc.id):
                 subject_entity = db.get(Entity, relation.subject_entity_id)
@@ -448,13 +470,26 @@ class DocEntitiesService:
                             context=relation.context,
                         )
                     )
+            resolution_counts = Counter(ent.resolution_status or "unknown" for ent in entities)
+            metadata: Dict[str, Any] = {
+                "source": getattr(doc, "source", None),
+                "aleph_id": getattr(doc, "aleph_id", None),
+                "linking_status_counts": dict(resolution_counts),
+                "linking_resolved": resolution_counts.get("resolved", 0),
+                "linking_unmatched": resolution_counts.get("unmatched", 0),
+                "linking_pending": resolution_counts.get("pending", 0),
+            }
+            score_values = [ent.resolution_score for ent in entities if ent.resolution_score is not None]
+            if score_values:
+                metadata["linking_mean_score"] = sum(score_values) / len(score_values)
+
             return DocumentModel(
                 doc_id=doc_id,
                 title=doc.title,
                 text=None,
                 entities=entities,
                 relations=relations,
-                metadata=None,
+                metadata=metadata,
                 created_at=doc.created_at.isoformat() if getattr(doc, "created_at", None) else None,
             )
 
