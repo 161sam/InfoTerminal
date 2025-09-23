@@ -14,15 +14,16 @@ instead of duplicating rows._
 
 - [x] Feature flag `AGENTS_ENABLED` default `0`, enabling `/tools`, `/chat`,
   `/chat/{id}/cancel`. 【F:services/flowise-connector/app/main.py†L164-L244】
-- [x] Tool registry exposes exactly three tools (`search`, `graph.query`,
-  `dossier.build`) with parameter schema. 【F:services/flowise-connector/app/main.py†L47-L107】
+- [x] Tool registry exposes exactly six tools (`search`, `graph.query`,
+  `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
+  with parameter schema. 【F:services/flowise-connector/app/main.py†L63-L165】
 - [x] `/chat` enforces static allowlist, max one mocked tool call, global
   rate-limit (5/min). 【F:services/flowise-connector/app/main.py†L209-L281】
 - [x] Metrics counters (`agent_tool_calls_total`, `agent_policy_denied_total`,
   `agent_rate_limit_block_total`) plus Grafana tiles. 【F:services/flowise-connector/app/main.py†L118-L148】【F:grafana/dashboards/infra-overview.json†L7-L40】
 - [x] Cancel hook stub logs cancellation requests. 【F:services/flowise-connector/app/main.py†L299-L306】
 - [x] API tests cover tool list, allowlist deny, rate limit, metrics exposure.
-  【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L74】
+    【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L86】
 - [x] Frontend MVP chat displays progress badges + error states. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L265】
 - [x] Quickstart + backlog artefacts refreshed. 【F:docs/agents/quickstart.md†L1-L120】【F:backlog/phase4/ITERATION-04a_PLAN.md†L1-L16】
 

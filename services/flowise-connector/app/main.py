@@ -4,7 +4,7 @@ This module exposes a lightweight FastAPI application that
 implements the feature set required for the Wave 4 agent MVP:
 
 * Feature flag guard (`AGENTS_ENABLED`).
-* Static tool registry exposing exactly three tools.
+* Static tool registry exposing exactly six tools.
 * Single-turn chat endpoint that issues at most one mocked tool call.
 * Governance primitives: allowlist enforcement, global rate limit,
   and cancel hook stub.
@@ -78,6 +78,23 @@ TOOL_REGISTRY: Dict[str, ToolDefinition] = {
             },
         },
     ),
+    "doc-entities.ner": ToolDefinition(
+        name="doc-entities.ner",
+        description="Run named entity recognition on provided document text.",
+        parameters={
+            "text": {
+                "type": "string",
+                "description": "Document text that should be processed by the NER model.",
+                "required": True,
+            },
+            "language": {
+                "type": "string",
+                "description": "ISO language code guiding the mock NER pipeline (default 'de').",
+                "required": False,
+                "default": "de",
+            },
+        },
+    ),
     "graph.query": ToolDefinition(
         name="graph.query",
         description="Execute a canned Cypher query against the offline demo graph.",
@@ -109,6 +126,40 @@ TOOL_REGISTRY: Dict[str, ToolDefinition] = {
                 "description": "Toggle mock source list in the summary output.",
                 "required": False,
                 "default": True,
+            },
+        },
+    ),
+    "plugin-runner.run": ToolDefinition(
+        name="plugin-runner.run",
+        description="Invoke a mocked plugin execution via the sandbox runner.",
+        parameters={
+            "plugin_id": {
+                "type": "string",
+                "description": "Identifier of the plugin to execute (e.g. nmap.scan).",
+                "required": True,
+            },
+            "payload": {
+                "type": "object",
+                "description": "Arbitrary payload forwarded to the mocked plugin invocation.",
+                "required": False,
+                "default": {},
+            },
+        },
+    ),
+    "video.analyze": ToolDefinition(
+        name="video.analyze",
+        description="Submit a video asset for offline forensic analysis.",
+        parameters={
+            "source_url": {
+                "type": "string",
+                "description": "Public or internal URL of the video asset to inspect.",
+                "required": True,
+            },
+            "analysis_profile": {
+                "type": "string",
+                "description": "Selects the mocked analysis profile (default 'objects').",
+                "required": False,
+                "default": "objects",
             },
         },
     ),
