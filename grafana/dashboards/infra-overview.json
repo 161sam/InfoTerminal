@@ -72,6 +72,28 @@
         { "expr": "sum(feed_dedup_skipped_total)", "datasource": "Prometheus" }
       ],
       "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent Tool Latency P95",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(agent_tool_latency_seconds_bucket[5m])) by (le, tool))",
+          "legendFormat": "{{tool}}",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent Rate Limited (by Scope)",
+      "targets": [
+        {
+          "expr": "sum(rate(agent_rate_limited_total[5m])) by (scope)",
+          "legendFormat": "{{scope}}",
+          "datasource": "Prometheus"
+        }
+      ]
     }
   ]
 }
