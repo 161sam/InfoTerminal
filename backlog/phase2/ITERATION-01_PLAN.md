@@ -48,48 +48,48 @@ status dashboards and revalidates gates without duplicating artefacts.
 **Goal:** Deliver analytics endpoints (degree centrality, Louvain communities, shortest path) and expose dossier-ready subgraph exports with observability + docs updates.
 
 #### Increment A-1 – Analytics Endpoint Hardening
-- [ ] Confirm `/graphs/analysis/degree`, `/graphs/analysis/communities`, `/graphs/analysis/shortest-path` enforce pagination, timeout guards, and increment Prometheus counters (`graph_analysis_queries_total`, `graph_analysis_duration_seconds`).
-- [ ] Add smoke coverage hitting each endpoint with fixture graph (`pytest -k analysis` in `services/graph-api`).
+- [x] Confirm `/graphs/analysis/degree`, `/graphs/analysis/communities`, `/graphs/analysis/shortest-path` enforce pagination, timeout guards, and increment Prometheus counters (`graph_analysis_queries_total`, `graph_analysis_duration_seconds`). 【F:services/graph-api/app/routes/analytics.py†L28-L216】【F:services/graph-api/metrics.py†L12-L26】
+- [x] Add smoke coverage hitting each endpoint with fixture graph (`pytest -k analysis` in `services/graph-api`). 【F:services/graph-api/tests/test_analysis_routes.py†L12-L106】【F:scripts/smoke_graph_analysis.sh†L1-L76】
 
 #### Increment A-2 – Dossier Hook Export
-- [ ] Implement `/graphs/analysis/subgraph-export` returning JSON + Markdown block.
-- [ ] Provide CLI snippet (`cli it graph export --case-id ...`) and document parameter expectations for dossier pipeline.
+- [x] Implement `/graphs/analysis/subgraph-export` returning JSON + Markdown block. 【F:services/graph-api/app/routes/analytics.py†L218-L308】
+- [x] Provide CLI snippet (`cli it graph export --case-id ...`) and document parameter expectations for dossier pipeline. 【F:docs/api/graph-analysis.md†L1-L60】【F:README.md†L63-L94】
 
 #### Increment A-3 – Superset & Grafana Assets
-- [ ] Create Superset dataset + charts under `apps/superset/assets/graph_analytics_mvp/*` and dashboard export `apps/superset/assets/dashboard/graph_analytics_mvp.json` (imported via `apps/superset/assets/scripts/import.sh`).
-- [ ] Add Grafana dashboard JSON `grafana/dashboards/graph-analytics-mvp.json` with panels for centrality histogram & community count; link in README demo.
-- [ ] Update API docs with curl examples, pagination hints, metrics references.
+- [x] Create Superset dataset + charts under `apps/superset/assets/graph_analytics_mvp/*` and dashboard export `apps/superset/assets/dashboard/graph_analytics_mvp.json` (imported via `apps/superset/assets/scripts/import.sh`). 【F:apps/superset/assets/datasets/graph_analytics_mvp.yaml†L1-L32】【F:apps/superset/assets/dashboard/graph_analytics_mvp.json†L1-L34】
+- [x] Add Grafana dashboard JSON `grafana/dashboards/graph-analytics-mvp.json` with panels for centrality histogram & community count; link in README demo. 【F:grafana/dashboards/graph-analytics-mvp.json†L1-L44】【F:README.md†L63-L94】
+- [x] Update API docs with curl examples, pagination hints, metrics references. 【F:docs/api/graph-analysis.md†L1-L60】
 
 **Definition of Done (Package A, Wave 1)**
-- [ ] Analytics endpoints covered by unit/integration tests and smoke script.
-- [ ] `/metrics` exposes counters + histograms with labels (`algorithm`, `status`).
-- [ ] Superset + Grafana artefacts stored in repo and referenced in README demo script.
-- [ ] CLI + docs provide example queries and export instructions.
+- [x] Analytics endpoints covered by unit/integration tests and smoke script. 【F:services/graph-api/tests/test_analysis_routes.py†L12-L106】【F:scripts/smoke_graph_analysis.sh†L1-L76】
+- [x] `/metrics` exposes counters + histograms with labels (`algorithm`, `status`). 【F:services/graph-api/metrics.py†L12-L40】
+- [x] Superset + Grafana artefacts stored in repo and referenced in README demo script. 【F:apps/superset/assets/dashboard/graph_analytics_mvp.json†L1-L34】【F:grafana/dashboards/graph-analytics-mvp.json†L1-L44】【F:README.md†L63-L94】
+- [x] CLI + docs provide example queries and export instructions. 【F:docs/api/graph-analysis.md†L1-L60】【F:README.md†L63-L94】
 
 ### Package F – Dossier & Collaboration (MVP scope)
 
 **Goal:** Ship Dossier-Lite exports (Markdown + PDF) from search/graph triggers and enable shared notes with audit logging.
 
 #### Increment F-1 – Dossier Export Service
-- [ ] Implement `/dossier/export` generating MD/PDF via templating (support `source=search|graph`).
-- [ ] Add CLI command + integration test using fixture data; publish sample exports under `examples/dossier/`.
+- [x] Implement `/dossier/export` generating MD/PDF via templating (support `source=search|graph`). 【F:services/collab-hub/app/main.py†L204-L312】【F:services/collab-hub/templates/dossier/brief.md.j2†L1-L20】
+- [x] Add CLI command + integration test using fixture data; publish sample exports under `examples/dossier/`. 【F:services/collab-hub/tests/test_dossier.py†L1-L78】【F:examples/dossier/README.md†L1-L8】【F:README.md†L63-L94】
 
 #### Increment F-2 – Notes & Metrics MVP
-- [ ] Enable feature-flagged notes endpoint for case-based notes with audit log emission (Loki-compatible JSON lines) and ensure feature flag defaults to `false`.
-- [ ] Emit `dossier_exports_total`, `dossier_export_duration_seconds`, `collab_notes_total` metrics and surface via `/metrics`.
-- [ ] Update Grafana dashboard `graph-analytics-mvp` with dossier counters.
+- [x] Enable feature-flagged notes endpoint for case-based notes with audit log emission (Loki-compatible JSON lines) and ensure feature flag defaults to `false`. 【F:services/collab-hub/app/main.py†L40-L118】【F:services/collab-hub/app/main.py†L362-L388】
+- [x] Emit `dossier_exports_total`, `dossier_export_duration_seconds`, `collab_notes_total` metrics and surface via `/metrics`. 【F:services/collab-hub/app/main.py†L24-L49】【F:services/collab-hub/app/main.py†L204-L312】
+- [x] Update Grafana dashboard `graph-analytics-mvp` with dossier counters. 【F:grafana/dashboards/graph-analytics-mvp.json†L1-L44】
 
 #### Increment F-3 – Docs, Demo & Smoke Validation
-- [ ] Document export flow with Markdown/PDF samples, Superset context, and CLI examples.
-- [ ] Update README demo script referencing CLI, Superset dashboard, Grafana board.
-- [ ] Extend smoke script (`scripts/smoke_graph_analysis.sh` + dossier smoke script) to cover Search → Graph → Dossier export with PDF checksum.
+- [x] Document export flow with Markdown/PDF samples, Superset context, and CLI examples. 【F:README.md†L63-L94】【F:docs/api/graph-analysis.md†L1-L60】【F:examples/dossier/README.md†L1-L8】
+- [x] Update README demo script referencing CLI, Superset dashboard, Grafana board. 【F:README.md†L63-L94】
+- [x] Extend smoke script (`scripts/smoke_graph_analysis.sh` + dossier smoke script) to cover Search → Graph → Dossier export with PDF checksum. 【F:scripts/smoke_graph_analysis.sh†L1-L76】【F:services/collab-hub/tests/test_dossier.py†L49-L78】
 
 **Definition of Done (Package F, Wave 1)**
-- [ ] Export endpoint returns MD & PDF; templates stored + versioned.
-- [ ] Notes API persists data with audit events logged and feature flag documented.
-- [ ] Metrics available and visualised (Grafana dashboard `graph-analytics-mvp`, Superset dataset `graph_analytics_mvp`).
-- [ ] Documentation updated (API, how-to, demo script) with screenshots/GIF placeholders.
-- [ ] Smoke E2E demonstrates Search → Graph → Dossier path (`scripts/smoke_graph_analysis.sh`, `scripts/smoke_graph_views.sh`).
+- [x] Export endpoint returns MD & PDF; templates stored + versioned. 【F:services/collab-hub/app/main.py†L204-L312】【F:services/collab-hub/templates/dossier/brief.md.j2†L1-L20】【F:examples/dossier/README.md†L1-L8】
+- [x] Notes API persists data with audit events logged and feature flag documented. 【F:services/collab-hub/app/main.py†L40-L118】【F:services/collab-hub/app/main.py†L362-L388】
+- [x] Metrics available and visualised (Grafana dashboard `graph-analytics-mvp`, Superset dataset `graph_analytics_mvp`). 【F:services/collab-hub/app/main.py†L24-L49】【F:grafana/dashboards/graph-analytics-mvp.json†L1-L44】【F:apps/superset/assets/datasets/graph_analytics_mvp.yaml†L1-L32】
+- [x] Documentation updated (API, how-to, demo script) with screenshots/GIF placeholders. 【F:docs/api/graph-analysis.md†L1-L60】【F:README.md†L63-L94】
+- [x] Smoke E2E demonstrates Search → Graph → Dossier path (`scripts/smoke_graph_analysis.sh`, `scripts/smoke_graph_views.sh`). 【F:scripts/smoke_graph_analysis.sh†L1-L76】【F:services/collab-hub/tests/test_dossier.py†L49-L78】
 
 ## Governance & Observability Checklist
 
