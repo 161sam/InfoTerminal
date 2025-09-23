@@ -7,17 +7,16 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## A) Ontologie & Graph
 - **Goal**: Complete ontology coverage, graph analytics APIs (degree, betweenness, communities, shortest paths), dossier export hooks, and geo-enabled subgraph views.
 - **Current Evidence**:
-  - Graph algorithms implemented in `services/graph-api/analytics.py` (degree, betweenness, Louvain). 【F:services/graph-api/analytics.py†L1-L120】
-  - Geospatial helpers and Nominatim integration in `services/graph-api/geospatial.py`. 【F:services/graph-api/geospatial.py†L1-L120】
-  - Graph-views service exposes configurable metrics and feature flags. 【F:inventory/services.json†L227-L266】
-  - README beschreibt 5-Minuten-Demo für Search → Graph → Dossier inklusive Subgraph-Export. 【F:README.md†L17-L79】
+  - FastAPI analytics router exposes degree, Louvain, shortest-path, and subgraph export endpoints with Prometheus counters. 【F:services/graph-api/app/routes/analytics.py†L1-L220】【F:services/graph-api/metrics.py†L1-L40】
+  - Superset dashboard + Grafana panels checked in for graph analytics MVP. 【F:apps/superset/assets/dashboard/graph_analytics_mvp.json†L1-L200】【F:grafana/dashboards/graph-analytics-mvp.json†L1-L200】
+  - README beschreibt 5-Minuten-Demo für Search → Graph → Dossier inklusive Subgraph-Export. 【F:README.md†L17-L94】
 - **Gaps / Risks**:
   - Frontend graph explorer still targets hard-coded localhost endpoints, bypassing gateway routing. 【F:apps/frontend/src/components/graph/GraphExplorer.tsx†L1-L92】
-  - Dossier APIs not yet wired to graph exports; no automated validation of ontology constraints. 【F:services/graph-views/dossier/api.py†L1-L120】
+  - Ontology validation + automated Superset import checks not yet part of CI.
 - **DoD Checklist**:
-  - [ ] Observability: `/metrics`, `/healthz`, `/readyz` with graph-specific dashboards.
+  - [x] Observability: `/metrics`, `/healthz`, `/readyz` with graph-specific dashboards.
   - [ ] Tests: Integration tests covering analytics endpoints and ontology validators.
-  - [ ] Docs: Updated ontology reference + sample queries in `docs/`.
+  - [x] Docs: Updated ontology reference + sample queries in `docs/`.
   - [ ] Security: Gateway + OPA policies guarding graph export endpoints.
 - **Dependencies**: Package C (Geospatial map overlays), Package F (Dossier integration).
 
@@ -88,17 +87,16 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## F) Dossier & Collaboration
 - **Goal**: Export dossiers (PDF/MD) from search/graph context, shared notes/comments per case, audit logging.
 - **Current Evidence**:
-  - Graph-views dossier API stubs and templates. 【F:services/graph-views/dossier/api.py†L1-L120】
-  - Frontend dossier builder with modular panels. 【F:apps/frontend/pages/dossier.tsx†L1-L160】
-  - Collab-hub service managing tasks and websocket updates. 【F:services/collab-hub/app/main.py†L1-L120】
-  - README-Demo-Skript exportiert Markdown/PDF aus Graph-Daten (Wave 1). 【F:README.md†L51-L79】
+  - Collab-hub `/dossier/export` erzeugt Markdown/PDF inkl. Templates & Metrics, Tests decken Markdown/PDF + Notes Feature ab. 【F:services/collab-hub/app/main.py†L200-L360】【F:services/collab-hub/tests/test_dossier.py†L1-L60】
+  - Feature-flagged Notizen mit Audit-Logging (`CH_AUDIT_PATH`) aktivierbar; README-Demo referenziert End-to-End-Fluss. 【F:services/collab-hub/app/main.py†L60-L220】【F:README.md†L51-L94】
+  - Beispiel-Exports unter `examples/dossier/` dokumentiert. 【F:examples/dossier/README.md†L1-L80】
 - **Gaps / Risks**:
-  - Dossier exports mock data; collab-hub lacks metrics and audit persistence.
-  - Audit logging not integrated with Loki/Tempo.
+  - Audit logging not yet shipped to Loki/Tempo; frontend dossier builder und notes UI weiterhin ohne Backend-Verbindung.
+  - Case-basierte RBAC/Sharing-Regeln fehlen.
 - **DoD Checklist**:
-  - [ ] Observability: Metrics for dossier exports and collaboration events.
+  - [x] Observability: Metrics for dossier exports and collaboration events.
   - [ ] Tests: E2E flow from search selection to dossier PDF.
-  - [ ] Docs: Collaboration how-to + template catalogue.
+  - [x] Docs: Collaboration how-to + template catalogue.
   - [ ] Security: Access controls per case + audit trail ingestion.
 - **Dependencies**: Packages A/B (data sources), J (observability), Release.
 
