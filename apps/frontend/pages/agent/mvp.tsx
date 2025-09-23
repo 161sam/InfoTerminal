@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Bot, MessageSquare, ShieldAlert } from 'lucide-react';
@@ -73,7 +73,7 @@ export default function AgentMvpChatPage() {
   const router = useRouter();
   const [selectedTool, setSelectedTool] = useState<string>('dossier.build');
   const [prompt, setPrompt] = useState<string>('Draft a dossier overview for ACME Corp');
-  const [conversationId] = useState<string>(() => `demo-${Date.now()}`);
+  const [conversationId, setConversationId] = useState<string>('demo-seed');
   const [formValues, setFormValues] = useState<Record<string, string | boolean>>({
     subject: 'ACME Corp',
     include_sources: true
@@ -122,6 +122,12 @@ export default function AgentMvpChatPage() {
     return params;
   };
 
+  useEffect(() => {
+    setConversationId(`demo-${Date.now()}`);
+  }, []);
+
+  const activeConversationId = conversationId || 'demo-seed';
+
   const submitPrompt = async () => {
     if (!prompt.trim()) {
       setErrorMessage('Enter a prompt for the agent.');
@@ -159,7 +165,7 @@ export default function AgentMvpChatPage() {
           message: prompt.trim(),
           tool: selectedTool,
           toolParams: params,
-          conversationId
+          conversationId: activeConversationId
         })
       });
 
@@ -390,7 +396,7 @@ export default function AgentMvpChatPage() {
             ))}
           </div>
           <div className="mt-4 rounded-md border border-dashed border-gray-200 bg-gray-50 p-4 text-xs text-gray-600">
-            Conversation ID: <span className="font-mono">{conversationId}</span>
+            Conversation ID: <span className="font-mono">{activeConversationId}</span>
           </div>
         </section>
       </div>
