@@ -11,15 +11,19 @@ waves:
     packages:
       - code: "A"
         name: "Ontologie & Graph"
+        priority_rank: 1
         value_driver: "Unlock graph analytics endpoints and dossier subgraph export"
         risk_reduction: "Enables observability on analytics stack and seeds dossier integrations"
         dependencies: []
+        mvp_scope: "Degree/Louvain/shortest-path endpoints, dossier hook"
       - code: "F"
         name: "Dossier & Collaboration"
+        priority_rank: 2
         value_driver: "Deliver shareable dossier exports and collaboration notes"
         risk_reduction: "Validates end-to-end Search → Graph → Dossier flow before later packages rely on it"
         dependencies:
           - "A"
+        mvp_scope: "Markdown/PDF export, shared notes, audit metrics"
     gates:
       - "inventory_policy"
       - "health_ready_metrics"
@@ -30,17 +34,21 @@ waves:
     packages:
       - code: "B"
         name: "NLP & Resolver"
+        priority_rank: 3
         value_driver: "Relation extraction + entity linking to enrich graph and dossiers"
         risk_reduction: "Provides confidence scores + metrics before agents/plugins depend on NLP outputs"
         dependencies:
           - "A"
           - "F"
+        mvp_scope: "Heuristic relation extraction, entity linking, metrics"
       - code: "C"
         name: "Geospatial"
+        priority_rank: 4
         value_driver: "Map overlays and bbox queries tied to graph entities"
         risk_reduction: "Adds geo context incrementally while analytics/dossier pipeline is fresh"
         dependencies:
           - "A"
+        mvp_scope: "Geocoding optionality, bbox query, map layer"
     gates:
       - "inventory_policy"
       - "health_ready_metrics"
@@ -51,17 +59,21 @@ waves:
     packages:
       - code: "G"
         name: "Plugins"
+        priority_rank: 5
         value_driver: "Registry + sandbox runner (nmap example) with observability"
         risk_reduction: "Hardens plugin execution before external feeds + agents rely on them"
         dependencies:
           - "A"
           - "F"
+        mvp_scope: "Registry YAML, runner, nmap ingest, metrics"
       - code: "D"
         name: "Daten-Ingest & Workflows"
+        priority_rank: 6
         value_driver: "Idempotent NiFi/n8n automation feeding analytics and dossiers"
         risk_reduction: "Ensures ingest reliability ahead of feed + release work"
         dependencies:
           - "F"
+        mvp_scope: "NiFi/n8n template automation, retry/backoff instrumentation"
     gates:
       - "inventory_policy"
       - "health_ready_metrics"
@@ -72,17 +84,21 @@ waves:
     packages:
       - code: "H"
         name: "AI-Agenten"
+        priority_rank: 7
         value_driver: "Policy-controlled Flowise agents with audit trails"
         risk_reduction: "Depends on stable NLP/Plugins to minimise blast radius"
         dependencies:
           - "B"
           - "G"
+        mvp_scope: "Flowise policies, agent audit trail, tool wiring"
       - code: "I"
         name: "Externe Feeds"
+        priority_rank: 8
         value_driver: "Feed connectors with freshness monitoring"
         risk_reduction: "Builds atop ingest automation and plugin hardening"
         dependencies:
           - "D"
+        mvp_scope: "Connector templates, freshness metrics, alerting"
     gates:
       - "inventory_policy"
       - "health_ready_metrics"
@@ -93,6 +109,7 @@ waves:
     packages:
       - code: "J"
         name: "Performance & Infra"
+        priority_rank: 9
         value_driver: "Probe coverage, retry/timeout matrices, performance dashboards"
         risk_reduction: "Optimises infrastructure after functional packages prove value"
         dependencies:
@@ -100,14 +117,17 @@ waves:
           - "B"
           - "F"
           - "G"
+        mvp_scope: "SLO dashboards, load/perf testing, infra guardrails"
       - code: "K"
         name: "Frontend & UX"
+        priority_rank: 10
         value_driver: "OIDC wiring, dossier template picker, performance instrumentation"
         risk_reduction: "Executes once backend APIs are dependable to avoid rework"
         dependencies:
           - "F"
           - "B"
           - "C"
+        mvp_scope: "OIDC login, dossier template picker, metrics instrumentation"
     gates:
       - "inventory_policy"
       - "health_ready_metrics"
@@ -118,6 +138,7 @@ waves:
     packages:
       - code: "L"
         name: "Docs & Tests"
+        priority_rank: 11
         value_driver: "Inventory-driven doc refresh, coverage gating, runbooks"
         risk_reduction: "Finalises knowledge base after features settle"
         dependencies:
@@ -126,20 +147,25 @@ waves:
           - "F"
           - "G"
           - "J"
+        mvp_scope: "Inventory-sync docs, coverage gates, runbooks"
       - code: "Hardening"
         name: "Security Hardening"
+        priority_rank: 12
         value_driver: "Threat model, backup drills, egress policy validation"
         risk_reduction: "Locks in compliance/security before release"
         dependencies:
           - "G"
           - "J"
+        mvp_scope: "Threat model, backup drills, policy validation"
       - code: "Release"
         name: "Release"
+        priority_rank: 13
         value_driver: "Release notes, demo assets, install guides"
         risk_reduction: "Ensures final packaging only after all gates stable"
         dependencies:
           - "L"
           - "Hardening"
+        mvp_scope: "Release notes, demo kit, install guides"
     gates:
       - "inventory_policy"
       - "health_ready_metrics"

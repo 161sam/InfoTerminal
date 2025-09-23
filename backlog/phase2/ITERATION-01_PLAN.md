@@ -30,55 +30,64 @@ status dashboards and revalidates gates without duplicating artefacts.
 
 ## Wave 1 Detailed Plan (Packages A & F)
 
+### Increment Breakdown (risk-reducing, idempotent)
+
+| Increment | Package | Focus | Dependencies | Completion Evidence |
+| --- | --- | --- | --- | --- |
+| **A-1** | A | Harden `/graphs/analysis/*` endpoints (pagination, timeouts, metrics) + smoke tests | Seed graph fixtures | Pytest module `services/graph-api/tests/test_analysis_routes.py`, Prometheus counters exposed |
+| **A-2** | A | Dossier subgraph export + CLI hook | Increment A-1 | Endpoint `/graphs/analysis/subgraph-export`, CLI snippet documented |
+| **A-3** | A | Observability + dashboards (Superset + Grafana) | Increments A-1/A-2 | Dashboard artefacts (`apps/superset/assets/**/*graph_analytics_mvp*`, `grafana/dashboards/graph-analytics-mvp.json`) |
+| **F-1** | F | `/dossier/export` Markdown/PDF service + templates | Subgraph export (A-2) | Integration test `services/collab-hub/tests/test_dossier.py`, sample exports in `examples/dossier/` |
+| **F-2** | F | Notes/Comments MVP with audit logging + metrics | Feature flag scaffolding | Audit log config (`CH_AUDIT_PATH`), metrics counters, feature flag default off |
+| **F-3** | F | README demo refresh, Superset/Grafana references, smoke E2E extension | Increments F-1/F-2 + A-3 | Updated README 5-minute demo, `scripts/smoke_graph_analysis.sh` and dossier smoke script |
+
+> 🔁 **Idempotent**: Each increment regenerates artefacts in place (dashboards, exports, docs) so reruns update resources without duplicating them.
+
 ### Package A – Ontologie & Graph (MVP scope)
 
 **Goal:** Deliver analytics endpoints (degree centrality, Louvain communities, shortest path) and expose dossier-ready subgraph exports with observability + docs updates.
 
-**Incremental Tasks (idempotent)**
-1. **Analytics Endpoint Hardening**
-   - Confirm `/graphs/analysis/degree` (paginated, timeout aware) + `/graphs/analysis/communities` + `/graphs/analysis/shortest-path` implement request validation and Prometheus counters (`graph_analysis_queries_total`, `graph_analysis_duration_seconds`).
-   - Add smoke tests hitting each endpoint with fixture graph. Use `pytest -k analysis` in `services/graph-api` (create if missing).
-2. **Dossier Hook Export**
-   - Implement subgraph export endpoint returning JSON + Markdown block (`/graphs/analysis/subgraph-export`).
-   - Provide CLI snippet (`cli it graph export --case-id ...`) wiring to dossier pipeline.
-3. **Superset Mini-Dashboard**
-   - Create Superset dataset + chart definitions under `apps/superset/assets/` (`graph_analytics_mvp`).
-   - Charts: degree centrality histogram, community count big number. Dashboard export lives at `apps/superset/assets/dashboard/graph_analytics_mvp.json` and is imported via `apps/superset/assets/scripts/import.sh`.
-4. **Docs & Examples**
-   - Update API docs with curl examples, note timeouts/pagination, reference metrics names.
-   - README demo section links to Superset dashboard and Grafana panel for the MVP.
-5. **Observability & Gates**
-   - Ensure metrics surface under `/metrics`; add Grafana dashboard JSON `grafana/dashboards/graph-analytics-mvp.json` with new panels.
+#### Increment A-1 – Analytics Endpoint Hardening
+- [ ] Confirm `/graphs/analysis/degree`, `/graphs/analysis/communities`, `/graphs/analysis/shortest-path` enforce pagination, timeout guards, and increment Prometheus counters (`graph_analysis_queries_total`, `graph_analysis_duration_seconds`).
+- [ ] Add smoke coverage hitting each endpoint with fixture graph (`pytest -k analysis` in `services/graph-api`).
 
-**Definition of Done (Wave 1)**
-- [ ] Analytics endpoints covered by unit/integration tests.
+#### Increment A-2 – Dossier Hook Export
+- [ ] Implement `/graphs/analysis/subgraph-export` returning JSON + Markdown block.
+- [ ] Provide CLI snippet (`cli it graph export --case-id ...`) and document parameter expectations for dossier pipeline.
+
+#### Increment A-3 – Superset & Grafana Assets
+- [ ] Create Superset dataset + charts under `apps/superset/assets/graph_analytics_mvp/*` and dashboard export `apps/superset/assets/dashboard/graph_analytics_mvp.json` (imported via `apps/superset/assets/scripts/import.sh`).
+- [ ] Add Grafana dashboard JSON `grafana/dashboards/graph-analytics-mvp.json` with panels for centrality histogram & community count; link in README demo.
+- [ ] Update API docs with curl examples, pagination hints, metrics references.
+
+**Definition of Done (Package A, Wave 1)**
+- [ ] Analytics endpoints covered by unit/integration tests and smoke script.
 - [ ] `/metrics` exposes counters + histograms with labels (`algorithm`, `status`).
-- [ ] API docs include example requests/responses and export instructions.
-- [ ] Superset dataset, charts, and dashboard exports checked into repo (`apps/superset/assets/**/*graph_analytics_mvp*`) and referenced in README demo script.
-- [ ] Smoke E2E (`scripts/smoke_graph_analysis.sh`) verifies `curl` → `graph-analysis` → `dossier export` path.
+- [ ] Superset + Grafana artefacts stored in repo and referenced in README demo script.
+- [ ] CLI + docs provide example queries and export instructions.
 
 ### Package F – Dossier & Collaboration (MVP scope)
 
 **Goal:** Ship Dossier-Lite exports (Markdown + PDF) from search/graph triggers and enable shared notes with audit logging.
 
-**Incremental Tasks (idempotent)**
-1. **Dossier Export Service**
-   - Implement backend route `/dossier/export` generating MD/PDF using template engine (reuse existing template stubs). Support triggers via query param `source=search|graph`.
-   - Add CLI command + integration test using fixture data.
-2. **Notes/Comments MVP**
-   - Enable collab-hub endpoint for case-based notes; ensure feature flag default `false`. Add audit log emission to Loki-compatible format.
-3. **Audit & Metrics**
-   - Emit `dossier_exports_total`, `dossier_export_duration_seconds`, `collab_notes_total` metrics. Wire to `/metrics` and update Grafana dashboards.
-4. **Docs & Demo Assets**
-   - Document export flow with sample Markdown/PDF outputs stored under `examples/dossier/` and cross-link Superset dataset.
-   - Update README demo script referencing CLI, Superset dashboard, and Grafana board.
-5. **E2E Validation**
-   - Extend smoke script (`test_dossier_v02.sh` or new) to cover Search → Graph → Dossier export, verifying PDF checksum.
+#### Increment F-1 – Dossier Export Service
+- [ ] Implement `/dossier/export` generating MD/PDF via templating (support `source=search|graph`).
+- [ ] Add CLI command + integration test using fixture data; publish sample exports under `examples/dossier/`.
 
-**Definition of Done (Wave 1)**
+#### Increment F-2 – Notes & Metrics MVP
+- [ ] Enable feature-flagged notes endpoint for case-based notes with audit log emission (Loki-compatible JSON lines) and ensure feature flag defaults to `false`.
+- [ ] Emit `dossier_exports_total`, `dossier_export_duration_seconds`, `collab_notes_total` metrics and surface via `/metrics`.
+- [ ] Update Grafana dashboard `graph-analytics-mvp` with dossier counters.
+
+#### Increment F-3 – Docs, Demo & Smoke Validation
+- [ ] Document export flow with Markdown/PDF samples, Superset context, and CLI examples.
+- [ ] Update README demo script referencing CLI, Superset dashboard, Grafana board.
+- [ ] Extend smoke script (`scripts/smoke_graph_analysis.sh` + dossier smoke script) to cover Search → Graph → Dossier export with PDF checksum.
+
+**Definition of Done (Package F, Wave 1)**
 - [ ] Export endpoint returns MD & PDF; templates stored + versioned.
-- [ ] Notes API persists data with audit events logged.
-- [ ] Metrics available and visualised (Grafana dashboard `graph-analytics-mvp` + Superset dataset `graph_analytics_mvp`).
+- [ ] Notes API persists data with audit events logged and feature flag documented.
+- [ ] Metrics available and visualised (Grafana dashboard `graph-analytics-mvp`, Superset dataset `graph_analytics_mvp`).
 - [ ] Documentation updated (API, how-to, demo script) with screenshots/GIF placeholders.
 - [ ] Smoke E2E demonstrates Search → Graph → Dossier path (`scripts/smoke_graph_analysis.sh`, `scripts/smoke_graph_views.sh`).
 
