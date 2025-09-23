@@ -11,7 +11,7 @@ from app.main import (
     FeedStore,
     RSSParser,
     RSSClient,
-    scheduler_loop,
+    rss_scheduler_loop,
     feed_dedup_skipped_total,
     feed_items_fetched_total,
     feed_items_ingested_total,
@@ -110,7 +110,7 @@ async def test_run_endpoint_uses_pipeline(monkeypatch, client):
     async def fake_fetch(url: str) -> str:  # noqa: ARG001
         return RSS_SAMPLE
 
-    monkeypatch.setattr("app.main.pipeline.client.fetch", fake_fetch)
+    monkeypatch.setattr("app.main.rss_pipeline.client.fetch", fake_fetch)
     response = await client.post("/feeds/rss/run", json={"dry_run": False})
     assert response.status_code == 200
     body = response.json()
@@ -138,6 +138,11 @@ async def test_feature_flags_block(monkeypatch, client):
     response = await client.post("/feeds/rss/run")
     assert response.status_code == 503
 
+    monkeypatch.setenv("RSS_ENABLED", "1")
+    monkeypatch.setenv("FEED_OTX_ENABLED", "0")
+    response = await client.post("/feeds/otx/run")
+    assert response.status_code == 503
+
 
 @pytest.mark.anyio
 async def test_startup_scheduler(monkeypatch):
@@ -154,15 +159,15 @@ async def test_startup_scheduler(monkeypatch):
     monkeypatch.setenv("FEEDS_ENABLED", "1")
     monkeypatch.setenv("RSS_ENABLED", "1")
     feed_main.FETCH_INTERVAL_SECONDS = 1
-    monkeypatch.setattr(feed_main.pipeline, "run", fake_run)
+    monkeypatch.setattr(feed_main.rss_pipeline, "run", fake_run)
 
     await feed_main.startup()  # type: ignore[attr-defined]
-    assert feed_main.scheduler_task is not None
-    feed_main.scheduler_task.cancel()
+    assert feed_main.rss_scheduler_task is not None
+    feed_main.rss_scheduler_task.cancel()
     with pytest.raises(asyncio.CancelledError):
-        await feed_main.scheduler_task
-    await feed_main.pipeline.close()
-    feed_main.scheduler_task = None
+        await feed_main.rss_scheduler_task
+    await feed_main.rss_pipeline.close()
+    feed_main.rss_scheduler_task = None
     feed_main.FETCH_INTERVAL_SECONDS = 0
 
 
@@ -199,13 +204,13 @@ async def test_scheduler_loop_handles_error(monkeypatch):
     async def fake_sleep(delay: float):  # noqa: ARG001
         raise asyncio.CancelledError
 
-    monkeypatch.setattr(feed_main.pipeline, "run", fake_run)
+    monkeypatch.setattr(feed_main.rss_pipeline, "run", fake_run)
     monkeypatch.setenv("FEEDS_ENABLED", "1")
     monkeypatch.setenv("RSS_ENABLED", "1")
     feed_main.RSS_DRY_RUN_DEFAULT = False
     monkeypatch.setattr("app.main.asyncio.sleep", fake_sleep)
 
     with pytest.raises(asyncio.CancelledError):
-        await scheduler_loop()
+        await rss_scheduler_loop()
     feed_main.RSS_DRY_RUN_DEFAULT = True
 

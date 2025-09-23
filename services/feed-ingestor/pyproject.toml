@@ -5,7 +5,8 @@ dependencies = [
   "fastapi>=0.111",
   "uvicorn>=0.30",
   "httpx>=0.27",
-  "prometheus-client==0.20.*"
+  "prometheus-client==0.20.*",
+  "pytest-cov>=4.1"
 ]
 
 [tool.pytest.ini_options]

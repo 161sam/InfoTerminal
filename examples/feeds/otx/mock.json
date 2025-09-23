@@ -1,0 +1,23 @@
+{
+  "results": [
+    {
+      "name": "Demo Pulse",
+      "tags": ["threat-intel", "demo"],
+      "created": "2024-05-10T12:00:00",
+      "indicators": [
+        {
+          "indicator": "malicious.example.com",
+          "type": "domain",
+          "first_seen": "2024-05-01T08:30:00Z",
+          "tags": ["domain", "demo"]
+        },
+        {
+          "indicator": "198.51.100.3",
+          "type": "IPv4",
+          "created": "2024-05-02T15:45:00Z",
+          "tags": ["ipv4"]
+        }
+      ]
+    }
+  ]
+}
