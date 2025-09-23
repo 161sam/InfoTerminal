@@ -67,6 +67,17 @@
     },
     {
       "type": "stat",
+      "title": "OTX → Graph Items Ingested",
+      "targets": [
+        {
+          "expr": "sum(feed_items_ingested_total{source=\"otx\",target=\"graph\"})",
+          "datasource": "Prometheus"
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
       "title": "Feed Dedup Skipped",
       "targets": [
         { "expr": "sum(feed_dedup_skipped_total)", "datasource": "Prometheus" }

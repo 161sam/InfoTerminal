@@ -12,6 +12,7 @@ from app.main import (
     otx_scheduler_loop,
     feed_dedup_skipped_total,
     feed_items_fetched_total,
+    feed_items_ingested_total,
 )
 
 OTX_SAMPLE = {
@@ -33,6 +34,16 @@ OTX_SAMPLE = {
 }
 
 
+def read_counter(counter, **labels):
+    if labels:
+        key = tuple(labels[name] for name in counter._labelnames)  # type: ignore[attr-defined]
+        metric = counter._metrics.get(key)  # type: ignore[attr-defined]
+        if metric is None:
+            return 0.0
+        return metric._value.get()  # type: ignore[attr-defined]
+    return counter._value.get()  # type: ignore[attr-defined]
+
+
 @pytest.mark.anyio
 async def test_otx_normalizer_extracts_fields():
     normalizer = OTXNormalizer()
@@ -49,31 +60,52 @@ async def test_otx_normalizer_extracts_fields():
 @pytest.mark.anyio
 async def test_otx_pipeline_deduplicates(monkeypatch):
     store = OTXStore()
-    pipeline = OTXPipeline(store)
+    captured = {"payloads": []}
+
+    class FakeGraphClient:
+        async def ingest_threat_indicators(self, payload):
+            captured["payloads"].append(payload)
+            return {"status": "ok", "ingested": len(payload["items"])}
+
+        async def close(self):
+            return None
+
+    pipeline = OTXPipeline(store, ingest_client=FakeGraphClient())
 
     async def fake_fetch(url: str):  # noqa: ARG001
         return OTX_SAMPLE
 
     monkeypatch.setattr(pipeline.client, "fetch", fake_fetch)
 
-    fetched_before = feed_items_fetched_total.labels(source="otx")._value.get()  # type: ignore[attr-defined]
-    dedup_before = feed_dedup_skipped_total.labels(source="otx")._value.get()  # type: ignore[attr-defined]
+    fetched_before = read_counter(feed_items_fetched_total, source="otx")
+    dedup_before = read_counter(feed_dedup_skipped_total, source="otx")
+    ingested_before = read_counter(
+        feed_items_ingested_total, source="otx", target="graph"
+    )
 
     first = await pipeline.run("https://example.com", dry_run=False)
     assert first.fetched == 1
     assert first.deduped == 0
     assert len(first.items) == 1
     assert store.seen(first.items[0])
+    assert first.ingested == 1
+    assert captured["payloads"]
 
     second = await pipeline.run("https://example.com", dry_run=False)
     assert second.deduped == 1
     assert len(second.items) == 0
+    assert second.ingested == 0
+    assert len(captured["payloads"]) == 1
 
-    fetched_after = feed_items_fetched_total.labels(source="otx")._value.get()  # type: ignore[attr-defined]
-    dedup_after = feed_dedup_skipped_total.labels(source="otx")._value.get()  # type: ignore[attr-defined]
+    fetched_after = read_counter(feed_items_fetched_total, source="otx")
+    dedup_after = read_counter(feed_dedup_skipped_total, source="otx")
+    ingested_after = read_counter(
+        feed_items_ingested_total, source="otx", target="graph"
+    )
 
     assert fetched_after == pytest.approx(fetched_before + 2)
     assert dedup_after == pytest.approx(dedup_before + 1)
+    assert ingested_after == pytest.approx(ingested_before + 1)
 
     await pipeline.close()
 
@@ -89,6 +121,7 @@ async def test_otx_run_endpoint(monkeypatch, client):
     body = response.json()
     assert body["fetched"] == 1
     assert body["deduped"] == 0
+    assert body["ingested"] == 1
     assert body["dry_run"] is False
     assert body["items"][0]["indicator"] == "1.2.3.4"
 
