@@ -1,12 +1,11 @@
-"""
-Relation extraction module for InfoTerminal doc-entities service.
-Implements rule-based and dependency parsing approaches to extract relationships between entities.
-"""
+"""Relation extraction module for InfoTerminal doc-entities service."""
 
+import logging
 import re
-import spacy
-from typing import List, Dict, Any, Tuple, Optional
 from collections import defaultdict
+from typing import Any, Dict, Iterable, List, Optional, Tuple
+
+import spacy
 
 
 class RelationExtractor:
@@ -14,11 +13,47 @@ class RelationExtractor:
     
     def __init__(self, model_name: str = "en_core_web_sm"):
         """Initialize the relation extractor with spaCy model."""
+
+        self.logger = logging.getLogger(__name__)
+        self.supports_dependencies = False
+
         try:
             self.nlp = spacy.load(model_name)
         except OSError:
-            # Fallback to smaller model if available
-            self.nlp = spacy.load("en_core_web_sm")
+            self.logger.warning(
+                "spaCy model %s missing – falling back to blank('en') pipeline",
+                model_name,
+            )
+            self.nlp = spacy.blank("en")
+        except Exception as exc:  # pragma: no cover - defensive guard
+            self.logger.warning("spaCy load error (%s); using blank pipeline", exc)
+            self.nlp = spacy.blank("en")
+
+        if not hasattr(self.nlp, "has_pipe"):
+            original_nlp = self.nlp
+
+            class _CallablePipeline:
+                def __init__(self, func):
+                    self._func = func
+
+                def __call__(self, text: str):  # pragma: no cover - exercised in tests
+                    return self._func(text)
+
+                def has_pipe(self, _: str) -> bool:
+                    return False
+
+                def add_pipe(self, *_args, **_kwargs):  # pragma: no cover - no-op in stubs
+                    return None
+
+            self.nlp = _CallablePipeline(original_nlp)
+
+        if not self.nlp.has_pipe("sentencizer"):
+            try:
+                self.nlp.add_pipe("sentencizer")
+            except Exception:  # pragma: no cover - spaCy <3.1 fallback
+                pass
+
+        self.supports_dependencies = self.nlp.has_pipe("parser")
         
         # Relation patterns for different entity types
         self.relation_patterns = {
@@ -94,16 +129,17 @@ class RelationExtractor:
                 if token_idx < len(text):
                     entity_map[token_idx] = entity
         
-        # Method 1: Dependency parsing
-        dependency_relations = self._extract_dependency_relations(doc, entities)
-        relations.extend(dependency_relations)
+        # Method 1: Dependency parsing (skip when parser unavailable)
+        if self.supports_dependencies:
+            dependency_relations = self._extract_dependency_relations(doc, entities)
+            relations.extend(dependency_relations)
         
         # Method 2: Pattern matching
         pattern_relations = self._extract_pattern_relations(text, entities)
         relations.extend(pattern_relations)
         
         # Method 3: Sentence-level co-occurrence
-        cooccurrence_relations = self._extract_cooccurrence_relations(doc, entities)
+        cooccurrence_relations = self._extract_cooccurrence_relations(doc, text, entities)
         relations.extend(cooccurrence_relations)
         
         # Remove duplicates and rank by confidence
@@ -113,6 +149,8 @@ class RelationExtractor:
     
     def _extract_dependency_relations(self, doc, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Extract relations using spaCy dependency parsing."""
+        if not self.supports_dependencies:
+            return []
         relations = []
         
         # Create token-to-entity mapping
@@ -204,21 +242,27 @@ class RelationExtractor:
         
         return relations
     
-    def _extract_cooccurrence_relations(self, doc, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _extract_cooccurrence_relations(
+        self,
+        doc,
+        text: str,
+        entities: List[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
         """Extract relations based on co-occurrence in the same sentence."""
         relations = []
-        
+
         # Group entities by sentence
         sentence_entities = defaultdict(list)
+        sentences = list(self._iter_sentences(doc, text))
         for entity in entities:
             start_char = entity.get("span_start", 0)
-            for sent in doc.sents:
-                if sent.start_char <= start_char < sent.end_char:
-                    sentence_entities[sent.text].append(entity)
+            for sent_text, sent_start, sent_end in sentences:
+                if sent_start <= start_char < sent_end:
+                    sentence_entities[(sent_text, sent_start, sent_end)].append(entity)
                     break
-        
+
         # For entities in the same sentence, infer weak relations
-        for sentence_text, sent_entities in sentence_entities.items():
+        for (sentence_text, _, _), sent_entities in sentence_entities.items():
             if len(sent_entities) >= 2:
                 for i, ent1 in enumerate(sent_entities):
                     for ent2 in sent_entities[i+1:]:
@@ -333,8 +377,45 @@ class RelationExtractor:
     
     def _get_sentence_context(self, token) -> str:
         """Get sentence context for a token."""
-        sent = token.sent
-        return sent.text.strip()
+        try:
+            sent = token.sent
+            return sent.text.strip()
+        except AttributeError:
+            return ""
+
+    def _iter_sentences(self, doc, text: str) -> Iterable[Tuple[str, int, int]]:
+        """Yield sentence text and boundaries even without parser support."""
+
+        if (
+            doc is not None
+            and hasattr(doc, "has_annotation")
+            and hasattr(doc, "sents")
+        ):
+            try:
+                if doc.has_annotation("SENT_START"):
+                    for sent in doc.sents:
+                        yield sent.text, sent.start_char, sent.end_char
+                    return
+            except Exception:  # pragma: no cover - defensive fallback
+                pass
+
+        if not text:
+            return
+
+        offset = 0
+        for match in re.finditer(r"[^.!?]+[.!?]?", text):
+            chunk = match.group().strip()
+            if not chunk:
+                continue
+            start = match.start()
+            end = match.end()
+            offset = end
+            yield chunk, start, end
+
+        if offset < len(text):
+            remainder = text[offset:].strip()
+            if remainder:
+                yield remainder, offset, len(text)
     
     def _deduplicate_relations(self, relations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Remove duplicate relations and keep the highest confidence ones."""

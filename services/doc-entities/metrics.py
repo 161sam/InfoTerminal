@@ -42,6 +42,15 @@ RESOLVER_OUTCOMES = _get_or_register(
     ),
 )
 
+RESOLVER_STATUS_COUNTS = _get_or_register(
+    "doc_entities_linking_status_total",
+    lambda: Counter(
+        "doc_entities_linking_status_total",
+        "Cumulative count of entity linking statuses surfaced to clients",
+        ["status"],
+    ),
+)
+
 RESOLVER_CONFIDENCE = _get_or_register(
     "doc_entities_resolver_best_candidate_confidence",
     lambda: Histogram(

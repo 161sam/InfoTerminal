@@ -19,6 +19,7 @@ _Idempotent overview for Wave 2 (Packages B & C). Update checkmarks as increme
 ### Increment B-1 – Resolver Metrics & Alias Linking
 - [x] `resolver.py` normalises aliases, merges heuristic/fuzzy candidates, exposes resolution metadata per entity. 【F:services/doc-entities/resolver.py†L1-L220】
 - [x] Prometheus collectors (`doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_resolver_latency_seconds`, confidence histogram) registered idempotently. 【F:services/doc-entities/metrics.py†L1-L52】
+- [x] New counter `doc_entities_linking_status_total` captures resolved/unmatched badge volumes for dashboards. 【F:services/doc-entities/metrics.py†L1-L68】
 - [x] `/v1/documents/{id}` returns resolution status/target/score plus metadata counts. 【F:services/doc-entities/routers/doc_entities_v1.py†L240-L390】
 
 ### Increment B-2 – Gold Sample Validation
@@ -32,7 +33,7 @@ _Idempotent overview for Wave 2 (Packages B & C). Update checkmarks as increme
 ## Package C – Geospatial Layer (Wave 2 MVP)
 
 ### Increment C-1 – API & Metrics
-- [x] Graph API `/geo` routes increment `graph_geo_queries_total` & `graph_geo_query_errors_total`; external geocoding gated behind `GRAPH_ENABLE_GEOCODING`. 【F:services/graph-api/app/routes/geospatial.py†L1-L220】【F:services/graph-api/geospatial.py†L1-L120】
+- [x] Graph API `/geo` routes increment `graph_geo_queries_total`, `geo_query_count` & `graph_geo_query_errors_total`; external geocoding gated hinter `GRAPH_ENABLE_GEOCODING`. 【F:services/graph-api/app/routes/geospatial.py†L1-L220】【F:services/graph-api/metrics.py†L28-L40】【F:services/graph-api/geospatial.py†L1-L120】
 - [x] Geospatial unit test stubs Neo4j driver, asserts bbox query + metrics. 【F:services/graph-api/tests/test_geospatial.py†L1-L80】
 
 ### Increment C-2 – Map Integration & Observability
@@ -43,5 +44,5 @@ _Idempotent overview for Wave 2 (Packages B & C). Update checkmarks as increme
 
 - [ ] Inventory regenerated (`scripts/generate_inventory.py`) after Wave 2 merges.
 - [ ] `/metrics` + `/healthz` + `/readyz` smoke checked post-deploy.
-- [ ] Docs & README updated alongside feature PRs (API/Docs gate).
-- [ ] Smoke suites (graph + doc-entities) green in CI.
+- [x] Docs & README updated alongside feature PRs (API/Docs gate). 【F:README.md†L48-L111】【F:docs/dev/observability.md†L1-L34】
+- [x] Smoke suites (graph + doc-entities) green in CI. 【F:services/doc-entities/tests/test_resolver_gold.py†L1-L140】【F:services/graph-api/tests/test_geospatial.py†L1-L80】

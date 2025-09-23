@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 
 import pytest
 
-from metrics import GRAPH_GEO_QUERIES
+from metrics import GRAPH_GEO_QUERIES, GEO_QUERY_COUNT
 
 
 class DummyResult:
@@ -80,5 +80,7 @@ async def test_geo_entities_records_metrics(client):
     assert payload["count"] == 1
     assert payload["entities"][0]["name"] == "Berlin"
 
-    metric_value = GRAPH_GEO_QUERIES.labels(type="bbox")._value.get()
-    assert metric_value >= 1
+    bbox_metric = GRAPH_GEO_QUERIES.labels(type="bbox")._value.get()
+    compat_metric = GEO_QUERY_COUNT.labels(type="bbox")._value.get()
+    assert bbox_metric >= 1
+    assert compat_metric >= 1
