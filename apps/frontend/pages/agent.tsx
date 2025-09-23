@@ -45,12 +45,22 @@ export default function ConsolidatedAgentPage() {
   ];
 
   return (
-    <DashboardLayout 
-      title="Agent Platform" 
+    <DashboardLayout
+      title="Agent Platform"
       subtitle="AI-powered investigation and analysis platform"
     >
       <div className="max-w-7xl mx-auto space-y-6">
-        
+        <div className="rounded-lg border border-primary-200 bg-primary-50 p-4 text-sm text-gray-800 shadow-sm">
+          <p className="font-semibold">New: single-turn MVP chat</p>
+          <p className="mt-1">
+            Need the lightweight mocked agent demo from Wave 4?{' '}
+            <a href="/agent/mvp" className="text-primary-700 underline">
+              Open the MVP chat interface
+            </a>{' '}
+            to trigger the mocked tool governance flow.
+          </p>
+        </div>
+
         {/* Main Tab Navigation */}
         <div className="space-y-6">
           {/* Tab Navigation */}
