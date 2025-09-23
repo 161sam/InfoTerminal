@@ -1,0 +1,35 @@
+{
+  "dashboard_title": "graph_analytics_mvp",
+  "description": "Graph analytics MVP dashboard for degree distribution and community coverage.",
+  "charts": [
+    "graph_degree_histogram",
+    "graph_community_count"
+  ],
+  "metadata": {
+    "native_filter_configuration": [
+      {
+        "id": "nf_algorithm",
+        "name": "Algorithm",
+        "filterType": "select",
+        "targets": [
+          {
+            "datasetId": "graph_analytics_mvp",
+            "column": "algorithm"
+          }
+        ]
+      },
+      {
+        "id": "nf_label",
+        "name": "Label",
+        "filterType": "select",
+        "targets": [
+          {
+            "datasetId": "graph_analytics_mvp",
+            "column": "label"
+          }
+        ]
+      }
+    ],
+    "cross_filters_enabled": true
+  }
+}

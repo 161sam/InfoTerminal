@@ -1,0 +1,20 @@
+{
+  "slice_name": "graph_community_count",
+  "viz_type": "big_number_total",
+  "datasource": "graph_analytics_mvp",
+  "params": {
+    "metric": "community_count",
+    "time_range": "No filter",
+    "comparison_type": "values",
+    "format": "SMART_NUMBER",
+    "show_trend_line": false,
+    "adhoc_filters": [
+      {
+        "expressionType": "SQL",
+        "sqlExpression": "algorithm = 'louvain'",
+        "clause": "WHERE",
+        "isExtra": false
+      }
+    ]
+  }
+}

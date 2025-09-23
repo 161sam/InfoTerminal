@@ -1,0 +1,40 @@
+{
+  "uid": "graph-analytics-mvp",
+  "title": "Graph Analytics MVP",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Analysis Query Rate",
+      "targets": [
+        {
+          "expr": "sum(rate(graph_analysis_queries_total[5m])) by (algorithm)",
+          "legendFormat": "{{algorithm}}",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Analysis Duration p95",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(graph_analysis_duration_seconds_bucket[5m])) by (le, algorithm))",
+          "legendFormat": "{{algorithm}}",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Subgraph Exports",
+      "targets": [
+        {
+          "expr": "sum(increase(graph_subgraph_exports_total[15m]))",
+          "datasource": "Prometheus"
+        }
+      ]
+    }
+  ]
+}
