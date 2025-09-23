@@ -16,11 +16,12 @@ implements the feature set required for the Wave 4 agent MVP:
 from __future__ import annotations
 
 import hashlib
+import json
+import logging
 import os
+import string
 import time
 import uuid
-import string
-import logging
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from datetime import datetime
@@ -188,6 +189,21 @@ agent_tool_calls_total = Counter(
     "agent_tool_calls_total",
     "Total number of tool calls executed by the agent MVP.",
     labelnames=("tool",),
+)
+agent_tool_call_started_total = Counter(
+    "agent_tool_call_started_total",
+    "Total number of tool call start events emitted by the agent MVP.",
+    labelnames=("tool",),
+)
+agent_tool_call_succeeded_total = Counter(
+    "agent_tool_call_succeeded_total",
+    "Total number of tool call success events emitted by the agent MVP.",
+    labelnames=("tool",),
+)
+agent_tool_call_failed_total = Counter(
+    "agent_tool_call_failed_total",
+    "Total number of tool call failure events emitted by the agent MVP.",
+    labelnames=("tool", "reason"),
 )
 agent_policy_denied_total = Counter(
     "agent_policy_denied_total",
@@ -515,10 +531,53 @@ async def policy_denied_handler(_: Request, exc: PolicyDeniedError) -> JSONRespo
 
 @app.middleware("http")
 async def add_request_id(request: Request, call_next):
-    request_id = request.headers.get("X-Request-Id", str(uuid.uuid4()))
+    request_id = request.headers.get("X-Request-Id") or str(uuid.uuid4())
+    request.state.request_id = request_id
+    request.state.req_id = request_id
     response = await call_next(request)
     response.headers["X-Request-Id"] = request_id
     return response
+
+
+def _emit_tool_event(
+    event: str,
+    *,
+    tool: Optional[str],
+    conversation_id: str,
+    request_id: str,
+    user_hash: str,
+    reason: Optional[str] = None,
+    details: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Emit structured log and metrics for tool lifecycle events."""
+
+    resolved_tool = tool or "__unknown__"
+    payload = {
+        "event": event,
+        "tool": resolved_tool,
+        "conversation_id": conversation_id,
+        "request_id": request_id,
+        "user_hash": user_hash,
+    }
+    if reason:
+        payload["reason"] = reason
+    if details:
+        payload["details"] = details
+
+    log_message = json.dumps(payload, separators=(",", ":"))
+    log_extra = {"req_id": request_id}
+
+    if event == "tool_call_failed":
+        logger.error(log_message, extra=log_extra)
+        agent_tool_call_failed_total.labels(
+            tool=resolved_tool, reason=reason or "unknown"
+        ).inc()
+    elif event == "tool_call_succeeded":
+        logger.info(log_message, extra=log_extra)
+        agent_tool_call_succeeded_total.labels(tool=resolved_tool).inc()
+    else:
+        logger.info(log_message, extra=log_extra)
+        agent_tool_call_started_total.labels(tool=resolved_tool).inc()
 
 
 @app.get("/healthz")
@@ -560,31 +619,54 @@ async def chat(
     user_identifier = extract_user_identifier(fastapi_request)
     user_hash = compute_user_hash(user_identifier)
 
+    request_id = getattr(fastapi_request.state, "request_id", None) or fastapi_request.headers.get(
+        "X-Request-Id"
+    )
+    if not request_id:
+        request_id = str(uuid.uuid4())
+        fastapi_request.state.request_id = request_id
+        fastapi_request.state.req_id = request_id
+
     policy_context = {
         "conversation_id": conversation_id,
-        "request_id": fastapi_request.headers.get("X-Request-Id"),
+        "request_id": request_id,
         "user_hash": user_hash,
     }
 
-    selected_tool = resolve_tool(
-        chat_request.tool,
-        route="chat",
-        context=policy_context,
-    )
+    requested_tool = chat_request.tool or "dossier.build"
+
+    try:
+        selected_tool = resolve_tool(
+            chat_request.tool,
+            route="chat",
+            context=policy_context,
+        )
+    except PolicyDeniedError as exc:
+        _emit_tool_event(
+            "tool_call_failed",
+            tool=requested_tool,
+            conversation_id=conversation_id,
+            request_id=request_id,
+            user_hash=user_hash,
+            reason=exc.reason,
+            details=exc.details,
+        )
+        raise
+
     tool_definition = TOOL_REGISTRY[selected_tool]
 
     try:
         global_rate_limiter.check(user_hash=user_hash, tool=selected_tool)
         user_tool_rate_limiter.check(user_hash=user_hash, tool=selected_tool)
     except RateLimitExceededError as exc:
-        logger.warning(
-            "rate_limit_block",
-            extra={
-                "conversation_id": conversation_id,
-                "scope": exc.scope,
-                "tool": selected_tool,
-                "user_hash": user_hash,
-            },
+        _emit_tool_event(
+            "tool_call_failed",
+            tool=selected_tool,
+            conversation_id=conversation_id,
+            request_id=request_id,
+            user_hash=user_hash,
+            reason="rate_limited",
+            details={"scope": exc.scope},
         )
         raise HTTPException(status_code=429, detail=str(exc)) from exc
 
@@ -609,7 +691,39 @@ async def chat(
         }
     ]
 
-    tool_call = execute_tool(selected_tool, params, prompt, user_hash)
+    _emit_tool_event(
+        "tool_call_started",
+        tool=selected_tool,
+        conversation_id=conversation_id,
+        request_id=request_id,
+        user_hash=user_hash,
+        details={"params": params},
+    )
+
+    try:
+        tool_call = execute_tool(selected_tool, params, prompt, user_hash)
+    except Exception as exc:  # pragma: no cover - defensive guard
+        _emit_tool_event(
+            "tool_call_failed",
+            tool=selected_tool,
+            conversation_id=conversation_id,
+            request_id=request_id,
+            user_hash=user_hash,
+            reason="execution_error",
+            details={"error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=500, detail="Tool execution failed."
+        ) from exc
+
+    _emit_tool_event(
+        "tool_call_succeeded",
+        tool=selected_tool,
+        conversation_id=conversation_id,
+        request_id=request_id,
+        user_hash=user_hash,
+        details={"result": tool_call.result},
+    )
     steps.append(
         {
             "status": "completed",
@@ -667,6 +781,9 @@ __all__ = [
     "global_rate_limiter",
     "user_tool_rate_limiter",
     "agent_tool_calls_total",
+    "agent_tool_call_started_total",
+    "agent_tool_call_succeeded_total",
+    "agent_tool_call_failed_total",
     "agent_policy_denied_total",
     "agent_rate_limit_block_total",
     "agent_rate_limited_total",

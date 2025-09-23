@@ -1,4 +1,5 @@
 import time
+import logging
 from types import SimpleNamespace
 
 import pytest
@@ -8,6 +9,9 @@ from app.main import (
     agent_policy_denied_total,
     agent_rate_limit_block_total,
     agent_rate_limited_total,
+    agent_tool_call_failed_total,
+    agent_tool_call_started_total,
+    agent_tool_call_succeeded_total,
     agent_tool_calls_total,
     agent_tool_latency_seconds,
     compute_user_hash,
@@ -48,13 +52,20 @@ async def test_tools_endpoint_returns_exact_six_tools(client):
 
 
 @pytest.mark.anyio
-async def test_chat_allowed_tool_succeeds(client):
+async def test_chat_allowed_tool_succeeds(client, caplog):
     payload = {
         "message": "Generate a quick dossier",
         "tool": "dossier.build",
         "tool_params": {"subject": "ACME Corp"},
     }
+    caplog.set_level(logging.INFO, logger="flowise-connector")
     start_value = get_counter_value(agent_tool_calls_total, tool="dossier.build")
+    start_started = get_counter_value(
+        agent_tool_call_started_total, tool="dossier.build"
+    )
+    start_succeeded = get_counter_value(
+        agent_tool_call_succeeded_total, tool="dossier.build"
+    )
     response = await client.post("/chat", json=payload)
     assert response.status_code == 200
     body = response.json()
@@ -62,6 +73,17 @@ async def test_chat_allowed_tool_succeeds(client):
     assert body["tool_call"]["result"]["summary"].startswith("Mocked dossier.build run")
     end_value = get_counter_value(agent_tool_calls_total, tool="dossier.build")
     assert end_value == pytest.approx(start_value + 1)
+    end_started = get_counter_value(
+        agent_tool_call_started_total, tool="dossier.build"
+    )
+    end_succeeded = get_counter_value(
+        agent_tool_call_succeeded_total, tool="dossier.build"
+    )
+    assert end_started == pytest.approx(start_started + 1)
+    assert end_succeeded == pytest.approx(start_succeeded + 1)
+    joined_logs = "\n".join(record.message for record in caplog.records)
+    assert '"event":"tool_call_started"' in joined_logs
+    assert '"event":"tool_call_succeeded"' in joined_logs
 
 
 @pytest.mark.anyio
@@ -80,7 +102,7 @@ async def test_chat_forbidden_tool_denied(client):
 
 
 @pytest.mark.anyio
-async def test_chat_policy_denied_response(monkeypatch, client):
+async def test_chat_policy_denied_response(monkeypatch, client, caplog):
     def deny(**kwargs):
         return PolicyDecision(
             allow=False,
@@ -90,6 +112,10 @@ async def test_chat_policy_denied_response(monkeypatch, client):
         )
 
     start_value = get_counter_value(agent_policy_denied_total)
+    start_failed = get_counter_value(
+        agent_tool_call_failed_total, tool="dossier.build", reason="policy_denied"
+    )
+    caplog.set_level(logging.INFO, logger="flowise-connector")
     monkeypatch.setattr(policy_engine, "authorize", deny)
     payload = {
         "message": "Generate a quick dossier",
@@ -103,6 +129,13 @@ async def test_chat_policy_denied_response(monkeypatch, client):
     assert body["message"] == "Tool blocked by compliance policy."
     end_value = get_counter_value(agent_policy_denied_total)
     assert end_value == pytest.approx(start_value + 1)
+    end_failed = get_counter_value(
+        agent_tool_call_failed_total, tool="dossier.build", reason="policy_denied"
+    )
+    assert end_failed == pytest.approx(start_failed + 1)
+    joined_logs = "\n".join(record.message for record in caplog.records)
+    assert '"event":"tool_call_failed"' in joined_logs
+    assert '"reason":"policy_denied"' in joined_logs
 
 
 @pytest.mark.anyio

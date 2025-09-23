@@ -32,12 +32,17 @@ Available endpoints:
   `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
   including parameter schema.
 - `POST /chat` → executes at most one mocked tool call and returns the summary
-  plus tool steps.
+  plus tool steps and lifecycle telemetry.
 - `POST /chat/{conversation_id}/cancel` → stub that logs cancel requests.
-- Metrics: `/metrics` exposes `agent_tool_calls_total`,
-  `agent_policy_denied_total`, `agent_rate_limit_block_total`,
-  `agent_rate_limited_total`, and the latency histogram
-  `agent_tool_latency_seconds` (labelled by tool and hashed user).
+- Metrics: `/metrics` exposes `agent_tool_calls_total`, the lifecycle counters
+  `agent_tool_call_started_total`, `agent_tool_call_succeeded_total`,
+  `agent_tool_call_failed_total`, `agent_policy_denied_total`,
+  `agent_rate_limit_block_total`, `agent_rate_limited_total`, and the latency
+  histogram `agent_tool_latency_seconds` (labelled by tool and hashed user).
+- Structured logs: every `/chat` invocation emits `tool_call_started`,
+  `tool_call_succeeded`, or `tool_call_failed` JSON log records containing the
+  request id, conversation id, tool name, and failure reason (for denied or
+  rate-limited requests).
 
 Example request:
 
@@ -72,8 +77,8 @@ Expected response fragment:
 ## Frontend MVP chat
 
 The lightweight MVP chat lives at `/agent/mvp` in the Next.js frontend. The
-page renders a simple prompt form, tool selector, and progress badges showing
-when the mocked tool call starts and completes.
+page renders a simple prompt form, tool selector, and animated progress ticks
+showing when the mocked tool call starts and completes (including failures).
 
 ```bash
 cd apps/frontend
@@ -82,14 +87,17 @@ pnpm dev -- --port 3411
 
 Then open http://localhost:3411/agent/mvp and send a prompt. Denied requests
 (for example selecting a non-existent tool or a policy-blocked action) return a
-red error badge and surface the reason from the backend.
+red error badge with a consistent error message (e.g. “Request blocked by policy
+(OPA deny)” or “Rate limit exceeded. Try again soon.”) and surface the details
+from the backend.
 
 ## Offline demo script
 
 1. Enable the flag and start the connector with `uvicorn` as shown above.
 2. Use `curl http://localhost:8610/tools` to confirm the six-tool registry.
 3. Trigger `dossier.build` using the sample `curl` snippet and observe the
-   counters via `curl http://localhost:8610/metrics`.
+   counters via `curl http://localhost:8610/metrics` – the lifecycle counters
+   increment alongside the legacy totals.
 4. Start the frontend (`pnpm dev`) and visit `/agent/mvp`; submit the same
    prompt to view the tool call progress badge and the mocked summary.
 5. Hit the rate limit by sending six quick requests → the UI surfaces a clear
@@ -135,8 +143,10 @@ To deny a tool, add an entry with `"effect": "deny"` and customise the
 ## Where to observe metrics
 
 - Prometheus scrape target: Flowise connector (`agent_tool_calls_total`,
-  `agent_policy_denied_total`, `agent_rate_limit_block_total`,
-  `agent_rate_limited_total`, `agent_tool_latency_seconds`).
+  `agent_tool_call_started_total`, `agent_tool_call_succeeded_total`,
+  `agent_tool_call_failed_total`, `agent_policy_denied_total`,
+  `agent_rate_limit_block_total`, `agent_rate_limited_total`,
+  `agent_tool_latency_seconds`).
 - Grafana dashboard: `grafana/dashboards/infra-overview.json` now ships a tile
   for each counter.
 
