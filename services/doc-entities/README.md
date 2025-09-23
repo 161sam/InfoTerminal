@@ -37,7 +37,11 @@ Placeholder endpoint for resolving a single entity. Also returns HTTP
 
 ## Environment Variables
 
-See [`.env.example`](.env.example) for available settings.
+See [`.env.example`](.env.example) for available settings. Wave 2 introduces:
+
+- `GRAPH_WRITE_RELATIONS=1` – enable Neo4j writes for extracted relations (off by default).
+- `GRAPH_API_URL` – override the graph endpoint used for resolver callbacks and relation writes.
+- `RESOLVE_CONFIDENCE_THRESHOLD` – tweak the resolver confidence gate (default `0.7`).
 
 ## Migrations
 

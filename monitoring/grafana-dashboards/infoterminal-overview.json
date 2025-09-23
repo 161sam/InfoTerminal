@@ -1308,6 +1308,11 @@
           "expr": "sum(rate(doc_entities_resolver_outcomes_total[5m])) by (status)",
           "legendFormat": "{{status}}",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(doc_entities_linking_status_total[5m])) by (status)",
+          "legendFormat": "{{status}} badges",
+          "refId": "B"
         }
       ]
     },
@@ -1370,6 +1375,11 @@
           "expr": "sum(rate(graph_geo_queries_total[5m])) by (type)",
           "legendFormat": "{{type}}",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(geo_query_count[5m])) by (type)",
+          "legendFormat": "{{type}} compat",
+          "refId": "B"
         }
       ]
     }

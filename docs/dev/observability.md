@@ -13,12 +13,12 @@ endpoints and Grafana renders dashboards from the collected time series.
 
 ## Service Metrics
 
-| Service        | Metrics                                                                                                                                   |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `search-api`   | `search_requests_total`, `search_errors_total`, `search_latency_seconds`, `search_rerank_requests_total`, `search_rerank_latency_seconds` |
-| `graph-api`    | `graph_requests_total`                                                                                                                    |
-| `doc-entities` | `resolver_runs_total`, `resolver_entities_total`, `resolver_latency_seconds`                                                              |
-| `nlp-service`  | `nlp_requests_total`, `nlp_latency_seconds`                                                                                               |
+| Service | Key metrics |
+| --- | --- |
+| `search-api` | `search_requests_total`, `search_errors_total`, `search_latency_seconds`, `search_rerank_requests_total`, `search_rerank_latency_seconds` |
+| `graph-api` | `graph_requests_total`, `graph_geo_queries_total`, `geo_query_count`, `graph_geo_query_errors_total` |
+| `doc-entities` | `doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_linking_status_total`, `doc_entities_resolver_latency_seconds` |
+| `graph-views` | `graph_views_requests_total`, `graph_views_errors_total` |
 
 ## Prometheus
 
@@ -30,8 +30,7 @@ Configuration lives in `deploy/prometheus/prometheus.yml`.
 
 ## Grafana
 
-Grafana is pre-provisioned with a Prometheus datasource and three dashboards
-(API Overview, Search Rerank, Doc Resolver) under the folder **InfoTerminal**.
+Grafana is pre-provisioned with a Prometheus datasource and dashboards under the folder **InfoTerminal**. Wave 2 adds resolver outcome and geospatial panels to `monitoring/grafana-dashboards/infoterminal-overview.json` so teams can track linking status splits and `/geo` query volumes at a glance.
 
 ## Troubleshooting
 

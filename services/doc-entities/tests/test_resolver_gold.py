@@ -1,6 +1,7 @@
 """Gold-sample regression tests for entity linking and relations."""
 
 import os
+import os
 import sys
 import uuid
 from pathlib import Path
@@ -11,6 +12,8 @@ from fastapi.testclient import TestClient
 SERVICE_ROOT = Path(__file__).resolve().parents[1]
 if str(SERVICE_ROOT) not in sys.path:
     sys.path.insert(0, str(SERVICE_ROOT))
+
+pytest.importorskip("spacy")
 
 
 @pytest.fixture(scope="module")
@@ -128,4 +131,26 @@ def test_nlp_loader_stubbed(spacy_calls, monkeypatch):
     monkeypatch.setattr("nlp_loader.BACKEND", "transformers")
     transformed = summarize("Sentence one. Sentence two.", "en")
     assert isinstance(transformed, str) and transformed
+
+
+def test_relation_extractor_fallback(monkeypatch):
+    """Relation extractor should work even when spaCy models are unavailable."""
+
+    import relation_extractor
+
+    monkeypatch.setattr(
+        relation_extractor.spacy,
+        "load",
+        lambda *args, **kwargs: (_ for _ in ()).throw(OSError("missing model")),
+    )
+
+    extractor = relation_extractor.RelationExtractor()
+    text = "Alice works at OpenAI in Berlin."
+    entities = [
+        {"id": "1", "label": "PERSON", "span_start": 0, "span_end": 5, "value": "Alice"},
+        {"id": "2", "label": "ORG", "span_start": 16, "span_end": 22, "value": "OpenAI"},
+    ]
+
+    relations = extractor.extract_relations(text, entities)
+    assert any(rel.get("predicate") == "WORKS_AT" for rel in relations)
 

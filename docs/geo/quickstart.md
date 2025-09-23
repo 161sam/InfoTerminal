@@ -18,7 +18,7 @@ curl -X POST "http://localhost:8612/geo/entities/nearby" \
   -d '{"latitude":52.5,"longitude":13.4,"radius_km":10}'
 ```
 
-Prometheus counters `graph_geo_queries_total{type="bbox"}` and `graph_geo_query_errors_total` are exposed via `http://localhost:8612/metrics`.
+Prometheus counters `graph_geo_queries_total{type="bbox"}`, the compatibility alias `geo_query_count`, and `graph_geo_query_errors_total` are exposed via `http://localhost:8612/metrics`.
 
 > ℹ️ External geocoding (Nominatim) is opt-in. Set `GRAPH_ENABLE_GEOCODING=1` before starting the Graph API if you need live coordinate lookups.
 

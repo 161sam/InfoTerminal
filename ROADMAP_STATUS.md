@@ -24,7 +24,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 - **Goal**: Stable summarisation, relation extraction, entity linking with confidence reporting, and feedback loops for active learning.
 - **Current Evidence**:
   - Doc-entities router provides NER, relations, fuzzy matching, graph write hooks und liefert Resolver-Metadaten + HTML Highlights. 【F:services/doc-entities/routers/doc_entities_v1.py†L1-L390】
-  - Resolver aggregiert Alias/Fuzzy Kandidaten, exportiert Prometheus Counter & Histogramme. 【F:services/doc-entities/resolver.py†L1-L220】【F:services/doc-entities/metrics.py†L1-L52】
+  - Resolver aggregiert Alias/Fuzzy Kandidaten, exportiert Prometheus Counter & Histogramme inkl. `doc_entities_linking_status_total`. 【F:services/doc-entities/resolver.py†L1-L220】【F:services/doc-entities/metrics.py†L1-L68】
   - Frontend zeigt Linking-Badges & README dokumentiert Demo-Fluss (NER → Resolver → Geo). 【F:apps/frontend/src/components/docs/DocumentDetail.tsx†L1-L320】【F:README.md†L48-L96】
 - **Gaps / Risks**:
   - Summaries und Feedback-Flows bleiben Mock; Active-Learning-Persistence & Resolver-Audit fehlen. 【F:apps/frontend/pages/dossier.tsx†L60-L120】
@@ -39,7 +39,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## C) Geospatial-Layer
 - **Goal**: Geo ingest (GeoJSON/OSM), bbox/nearby APIs, clustering/heatmaps, and frontend map overlays linked to the graph.
 - **Current Evidence**:
-  - `/geo/entities` + `/geo/entities/nearby` beantworten BBox/Radius Queries; Counters `graph_geo_queries_total`, Fehlerzähler & Grafana-Panels aktiv. 【F:services/graph-api/app/routes/geospatial.py†L1-L220】【F:services/graph-api/metrics.py†L28-L52】【F:monitoring/grafana-dashboards/infoterminal-overview.json†L1-L400】
+  - `/geo/entities` + `/geo/entities/nearby` beantworten BBox/Radius Queries; Counters `graph_geo_queries_total`, `geo_query_count`, Fehlerzähler & Grafana-Panels aktiv. 【F:services/graph-api/app/routes/geospatial.py†L1-L220】【F:services/graph-api/metrics.py†L28-L40】【F:monitoring/grafana-dashboards/infoterminal-overview.json†L1-L400】
   - Frontend Map Panel & README Demo nutzen Graph-Geo API (Bounding Box, Nearby, Heatmap). 【F:apps/frontend/src/components/MapPanel.tsx†L1-L220】【F:README.md†L63-L96】
   - Graph-views exposes a dedicated geo router. 【F:services/graph-views/geo.py†L1-L120】
 - **Gaps / Risks**:

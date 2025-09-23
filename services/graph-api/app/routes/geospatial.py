@@ -12,7 +12,7 @@ SERVICE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(SERVICE_DIR))
 
 from geospatial import GeospatialService, BoundingBox, GeocodeRequest, GeoEntity
-from metrics import GRAPH_GEO_QUERIES, GRAPH_GEO_QUERY_ERRORS
+from metrics import GRAPH_GEO_QUERIES, GRAPH_GEO_QUERY_ERRORS, GEO_QUERY_COUNT
 
 router = APIRouter(prefix="/geo", tags=["geospatial"])
 
@@ -54,6 +54,7 @@ def get_geo_entities(
         geo_service = GeospatialService(driver)
         entities = geo_service.get_entities_by_bbox(bbox, limit)
         GRAPH_GEO_QUERIES.labels(type="bbox").inc()
+        GEO_QUERY_COUNT.labels(type="bbox").inc()
 
         return {
             "bbox": {
@@ -86,6 +87,7 @@ def get_nearby_entities(request: Request, nearby_request: NearbyRequest):
             nearby_request.limit
         )
         GRAPH_GEO_QUERIES.labels(type="nearby").inc()
+        GEO_QUERY_COUNT.labels(type="nearby").inc()
 
         return {
             "center": {
@@ -117,6 +119,7 @@ def geocode_location(request: Request, geocode_request: GeocodeRequest):
 
         if result:
             GRAPH_GEO_QUERIES.labels(type="geocode").inc()
+            GEO_QUERY_COUNT.labels(type="geocode").inc()
             return {
                 "success": True,
                 "location": geocode_request.location,
@@ -150,6 +153,7 @@ def geocode_node(request: Request, geocode_node_request: GeocodeNodeRequest):
 
         if result.get("success"):
             GRAPH_GEO_QUERIES.labels(type="node_geocode").inc()
+            GEO_QUERY_COUNT.labels(type="node_geocode").inc()
         else:
             GRAPH_GEO_QUERY_ERRORS.labels(type="node_geocode").inc()
         return result
@@ -181,6 +185,7 @@ def batch_geocode(
         )
 
         GRAPH_GEO_QUERIES.labels(type="batch_geocode").inc()
+        GEO_QUERY_COUNT.labels(type="batch_geocode").inc()
 
         return {
             "success": True,
@@ -207,6 +212,7 @@ def geo_statistics(request: Request):
         geo_service = GeospatialService(driver)
         stats = geo_service.get_geo_statistics()
         GRAPH_GEO_QUERIES.labels(type="statistics").inc()
+        GEO_QUERY_COUNT.labels(type="statistics").inc()
         return stats
     except Exception as e:
         GRAPH_GEO_QUERY_ERRORS.labels(type="statistics").inc()

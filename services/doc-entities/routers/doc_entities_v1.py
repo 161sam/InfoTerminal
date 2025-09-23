@@ -16,6 +16,7 @@ from nlp_loader import ner_spacy, summarize
 from nlp_client import ner as nlp_ner
 from relation_extractor import extract_relations
 from resolver import resolve_entities
+from metrics import RESOLVER_STATUS_COUNTS
 
 from ..db import SessionLocal
 from ..models import Document, Entity, EntityResolution, Relation, RelationResolution
@@ -379,6 +380,8 @@ class DocEntitiesService:
                 background_tasks.add_task(resolve_entities, entity_ids)
 
         resolution_counts = Counter(ent.resolution_status or "unknown" for ent in entities)
+        for status, count in resolution_counts.items():
+            RESOLVER_STATUS_COUNTS.labels(status=status).inc(count)
         score_values = [ent.resolution_score for ent in entities if ent.resolution_score is not None]
 
         html_content = self._highlight(request.text, entities)

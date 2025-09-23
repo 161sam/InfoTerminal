@@ -48,3 +48,9 @@ GRAPH_GEO_QUERY_ERRORS = Counter(
     "Geospatial API errors grouped by type",
     ["type"],
 )
+
+GEO_QUERY_COUNT = Counter(
+    "geo_query_count",
+    "Compatibility counter mirroring geospatial queries by type",
+    ["type"],
+)

@@ -101,8 +101,8 @@ Details und Reports: `build-stabilization/README.md`
    ```
 7. **Observability & Dashboards kontrollieren**
    - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `collab-hub` prüfen (neue Counter/Histograms).
-   - Prometheus: `doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_resolver_latency_seconds` beobachten.
-   - Prometheus: `graph_geo_queries_total`, `graph_geo_query_errors_total` auf der Graph-API.
+   - Prometheus: `doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_linking_status_total`, `doc_entities_resolver_latency_seconds` beobachten.
+   - Prometheus: `graph_geo_queries_total`, `geo_query_count`, `graph_geo_query_errors_total` auf der Graph-API.
    - Grafana: Dashboard **Graph Analytics MVP** (`grafana/dashboards/graph-analytics-mvp.json`).
    - Grafana: neues Panel **NLP Resolver Outcomes** + **Geo Query Volume** (siehe `monitoring/grafana-dashboards/infoterminal-overview.json`).
    - Superset: Dashboard **Graph Analytics – MVP** (`apps/superset/assets/dashboard/graph_analytics_mvp.json`).
