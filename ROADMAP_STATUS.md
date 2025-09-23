@@ -119,7 +119,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## H) AI-Agenten
 - **Goal**: Flowise connector, multi-agent playbooks (researcher/verifier/dossier), Assistant UI with tool panels, policy enforcement.
 - **Current Evidence**:
--  - Flowise connector MVP exposes static tool allowlist, `/chat` with mocked tool execution, and Prometheus counters. 【F:services/flowise-connector/app/main.py†L47-L306】【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L74】
+-  - Flowise connector MVP exposes static six-tool allowlist, `/chat` with mocked tool execution, and Prometheus counters. 【F:services/flowise-connector/app/main.py†L63-L456】【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L86】
 -  - Grafana dashboard extended with agent counters; quickstart documents setup and offline demo. 【F:grafana/dashboards/infra-overview.json†L7-L40】【F:docs/agents/quickstart.md†L1-L120】
 -  - Frontend ships `/agent/mvp` single-turn chat with progress badges + API proxy. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L265】【F:apps/frontend/pages/api/agent/mvp-chat.ts†L1-L80】
 - **Gaps / Risks**:

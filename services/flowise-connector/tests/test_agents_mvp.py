@@ -18,11 +18,12 @@ def get_counter_value(counter, **labels):
 
 
 @pytest.mark.anyio
-async def test_tools_endpoint_returns_exact_three_tools(client):
+async def test_tools_endpoint_returns_exact_six_tools(client):
     response = await client.get("/tools")
     assert response.status_code == 200
     data = response.json()
     assert sorted(tool["name"] for tool in data["tools"]) == sorted(TOOL_REGISTRY.keys())
+    assert len(data["tools"]) == 6
 
 
 @pytest.mark.anyio
@@ -47,7 +48,7 @@ async def test_chat_forbidden_tool_denied(client):
     start_value = get_counter_value(agent_policy_denied_total)
     response = await client.post(
         "/chat",
-        json={"message": "hack", "tool": "video.analyze"},
+        json={"message": "hack", "tool": "forbidden.tool"},
     )
     assert response.status_code == 403
     end_value = get_counter_value(agent_policy_denied_total)

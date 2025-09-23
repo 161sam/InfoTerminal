@@ -19,7 +19,7 @@ export AGENTS_ENABLED=1
 ## Start the connector (mocked tools)
 
 Run the FastAPI app locally; the tests ship a deterministic tool registry with
-three tools:
+six tools:
 
 ```bash
 cd services/flowise-connector
@@ -29,7 +29,8 @@ uvicorn app.main:app --reload --port 8610
 Available endpoints:
 
 - `GET /tools` → returns the allowlisted tools (`search`, `graph.query`,
-  `dossier.build`) including parameter schema.
+  `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
+  including parameter schema.
 - `POST /chat` → executes at most one mocked tool call and returns the summary
   plus tool steps.
 - `POST /chat/{conversation_id}/cancel` → stub that logs cancel requests.
@@ -84,7 +85,7 @@ badge and surface the reason from the backend.
 ## Offline demo script
 
 1. Enable the flag and start the connector with `uvicorn` as shown above.
-2. Use `curl http://localhost:8610/tools` to confirm the three-tool registry.
+2. Use `curl http://localhost:8610/tools` to confirm the six-tool registry.
 3. Trigger `dossier.build` using the sample `curl` snippet and observe the
    counters via `curl http://localhost:8610/metrics`.
 4. Start the frontend (`pnpm dev`) and visit `/agent/mvp`; submit the same
