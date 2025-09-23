@@ -35,3 +35,16 @@ GRAPH_SUBGRAPH_EXPORT_DURATION = Histogram(
     "Duration of dossier subgraph exports",
     ["format", "status"],
 )
+
+# Wave 2 geospatial metrics
+GRAPH_GEO_QUERIES = Counter(
+    "graph_geo_queries_total",
+    "Geospatial API queries grouped by type",
+    ["type"],
+)
+
+GRAPH_GEO_QUERY_ERRORS = Counter(
+    "graph_geo_query_errors_total",
+    "Geospatial API errors grouped by type",
+    ["type"],
+)
