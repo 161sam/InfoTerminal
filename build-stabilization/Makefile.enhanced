@@ -1,0 +1,280 @@
+# InfoTerminal Enhanced Makefile - Build System Stabilization
+# Includes optimized build targets and validation commands
+
+.PHONY: help clean install build test lint format validate docker docker-optimized ci-check
+
+# Default target
+help:
+	@echo "InfoTerminal Build System - Available Commands:"
+	@echo "=============================================="
+	@echo ""
+	@echo "🔧 Development:"
+	@echo "  install      - Install all dependencies"
+	@echo "  dev          - Start development server"
+	@echo "  build        - Production build"
+	@echo "  test         - Run test suites"
+	@echo "  clean        - Clean build artifacts"
+	@echo ""
+	@echo "🎯 Quality Assurance:"
+	@echo "  lint         - Run linting (Python + Frontend)"
+	@echo "  format       - Format code (Python + Frontend)"
+	@echo "  typecheck    - TypeScript compilation check"
+	@echo "  validate     - Full build system validation"
+	@echo ""
+	@echo "🐳 Docker:"
+	@echo "  docker       - Build standard Docker image"
+	@echo "  docker-opt   - Build optimized Docker image"
+	@echo "  docker-test  - Test Docker container"
+	@echo ""
+	@echo "🚀 CI/CD:"
+	@echo "  ci-check     - Run CI validation locally"
+	@echo "  production   - Full production readiness check"
+	@echo ""
+
+# Installation
+install:
+	@echo "📦 Installing InfoTerminal dependencies..."
+	npm ci
+	@echo "✅ Dependencies installed successfully"
+
+# Development
+dev:
+	@echo "🚀 Starting InfoTerminal development server..."
+	@it fe dev
+
+# Build targets
+build: build-frontend build-backend
+
+build-frontend:
+	@echo "🏗️ Building InfoTerminal frontend..."
+	@cd apps/frontend && npm run build
+	@echo "✅ Frontend build complete"
+
+build-backend: gv.venv
+	@echo "🏗️ Building InfoTerminal backend..."
+	@$(MAKE) gv.test
+	@echo "✅ Backend build complete"
+
+# TypeScript check
+typecheck:
+	@echo "📋 Running TypeScript compilation check..."
+	@cd apps/frontend && npm run typecheck
+	@echo "✅ TypeScript check passed"
+
+# Enhanced testing
+test: test-frontend test-backend
+
+test-frontend:
+	@echo "🧪 Running frontend tests..."
+	@cd apps/frontend && CI=1 npm run test --silent -- --reporter=dot
+	@echo "✅ Frontend tests passed"
+
+test-backend: gv.test
+
+# Linting with enhanced checks
+lint: lint-frontend lint-backend
+
+lint-frontend:
+	@echo "🔍 Linting frontend code..."
+	@cd apps/frontend && npm run lint
+	@echo "✅ Frontend linting passed"
+
+lint-backend: lint.py
+
+# Code formatting
+format: format-frontend format-backend
+
+format-frontend:
+	@echo "🎨 Formatting frontend code..."
+	@cd apps/frontend && npm run prettier --write "**/*.{ts,tsx,js,jsx,json,md}"
+	@echo "✅ Frontend formatting complete"
+
+format-backend:
+	@cd services/graph-views && .venv/bin/python -m ruff format . || true
+	@cd services/graph-views && .venv/bin/python -m ruff check --fix . || true
+
+# Clean build artifacts
+clean:
+	@echo "🧹 Cleaning build artifacts..."
+	@rm -rf apps/frontend/.next
+	@rm -rf apps/frontend/dist
+	@rm -rf apps/frontend/coverage
+	@rm -rf apps/frontend/test-results
+	@find . -name "node_modules" -type d -prune -exec rm -rf {} \; 2>/dev/null || true
+	@find . -name "__pycache__" -type d -prune -exec rm -rf {} \; 2>/dev/null || true
+	@find . -name "*.pyc" -delete 2>/dev/null || true
+	@echo "✅ Clean complete"
+
+# Build validation
+validate:
+	@echo "🔧 Running InfoTerminal build system validation..."
+	@chmod +x build-stabilization/final_validation.sh || true
+	@bash build-stabilization/final_validation.sh
+	@echo "✅ Validation complete"
+
+# Docker builds
+docker:
+	@echo "🐳 Building InfoTerminal Docker image..."
+	@docker build -f apps/frontend/Dockerfile -t infoterminal/frontend:latest .
+	@echo "✅ Docker build complete"
+
+docker-optimized:
+	@echo "🐳 Building optimized InfoTerminal Docker image..."
+	@docker build -f apps/frontend/Dockerfile.optimized -t infoterminal/frontend:optimized .
+	@echo "✅ Optimized Docker build complete"
+
+docker-test:
+	@echo "🧪 Testing Docker container..."
+	@docker run -d --name infoterminal-test -p 3001:3000 infoterminal/frontend:latest
+	@sleep 15
+	@curl -f http://localhost:3001/api/health || (echo "❌ Container health check failed" && exit 1)
+	@echo "✅ Container health check passed"
+	@docker stop infoterminal-test
+	@docker rm infoterminal-test
+	@echo "✅ Docker test complete"
+
+# CI/CD validation
+ci-check: install typecheck lint build test
+	@echo "🚀 CI validation complete - all checks passed"
+
+# Production readiness check
+production: clean install ci-check docker-test validate
+	@echo ""
+	@echo "🎯 InfoTerminal Production Readiness Check Complete"
+	@echo "================================================="
+	@echo "✅ All quality gates passed"
+	@echo "✅ Build system stable"
+	@echo "✅ Docker containers healthy"
+	@echo "✅ Ready for v1.0.0 deployment"
+	@echo ""
+
+# Performance benchmarking
+benchmark:
+	@echo "📊 Running build performance benchmark..."
+	@echo "Frontend build time:"
+	@cd apps/frontend && time npm run build > /dev/null 2>&1
+	@echo "Docker build time:"
+	@time docker build -f apps/frontend/Dockerfile -t infoterminal/benchmark . > /dev/null 2>&1
+	@docker rmi infoterminal/benchmark
+	@echo "✅ Benchmark complete"
+
+# Dependency updates
+update-deps:
+	@echo "📦 Updating dependencies..."
+	@cd apps/frontend && npm update
+	@echo "✅ Dependencies updated"
+
+# Security audit
+security:
+	@echo "🔒 Running security audit..."
+	@cd apps/frontend && npm audit --audit-level moderate || true
+	@echo "✅ Security audit complete"
+
+# Bundle analysis
+analyze:
+	@echo "📦 Analyzing bundle size..."
+	@cd apps/frontend && npm run build
+	@cd apps/frontend && du -sh .next/
+	@find apps/frontend/.next -name "*.js" | head -10 | xargs ls -lah
+	@echo "✅ Bundle analysis complete"
+
+# Health check
+health:
+	@echo "💚 InfoTerminal system health check..."
+	@echo "Node.js: $$(node --version)"
+	@echo "npm: $$(npm --version)"
+	@echo "Docker: $$(docker --version 2>/dev/null || echo 'Not available')"
+	@echo "Git: $$(git --version)"
+	@echo "✅ System health check complete"
+
+# Original targets (preserved for backward compatibility)
+gv.test:
+	@cd services/graph-views && \
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+	PYTHONPATH="$(PWD)/services/graph-views" \
+	.venv/bin/pytest -q -c pytest.ini
+
+gv.cov:
+	@cd services/graph-views && \
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+	PYTHONPATH="$(PWD)/services/graph-views" \
+	.venv/bin/pytest -c pytest.ini -p pytest_cov --cov=. --cov-report=term-missing -q $(COVER)
+
+fe.test:
+	@it fe test
+
+fe.dev:
+	@it fe dev
+
+fe.build:
+	@it fe build
+
+gv.serve:
+	@echo "Starting graph-views on :8403"; \
+	cd services/graph-views && \
+	GV_ALLOW_WRITES=$${GV_ALLOW_WRITES:-1} \
+	GV_BASIC_USER=$${GV_BASIC_USER:-dev} \
+	GV_BASIC_PASS=$${GV_BASIC_PASS:-devpass} \
+	GV_RATE_LIMIT_WRITE=$${GV_RATE_LIMIT_WRITE:-2/second} \
+	GV_AUDIT_LOG=$${GV_AUDIT_LOG:-1} \
+	.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8403 --reload
+
+smoke.gv.up:
+	@BASE=$${BASE:-http://localhost:8403} BOOT=1 scripts/smoke_graph_views.sh
+
+smoke.gv:
+	@scripts/smoke_graph_views.sh
+
+tag.v0.2.0:
+	@git add -A
+	@git commit -m "release: v0.2.0" || true
+	@git tag -a v0.2.0 -m "InfoTerminal v0.2.0"
+	@git push && git push --tags
+
+gv.venv:
+	@cd services/graph-views && \
+	python -m venv .venv >/dev/null 2>&1 || true && \
+	.venv/bin/python -m pip install -q --upgrade pip && \
+	.venv/bin/python -m pip install -q -r requirements-dev.txt && \
+	.venv/bin/python -m pip install -q pre-commit
+
+lint.py: gv.venv
+	@cd services/graph-views && \
+	.venv/bin/pre-commit install -f --install-hooks >/dev/null 2>&1 || true && \
+	.venv/bin/pre-commit run --all-files && \
+	.venv/bin/python -m ruff check services/graph-views
+
+lint.fe:
+	@npm -w apps/frontend run -s lint || echo "eslint/prettier not configured; skipping npm lint"
+	@npx -y prettier@3.3.3 -c "**/*.{md,yaml,yml,json}" --ignore-path .prettierignore --log-level warn --no-error-on-unmatched-pattern || true
+
+fmt.safe:
+	@chmod +x scripts/format_safe.sh
+	@./scripts/format_safe.sh || true
+
+lint.safe:
+	@npx -y prettier@3.3.3 -c $(shell tr '\n' ' ' < scripts/prettier_safe.list) --ignore-path .prettierignore --log-level warn || true
+
+docs.analyze:
+	python3 scripts/docs_pipeline.py analyze
+
+docs.consolidate:
+	python3 scripts/docs_pipeline.py consolidate
+
+docs.dedupe:
+	python3 scripts/docs_pipeline.py dedupe
+
+docs.all:
+	python3 scripts/docs_pipeline.py analyze consolidate dedupe
+
+kc.import:
+	bash scripts/keycloak_kcadm_import.sh
+
+kc.import.dry:
+	DRY_RUN=1 bash scripts/keycloak_kcadm_import.sh
+
+sso.smoke:
+	bash scripts/sso_smoke.sh
+
+rag.seed:
+	bash scripts/seed_rag_laws.sh

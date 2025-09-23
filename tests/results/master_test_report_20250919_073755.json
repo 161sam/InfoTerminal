@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-09-19T07:38:05+02:00",
+  "total_duration_seconds": 10,
+  "summary": {
+    "total_tests": 3,
+    "passed": 0,
+    "failed": 3,
+    "timeouts": 0,
+    "success_rate": 0
+  },
+  "test_results": {
+    "unit_backend": {
+      "status": "FAIL",
+      "duration_seconds": 1,
+      "log_file": "/home/saschi/InfoTerminal/tests/results/unit_backend_20250919_073755.log"
+    }
+,
+    "unit_frontend": {
+      "status": "FAIL",
+      "duration_seconds": 9,
+      "log_file": "/home/saschi/InfoTerminal/tests/results/unit_frontend_20250919_073755.log"
+    }
+,
+    "unit_cli": {
+      "status": "FAIL",
+      "duration_seconds": 0,
+      "log_file": "/home/saschi/InfoTerminal/tests/results/unit_cli_20250919_073755.log"
+    }
+  },
+  "environment": {
+  "timestamp": "2025-09-19T07:37:55+02:00",
+  "git_commit": "a428558052b73f1b28446d7245b1da0c0fa4bc73",
+  "git_branch": "main",
+  "system_info": {
+    "hostname": "server2",
+    "os": "Linux",
+    "architecture": "x86_64",
+    "cpu_cores": "20",
+    "memory_gb": ""
+  },
+  "test_configuration": {
+    "unit_tests": true,
+    "integration_tests": false,
+    "performance_tests": false,
+    "chaos_tests": false,
+    "e2e_tests": false
+  }
+}
+}

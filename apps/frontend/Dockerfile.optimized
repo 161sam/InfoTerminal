@@ -1,0 +1,132 @@
+# InfoTerminal Frontend - Enhanced Production Dockerfile
+# Build System Stabilization - Optimized Multi-Stage Build
+
+# Build arguments for flexibility
+ARG NODE_VERSION=20
+ARG PNPM_VERSION=8.15.0
+ARG ALPINE_VERSION=3.18
+
+# Base image with build args
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+
+# Build-time optimizations
+ARG PNPM_VERSION
+ENV PNPM_VERSION=${PNPM_VERSION}
+
+# Install system dependencies for building native modules
+RUN apk add --no-cache libc6-compat python3 make g++
+
+WORKDIR /app
+
+# Install pnpm with specific version
+RUN npm install -g pnpm@${PNPM_VERSION}
+
+# Copy workspace configuration first for better caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/frontend/package.json apps/frontend/package.json
+
+# Install dependencies with frozen lockfile
+RUN --mount=type=cache,target=/root/.pnpm \
+    pnpm install --filter @infoterminal/frontend... --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM base AS builder
+
+# Build-time environment variables
+ARG NODE_ENV=production
+ARG NEXT_TELEMETRY_DISABLED=1
+ARG BUILD_TIME
+ARG GIT_COMMIT
+
+ENV NODE_ENV=${NODE_ENV}
+ENV NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED}
+ENV BUILD_TIME=${BUILD_TIME}
+ENV GIT_COMMIT=${GIT_COMMIT}
+
+WORKDIR /app/apps/frontend
+
+# Install system dependencies for build process
+RUN apk add --no-cache bash git
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules /app/node_modules
+COPY --from=deps /app/apps/frontend/node_modules /app/apps/frontend/node_modules
+
+# Copy source code and build configuration
+COPY apps/frontend/ /app/apps/frontend/
+COPY scripts /app/scripts/
+COPY tsconfig.json /app/
+COPY package.json /app/
+
+# Install pnpm in builder
+RUN npm install -g pnpm@${PNPM_VERSION}
+
+# Build optimizations - run TypeScript check first
+RUN pnpm typecheck || (echo "TypeScript errors found! Build aborted." && exit 1)
+
+# Build the application with optimizations
+RUN --mount=type=cache,target=/root/.next \
+    pnpm build
+
+# Verify build output
+RUN ls -la .next/ && \
+    test -f .next/standalone/server.js || (echo "Standalone build failed!" && exit 1)
+
+# Production image, copy all the files and run next
+FROM base AS runner
+
+# Production environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+WORKDIR /app
+
+# Create non-root user with specific UID/GID
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy public assets with proper ownership
+COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/public ./public
+
+# Create .next directory with proper permissions
+RUN mkdir .next && chown nextjs:nodejs .next
+
+# Copy built application with proper ownership
+COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/.next/static ./.next/static
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
+    tini \
+    curl \
+    wget
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Use tini as init system for proper signal handling
+ENTRYPOINT ["/sbin/tini", "--"]
+
+# Start the application
+CMD ["node", "server.js"]
+
+# Enhanced health check with retries
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD curl -f http://localhost:3000/api/health || wget -qO- http://localhost:3000/api/health || exit 1
+
+# Build metadata
+LABEL \
+    org.opencontainers.image.title="InfoTerminal Frontend" \
+    org.opencontainers.image.description="Next.js frontend application for InfoTerminal OSINT platform" \
+    org.opencontainers.image.version="v0.2.0" \
+    org.opencontainers.image.vendor="InfoTerminal" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.source="https://github.com/161sam/InfoTerminal"

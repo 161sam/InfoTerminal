@@ -1,0 +1,40 @@
+{
+  "search_entries": [
+    {
+      "id": "search_1",
+      "title": "Federal Reserve Interest Rate Decision",
+      "content": "The Federal Reserve maintains interest rates at 5.25-5.50% as inflation concerns persist",
+      "source": "Financial News",
+      "timestamp": "2024-07-31T14:00:00Z",
+      "tags": ["federal_reserve", "interest_rates", "monetary_policy"],
+      "relevance_score": 0.95
+    },
+    {
+      "id": "search_2",
+      "title": "IMF Global Growth Projections",
+      "content": "International Monetary Fund lowers global growth forecast to 3.1% for 2024",
+      "source": "Economic Report", 
+      "timestamp": "2024-07-16T10:30:00Z",
+      "tags": ["imf", "economic_growth", "global_economy"],
+      "relevance_score": 0.89
+    },
+    {
+      "id": "search_3",
+      "title": "Renewable Energy Investment Trends",
+      "content": "Global renewable energy capacity additions reached record levels in 2024",
+      "source": "Energy Report",
+      "timestamp": "2024-06-20T08:15:00Z",
+      "tags": ["renewable_energy", "investment", "climate"],
+      "relevance_score": 0.82
+    },
+    {
+      "id": "search_4",
+      "title": "AI in Banking Sector Analysis",
+      "content": "Artificial intelligence adoption accelerates in financial services with focus on compliance",
+      "source": "Technology News",
+      "timestamp": "2024-08-05T16:45:00Z",
+      "tags": ["artificial_intelligence", "banking", "fintech"],
+      "relevance_score": 0.77
+    }
+  ]
+}

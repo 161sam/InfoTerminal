@@ -1,0 +1,21 @@
+{
+  "name": "NLP Workflow Test",
+  "description": "Document processing and entity extraction",
+  "documents": [
+    {
+      "text": "The International Monetary Fund (IMF) announced today that Jerome Powell, Chairman of the Federal Reserve, will participate in the upcoming Global Financial Stability meeting in Washington D.C. The meeting will address current monetary policy challenges and inflation targets.",
+      "expected_entities": [
+        {"text": "International Monetary Fund", "type": "ORGANIZATION"},
+        {"text": "IMF", "type": "ORGANIZATION"}, 
+        {"text": "Jerome Powell", "type": "PERSON"},
+        {"text": "Federal Reserve", "type": "ORGANIZATION"},
+        {"text": "Washington D.C.", "type": "LOCATION"},
+        {"text": "Global Financial Stability meeting", "type": "EVENT"}
+      ],
+      "expected_relationships": [
+        {"source": "Jerome Powell", "target": "Federal Reserve", "type": "AFFILIATED_WITH"},
+        {"source": "Global Financial Stability meeting", "target": "Washington D.C.", "type": "LOCATED_IN"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Search Workflow Test",
+  "description": "Search functionality with ranking and filtering",
+  "test_cases": [
+    {
+      "query": "federal reserve interest rates",
+      "filters": {
+        "date_range": "2024-01-01:2024-12-31",
+        "source_type": "official"
+      },
+      "expected_results": {
+        "min_results": 1,
+        "top_result_relevance": 0.9,
+        "contains_terms": ["federal", "reserve", "interest", "rates"]
+      }
+    },
+    {
+      "query": "IMF economic growth forecast 2024",
+      "filters": {
+        "source_type": "economic"
+      },
+      "expected_results": {
+        "min_results": 1,
+        "top_result_relevance": 0.85,
+        "contains_terms": ["IMF", "economic", "growth", "2024"]
+      }
+    }
+  ]
+}

@@ -4,7 +4,7 @@
     "@testing-library/react": "^16.3.0",
     "@types/eslint": "^8.56.12",
     "@vitest/coverage-v8": "^1.6.1",
-    "jsdom": "^24.1.3",
+    "jsdom": "^27.0.0",
     "markdown-link-check": "^3.12.2",
     "markdownlint-cli": "^0.45.0",
     "markdownlint-cli2": "^0.18.1",
@@ -29,7 +29,10 @@
     "lint:md": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md'",
     "lint:md:fix": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md' --fix",
     "lint:md:links": "markdown-link-check -q -c .mlc.config.json docs/**/*.md",
-    "test:fe": "npm -w apps/frontend test"
+    "test:fe": "npm -w apps/frontend test",
+    "bs:ts-audit": "bash build-stabilization/typescript_audit.sh",
+    "bs:validate": "bash build-stabilization/build_validation.sh",
+    "bs:final": "bash build-stabilization/final_validation.sh"
   },
   "workspaces": [
     "apps/*",

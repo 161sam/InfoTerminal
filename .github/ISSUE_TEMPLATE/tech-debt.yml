@@ -1,0 +1,51 @@
+name: "Tech Debt / Stabilisation"
+description: "Capture refactors, clean-up, or stabilisation tasks"
+title: "chore: [area] brief description"
+labels:
+  - needs-triage
+  - tech-debt
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for cross-cutting improvements (observability, refactors, docs debt). Link to the relevant STATUS row and backlog epic if applicable.
+  - type: input
+    id: area
+    attributes:
+      label: Affected Area
+      description: "E.g. search-api, frontend, observability, infra."
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Current Pain / Risk
+      description: "Describe the instability, debt, or gap. Include metrics or examples."
+    validations:
+      required: true
+  - type: textarea
+    id: remediation
+    attributes:
+      label: Proposed Remediation
+      description: "Outline the steps to resolve the issue. Mention scripts/tests/docs to update."
+    validations:
+      required: true
+  - type: checkboxes
+    id: safeguards
+    attributes:
+      label: Safeguards
+      options:
+        - label: "Impact assessed (performance/security/regression)"
+          required: true
+        - label: "Rollback / mitigation identified"
+          required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: DoD Checklist
+      description: "List concrete acceptance checks (tests run, dashboards updated, docs touched)."
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: "Link to STATUS.md, DOCS_DIFF.md, ROADMAP_STATUS.md, dashboards, or logs."

@@ -1,0 +1,391 @@
+{
+  "api_routes": [
+    {
+      "file": "apps/frontend/pages/api/agent/index.ts",
+      "route": "/api/agent"
+    },
+    {
+      "file": "apps/frontend/pages/api/agent/capabilities.ts",
+      "route": "/api/agent/capabilities"
+    },
+    {
+      "file": "apps/frontend/pages/api/agent/chat.ts",
+      "route": "/api/agent/chat"
+    },
+    {
+      "file": "apps/frontend/pages/api/agent/health.ts",
+      "route": "/api/agent/health"
+    },
+    {
+      "file": "apps/frontend/pages/api/agent/playbooks.ts",
+      "route": "/api/agent/playbooks"
+    },
+    {
+      "file": "apps/frontend/pages/api/auth/[...nextauth].ts",
+      "route": "/api/auth/[...nextauth]"
+    },
+    {
+      "file": "apps/frontend/pages/api/auth/login.ts",
+      "route": "/api/auth/login"
+    },
+    {
+      "file": "apps/frontend/pages/api/auth/logout.ts",
+      "route": "/api/auth/logout"
+    },
+    {
+      "file": "apps/frontend/pages/api/auth/me.ts",
+      "route": "/api/auth/me"
+    },
+    {
+      "file": "apps/frontend/pages/api/auth/refresh.ts",
+      "route": "/api/auth/refresh"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/audit.ts",
+      "route": "/api/collab/audit"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/labels.ts",
+      "route": "/api/collab/labels"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/tasks.ts",
+      "route": "/api/collab/tasks"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/tasks/[id]/index.ts",
+      "route": "/api/collab/tasks/[id]"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/tasks/[id]/move.ts",
+      "route": "/api/collab/tasks/[id]/move"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/tasks/[id]/update.ts",
+      "route": "/api/collab/tasks/[id]/update"
+    },
+    {
+      "file": "apps/frontend/pages/api/demo/load.ts",
+      "route": "/api/demo/load"
+    },
+    {
+      "file": "apps/frontend/pages/api/demo/reset.ts",
+      "route": "/api/demo/reset"
+    },
+    {
+      "file": "apps/frontend/pages/api/docs/annotate.ts",
+      "route": "/api/docs/annotate"
+    },
+    {
+      "file": "apps/frontend/pages/api/docs/upload.ts",
+      "route": "/api/docs/upload"
+    },
+    {
+      "file": "apps/frontend/pages/api/documents/upload.ts",
+      "route": "/api/documents/upload"
+    },
+    {
+      "file": "apps/frontend/pages/api/dossier.ts",
+      "route": "/api/dossier"
+    },
+    {
+      "file": "apps/frontend/pages/api/forensics/ingest.ts",
+      "route": "/api/forensics/ingest"
+    },
+    {
+      "file": "apps/frontend/pages/api/forensics/verify.ts",
+      "route": "/api/forensics/verify"
+    },
+    {
+      "file": "apps/frontend/pages/api/graph/analytics/embeddings/node2vec.ts",
+      "route": "/api/graph/analytics/embeddings/node2vec"
+    },
+    {
+      "file": "apps/frontend/pages/api/graph/analytics/pagerank.ts",
+      "route": "/api/graph/analytics/pagerank"
+    },
+    {
+      "file": "apps/frontend/pages/api/health.ts",
+      "route": "/api/health"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks.ts",
+      "route": "/api/ops/stacks"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks/[name]/down.ts",
+      "route": "/api/ops/stacks/[name]/down"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks/[name]/logs.ts",
+      "route": "/api/ops/stacks/[name]/logs"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks/[name]/restart.ts",
+      "route": "/api/ops/stacks/[name]/restart"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks/[name]/scale.ts",
+      "route": "/api/ops/stacks/[name]/scale"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks/[name]/status.ts",
+      "route": "/api/ops/stacks/[name]/status"
+    },
+    {
+      "file": "apps/frontend/pages/api/ops/stacks/[name]/up.ts",
+      "route": "/api/ops/stacks/[name]/up"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/[name]/config.ts",
+      "route": "/api/plugins/[name]/config"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/[name]/enable.ts",
+      "route": "/api/plugins/[name]/enable"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/[name]/health.ts",
+      "route": "/api/plugins/[name]/health"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/invoke/[plugin]/[tool].ts",
+      "route": "/api/plugins/invoke/[plugin]/[tool]"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/registry.ts",
+      "route": "/api/plugins/registry"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/state.ts",
+      "route": "/api/plugins/state"
+    },
+    {
+      "file": "apps/frontend/pages/api/plugins/tools.ts",
+      "route": "/api/plugins/tools"
+    },
+    {
+      "file": "apps/frontend/pages/api/rag/graph/law/upsert.ts",
+      "route": "/api/rag/graph/law/upsert"
+    },
+    {
+      "file": "apps/frontend/pages/api/rag/law/context.ts",
+      "route": "/api/rag/law/context"
+    },
+    {
+      "file": "apps/frontend/pages/api/rag/law/hybrid.ts",
+      "route": "/api/rag/law/hybrid"
+    },
+    {
+      "file": "apps/frontend/pages/api/rag/law/retrieve.ts",
+      "route": "/api/rag/law/retrieve"
+    },
+    {
+      "file": "apps/frontend/pages/api/roles/[...params].ts",
+      "route": "/api/roles/[...params]"
+    },
+    {
+      "file": "apps/frontend/pages/api/search.ts",
+      "route": "/api/search"
+    },
+    {
+      "file": "apps/frontend/pages/api/security/incognito/[sessionId]/containers.ts",
+      "route": "/api/security/incognito/[sessionId]/containers"
+    },
+    {
+      "file": "apps/frontend/pages/api/security/incognito/[sessionId]/stop.ts",
+      "route": "/api/security/incognito/[sessionId]/stop"
+    },
+    {
+      "file": "apps/frontend/pages/api/security/incognito/[sessionId]/wipe.ts",
+      "route": "/api/security/incognito/[sessionId]/wipe"
+    },
+    {
+      "file": "apps/frontend/pages/api/security/incognito/start.ts",
+      "route": "/api/security/incognito/start"
+    },
+    {
+      "file": "apps/frontend/pages/api/security/status.ts",
+      "route": "/api/security/status"
+    },
+    {
+      "file": "apps/frontend/pages/api/users/index.ts",
+      "route": "/api/users"
+    },
+    {
+      "file": "apps/frontend/pages/api/users/[...params].ts",
+      "route": "/api/users/[...params]"
+    },
+    {
+      "file": "apps/frontend/pages/api/verification/classify-stance.ts",
+      "route": "/api/verification/classify-stance"
+    },
+    {
+      "file": "apps/frontend/pages/api/verification/credibility.ts",
+      "route": "/api/verification/credibility"
+    },
+    {
+      "file": "apps/frontend/pages/api/verification/extract-claims.ts",
+      "route": "/api/verification/extract-claims"
+    },
+    {
+      "file": "apps/frontend/pages/api/verification/find-evidence.ts",
+      "route": "/api/verification/find-evidence"
+    },
+    {
+      "file": "apps/frontend/pages/api/xai/explain.ts",
+      "route": "/api/xai/explain"
+    }
+  ],
+  "feature_flags": [
+    "NEXT_PUBLIC_AGENT_API",
+    "NEXT_PUBLIC_AGENT_DEFAULT_TYPE",
+    "NEXT_PUBLIC_AGENT_INCLUDE_STEPS",
+    "NEXT_PUBLIC_AGENT_MAX_ITERATIONS",
+    "NEXT_PUBLIC_AGENT_TIMEOUT",
+    "NEXT_PUBLIC_ALEPH_URL",
+    "NEXT_PUBLIC_COLLAB_PORT",
+    "NEXT_PUBLIC_DEBUG_AGENT",
+    "NEXT_PUBLIC_DOCENTITIES_API",
+    "NEXT_PUBLIC_DOC_ENTITIES_API",
+    "NEXT_PUBLIC_DOC_ENTITIES_URL",
+    "NEXT_PUBLIC_FEATURE_AGENT",
+    "NEXT_PUBLIC_FEATURE_MULTI_AGENT",
+    "NEXT_PUBLIC_FEATURE_NLP",
+    "NEXT_PUBLIC_FEATURE_OPS",
+    "NEXT_PUBLIC_FEATURE_PLUGINS",
+    "NEXT_PUBLIC_FEATURE_WORKFLOWS",
+    "NEXT_PUBLIC_FLOWISE_API",
+    "NEXT_PUBLIC_GATEWAY_ENABLED",
+    "NEXT_PUBLIC_GATEWAY_URL",
+    "NEXT_PUBLIC_GRAPH_API",
+    "NEXT_PUBLIC_GRAPH_DEEPLINK_BASE",
+    "NEXT_PUBLIC_N8N_URL",
+    "NEXT_PUBLIC_NLP_URL",
+    "NEXT_PUBLIC_SEARCH_API",
+    "NEXT_PUBLIC_VIEWS_API"
+  ],
+  "generated_at": "2025-09-23T10:00:10Z",
+  "pages": [
+    {
+      "file": "apps/frontend/pages/agent/[tab].tsx",
+      "route": "/agent/[tab]"
+    },
+    {
+      "file": "apps/frontend/pages/agent.tsx",
+      "route": "/agent"
+    },
+    {
+      "file": "apps/frontend/pages/analytics.tsx",
+      "route": "/analytics"
+    },
+    {
+      "file": "apps/frontend/pages/asset/[id].tsx",
+      "route": "/asset/[id]"
+    },
+    {
+      "file": "apps/frontend/pages/collab.tsx",
+      "route": "/collab"
+    },
+    {
+      "file": "apps/frontend/pages/data-import.tsx",
+      "route": "/data-import"
+    },
+    {
+      "file": "apps/frontend/pages/data.tsx",
+      "route": "/data"
+    },
+    {
+      "file": "apps/frontend/pages/demo.tsx",
+      "route": "/demo"
+    },
+    {
+      "file": "apps/frontend/pages/docs/[id].tsx",
+      "route": "/docs/[id]"
+    },
+    {
+      "file": "apps/frontend/pages/docs/index.tsx",
+      "route": "/docs"
+    },
+    {
+      "file": "apps/frontend/pages/documents/index.tsx",
+      "route": "/documents"
+    },
+    {
+      "file": "apps/frontend/pages/dossier.tsx",
+      "route": "/dossier"
+    },
+    {
+      "file": "apps/frontend/pages/entities.tsx",
+      "route": "/entities"
+    },
+    {
+      "file": "apps/frontend/pages/graph.tsx",
+      "route": "/graph"
+    },
+    {
+      "file": "apps/frontend/pages/graphx/[tab].tsx",
+      "route": "/graphx/[tab]"
+    },
+    {
+      "file": "apps/frontend/pages/graphx.tsx",
+      "route": "/graphx"
+    },
+    {
+      "file": "apps/frontend/pages/index.tsx",
+      "route": "/"
+    },
+    {
+      "file": "apps/frontend/pages/media-forensics.tsx",
+      "route": "/media-forensics"
+    },
+    {
+      "file": "apps/frontend/pages/nlp/[domain].tsx",
+      "route": "/nlp/[domain]"
+    },
+    {
+      "file": "apps/frontend/pages/nlp.tsx",
+      "route": "/nlp"
+    },
+    {
+      "file": "apps/frontend/pages/person/[id].tsx",
+      "route": "/person/[id]"
+    },
+    {
+      "file": "apps/frontend/pages/plugins/[name].tsx",
+      "route": "/plugins/[name]"
+    },
+    {
+      "file": "apps/frontend/pages/plugins/index.tsx",
+      "route": "/plugins"
+    },
+    {
+      "file": "apps/frontend/pages/search.tsx",
+      "route": "/search"
+    },
+    {
+      "file": "apps/frontend/pages/security.tsx",
+      "route": "/security"
+    },
+    {
+      "file": "apps/frontend/pages/settings-refactored.tsx",
+      "route": "/settings-refactored"
+    },
+    {
+      "file": "apps/frontend/pages/settings.tsx",
+      "route": "/settings"
+    },
+    {
+      "file": "apps/frontend/pages/verification/dashboard.tsx",
+      "route": "/verification/dashboard"
+    },
+    {
+      "file": "apps/frontend/pages/verification/media-forensics.tsx",
+      "route": "/verification/media-forensics"
+    },
+    {
+      "file": "apps/frontend/pages/verification.tsx",
+      "route": "/verification"
+    }
+  ]
+}

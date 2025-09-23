@@ -1,0 +1,64 @@
+name: "Feature Request (Roadmap)"
+description: "Plan a roadmap-aligned feature or enhancement"
+title: "feat: [pkg-?] brief description"
+labels:
+  - phase-2
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for roadmap work packages (see `backlog/README.md`). Link the relevant epic and update `STATUS.md` after completion.
+  - type: input
+    id: epic
+    attributes:
+      label: Linked Epic / Package
+      description: "Reference the epic ID (e.g. pkg-A-graph)."
+      placeholder: "pkg-A-graph"
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary & Value
+      description: "What is the user/business value? Reference affected services or frontend routes."
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope & Boundaries
+      description: "List what is in/out of scope. Mention expected artefacts (code, docs, dashboards)."
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria (DoD)
+      description: "Convert the epic DoD into concrete checks for this feature."
+      placeholder: "- [ ] Observability dashboard updated\n- [ ] Playwright test added"
+    validations:
+      required: true
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Global DoD Confirmation
+      options:
+        - label: "Observability hooks defined (health/ready/metrics/alerts)"
+          required: true
+        - label: "Tests identified (unit/integration/e2e as applicable)"
+          required: true
+        - label: "Documentation plan (README/docs/backlog)"
+          required: true
+        - label: "Security/privacy considerations reviewed (OIDC/OPA/egress)"
+          required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies & Risks
+      description: "List upstream/downstream work, data migrations, or external blockers."
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: "Link to STATUS.md row, DOCS_DIFF item, ROADMAP_STATUS section, dashboards, etc."
