@@ -11,14 +11,23 @@ if str(REPO_ROOT) not in sys.path:
 
 os.environ.setdefault("FEEDS_ENABLED", "1")
 os.environ.setdefault("RSS_ENABLED", "1")
+os.environ.setdefault("FEED_OTX_ENABLED", "1")
 os.environ.setdefault("RSS_FETCH_INTERVAL", "0")
 os.environ.setdefault("RSS_DRY_RUN", "0")
+os.environ.setdefault("OTX_FETCH_INTERVAL", "0")
+os.environ.setdefault("OTX_DRY_RUN", "0")
 
 service_dir = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(service_dir))
 
 import app.main as app_main  # type: ignore  # noqa: E402
-from app.main import backoff, pipeline, store  # noqa: E402
+from app.main import (  # type: ignore  # noqa: E402
+    otx_backoff,
+    otx_store,
+    rss_backoff,
+    rss_pipeline,
+    rss_store,
+)
 
 app = app_main.app
 
@@ -37,5 +46,7 @@ async def client():
 
 @pytest.fixture(autouse=True)
 def reset_store():
-    store.clear()
-    backoff.reset()
+    rss_store.clear()
+    otx_store.clear()
+    rss_backoff.reset()
+    otx_backoff.reset()
