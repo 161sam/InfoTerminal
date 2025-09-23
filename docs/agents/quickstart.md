@@ -28,7 +28,7 @@ uvicorn app.main:app --reload --port 8610
 
 Available endpoints:
 
-- `GET /tools` → returns the allowlisted tools (`search`, `graph.query`,
+- `GET /tools` → returns the policy-governed tools (`search`, `graph.query`,
   `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
   including parameter schema.
 - `POST /chat` → executes at most one mocked tool call and returns the summary
@@ -79,8 +79,8 @@ pnpm dev -- --port 3411
 ```
 
 Then open http://localhost:3411/agent/mvp and send a prompt. Denied requests
-(for example selecting a non-existent tool via the API route) return a red error
-badge and surface the reason from the backend.
+(for example selecting a non-existent tool or a policy-blocked action) return a
+red error badge and surface the reason from the backend.
 
 ## Offline demo script
 
@@ -94,12 +94,40 @@ badge and surface the reason from the backend.
    error and the `agent_rate_limit_block_total` counter increments (visible in
    Grafana’s Infra Overview dashboard panels).
 
-## Policy snippets
+## Policy enforcement with OPA
 
-The MVP uses a static allowlist inside the service. Future waves will integrate
-OPA, but for now add new tools by editing `TOOL_REGISTRY` in
-`services/flowise-connector/app/main.py` and expanding the frontend tool list in
-`apps/frontend/pages/agent/mvp.tsx`.
+The connector now loads `policy/agents/tool_policy.rego` (override via
+`AGENT_POLICY_PATH`) together with `policy/agents/tool_data.json`. At runtime the
+service calls the OPA decision endpoint configured via `AGENT_OPA_URL` (default
+`http://localhost:8181/v1/data`) and `AGENT_OPA_DECISION` (default
+`agents/tool/decision`). Every `/chat` request sends `{tool, route, context}` to
+OPA; the decision result supplies both the verdict and the human-readable
+message shown in the Assistant UI.
+
+Sample rule from the bundled policy:
+
+```rego
+package agents.tool
+
+decision = {
+    "allow": true,
+    "reason": entry.reason,
+    "message": entry.message,
+} {
+    entry := data.agents.allowed_tools[_]
+    entry.tool == input.tool
+    route_matches(entry.route)
+    not entry.effect
+}
+```
+
+To deny a tool, add an entry with `"effect": "deny"` and customise the
+`message` in `tool_data.json`. Environment flags:
+
+- `AGENT_OPA_ENABLED` (default `1`) toggles enforcement.
+- `AGENT_OPA_FAIL_OPEN` (default `1`) allows falling back to legacy behaviour if
+  OPA is unreachable.
+- `AGENT_OPA_TIMEOUT` configures the HTTP timeout in seconds.
 
 ## Where to observe metrics
 
@@ -110,12 +138,16 @@ OPA, but for now add new tools by editing `TOOL_REGISTRY` in
 
 ## Tests
 
-Execute the dedicated API tests before shipping changes:
+Execute the dedicated API and policy tests before shipping changes:
 
 ```bash
 cd services/flowise-connector
 pytest
+
+# optional, validates Rego bundle
+opa test ../../policy
 ```
 
-The suite validates tool registry size, allowlist enforcement, rate limits, and
-metrics exposure.
+The suite validates tool registry size, OPA enforcement, rate limits, and
+metrics exposure. `opa test` ensures the Rego policy remains in sync with the
+Python integration.

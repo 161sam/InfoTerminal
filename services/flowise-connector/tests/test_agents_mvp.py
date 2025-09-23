@@ -6,6 +6,7 @@ from app.main import (
     agent_rate_limit_block_total,
     agent_tool_calls_total,
 )
+from app.policy import PolicyDecision, policy_engine
 
 
 def get_counter_value(counter, **labels):
@@ -15,6 +16,15 @@ def get_counter_value(counter, **labels):
             return 0.0
         return metric._value.get()  # type: ignore[attr-defined]
     return counter._value.get()  # type: ignore[attr-defined]
+
+
+@pytest.fixture(autouse=True)
+def stub_policy_allow(monkeypatch):
+    monkeypatch.setattr(
+        policy_engine,
+        "authorize",
+        lambda **_: PolicyDecision(allow=True, message="allowed", reason="policy_allow"),
+    )
 
 
 @pytest.mark.anyio
@@ -51,6 +61,35 @@ async def test_chat_forbidden_tool_denied(client):
         json={"message": "hack", "tool": "forbidden.tool"},
     )
     assert response.status_code == 403
+    body = response.json()
+    assert body["error"] == "unknown_tool"
+    assert "not registered" in body["message"]
+    end_value = get_counter_value(agent_policy_denied_total)
+    assert end_value == pytest.approx(start_value + 1)
+
+
+@pytest.mark.anyio
+async def test_chat_policy_denied_response(monkeypatch, client):
+    def deny(**kwargs):
+        return PolicyDecision(
+            allow=False,
+            message="Tool blocked by compliance policy.",
+            reason="policy_denied",
+            raw={"allow": False},
+        )
+
+    start_value = get_counter_value(agent_policy_denied_total)
+    monkeypatch.setattr(policy_engine, "authorize", deny)
+    payload = {
+        "message": "Generate a quick dossier",
+        "tool": "dossier.build",
+        "tool_params": {"subject": "ACME Corp"},
+    }
+    response = await client.post("/chat", json=payload)
+    assert response.status_code == 403
+    body = response.json()
+    assert body["error"] == "policy_denied"
+    assert body["message"] == "Tool blocked by compliance policy."
     end_value = get_counter_value(agent_policy_denied_total)
     assert end_value == pytest.approx(start_value + 1)
 

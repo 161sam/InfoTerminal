@@ -17,8 +17,8 @@ instead of duplicating rows._
 - [x] Tool registry exposes exactly six tools (`search`, `graph.query`,
   `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
   with parameter schema. 【F:services/flowise-connector/app/main.py†L63-L165】
-- [x] `/chat` enforces static allowlist, max one mocked tool call, global
-  rate-limit (5/min). 【F:services/flowise-connector/app/main.py†L209-L281】
+- [x] `/chat` enforces OPA tool policy (tool + route), max one mocked tool call,
+  global rate-limit (5/min). 【F:services/flowise-connector/app/main.py†L1-L520】
 - [x] Metrics counters (`agent_tool_calls_total`, `agent_policy_denied_total`,
   `agent_rate_limit_block_total`) plus Grafana tiles. 【F:services/flowise-connector/app/main.py†L118-L148】【F:grafana/dashboards/infra-overview.json†L7-L40】
 - [x] Cancel hook stub logs cancellation requests. 【F:services/flowise-connector/app/main.py†L299-L306】
