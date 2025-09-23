@@ -1,0 +1,42 @@
+{
+  "agents": {
+    "allowed_tools": [
+      {
+        "tool": "search",
+        "route": "chat",
+        "message": "Tool 'search' permitted for chat route.",
+        "reason": "policy_allow"
+      },
+      {
+        "tool": "graph.query",
+        "route": "chat",
+        "message": "Tool 'graph.query' permitted for chat route.",
+        "reason": "policy_allow"
+      },
+      {
+        "tool": "dossier.build",
+        "route": "chat",
+        "message": "Tool 'dossier.build' permitted for chat route.",
+        "reason": "policy_allow"
+      },
+      {
+        "tool": "doc-entities.ner",
+        "route": "chat",
+        "message": "Tool 'doc-entities.ner' permitted for chat route.",
+        "reason": "policy_allow"
+      },
+      {
+        "tool": "plugin-runner.run",
+        "route": "chat",
+        "message": "Tool 'plugin-runner.run' permitted for chat route.",
+        "reason": "policy_allow"
+      },
+      {
+        "tool": "video.analyze",
+        "route": "chat",
+        "message": "Tool 'video.analyze' permitted for chat route.",
+        "reason": "policy_allow"
+      }
+    ]
+  }
+}

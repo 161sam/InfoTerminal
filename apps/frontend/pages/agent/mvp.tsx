@@ -172,6 +172,9 @@ export default function AgentMvpChatPage() {
       const payload = await response.json();
 
       if (!response.ok) {
+        const policyDetail = payload?.detail;
+        const readableError =
+          policyDetail?.message || payload?.error || policyDetail?.error || 'Agent request denied.';
         setMessages((prev) =>
           prev.map((message) =>
             message.id === toolMessageId
@@ -179,12 +182,12 @@ export default function AgentMvpChatPage() {
                   ...message,
                   status: 'error',
                   content: `tool_call: ${selectedTool} ❌`,
-                  details: { error: payload.error }
+                  details: { error: readableError, policy: policyDetail }
                 }
               : message
           )
         );
-        setErrorMessage(payload.error || 'Agent request denied.');
+        setErrorMessage(readableError);
         return;
       }
 

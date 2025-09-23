@@ -6,7 +6,7 @@ implements the feature set required for the Wave 4 agent MVP:
 * Feature flag guard (`AGENTS_ENABLED`).
 * Static tool registry exposing exactly six tools.
 * Single-turn chat endpoint that issues at most one mocked tool call.
-* Governance primitives: allowlist enforcement, global rate limit,
+* Governance primitives: OPA-backed policy enforcement, global rate limit,
   and cancel hook stub.
 * Basic safety controls (input sanitisation, max tokens/steps metadata).
 * Prometheus counters for policy denials, tool calls, and rate limits.
@@ -28,7 +28,10 @@ from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, root_validator
 from prometheus_client import Counter
+from starlette.responses import JSONResponse
 from starlette_exporter import PrometheusMiddleware, handle_metrics
+
+from app.policy import PolicyDecision, policy_engine
 
 logger = logging.getLogger("flowise-connector")
 logging.basicConfig(level=logging.INFO)
@@ -178,7 +181,7 @@ agent_tool_calls_total = Counter(
 )
 agent_policy_denied_total = Counter(
     "agent_policy_denied_total",
-    "Total number of denied tool requests due to static allowlist.",
+    "Total number of denied tool requests due to policy enforcement.",
 )
 agent_rate_limit_block_total = Counter(
     "agent_rate_limit_block_total",
@@ -192,6 +195,22 @@ agent_rate_limit_block_total = Counter(
 
 class RateLimitExceededError(RuntimeError):
     """Raised when the global rate limit budget is exhausted."""
+
+
+class PolicyDeniedError(RuntimeError):
+    """Raised when the agent policy denies a tool invocation."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        reason: str = "policy_denied",
+        details: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        super().__init__(message)
+        self.message = message
+        self.reason = reason
+        self.details = details or {}
 
 
 class GlobalRateLimiter:
@@ -311,16 +330,34 @@ def sanitise_message(message: str) -> str:
     return clean
 
 
-def resolve_tool(tool: Optional[str]) -> str:
-    if tool:
-        if tool not in ALLOWED_TOOLS:
-            agent_policy_denied_total.inc()
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Tool '{tool}' is not allowed.",
-            )
-        return tool
-    return "dossier.build"
+def resolve_tool(
+    tool: Optional[str],
+    *,
+    route: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> str:
+    selected = tool or "dossier.build"
+    if selected not in ALLOWED_TOOLS:
+        agent_policy_denied_total.inc()
+        raise PolicyDeniedError(
+            f"Tool '{selected}' is not registered.",
+            reason="unknown_tool",
+            details={"tool": selected},
+        )
+
+    decision: PolicyDecision = policy_engine.authorize(
+        tool=selected,
+        route=route,
+        context=context or {},
+    )
+    if not decision.allow:
+        agent_policy_denied_total.inc()
+        raise PolicyDeniedError(
+            decision.message or f"Tool '{selected}' blocked by policy.",
+            reason=decision.reason or "policy_denied",
+            details={"tool": selected, "policy": decision.raw},
+        )
+    return selected
 
 
 def execute_tool(tool_name: str, params: Dict[str, Any], prompt: str) -> ToolCall:
@@ -365,6 +402,18 @@ app.add_middleware(
 app.add_route("/metrics", handle_metrics)
 
 
+@app.exception_handler(PolicyDeniedError)
+async def policy_denied_handler(_: Request, exc: PolicyDeniedError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_403_FORBIDDEN,
+        content={
+            "error": exc.reason,
+            "message": exc.message,
+            "details": exc.details,
+        },
+    )
+
+
 @app.middleware("http")
 async def add_request_id(request: Request, call_next):
     request_id = request.headers.get("X-Request-Id", str(uuid.uuid4()))
@@ -398,9 +447,13 @@ async def list_tools(_: None = Depends(require_agents_enabled)) -> ToolsResponse
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest, _: None = Depends(require_agents_enabled)) -> ChatResponse:
-    prompt = sanitise_message(request.message)
-    conversation_id = request.conversation_id or str(uuid.uuid4())
+async def chat(
+    chat_request: ChatRequest,
+    fastapi_request: Request,
+    _: None = Depends(require_agents_enabled),
+) -> ChatResponse:
+    prompt = sanitise_message(chat_request.message)
+    conversation_id = chat_request.conversation_id or str(uuid.uuid4())
 
     try:
         global_rate_limiter.check()
@@ -408,14 +461,23 @@ async def chat(request: ChatRequest, _: None = Depends(require_agents_enabled)) 
         logger.warning("rate_limit_block", extra={"conversation_id": conversation_id})
         raise HTTPException(status_code=429, detail=str(exc)) from exc
 
-    selected_tool = resolve_tool(request.tool)
+    policy_context = {
+        "conversation_id": conversation_id,
+        "request_id": fastapi_request.headers.get("X-Request-Id"),
+    }
+
+    selected_tool = resolve_tool(
+        chat_request.tool,
+        route="chat",
+        context=policy_context,
+    )
     tool_definition = TOOL_REGISTRY[selected_tool]
 
     # Hydrate default parameters when omitted to keep schema deterministic.
     params: Dict[str, Any] = {}
     for param_name, schema in tool_definition.parameters.items():
-        if param_name in request.tool_params:
-            params[param_name] = request.tool_params[param_name]
+        if param_name in chat_request.tool_params:
+            params[param_name] = chat_request.tool_params[param_name]
         elif "default" in schema:
             params[param_name] = schema["default"]
         elif schema.get("required"):

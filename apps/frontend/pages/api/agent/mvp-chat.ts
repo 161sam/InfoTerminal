@@ -45,7 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (!response.ok) {
-      const detail = payload?.detail || payload?.error || response.statusText;
+      const detail =
+        payload?.message || payload?.detail || payload?.error || response.statusText;
       return res.status(response.status).json({ error: detail, detail: payload });
     }
 
