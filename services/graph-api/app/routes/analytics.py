@@ -1,150 +1,139 @@
-# Analytics routes for graph algorithms and statistics
+"""Graph analysis endpoints used by the dossier pipeline."""
 
-from typing import Optional
-from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from __future__ import annotations
 
-# Import analytics from parent directory
-import sys
-from pathlib import Path
-SERVICE_DIR = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(SERVICE_DIR))
-from analytics import GraphAnalytics, CentralityRequest, CommunityRequest
+import time
+from typing import Any, Dict, Optional
+
+from fastapi import APIRouter, HTTPException, Query, Request
+from pydantic import BaseModel, Field
+
+from analytics import GraphAnalytics
+from metrics import (
+    GRAPH_ANALYSIS_DURATION,
+    GRAPH_ANALYSIS_QUERIES,
+    GRAPH_SUBGRAPH_EXPORTS,
+    GRAPH_SUBGRAPH_EXPORT_DURATION,
+)
 from utils.neo4j_client import neo_session
 
-router = APIRouter(prefix="/analytics", tags=["analytics"])
+
+router = APIRouter(prefix="/graphs/analysis", tags=["graph-analysis"])
+legacy_router = APIRouter(prefix="/analytics", tags=["analytics"], deprecated=True)
 
 
-@router.get("/centrality/degree")
-def get_degree_centrality(
-    request: Request,
-    node_type: Optional[str] = None, 
-    limit: int = 100
-):
-    """Get degree centrality for nodes."""
-    driver = getattr(request.app.state, "driver", None)
-    if not driver:
-        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    
-    try:
-        analytics = GraphAnalytics(driver)
-        result = analytics.degree_centrality(node_type, limit)
-        return {
-            "centrality_type": "degree", 
-            "nodes": result,
-            "total_nodes": len(result)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
-
-
-@router.get("/centrality/betweenness") 
-def get_betweenness_centrality(
-    request: Request,
-    node_type: Optional[str] = None, 
-    limit: int = 100
-):
-    """Get betweenness centrality for nodes."""
-    driver = getattr(request.app.state, "driver", None)
-    if not driver:
-        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    
-    try:
-        analytics = GraphAnalytics(driver)
-        result = analytics.betweenness_centrality(node_type, limit)
-        return {
-            "centrality_type": "betweenness", 
-            "nodes": result,
-            "total_nodes": len(result)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
-
-
-@router.post("/communities")
-def detect_communities(request: Request, community_request: CommunityRequest):
-    """Detect communities in the graph."""
-    driver = getattr(request.app.state, "driver", None)
-    if not driver:
-        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    
-    try:
-        analytics = GraphAnalytics(driver)
-        
-        if community_request.algorithm == "louvain":
-            result = analytics.louvain_communities(community_request.min_community_size or 3)
-        else:
-            raise HTTPException(400, f"Unsupported algorithm: {community_request.algorithm}")
-            
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
-
-
-@router.get("/summary")
-def graph_summary(request: Request):
-    """Get overall graph statistics."""
-    driver = getattr(request.app.state, "driver", None)
-    if not driver:
-        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    
-    try:
-        analytics = GraphAnalytics(driver)
-        return analytics.graph_summary()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
-
-
-@router.get("/embeddings/node2vec")
-def node2vec_embeddings(
-    request: Request,
-    dimensions: int = 32,
-    walk_length: int = 80,
-    walks_per_node: int = 10,
-    window_size: int = 10,
-):
-    """Compute Node2Vec embeddings via Neo4j GDS (limited set)."""
-    driver = getattr(request.app.state, "driver", None)
-    if not driver:
-        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-
-    try:
-        analytics = GraphAnalytics(driver)
-        return analytics.node2vec_embeddings(dimensions, walk_length, walks_per_node, window_size)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
-
-
-@router.get("/pagerank")
-def pagerank(request: Request, node_type: str | None = None, limit: int = 100):
-    driver = getattr(request.app.state, "driver", None)
-    if not driver:
-        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    try:
-        analytics = GraphAnalytics(driver)
-        return {"algorithm": "pagerank", "nodes": analytics.pagerank(node_type, limit)}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analytics error: {str(e)}")
-
-
-class PathRequest(BaseModel):
+class ShortestPathRequest(BaseModel):
     start_node_id: str
     end_node_id: str
-    max_length: Optional[int] = 6
+    max_length: int = Field(default=6, ge=1, le=16)
+    timeout_ms: Optional[int] = Field(default=None, ge=100, le=30000)
 
 
-@router.post("/paths/shortest")
-def shortest_path(request: Request, path_request: PathRequest):
-    """Find shortest path between two nodes."""
+def _record_analysis_metric(algorithm: str, status: str, duration: float) -> None:
+    GRAPH_ANALYSIS_QUERIES.labels(algorithm=algorithm, status=status).inc()
+    GRAPH_ANALYSIS_DURATION.labels(algorithm=algorithm, status=status).observe(duration)
+
+
+def _pagination(offset: int, limit: int, returned: int) -> Dict[str, Any]:
+    next_offset = offset + returned if returned == limit else None
+    previous_offset = max(offset - limit, 0) if offset > 0 else None
+    return {
+        "limit": limit,
+        "offset": offset,
+        "returned": returned,
+        "next_offset": next_offset,
+        "previous_offset": previous_offset,
+    }
+
+
+@router.get("/degree")
+def degree_centrality(
+    request: Request,
+    node_type: str | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0, le=1000),
+    timeout_ms: int | None = Query(default=None, ge=100, le=30000),
+) -> Dict[str, Any]:
     driver = getattr(request.app.state, "driver", None)
     if not driver:
         raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    
+
+    started = time.perf_counter()
     try:
+        analytics = GraphAnalytics(driver)
+        items = analytics.degree_centrality(
+            node_type=node_type,
+            limit=limit,
+            offset=offset,
+            timeout_ms=timeout_ms,
+        )
+        duration = time.perf_counter() - started
+        _record_analysis_metric("degree", "success", duration)
+        return {
+            "algorithm": "degree",
+            "node_type": node_type,
+            "results": items,
+            "pagination": _pagination(offset, limit, len(items)),
+        }
+    except HTTPException:
+        duration = time.perf_counter() - started
+        _record_analysis_metric("degree", "error", duration)
+        raise
+    except Exception as exc:  # pragma: no cover - defensive guard
+        duration = time.perf_counter() - started
+        _record_analysis_metric("degree", "error", duration)
+        raise HTTPException(status_code=500, detail=f"Analytics error: {exc}") from exc
+
+
+@router.get("/communities")
+def louvain_communities(
+    request: Request,
+    min_size: int = Query(default=3, ge=1, le=50),
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0, le=1000),
+    timeout_ms: int | None = Query(default=None, ge=100, le=30000),
+) -> Dict[str, Any]:
+    driver = getattr(request.app.state, "driver", None)
+    if not driver:
+        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
+
+    started = time.perf_counter()
+    try:
+        analytics = GraphAnalytics(driver)
+        payload = analytics.louvain_communities(
+            min_size=min_size,
+            offset=offset,
+            limit=limit,
+            timeout_ms=timeout_ms,
+        )
+        duration = time.perf_counter() - started
+        _record_analysis_metric("louvain", "success", duration)
+        payload["pagination"] = _pagination(offset, limit, len(payload.get("communities", [])))
+        return payload
+    except HTTPException:
+        duration = time.perf_counter() - started
+        _record_analysis_metric("louvain", "error", duration)
+        raise
+    except Exception as exc:  # pragma: no cover
+        duration = time.perf_counter() - started
+        _record_analysis_metric("louvain", "error", duration)
+        raise HTTPException(status_code=500, detail=f"Analytics error: {exc}") from exc
+
+
+@router.post("/shortest-path")
+def shortest_path(request: Request, payload: ShortestPathRequest) -> Dict[str, Any]:
+    driver = getattr(request.app.state, "driver", None)
+    if not driver:
+        raise HTTPException(status_code=503, detail="Neo4j driver not ready")
+
+    algorithm = "shortest_path"
+    started = time.perf_counter()
+    try:
+        timeout = payload.timeout_ms / 1000 if payload.timeout_ms else None
         with neo_session(driver) as session:
             query = """
             MATCH (start {id: $start}), (end {id: $end})
-            MATCH path = shortestPath((start)-[*..%d]-(end))
+            MATCH path = shortestPath((start)-[*..$max_len]-(end))
             RETURN [n in nodes(path) | {
                 id: n.id,
                 name: n.name,
@@ -152,52 +141,92 @@ def shortest_path(request: Request, path_request: PathRequest):
             }] as nodes,
             [r in relationships(path) | type(r)] as relationships,
             length(path) as path_length
-            """ % (path_request.max_length or 6)
-            
-            result = session.run(query, 
-                               start=path_request.start_node_id, 
-                               end=path_request.end_node_id).single()
-            
-            if not result:
-                return {"path_found": False, "message": "No path found"}
-            
-            return {
-                "path_found": True,
-                "nodes": result["nodes"],
-                "relationships": result["relationships"], 
-                "length": result["path_length"]
+            """
+
+            params = {
+                "start": payload.start_node_id,
+                "end": payload.end_node_id,
+                "max_len": payload.max_length,
             }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Path analysis error: {str(e)}")
+            run_kwargs: Dict[str, Any] = {}
+            if timeout:
+                run_kwargs["timeout"] = timeout
+
+            result = session.run(query, parameters=params, **run_kwargs).single()
+
+        duration = time.perf_counter() - started
+        _record_analysis_metric(algorithm, "success", duration)
+
+        if not result:
+            return {
+                "path_found": False,
+                "message": "No path found",
+                "nodes": [],
+                "relationships": [],
+            }
+
+        return {
+            "path_found": True,
+            "nodes": result["nodes"],
+            "relationships": result["relationships"],
+            "length": result["path_length"],
+        }
+    except HTTPException:
+        duration = time.perf_counter() - started
+        _record_analysis_metric(algorithm, "error", duration)
+        raise
+    except Exception as exc:  # pragma: no cover
+        duration = time.perf_counter() - started
+        _record_analysis_metric(algorithm, "error", duration)
+        raise HTTPException(status_code=500, detail=f"Path analysis error: {exc}") from exc
 
 
-@router.get("/node/{node_id}/influence")
-def node_influence(request: Request, node_id: str, depth: int = 2):
-    """Analyze a node's influence in its neighborhood."""
+@router.get("/subgraph-export")
+def subgraph_export(
+    request: Request,
+    center_id: str = Query(..., description="Center node identifier"),
+    radius: int = Query(default=2, ge=1, le=5),
+    limit: int = Query(default=200, ge=1, le=1000),
+    relationship_type: list[str] | None = Query(default=None),
+    timeout_ms: int | None = Query(default=None, ge=100, le=30000),
+    format: str = Query(default="json", pattern="^(json|markdown)$"),
+) -> Dict[str, Any]:
     driver = getattr(request.app.state, "driver", None)
     if not driver:
         raise HTTPException(status_code=503, detail="Neo4j driver not ready")
-    
+
+    started = time.perf_counter()
     try:
-        with neo_session(driver) as session:
-            # Get node's direct and indirect connections
-            query = """
-            MATCH (n {id: $node_id})
-            OPTIONAL MATCH (n)-[*1..%d]-(connected)
-            WITH n, collect(DISTINCT connected) as neighborhood
-            RETURN {
-                node: {id: n.id, name: n.name, labels: labels(n)},
-                direct_connections: size([(n)--() | 1]),
-                neighborhood_size: size(neighborhood),
-                influence_score: size(neighborhood) * 1.0 / $depth
-            } as result
-            """ % depth
-            
-            result = session.run(query, node_id=node_id, depth=depth).single()
-            
-            if not result:
-                raise HTTPException(404, "Node not found")
-                
-            return result["result"]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Influence analysis error: {str(e)}")
+        analytics = GraphAnalytics(driver)
+        result = analytics.subgraph_export(
+            center_id=center_id,
+            radius=radius,
+            limit=limit,
+            relationship_types=relationship_type,
+            timeout_ms=timeout_ms,
+        )
+
+        duration = time.perf_counter() - started
+        GRAPH_SUBGRAPH_EXPORTS.labels(format=format, status="success").inc()
+        GRAPH_SUBGRAPH_EXPORT_DURATION.labels(format=format, status="success").observe(duration)
+
+        if format == "markdown":
+            return {"markdown": result["markdown"], "center": result["center"]}
+
+        return result
+    except HTTPException:
+        duration = time.perf_counter() - started
+        GRAPH_SUBGRAPH_EXPORTS.labels(format=format, status="error").inc()
+        GRAPH_SUBGRAPH_EXPORT_DURATION.labels(format=format, status="error").observe(duration)
+        raise
+    except Exception as exc:  # pragma: no cover
+        duration = time.perf_counter() - started
+        GRAPH_SUBGRAPH_EXPORTS.labels(format=format, status="error").inc()
+        GRAPH_SUBGRAPH_EXPORT_DURATION.labels(format=format, status="error").observe(duration)
+        raise HTTPException(status_code=500, detail=f"Export failed: {exc}") from exc
+
+
+# Legacy compatibility routes
+legacy_router.add_api_route("/centrality/degree", degree_centrality, methods=["GET"])
+legacy_router.add_api_route("/communities", louvain_communities, methods=["GET"])
+legacy_router.add_api_route("/paths/shortest", shortest_path, methods=["POST"])

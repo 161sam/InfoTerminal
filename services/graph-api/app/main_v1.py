@@ -46,6 +46,7 @@ from it_logging import setup_logging
 from utils.neo4j_client import get_driver, neo_session
 from .routes.alg import router as alg_router
 from .routes.export import router as export_router
+from .routes.analytics import legacy_router as legacy_analytics_router
 from .routes.analytics import router as analytics_router
 from .routes.geospatial import router as geospatial_router
 
@@ -217,7 +218,7 @@ class NeighborRequest(BaseModel):
     )
     direction: str = Field(
         default="both",
-        regex="^(incoming|outgoing|both)$",
+        pattern="^(incoming|outgoing|both)$",
         description="Traversal direction"
     )
 
@@ -413,7 +414,7 @@ def get_node_neighbors(
     depth: int = Query(default=1, ge=1, le=5, description="Traversal depth"),
     limit: int = Query(default=50, ge=1, le=1000, description="Maximum neighbors to return"),
     relationship_types: Optional[str] = Query(None, description="Comma-separated relationship types"),
-    direction: str = Query(default="both", regex="^(incoming|outgoing|both)$", description="Traversal direction")
+    direction: str = Query(default="both", pattern="^(incoming|outgoing|both)$", description="Traversal direction")
 ):
     """
     Find neighbors of a specific node.
@@ -864,6 +865,7 @@ app.include_router(v1_router)
 app.include_router(alg_router)
 app.include_router(export_router)
 app.include_router(analytics_router)
+app.include_router(legacy_analytics_router)
 app.include_router(geospatial_router)
 
 # Legacy endpoints with deprecation warnings

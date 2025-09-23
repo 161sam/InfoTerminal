@@ -1,0 +1,40 @@
+# {{ title }}
+
+- **Case ID:** {{ case_id }}
+- **Source:** {{ source }}
+- **Generated:** {{ generated_at }}
+
+## Executive Summary
+{% if summary %}{{ summary }}{% else %}_No summary provided._{% endif %}
+
+## Assigned Analysts
+{% if analysts %}
+{% for analyst in analysts %}- {{ analyst }}
+{% endfor %}
+{% else %}
+- _No analysts recorded._
+{% endif %}
+
+## Key Entities
+{% if entities %}
+{% for entity in entities %}- {{ entity.get('label', entity.get('id', 'Unknown')) }} — {{ entity.get('description', '') }}
+{% endfor %}
+{% else %}
+_No entities linked to this dossier._
+{% endif %}
+
+## Referenced Intelligence
+{% if references %}
+{% for ref in references %}- [{{ ref.get('title', ref.get('url', 'Reference')) }}]({{ ref.get('url', '#') }})
+{% endfor %}
+{% else %}
+_No external references provided._
+{% endif %}
+
+## Analyst Notes
+{% if notes %}
+{% for entry in notes %}- {{ entry }}
+{% endfor %}
+{% else %}
+_No analyst notes captured for this case._
+{% endif %}

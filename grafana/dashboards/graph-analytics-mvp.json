@@ -35,6 +35,27 @@
           "datasource": "Prometheus"
         }
       ]
+    },
+    {
+      "type": "stat",
+      "title": "Dossier Exports (15m)",
+      "targets": [
+        {
+          "expr": "sum(increase(dossier_exports_total[15m])) by (format)",
+          "legendFormat": "{{format}}",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Collab Notes Created (15m)",
+      "targets": [
+        {
+          "expr": "sum(increase(collab_notes_total{status=\"created\"}[15m]))",
+          "datasource": "Prometheus"
+        }
+      ]
     }
   ]
 }
