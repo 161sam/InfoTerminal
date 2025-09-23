@@ -111,7 +111,7 @@ class GraphIngestClient:
         self.fallback_dir.mkdir(parents=True, exist_ok=True)
         path = self.fallback_dir / fallback_filename
         path.write_text(json.dumps(payload, indent=2, default=str))
-        logger.info("graph ingest stored locally", path=str(path))
+        logger.info("graph ingest stored locally %s", path)
         return {"status": "stored", "path": str(path)}
 
 
