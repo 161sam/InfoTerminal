@@ -49,6 +49,7 @@ from .routes.export import router as export_router
 from .routes.analytics import legacy_router as legacy_analytics_router
 from .routes.analytics import router as analytics_router
 from .routes.geospatial import router as geospatial_router
+from .routes.ingest import router as ingest_router
 
 try:
     import neo4j
@@ -121,6 +122,10 @@ setup_standard_openapi(
 app.state.service_name = "graph-api"
 app.state.version = os.getenv("GIT_SHA", "1.0.0")
 app.state.start_ts = time.monotonic()
+app.state.plugin_runs = []
+app.state.video_analyses = []
+app.state.last_plugin_ingest = None
+app.state.video_pipeline_enabled = False
 
 # OTEL instrumentation (optional)
 try:  # pragma: no cover - optional dependency
@@ -860,6 +865,7 @@ async def _run_community_algorithm(job_id: str, algorithm: str, parameters: Dict
 
 # Include V1 router
 app.include_router(v1_router)
+app.include_router(ingest_router)
 
 # Legacy routers (temporary compatibility)
 app.include_router(alg_router)

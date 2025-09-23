@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<nmaprun>
+  <scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000" />
+  <host>
+    <status state="up" reason="syn-ack" />
+    <address addr="192.0.2.10" addrtype="ipv4" />
+    <hostnames>
+      <hostname name="demo-host" type="user" />
+    </hostnames>
+    <ports>
+      <port protocol="tcp" portid="22">
+        <state state="open" reason="syn-ack" />
+        <service name="ssh" product="OpenSSH" version="8.4" />
+      </port>
+      <port protocol="tcp" portid="80">
+        <state state="open" reason="syn-ack" />
+        <service name="http" product="nginx" version="1.21" />
+      </port>
+    </ports>
+  </host>
+</nmaprun>

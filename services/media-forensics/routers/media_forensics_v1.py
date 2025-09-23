@@ -5,6 +5,7 @@ Provides EXIF extraction, perceptual hashing, forensic analysis, and comparison.
 
 import hashlib
 import json
+import logging
 import os
 import tempfile
 from typing import Dict, Any, Optional, List
@@ -15,7 +16,16 @@ import requests
 import numpy as np
 from PIL import Image
 from PIL.ExifTags import TAGS
-from fastapi import APIRouter, UploadFile, File, HTTPException, status, BackgroundTasks, Query
+from fastapi import (
+    APIRouter,
+    UploadFile,
+    File,
+    HTTPException,
+    status,
+    BackgroundTasks,
+    Query,
+    Depends,
+)
 from pydantic import BaseModel
 
 # Import shared standards
@@ -51,8 +61,14 @@ from ..models import (
     PerceptualHashes,
     ForensicAnalysis,
     ComparisonAnalysis,
-    ReverseSearchResult
+    ReverseSearchResult,
+    VideoAnalysisRequest,
+    VideoAnalysisResponse,
 )
+from ..video_pipeline import VideoPipeline
+from _shared.clients.graph_ingest import GraphIngestClient
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Media Forensics"], prefix="/v1")
 
@@ -61,6 +77,16 @@ MAX_FILE_SIZE = int(os.getenv("MEDIA_MAX_FILE_SIZE", 50 * 1024 * 1024))  # 50MB
 SUPPORTED_IMAGE_FORMATS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
 REVERSE_SEARCH_ENABLED = os.getenv("REVERSE_SEARCH_ENABLED", "0") == "1"
 BING_SEARCH_API_KEY = os.getenv("BING_SEARCH_API_KEY")
+VIDEO_PIPELINE_ENABLED = os.getenv("VIDEO_PIPELINE_ENABLED", "0") == "1"
+
+video_pipeline: Optional[VideoPipeline] = None
+graph_client: Optional[GraphIngestClient] = None
+
+
+def set_dependencies(pipeline: VideoPipeline, ingest_client: GraphIngestClient):
+    global video_pipeline, graph_client
+    video_pipeline = pipeline
+    graph_client = ingest_client
 
 
 def extract_exif_data(image: Image.Image) -> Dict[str, Any]:
@@ -436,7 +462,7 @@ async def batch_analyze_images(
 def get_image_metadata(sha256: str):
     """
     Get cached metadata for an image by SHA256 hash.
-    
+
     This is a placeholder for metadata caching integration.
     """
     return {
@@ -444,3 +470,63 @@ def get_image_metadata(sha256: str):
         "cached_metadata": None,
         "message": "Metadata caching not yet implemented. Consider integrating with Redis/database cache."
     }
+
+
+@router.post(
+    "/videos/analyze",
+    response_model=VideoAnalysisResponse,
+    summary="Analyze video file",
+    description="Extract frames and run simplified object detection via the media pipeline.",
+)
+async def analyze_video(
+    file: UploadFile = File(..., description="Video file to analyse"),
+    options: VideoAnalysisRequest = Depends(),
+):
+    if not VIDEO_PIPELINE_ENABLED:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "error": {
+                    "code": "VIDEO_PIPELINE_DISABLED",
+                    "message": "Video pipeline feature flag is disabled",
+                    "details": {"feature_flag": "VIDEO_PIPELINE_ENABLED"},
+                }
+            },
+        )
+
+    if video_pipeline is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "error": {
+                    "code": "VIDEO_PIPELINE_UNAVAILABLE",
+                    "message": "Video pipeline is not initialised",
+                }
+            },
+        )
+
+    video_bytes = await file.read()
+    if not video_bytes:
+        raise_http_error("VIDEO_FILE_EMPTY", "Uploaded video file is empty")
+    if len(video_bytes) > MAX_FILE_SIZE:
+        raise_http_error(
+            "VIDEO_FILE_TOO_LARGE",
+            "Video exceeds maximum allowed size",
+            {"max_bytes": MAX_FILE_SIZE},
+        )
+
+    analysis_payload, graph_payload = await video_pipeline.process_video(
+        video_bytes,
+        file.filename or "upload.mp4",
+        frame_interval=options.frame_interval,
+        min_area=options.min_area,
+        max_frames=options.max_frames,
+    )
+
+    if graph_client is not None:
+        try:
+            await graph_client.ingest_video_analysis(graph_payload)
+        except Exception as exc:  # pragma: no cover - network failure path
+            logger.warning("Video graph ingest failed: %s", exc)
+
+    return VideoAnalysisResponse(**analysis_payload)

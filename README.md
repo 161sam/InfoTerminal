@@ -45,7 +45,7 @@ Details und Reports: `build-stabilization/README.md`
 - **Observability:** Neue Prometheus-Metriken `graph_analysis_queries_total`, `graph_analysis_duration_seconds_bucket`, `graph_subgraph_exports_total`, `dossier_exports_total`, `collab_notes_total`.
 - **Gates:** Inventory/Policy, Health-Ready-Metrics, API/Docs und Smoke-E2E müssen nach jedem Merge grün bleiben (`scripts/generate_inventory.py`, `test_infoterminal_v030_features.sh --suite graph-dossier`).
 
-## 🧪 5-Minuten-Demo (offline, Wave 1 + 2)
+## 🧪 5-Minuten-Demo (offline, Wave 1–3)
 
 > Ziel: In fünf Minuten den End-to-End-Fluss **Search → Graph-Analyse → Dossier-Export → NLP-Linking → Geo-Overlay** demonstrieren – komplett offline und reproduzierbar.
 
@@ -100,13 +100,56 @@ Details und Reports: `build-stabilization/README.md`
    curl -s "http://localhost:8612/geo/entities?south=52&west=13&east=14&north=53" | jq '.entities[0]'
    ```
 7. **Observability & Dashboards kontrollieren**
-   - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `collab-hub` prüfen (neue Counter/Histograms).
+   - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `collab-hub`, `plugin-runner`, `media-forensics` prüfen (neue Counter/Histograms).
    - Prometheus: `doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_linking_status_total`, `doc_entities_resolver_latency_seconds` beobachten.
    - Prometheus: `graph_geo_queries_total`, `geo_query_count`, `graph_geo_query_errors_total` auf der Graph-API.
+   - Prometheus: `plugin_run_total{plugin="nmap"}`, `plugin_run_failures_total{plugin="nmap"}`, `video_frames_processed_total{pipeline="media_forensics"}` prüfen.
    - Grafana: Dashboard **Graph Analytics MVP** (`grafana/dashboards/graph-analytics-mvp.json`).
-   - Grafana: neues Panel **NLP Resolver Outcomes** + **Geo Query Volume** (siehe `monitoring/grafana-dashboards/infoterminal-overview.json`).
+   - Grafana: Panels **NLP Resolver Outcomes**, **Geo Query Volume**, **Plugin Execution Rate** und **Video Frames Processed Rate** (siehe `monitoring/grafana-dashboards/infoterminal-overview.json`).
    - Superset: Dashboard **Graph Analytics – MVP** (`apps/superset/assets/dashboard/graph_analytics_mvp.json`).
    - Smoke: `scripts/smoke_graph_analysis.sh` verifiziert Degree, Louvain, Shortest Path & Subgraph Export.
+8. **Plugin-Runner (nmap → Graph ingest)**
+   ```bash
+   export PLUGINS_DIR="$(pwd)/plugins"
+   export RESULTS_DIR="$(pwd)/tmp/plugin-results"
+   export PLUGIN_TEST_MODE=1
+   export IT_ENABLE_METRICS=1
+
+   curl -s -X POST "http://localhost:8621/v1/plugins/nmap/execute" \
+     -H 'Content-Type: application/json' \
+     -d '{"parameters":{"target":"scan.example"},"output_format":"json"}' | jq '.'
+
+   # Wait a moment and fetch the job payload including graph/search artefacts
+   curl -s "http://localhost:8621/v1/jobs" | jq '.jobs[0] | {status,graph_entities}'
+   cat tmp/plugin-results/graph_ingest/plugin_run_*.json | jq '.graph_entities[0]'
+   ```
+9. **Video-Pipeline (Frames → Graph ingest)**
+   ```bash
+   export VIDEO_PIPELINE_ENABLED=1
+   export MEDIA_GRAPH_FALLBACK_DIR="$(pwd)/tmp/video-graph"
+
+   VIDEO_FILE=$(python - <<'PY'
+import numpy as np
+import tempfile
+from PIL import Image
+
+frames = []
+for i in range(6):
+    frame = np.zeros((64, 64, 3), dtype=np.uint8)
+    frame[10 + i : 30 + i, 10:30] = 255
+    frames.append(Image.fromarray(frame))
+
+tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.gif')
+frames[0].save(tmp.name, save_all=True, append_images=frames[1:], duration=120, loop=0)
+print(tmp.name)
+PY
+   )
+
+   curl -s -X POST "http://localhost:8631/v1/videos/analyze" \
+     -F "file=@${VIDEO_FILE}" -F frame_interval=1 -F min_area=50 | jq '.summary, .scenes[0]'
+
+   cat tmp/video-graph/video_analysis_*.json | jq '.summary'
+   ```
 
 > 💡 **Idempotent:** Wiederholtes Ausführen aktualisiert Exporte/Dashboards und überschreibt Artefakte ohne Duplikate.
 

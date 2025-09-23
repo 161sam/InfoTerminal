@@ -22,7 +22,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Dict, Any
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import structlog
 import docker
@@ -39,11 +39,18 @@ from _shared.api_standards import (
     setup_standard_openapi,
     get_service_tags_metadata,
     HealthChecker,
-    DependencyCheck
+    DependencyCheck,
 )
+from _shared.clients.graph_ingest import GraphIngestClient
+from _shared.obs.metrics_boot import enable_prometheus_metrics
 
 # Import plugin system components
 from registry import PluginRegistry
+from metrics import (
+    PLUGIN_RUN_DURATION_SECONDS,
+    PLUGIN_RUN_FAILURE_TOTAL,
+    PLUGIN_RUN_TOTAL,
+)
 
 # Import routers
 from routers.core_v1 import router as core_router, set_dependencies
@@ -71,6 +78,7 @@ job_queue = None
 job_processor_task = None
 docker_client = None
 health_checker = HealthChecker(SERVICE_NAME, SERVICE_VERSION)
+graph_client: GraphIngestClient | None = None
 
 
 async def job_processor():
@@ -106,16 +114,49 @@ async def job_processor():
                     )
                     
                     # Update job with results
-                    running_jobs[job_id].update({
-                        "status": result.status,
-                        "completed_at": result.completed_at,
-                        "execution_time": result.execution_time,
-                        "results": result.parsed_output,
-                        "graph_entities": getattr(result, 'graph_entities', []),
-                        "search_documents": getattr(result, 'search_documents', []),
-                        "error": result.error,
-                        "output_files": getattr(result, 'output_files', [])
-                    })
+                    running_jobs[job_id].update(
+                        {
+                            "status": result.status,
+                            "completed_at": result.completed_at,
+                            "execution_time": result.execution_time,
+                            "results": result.parsed_output,
+                            "graph_entities": getattr(result, "graph_entities", []),
+                            "search_documents": getattr(result, "search_documents", []),
+                            "error": result.error,
+                            "output_files": getattr(result, "output_files", []),
+                        }
+                    )
+
+                    execution_time = result.execution_time or 0.0
+                    PLUGIN_RUN_TOTAL.labels(plugin=plugin_name).inc()
+                    if result.status != "completed":
+                        PLUGIN_RUN_FAILURE_TOTAL.labels(plugin=plugin_name).inc()
+                    else:
+                        PLUGIN_RUN_DURATION_SECONDS.labels(plugin=plugin_name).observe(
+                            execution_time
+                        )
+
+                    if graph_client is not None:
+                        ingest_payload = {
+                            "job_id": job_id,
+                            "plugin_name": plugin_name,
+                            "status": result.status,
+                            "completed_at": result.completed_at.isoformat()
+                            if result.completed_at
+                            else None,
+                            "execution_time": execution_time,
+                            "graph_entities": getattr(result, "graph_entities", []),
+                            "search_documents": getattr(result, "search_documents", []),
+                        }
+                        try:
+                            ingest_result = await graph_client.ingest_plugin_run(
+                                ingest_payload
+                            )
+                            running_jobs[job_id]["graph_ingest"] = ingest_result
+                        except Exception as exc:  # pragma: no cover
+                            logger.warning(
+                                "Graph ingest failed", job_id=job_id, error=str(exc)
+                            )
                     
                     # Save results to file if configured
                     if running_jobs[job_id].get("save_output", True):
@@ -140,13 +181,22 @@ async def job_processor():
                                execution_time=result.execution_time)
                     
                 except Exception as e:
-                    logger.error("Plugin execution failed", job_id=job_id, plugin=plugin_name, error=str(e))
+                    PLUGIN_RUN_TOTAL.labels(plugin=plugin_name).inc()
+                    PLUGIN_RUN_FAILURE_TOTAL.labels(plugin=plugin_name).inc()
+                    logger.error(
+                        "Plugin execution failed",
+                        job_id=job_id,
+                        plugin=plugin_name,
+                        error=str(e),
+                    )
                     if job_id in running_jobs:
-                        running_jobs[job_id].update({
-                            "status": "failed",
-                            "error": str(e),
-                            "completed_at": datetime.utcnow()
-                        })
+                        running_jobs[job_id].update(
+                            {
+                                "status": "failed",
+                                "error": str(e),
+                                "completed_at": datetime.utcnow(),
+                            }
+                        )
             
         except Exception as e:
             logger.error("Job processor error", error=str(e))
@@ -230,7 +280,7 @@ def check_job_queue() -> DependencyCheck:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan management."""
-    global plugin_registry, job_queue, job_processor_task, docker_client
+    global plugin_registry, job_queue, job_processor_task, docker_client, graph_client
     
     logger.info(f"Starting {SERVICE_NAME} v{SERVICE_VERSION}")
     
@@ -257,6 +307,11 @@ async def lifespan(app: FastAPI):
         
         # Start job processor
         job_processor_task = asyncio.create_task(job_processor())
+
+        # Prepare graph ingestion helper (optional when graph-api offline)
+        graph_client = GraphIngestClient(
+            fallback_dir=RESULTS_DIR / "graph_ingest"
+        )
         
         # Set up dependency checks
         health_checker.add_dependency("plugin_registry", check_plugin_registry)
@@ -290,6 +345,9 @@ async def lifespan(app: FastAPI):
     if docker_client:
         docker_client.close()
 
+    if graph_client:
+        await graph_client.close()
+
 
 # FastAPI application with standardized configuration
 app = FastAPI(
@@ -314,6 +372,9 @@ setup_standard_openapi(
     service_name=SERVICE_NAME,
     tags_metadata=get_service_tags_metadata(SERVICE_NAME)
 )
+
+# Enable Prometheus metrics if observability profile enabled
+enable_prometheus_metrics(app)
 
 # Include routers
 app.include_router(core_router, tags=["Core"])

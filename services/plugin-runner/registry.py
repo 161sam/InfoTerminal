@@ -61,6 +61,7 @@ class PluginRegistry:
         self.plugins_dir = plugins_dir
         self.plugins: Dict[str, PluginConfig] = {}
         self.docker_client = None
+        self.test_mode = os.getenv("PLUGIN_TEST_MODE", "0") == "1"
         self._init_docker()
         self._load_plugins()
     
@@ -166,13 +167,21 @@ class PluginRegistry:
         
         try:
             # Validate parameters
-            validated_params = self._validate_parameters(plugin_config, parameters)
-            
+            validated_params = self._validate_parameters(
+                plugin_config, parameters
+            )
+
             # Choose execution method based on security config
-            if plugin_config.security.get("sandbox") == "docker":
-                raw_output = await self._execute_in_docker(plugin_config, validated_params)
+            if self.test_mode:
+                raw_output = self._load_mock_output(plugin_config)
+            elif plugin_config.security.get("sandbox") == "docker":
+                raw_output = await self._execute_in_docker(
+                    plugin_config, validated_params
+                )
             else:
-                raw_output = await self._execute_local(plugin_config, validated_params)
+                raw_output = await self._execute_local(
+                    plugin_config, validated_params
+                )
             
             result.raw_output = raw_output
             result.completed_at = datetime.utcnow()
@@ -254,13 +263,11 @@ class PluginRegistry:
         """Execute plugin in Docker container for security."""
         if not self.docker_client:
             raise RuntimeError("Docker not available")
-        
+
         # Choose command template
-        scan_type = parameters.get("scan_type", "default")
-        if scan_type not in plugin_config.command_templates:
-            scan_type = "default"
-        
-        command_template = plugin_config.command_templates[scan_type]
+        command_template = self._select_command_template(
+            plugin_config, parameters.get("scan_type")
+        )
         command = command_template.format(**parameters)
         
         # Security settings
@@ -299,13 +306,11 @@ class PluginRegistry:
         """Execute plugin locally (less secure, for low-risk plugins only)."""
         if plugin_config.risk_level == "high":
             raise ValueError("High-risk plugins cannot be executed locally")
-        
-        # Choose command template  
-        scan_type = parameters.get("scan_type", "default")
-        if scan_type not in plugin_config.command_templates:
-            scan_type = "default"
-            
-        command_template = plugin_config.command_templates[scan_type]
+
+        # Choose command template
+        command_template = self._select_command_template(
+            plugin_config, parameters.get("scan_type")
+        )
         command = command_template.format(**parameters)
         
         try:
@@ -326,6 +331,37 @@ class PluginRegistry:
             raise asyncio.TimeoutError(f"Plugin execution timed out after {timeout} seconds")
         except Exception as e:
             raise RuntimeError(f"Local execution failed: {str(e)}")
+
+    def _select_command_template(
+        self, plugin_config: PluginConfig, scan_type: Optional[str]
+    ) -> str:
+        """Select a command template based on the requested scan type."""
+
+        templates = plugin_config.command_templates or {}
+        if scan_type and scan_type in templates:
+            return templates[scan_type]
+        if "default" in templates:
+            return templates["default"]
+        if templates:
+            return next(iter(templates.values()))
+        raise ValueError("No command templates defined for plugin")
+
+    def _load_mock_output(self, plugin_config: PluginConfig) -> str:
+        """Load mock output from disk when running in test mode."""
+
+        plugin_dir = self.plugins_dir / plugin_config.name
+        candidates = [
+            plugin_dir / "mock_output.json",
+            plugin_dir / "mock_output.xml",
+            plugin_dir / "mock_output.txt",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return candidate.read_text()
+
+        raise FileNotFoundError(
+            f"Test mode enabled but no mock output found for {plugin_config.name}"
+        )
     
     def _parse_output(self, plugin_config: PluginConfig, raw_output: str, output_format: str) -> Dict[str, Any]:
         """Parse plugin output based on configuration."""
