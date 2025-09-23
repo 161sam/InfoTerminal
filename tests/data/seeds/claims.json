@@ -1,0 +1,44 @@
+{
+  "claims": [
+    {
+      "id": "claim_1",
+      "text": "The Federal Reserve maintains interest rates at 5.25-5.50% as of July 2024",
+      "source": "Financial news",
+      "confidence": 0.95,
+      "verifiable": true,
+      "category": "monetary_policy",
+      "evidence_sources": ["federal_reserve_statement", "financial_press"],
+      "stance": "factual"
+    },
+    {
+      "id": "claim_2", 
+      "text": "Global economic growth is projected to be 3.1% in 2024 according to the IMF",
+      "source": "Economic report",
+      "confidence": 0.91,
+      "verifiable": true,
+      "category": "economic_forecast",
+      "evidence_sources": ["imf_weo", "economic_analysis"],
+      "stance": "factual"
+    },
+    {
+      "id": "claim_3",
+      "text": "Renewable energy investments create more jobs than fossil fuel investments",
+      "source": "Research study",
+      "confidence": 0.73,
+      "verifiable": true,
+      "category": "economic_analysis",
+      "evidence_sources": ["academic_research", "industry_studies"],
+      "stance": "supported"
+    },
+    {
+      "id": "claim_4",
+      "text": "AI will replace all human jobs in financial services by 2030",
+      "source": "Opinion article",
+      "confidence": 0.15,
+      "verifiable": false,
+      "category": "technology_prediction", 
+      "evidence_sources": [],
+      "stance": "speculative"
+    }
+  ]
+}

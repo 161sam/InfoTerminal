@@ -1,0 +1,296 @@
+# InfoTerminal Performance Alerting Rules
+# Prometheus alerting rules for production monitoring
+
+groups:
+  - name: infoterminal.performance
+    rules:
+      # High Response Time Alerts
+      - alert: HighAPIResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=~"infoterminal.*"}[5m])) > 0.2
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+          team: platform
+        annotations:
+          summary: "High API response time detected"
+          description: "{{ $labels.job }} P95 response time is {{ $value }}s, above 200ms threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/high-response-time"
+
+      - alert: CriticalAPIResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=~"infoterminal.*"}[5m])) > 1.0
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+          team: platform
+        annotations:
+          summary: "Critical API response time detected"
+          description: "{{ $labels.job }} P95 response time is {{ $value }}s, above 1s critical threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/critical-response-time"
+
+      # High Error Rate Alerts
+      - alert: HighErrorRate
+        expr: (rate(http_requests_total{job=~"infoterminal.*",status=~"5.."}[5m]) / rate(http_requests_total{job=~"infoterminal.*"}[5m])) * 100 > 5
+        for: 3m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+          team: platform
+        annotations:
+          summary: "High error rate detected"
+          description: "{{ $labels.job }} error rate is {{ $value }}%, above 5% threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/high-error-rate"
+
+      - alert: CriticalErrorRate
+        expr: (rate(http_requests_total{job=~"infoterminal.*",status=~"5.."}[5m]) / rate(http_requests_total{job=~"infoterminal.*"}[5m])) * 100 > 20
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+          team: platform
+        annotations:
+          summary: "Critical error rate detected"
+          description: "{{ $labels.job }} error rate is {{ $value }}%, above 20% critical threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/critical-error-rate"
+
+      # Service Availability Alerts
+      - alert: ServiceDown
+        expr: up{job=~"infoterminal.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+          instance: "{{ $labels.instance }}"
+          team: platform
+        annotations:
+          summary: "InfoTerminal service is down"
+          description: "{{ $labels.job }} at {{ $labels.instance }} has been down for more than 1 minute"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/service-down"
+
+      # Throughput Alerts
+      - alert: LowThroughput
+        expr: rate(http_requests_total{job="infoterminal-frontend"}[5m]) < 10
+        for: 5m
+        labels:
+          severity: warning
+          service: frontend
+          team: platform
+        annotations:
+          summary: "Low request throughput detected"
+          description: "Frontend throughput is {{ $value }} RPS, below 10 RPS threshold for 5 minutes"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/low-throughput"
+
+      # Resource Usage Alerts
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}%, above 85% threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/high-memory"
+
+      - alert: CriticalMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical memory usage detected"
+          description: "Memory usage is {{ $value }}%, above 95% critical threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/critical-memory"
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}%, above 80% threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/high-cpu"
+
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical CPU usage detected"
+          description: "CPU usage is {{ $value }}%, above 95% critical threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/critical-cpu"
+
+  - name: infoterminal.database
+    rules:
+      # Database Connection Alerts
+      - alert: Neo4jConnectionFailure
+        expr: neo4j_up{job="neo4j"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          database: neo4j
+          team: platform
+        annotations:
+          summary: "Neo4j database connection failure"
+          description: "Neo4j database is unreachable or down"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/neo4j-down"
+
+      - alert: OpenSearchConnectionFailure
+        expr: opensearch_up{job="opensearch"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          database: opensearch
+          team: platform
+        annotations:
+          summary: "OpenSearch connection failure"
+          description: "OpenSearch cluster is unreachable or down"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/opensearch-down"
+
+      # Database Performance Alerts
+      - alert: Neo4jHighQueryTime
+        expr: histogram_quantile(0.95, rate(neo4j_cypher_query_time_seconds_bucket[5m])) > 1.0
+        for: 3m
+        labels:
+          severity: warning
+          database: neo4j
+          team: platform
+        annotations:
+          summary: "Neo4j high query time detected"
+          description: "Neo4j P95 query time is {{ $value }}s, above 1s threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/neo4j-slow-queries"
+
+      - alert: OpenSearchHighIndexingLatency
+        expr: opensearch_indexing_index_time_in_millis > 1000
+        for: 3m
+        labels:
+          severity: warning
+          database: opensearch
+          team: platform
+        annotations:
+          summary: "OpenSearch high indexing latency"
+          description: "OpenSearch indexing time is {{ $value }}ms, above 1s threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/opensearch-slow-indexing"
+
+  - name: infoterminal.business
+    rules:
+      # Business Logic Alerts
+      - alert: LowVerificationAccuracy
+        expr: verification_accuracy_rate < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: verification
+          team: ml
+        annotations:
+          summary: "Low verification accuracy detected"
+          description: "Verification accuracy is {{ $value }}, below 80% threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/low-verification-accuracy"
+
+      - alert: HighClaimProcessingTime
+        expr: histogram_quantile(0.95, rate(claim_processing_duration_seconds_bucket[5m])) > 5.0
+        for: 5m
+        labels:
+          severity: warning
+          component: verification
+          team: ml
+        annotations:
+          summary: "High claim processing time"
+          description: "Claim processing P95 time is {{ $value }}s, above 5s threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/slow-claim-processing"
+
+      - alert: NLPProcessingBacklog
+        expr: nlp_processing_queue_size > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: nlp
+          team: ml
+        annotations:
+          summary: "NLP processing backlog detected"
+          description: "NLP processing queue has {{ $value }} items, above 100 threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/nlp-backlog"
+
+  - name: infoterminal.security
+    rules:
+      # Security Alerts
+      - alert: HighFailedLoginAttempts
+        expr: rate(auth_failed_attempts_total[5m]) > 5
+        for: 3m
+        labels:
+          severity: warning
+          component: auth
+          team: security
+        annotations:
+          summary: "High failed login attempts detected"
+          description: "Failed login rate is {{ $value }} per second, above 5/s threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/failed-logins"
+
+      - alert: SuspiciousAPIActivity
+        expr: rate(http_requests_total{status="403"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          component: api
+          team: security
+        annotations:
+          summary: "Suspicious API activity detected"
+          description: "403 error rate is {{ $value }} per second, indicating potential unauthorized access attempts"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/suspicious-activity"
+
+      - alert: UnauthorizedDataAccess
+        expr: rate(unauthorized_data_access_attempts_total[5m]) > 1
+        for: 1m
+        labels:
+          severity: critical
+          component: authorization
+          team: security
+        annotations:
+          summary: "Unauthorized data access attempts detected"
+          description: "Unauthorized access rate is {{ $value }} per second"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/unauthorized-access"
+
+  - name: infoterminal.integration
+    rules:
+      # Integration Test Results Alerts
+      - alert: IntegrationTestFailure
+        expr: integration_test_success_rate < 0.95
+        for: 0m
+        labels:
+          severity: warning
+          component: testing
+          team: platform
+        annotations:
+          summary: "Integration test failures detected"
+          description: "Integration test success rate is {{ $value }}, below 95% threshold"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/integration-test-failures"
+
+      - alert: PerformanceRegressionDetected
+        expr: increase(performance_regression_count[1h]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: performance
+          team: platform
+        annotations:
+          summary: "Performance regression detected"
+          description: "{{ $value }} performance regressions detected in the last hour"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/performance-regression"
+
+      - alert: ChaosTestFailure
+        expr: chaos_test_success_rate < 0.8
+        for: 0m
+        labels:
+          severity: critical
+          component: resilience
+          team: platform
+        annotations:
+          summary: "Chaos engineering test failures"
+          description: "Chaos test success rate is {{ $value }}, below 80% threshold - system resilience compromised"
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/chaos-test-failures"

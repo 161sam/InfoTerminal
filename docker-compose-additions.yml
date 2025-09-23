@@ -1,0 +1,199 @@
+  # === ADDITIONAL SERVICES (Missing from main docker-compose.yml) ===
+  
+  cache-manager:
+    build:
+      context: .
+      dockerfile: services/cache-manager/Dockerfile
+    ports: ["${IT_PORT_CACHE_MANAGER:-8630}:8000"]
+    env_file: .env
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - L1_CACHE_SIZE=${L1_CACHE_SIZE:-1000}
+      - L2_CACHE_TTL=${L2_CACHE_TTL:-3600}
+      - CACHE_COMPRESSION=${CACHE_COMPRESSION:-1}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  performance-monitor:
+    build:
+      context: .
+      dockerfile: services/performance-monitor/Dockerfile
+    ports: ["${IT_PORT_PERFORMANCE_MONITOR:-8629}:8000"]
+    env_file: .env
+    environment:
+      - MONITORING_INTERVAL=${MONITORING_INTERVAL:-30}
+      - ALERT_THRESHOLD_CPU=${ALERT_THRESHOLD_CPU:-80}
+      - ALERT_THRESHOLD_MEMORY=${ALERT_THRESHOLD_MEMORY:-80}
+      - METRICS_RETENTION_DAYS=${METRICS_RETENTION_DAYS:-7}
+    volumes:
+      - performance-metrics:/app/metrics
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  websocket-manager:
+    build:
+      context: .
+      dockerfile: services/websocket-manager/Dockerfile
+    ports: ["${IT_PORT_WEBSOCKET_MANAGER:-8631}:8000"]
+    env_file: .env
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/1}
+      - MAX_CONNECTIONS=${WS_MAX_CONNECTIONS:-1000}
+      - HEARTBEAT_INTERVAL=${WS_HEARTBEAT_INTERVAL:-30}
+      - MESSAGE_QUEUE_SIZE=${WS_MESSAGE_QUEUE_SIZE:-1000}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  feedback-aggregator:
+    build:
+      context: .
+      dockerfile: services/feedback-aggregator/Dockerfile  
+    ports: ["${IT_PORT_FEEDBACK_AGGREGATOR:-8632}:8000"]
+    env_file: .env
+    environment:
+      - POSTGRES_URL=postgresql://it_user:it_pass@postgres:5432/it_graph
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - GITHUB_REPO=${GITHUB_REPO:-}
+      - SENTIMENT_API_ENABLED=${SENTIMENT_API_ENABLED:-1}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  agent-connector:
+    build:
+      context: .
+      dockerfile: services/agent-connector/Dockerfile
+    ports: ["${IT_PORT_AGENT_CONNECTOR:-8633}:8000"]
+    env_file: .env
+    environment:
+      - PLUGINS_DIR=/app/plugins
+      - AGENTS_CONFIG_PATH=/app/config/agents.yaml
+      - AUDIT_SERVICE_URL=${AUDIT_SERVICE_URL:-}
+      - MAX_CONCURRENT_AGENTS=${MAX_CONCURRENT_AGENTS:-5}
+    volumes:
+      - ./plugins:/app/plugins:ro
+      - agent-configs:/app/config
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    ports: ["${IT_PORT_GATEWAY:-8635}:8080"]
+    env_file: .env
+    environment:
+      - GATEWAY_MODE=${GATEWAY_MODE:-development}
+      - RATE_LIMIT_REQUESTS=${RATE_LIMIT_REQUESTS:-1000}
+      - RATE_LIMIT_WINDOW=${RATE_LIMIT_WINDOW:-3600}
+      - AUTH_SERVICE_URL=http://auth-service:8080
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+    depends_on:
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  policy:
+    build:
+      context: .
+      dockerfile: services/policy/Dockerfile
+    ports: ["${IT_PORT_POLICY:-8636}:8000"]
+    env_file: .env
+    environment:
+      - OPA_SERVER_URL=${OPA_SERVER_URL:-http://opa:8181}
+      - POLICY_RELOAD_INTERVAL=${POLICY_RELOAD_INTERVAL:-60}
+      - POLICY_CACHE_TTL=${POLICY_CACHE_TTL:-300}
+    volumes:
+      - ./policy/rules:/app/policies:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  openbb-connector:
+    build:
+      context: .
+      dockerfile: services/openbb-connector/Dockerfile
+    ports: ["${IT_PORT_OPENBB_CONNECTOR:-8637}:8000"]
+    env_file: .env
+    environment:
+      - OPENBB_API_KEY=${OPENBB_API_KEY:-}
+      - FINANCIAL_DATA_CACHE_TTL=${FINANCIAL_DATA_CACHE_TTL:-3600}
+      - MAX_REQUESTS_PER_MINUTE=${MAX_REQUESTS_PER_MINUTE:-60}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  archive:
+    build:
+      context: .
+      dockerfile: services/archive/Dockerfile
+    ports: ["${IT_PORT_ARCHIVE:-8639}:8000"]
+    env_file: .env
+    environment:
+      - ARCHIVE_STORAGE_PATH=${ARCHIVE_STORAGE_PATH:-/data/archive}
+      - COMPRESSION_ENABLED=${COMPRESSION_ENABLED:-1}
+      - RETENTION_DAYS=${RETENTION_DAYS:-365}
+    volumes:
+      - archive-data:/data/archive
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # Redis (if not already present)
+  redis:
+    image: redis:7.2-alpine
+    ports: ["${IT_PORT_REDIS:-6379}:6379"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    command: redis-server --appendonly yes ${REDIS_PASSWORD:+--requirepass $REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+# Additional volumes for new services
+volumes:
+  performance-metrics:
+  agent-configs:
+  archive-data:
+  redis-data:

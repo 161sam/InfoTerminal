@@ -17,7 +17,7 @@ def test_root_help_lists_commands():
     assert res.exit_code == 0
     assert "start" in res.stdout
     assert "infra" in res.stdout
-    assert "search" not in res.stdout  # no other groups
+    assert "graph" in res.stdout
 
 
 def test_start_dry_run_builds_command():

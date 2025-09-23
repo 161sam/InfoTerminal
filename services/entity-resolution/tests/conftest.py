@@ -1,4 +1,15 @@
-import os, pathlib, pytest, importlib.util
+import importlib.util
+import os
+import pathlib
+import sys
+
+import pytest
+
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+pytest.importorskip("httpx")
 from httpx import AsyncClient, ASGITransport
 
 os.environ.setdefault("OTEL_SDK_DISABLED", "true")

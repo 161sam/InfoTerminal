@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import Panel from '@/components/layout/Panel';
+import { LoadingSpinner } from '@/components/ui/loading';
+import { inputStyles, buttonStyles, textStyles, cardStyles, statusStyles, compose } from '@/styles/design-tokens';
 import { 
   Shield, 
   ExternalLink,
@@ -209,42 +209,42 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
   };
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />
-          <CardTitle>Source Credibility Assessment</CardTitle>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
+    <Panel title="Source Credibility Assessment" className={className}>
+      <div className="space-y-6">
         {/* URL Input */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Source URL</label>
+          <label className={`${textStyles.body} font-medium`}>Source URL</label>
           <div className="flex gap-2">
             <input
               type="url"
               value={inputUrl}
               onChange={(e) => setInputUrl(e.target.value)}
               placeholder="https://example.com/article"
-              className="flex-1 p-2 border rounded"
+              className={`${inputStyles.base} flex-1`}
             />
             <button
               onClick={() => handleAssessCredibility()}
               disabled={isLoading || !inputUrl.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className={compose.button('primary', (isLoading || !inputUrl.trim()) ? 'opacity-50 cursor-not-allowed' : '')}
             >
-              {isLoading ? 'Analyzing...' : 'Assess'}
+              {isLoading ? (
+                <>
+                  <LoadingSpinner size="sm" variant="primary" layout="inline" />
+                  Analyzing...
+                </>
+              ) : (
+                'Assess'
+              )}
             </button>
           </div>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg">
+          <div className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}>
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <span className="text-sm text-red-800 dark:text-red-300">{error}</span>
+              <AlertTriangle className="h-4 w-4" />
+              <span className={textStyles.body}>{error}</span>
             </div>
           </div>
         )}
@@ -253,22 +253,27 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
         {credibilityData && (
           <div className="space-y-6">
             {/* Overall Rating */}
-            <div className={`p-4 rounded-lg ${getOverallRating(credibilityData).bgColor}`}>
+            <div className={`${cardStyles.base} ${cardStyles.padding} ${getOverallRating(credibilityData).bgColor}`}>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">Overall Credibility Rating</h3>
-                <Badge className={`${getOverallRating(credibilityData).color}`}>
+                <h3 className={`${textStyles.body} font-medium`}>Overall Credibility Rating</h3>
+                <span className={`${getOverallRating(credibilityData).color} ${statusStyles.info} px-3 py-1 rounded-full text-sm font-medium`}>
                   {getOverallRating(credibilityData).level}
-                </Badge>
+                </span>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Shield className="h-4 w-4" />
-                    <span className="text-sm font-medium">Credibility Score</span>
+                    <span className={`${textStyles.body} font-medium`}>Credibility Score</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Progress value={credibilityData.credibility_score * 100} className="flex-1 h-2" />
-                    <span className="text-sm font-medium">
+                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${credibilityData.credibility_score * 100}%` }}
+                      />
+                    </div>
+                    <span className={`${textStyles.body} font-medium`}>
                       {(credibilityData.credibility_score * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -276,11 +281,16 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Eye className="h-4 w-4" />
-                    <span className="text-sm font-medium">Transparency Score</span>
+                    <span className={`${textStyles.body} font-medium`}>Transparency Score</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Progress value={credibilityData.transparency_score * 100} className="flex-1 h-2" />
-                    <span className="text-sm font-medium">
+                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${credibilityData.transparency_score * 100}%` }}
+                      />
+                    </div>
+                    <span className={`${textStyles.body} font-medium`}>
                       {(credibilityData.transparency_score * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -290,43 +300,39 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
             {/* Bias and Factual Reporting */}
             <div className="grid grid-cols-2 gap-4">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    {getBiasIcon(credibilityData.bias_rating)}
-                    <span className="font-medium">Political Bias</span>
-                  </div>
-                  <Badge className={getBiasColor(credibilityData.bias_rating)}>
-                    {credibilityData.bias_rating.charAt(0).toUpperCase() + credibilityData.bias_rating.slice(1)}
-                  </Badge>
-                </CardContent>
-              </Card>
+              <div className={`${cardStyles.base} ${cardStyles.padding}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  {getBiasIcon(credibilityData.bias_rating)}
+                  <span className={`${textStyles.body} font-medium`}>Political Bias</span>
+                </div>
+                <span className={`${getBiasColor(credibilityData.bias_rating)} px-2 py-1 rounded text-sm font-medium`}>
+                  {credibilityData.bias_rating.charAt(0).toUpperCase() + credibilityData.bias_rating.slice(1)}
+                </span>
+              </div>
 
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="h-4 w-4" />
-                    <span className="font-medium">Factual Reporting</span>
-                  </div>
-                  <Badge className={getFactualColor(credibilityData.factual_reporting)}>
-                    {credibilityData.factual_reporting.charAt(0).toUpperCase() + credibilityData.factual_reporting.slice(1)}
-                  </Badge>
-                </CardContent>
-              </Card>
+              <div className={`${cardStyles.base} ${cardStyles.padding}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className={`${textStyles.body} font-medium`}>Factual Reporting</span>
+                </div>
+                <span className={`${getFactualColor(credibilityData.factual_reporting)} px-2 py-1 rounded text-sm font-medium`}>
+                  {credibilityData.factual_reporting.charAt(0).toUpperCase() + credibilityData.factual_reporting.slice(1)}
+                </span>
+              </div>
             </div>
 
             {/* Authority Indicators */}
             {credibilityData.authority_indicators.length > 0 && (
               <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
+                <h4 className={`${textStyles.body} font-medium mb-2 flex items-center gap-2`}>
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   Authority Indicators
                 </h4>
                 <div className="space-y-2">
                   {credibilityData.authority_indicators.map((indicator, index) => (
-                    <div key={index} className="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                    <div key={index} className={`flex items-center gap-2 ${cardStyles.base} p-2 ${statusStyles.success} border-green-200 dark:border-green-800`}>
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">{indicator}</span>
+                      <span className={textStyles.body}>{indicator}</span>
                     </div>
                   ))}
                 </div>
@@ -336,15 +342,15 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
             {/* Red Flags */}
             {credibilityData.red_flags.length > 0 && (
               <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
+                <h4 className={`${textStyles.body} font-medium mb-2 flex items-center gap-2`}>
                   <AlertTriangle className="h-4 w-4 text-red-500" />
                   Red Flags
                 </h4>
                 <div className="space-y-2">
                   {credibilityData.red_flags.map((flag, index) => (
-                    <div key={index} className="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/20 rounded">
+                    <div key={index} className={`flex items-center gap-2 ${cardStyles.base} p-2 ${statusStyles.error} border-red-200 dark:border-red-800`}>
                       <AlertTriangle className="h-4 w-4 text-red-500" />
-                      <span className="text-sm">{flag}</span>
+                      <span className={textStyles.body}>{flag}</span>
                     </div>
                   ))}
                 </div>
@@ -352,34 +358,34 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
             )}
 
             {/* Credibility Guide */}
-            <div className="p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg">
-              <h4 className="text-sm font-medium mb-2">Credibility Assessment Guide</h4>
-              <div className="grid grid-cols-1 gap-2 text-xs">
+            <div className={`${cardStyles.base} p-3 bg-gray-50 dark:bg-gray-900/20`}>
+              <h4 className={`${textStyles.body} font-medium mb-2`}>Credibility Assessment Guide</h4>
+              <div className="grid grid-cols-1 gap-2">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  <span><strong>80-100%:</strong> Highly credible, well-established source</span>
+                  <span className={textStyles.bodySmall}><strong>80-100%:</strong> Highly credible, well-established source</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                  <span><strong>40-79%:</strong> Moderately credible, verify with other sources</span>
+                  <span className={textStyles.bodySmall}><strong>40-79%:</strong> Moderately credible, verify with other sources</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full" />
-                  <span><strong>0-39%:</strong> Low credibility, use with extreme caution</span>
+                  <span className={textStyles.bodySmall}><strong>0-39%:</strong> Low credibility, use with extreme caution</span>
                 </div>
               </div>
             </div>
 
             {/* Source Link */}
             {inputUrl && (
-              <div className="flex items-center gap-2 p-3 border rounded-lg">
+              <div className={`flex items-center gap-2 ${cardStyles.base} ${cardStyles.padding}`}>
                 <ExternalLink className="h-4 w-4" />
-                <span className="text-sm font-medium">Source:</span>
+                <span className={`${textStyles.body} font-medium`}>Source:</span>
                 <a
                   href={inputUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 text-sm truncate flex-1"
+                  className={`${textStyles.link} truncate flex-1`}
                 >
                   {inputUrl}
                 </a>
@@ -388,18 +394,18 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
             {/* Performance Metrics Panel (v0.3.0+) */}
             {performanceMetrics && (
-              <div className="p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg">
+              <div className={`${cardStyles.base} p-3 bg-gray-50 dark:bg-gray-900/20`}>
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-medium">Performance Metrics</h4>
+                  <h4 className={`${textStyles.body} font-medium`}>Performance Metrics</h4>
                   <button
                     onClick={() => setShowPerformancePanel(!showPerformancePanel)}
-                    className="text-xs text-blue-600 hover:text-blue-800"
+                    className={`${textStyles.link} text-sm`}
                   >
                     {showPerformancePanel ? 'Hide' : 'Show'} Details
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className={`grid grid-cols-3 gap-2 ${textStyles.bodySmall}`}>
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
                     <span>Response: {performanceMetrics.response_time_ms.toFixed(0)}ms</span>
@@ -416,7 +422,7 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                 
                 {showPerformancePanel && (
                   <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                    <div className={textStyles.bodySmall}>
                       <div>Cache Status: {performanceMetrics.cache_hit ? 'Hit (data served from cache)' : 'Miss (fresh data retrieved)'}</div>
                       <div>Response Speed: {performanceMetrics.response_time_ms < 500 ? 'Fast' : performanceMetrics.response_time_ms < 1000 ? 'Normal' : 'Slow'}</div>
                     </div>
@@ -427,30 +433,30 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
             {/* Analytics Panel (v0.3.0+) */}
             {showAnalytics && analyticsData && (
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <h4 className="text-sm font-medium mb-2">Assessment Analytics</h4>
+              <div className={`${cardStyles.base} p-3 bg-blue-50 dark:bg-blue-900/20`}>
+                <h4 className={`${textStyles.body} font-medium mb-2`}>Assessment Analytics</h4>
                 
                 <div className="grid grid-cols-3 gap-4 mb-3">
                   <div className="text-center">
                     <div className="text-lg font-bold text-blue-600">{analyticsData.assessment_count}</div>
-                    <div className="text-xs text-gray-600">Total Assessments</div>
+                    <div className={textStyles.bodySmall}>Total Assessments</div>
                   </div>
                   <div className="text-center">
                     <div className="text-lg font-bold text-green-600">{analyticsData.average_response_time.toFixed(0)}ms</div>
-                    <div className="text-xs text-gray-600">Avg Response</div>
+                    <div className={textStyles.bodySmall}>Avg Response</div>
                   </div>
                   <div className="text-center">
                     <div className="text-lg font-bold text-purple-600">{(analyticsData.cache_hit_rate * 100).toFixed(0)}%</div>
-                    <div className="text-xs text-gray-600">Cache Hit Rate</div>
+                    <div className={textStyles.bodySmall}>Cache Hit Rate</div>
                   </div>
                 </div>
                 
                 {analyticsData.recent_assessments && analyticsData.recent_assessments.length > 0 && (
                   <div>
-                    <h5 className="text-xs font-medium mb-1">Recent Assessments</h5>
+                    <h5 className={`${textStyles.bodySmall} font-medium mb-1`}>Recent Assessments</h5>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
                       {analyticsData.recent_assessments.slice(0, 5).map((assessment, index) => (
-                        <div key={index} className="flex items-center justify-between text-xs">
+                        <div key={index} className={`flex items-center justify-between ${textStyles.bodySmall}`}>
                           <span className="truncate flex-1 pr-2">{assessment.url}</span>
                           <span className={`font-medium ${
                             assessment.credibility_score >= 0.7 ? 'text-green-600' :
@@ -467,7 +473,7 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </Panel>
   );
 }

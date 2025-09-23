@@ -1,0 +1,39 @@
+{
+  "name": "Verification Workflow Test",
+  "description": "End-to-end verification workflow with realistic data",
+  "steps": [
+    {
+      "step": "claim_extraction",
+      "input": {
+        "text": "The Federal Reserve announced that it would maintain the federal funds rate at 5.25-5.50 percent during its July 2024 meeting. This decision reflects the committee's ongoing commitment to bringing inflation down to the 2 percent target.",
+        "options": {
+          "max_claims": 3,
+          "confidence_threshold": 0.7
+        }
+      },
+      "expected_output": {
+        "claims": [
+          "Federal Reserve maintains federal funds rate at 5.25-5.50 percent",
+          "Decision made during July 2024 meeting",
+          "Committee committed to bringing inflation to 2 percent target"
+        ]
+      }
+    },
+    {
+      "step": "evidence_retrieval",
+      "input": {
+        "claim": "Federal Reserve maintains federal funds rate at 5.25-5.50 percent",
+        "max_sources": 5
+      },
+      "expected_output": {
+        "sources": [
+          {
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240731a.htm",
+            "credibility": 0.98,
+            "relevance": 0.95
+          }
+        ]
+      }
+    }
+  ]
+}

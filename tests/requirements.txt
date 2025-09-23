@@ -1,0 +1,4 @@
+# Minimal dependencies to run Python-based test suites
+httpx>=0.27
+numpy>=1.24
+typer>=0.11

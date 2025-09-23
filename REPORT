@@ -1,0 +1,95 @@
+# InfoTerminal API Standards Compliance Report
+Generated: validate_api_standards.py
+
+## Summary
+- **Overall Score**: 0.0%
+- **Status**: FAIL
+- **Services Tested**: 5
+- **Services Passing**: 0
+
+## Service Details
+
+### search-api ❌
+- **Score**: 0.0%
+- **Status**: FAIL
+- **Port**: 8401
+
+- **health**: ❌
+  - Health endpoints not accessible
+- **v1_namespace**: ❌
+  - V1 namespace not accessible
+- **openapi**: ❌
+  - OpenAPI documentation check failed
+- **error_handling**: ❌
+  - Error handling check failed
+- **pagination**: ❌
+  - pagination_found: False
+  - tested_endpoints: [{'endpoint': '/v1/search', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/documents', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/users', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/entities', 'status': 'error', 'accessible': False}]
+
+### graph-api ❌
+- **Score**: 0.0%
+- **Status**: FAIL
+- **Port**: 8402
+
+- **health**: ❌
+  - Health endpoints not accessible
+- **v1_namespace**: ❌
+  - V1 namespace not accessible
+- **openapi**: ❌
+  - OpenAPI documentation check failed
+- **error_handling**: ❌
+  - Error handling check failed
+- **pagination**: ❌
+  - pagination_found: False
+  - tested_endpoints: [{'endpoint': '/v1/search', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/documents', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/users', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/entities', 'status': 'error', 'accessible': False}]
+
+### graph-views ❌
+- **Score**: 0.0%
+- **Status**: FAIL
+- **Port**: 8403
+
+- **health**: ❌
+  - Health endpoints not accessible
+- **v1_namespace**: ❌
+  - V1 namespace not accessible
+- **openapi**: ❌
+  - OpenAPI documentation check failed
+- **error_handling**: ❌
+  - Error handling check failed
+- **pagination**: ❌
+  - pagination_found: False
+  - tested_endpoints: [{'endpoint': '/v1/search', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/documents', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/users', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/entities', 'status': 'error', 'accessible': False}]
+
+### doc-entities ❌
+- **Score**: 0.0%
+- **Status**: FAIL
+- **Port**: 8404
+
+- **health**: ❌
+  - Health endpoints not accessible
+- **v1_namespace**: ❌
+  - V1 namespace not accessible
+- **openapi**: ❌
+  - OpenAPI documentation check failed
+- **error_handling**: ❌
+  - Error handling check failed
+- **pagination**: ❌
+  - pagination_found: False
+  - tested_endpoints: [{'endpoint': '/v1/search', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/documents', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/users', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/entities', 'status': 'error', 'accessible': False}]
+
+### auth-service ❌
+- **Score**: 0.0%
+- **Status**: FAIL
+- **Port**: 8405
+
+- **health**: ❌
+  - Health endpoints not accessible
+- **v1_namespace**: ❌
+  - V1 namespace not accessible
+- **openapi**: ❌
+  - OpenAPI documentation check failed
+- **error_handling**: ❌
+  - Error handling check failed
+- **pagination**: ❌
+  - pagination_found: False
+  - tested_endpoints: [{'endpoint': '/v1/search', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/documents', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/users', 'status': 'error', 'accessible': False}, {'endpoint': '/v1/entities', 'status': 'error', 'accessible': False}]

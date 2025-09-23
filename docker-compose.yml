@@ -45,16 +45,50 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    ports: ["${IT_PORT_AUTH_SERVICE:-8616}:8080"]
+    env_file: .env
+    environment:
+      # Auth Service specific configuration
+      - AUTH_DATABASE_URL=postgresql://it_user:it_pass@postgres:5432/it_auth
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-secret-key-change-in-production}
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - JWT_REFRESH_TOKEN_EXPIRE_DAYS=7
+      - HOST=0.0.0.0
+      - PORT=8080
+      - ENVIRONMENT=${IT_ENV:-dev}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:3411}
+      - TRUSTED_HOSTS=${TRUSTED_HOSTS:-localhost,127.0.0.1}
+      - USER_REGISTRATION_ENABLED=false
+      - PASSWORD_MIN_LENGTH=8
+      - MFA_ENABLED=true
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
   web:
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
     ports: ["${IT_PORT_FRONTEND:-3411}:3000"]
     env_file: .env
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8080
     depends_on:
       search-api:
         condition: service_healthy
       graph-api:
+        condition: service_healthy
+      auth-service:
         condition: service_healthy
   opensearch:
     image: opensearchproject/opensearch:2
@@ -93,12 +127,14 @@ services:
       - POSTGRES_DB=it_graph
     # No host port mapping (policy: avoid standard ports)
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      test: ['CMD-SHELL', 'pg_isready -U $POSTGRES_USER -d $POSTGRES_DB']
       interval: 10s
       timeout: 5s
       retries: 10
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
   doc-entities:
     build: ./services/doc-entities
     ports: ["${IT_PORT_DOC_ENTITIES:-8613}:8000"]

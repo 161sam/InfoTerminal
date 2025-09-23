@@ -1,8 +1,8 @@
-"""
-User Journey Tracking Service
-
-Tracks user interactions, click paths, dwell time, and feature usage for UX optimization.
-"""
+/**
+ * User Journey Tracking Service
+ *
+ * Tracks user interactions, click paths, dwell time, and feature usage for UX optimization.
+ */
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';

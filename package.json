@@ -29,7 +29,10 @@
     "lint:md": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md'",
     "lint:md:fix": "markdownlint 'docs/**/*.md' 'cli/**/*.md' 'README.md' --fix",
     "lint:md:links": "markdown-link-check -q -c .mlc.config.json docs/**/*.md",
-    "test:fe": "npm -w apps/frontend test"
+    "test:fe": "npm -w apps/frontend test",
+    "bs:ts-audit": "bash build-stabilization/typescript_audit.sh",
+    "bs:validate": "bash build-stabilization/build_validation.sh",
+    "bs:final": "bash build-stabilization/final_validation.sh"
   },
   "workspaces": [
     "apps/*",

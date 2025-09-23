@@ -34,14 +34,12 @@ from _shared.api_standards import (
     setup_standard_exception_handlers,
     setup_standard_openapi,
     get_service_tags_metadata,
-    HealthChecker,
-    check_database_connection,
     PaginatedResponse,
     PaginationParams,
     APIError,
-    ErrorCodes,
-    StandardError
+    ErrorCodes
 )
+from _shared.health import make_healthz as legacy_make_healthz, make_readyz as legacy_make_readyz, probe_http as legacy_probe_http
 
 try:
     from opensearchpy import OpenSearch
@@ -61,6 +59,12 @@ from .metrics import (
     RERANK_LATENCY,
     RERANK_REQS,
 )
+
+try:
+    from search_api._shared.obs.otel_boot import setup_otel
+except Exception:  # pragma: no cover - optional dependency
+    def setup_otel(*args, **kwargs):
+        return None
 
 # Configuration
 settings = Settings()
@@ -96,37 +100,40 @@ app.state.service_name = "search-api"
 app.state.version = os.getenv("GIT_SHA", "1.0.0")
 app.state.start_ts = time.monotonic()
 
+# OpenTelemetry instrumentation (if available / enabled)
+setup_otel(app, service_name=app.state.service_name, version=app.state.version)
+
 # Initialize OpenSearch client
 client = None
 if OPENSEARCH_AVAILABLE:
     client = OpenSearch(settings.os_url)
 
-# Health Checker Setup
-health_checker = HealthChecker("search-api", app.state.version)
+# Legacy-style health helpers (retained for compatibility)
 
-def check_opensearch():
-    """Check OpenSearch connectivity."""
-    if not OPENSEARCH_AVAILABLE or not client:
-        raise Exception("OpenSearch client not available")
-    
-    # Perform a simple cluster health check
-    health = client.cluster.health()
-    if health.get("status") in ["red"]:
-        raise Exception(f"OpenSearch cluster status: {health.get('status')}")
 
-if OPENSEARCH_AVAILABLE and client:
-    health_checker.add_dependency("opensearch", lambda: check_database_connection(check_opensearch))
-
-# Standard Health Endpoints
-@app.get("/healthz", response_model=HealthChecker.health_check().__class__, tags=["health"])
+@app.get("/healthz", tags=["health"])
 def healthz():
-    """Health check endpoint (liveness probe)."""
-    return health_checker.health_check()
+    """Health check endpoint (legacy response schema)."""
+    return legacy_make_healthz(app.state.service_name, app.state.version, app.state.start_ts)
 
-@app.get("/readyz", response_model=HealthChecker.ready_check().__class__, tags=["health"])
+
+@app.get("/readyz", tags=["health"])
 def readyz():
-    """Readiness check endpoint (readiness probe).""" 
-    return health_checker.ready_check()
+    """Readiness check endpoint with legacy response schema."""
+    if os.getenv("IT_FORCE_READY") == "1":
+        payload, status = legacy_make_readyz(app.state.service_name, app.state.version, app.state.start_ts, {})
+        return JSONResponse(payload, status_code=status)
+
+    checks: Dict[str, Dict[str, Any]] = {}
+
+    opensearch_url = os.getenv("OPENSEARCH_URL") or getattr(settings, "os_url", None)
+    if opensearch_url and OPENSEARCH_AVAILABLE and client:
+        checks["opensearch"] = legacy_probe_http(f"{opensearch_url.rstrip('/')}/_cluster/health")
+    else:
+        checks["opensearch"] = {"status": "skipped", "latency_ms": None, "error": None, "reason": "missing config"}
+
+    payload, status = legacy_make_readyz(app.state.service_name, app.state.version, app.state.start_ts, checks)
+    return JSONResponse(payload, status_code=status)
 
 
 # API Models
@@ -705,11 +712,16 @@ def _apply_reranking(query: str, results: List[SearchResult]) -> List[SearchResu
 app.include_router(v1_router)
 
 # Legacy endpoints with deprecation warnings (temporary backward compatibility)
+@app.get("/search", deprecated=True, tags=["legacy"])
 @app.post("/search", deprecated=True, tags=["legacy"])
 def legacy_search(
-    q: str,
-    entity_type: Optional[str] = Query(None),
+    response: Response,
+    q: str = Query(..., description="Search query string"),
+    entity_type: Optional[str] = Query(None, description="comma-separated entity types"),
     rerank: Optional[int] = Query(None),
+    x_rerank: Optional[int] = Header(None, alias="X-Rerank"),
+    limit: int = Query(20, ge=1, le=100),
+    page: int = Query(1, ge=1),
     user=Depends(get_current_user)
 ):
     """
@@ -721,17 +733,46 @@ def legacy_search(
     # Convert to new format and call v1 endpoint
     request = SearchRequest(q=q)
     if entity_type:
-        request.filters = {"entity_type": entity_type.split(",")}
-    
-    pagination = PaginationParams(page=1, size=20)
-    enable_rerank = bool(rerank)
-    
-    response = search_documents(request, pagination, enable_rerank, user)
-    
-    # Convert back to legacy format
+        request.filters = {"entity_type": [s for s in entity_type.split(",") if s]}
+    request.facets = ["entities.type"]
+
+    pagination = PaginationParams(page=page, size=limit)
+    enable_rerank = (rerank == 1) or (x_rerank == 1)
+
+    search_response = search_documents(request, pagination, enable_rerank, user)
+
+    # Re-shape into the legacy envelope
+    items = [item.model_dump(mode="json") for item in search_response.items]
+
+    raw_facets = getattr(search_response, "facets", {}) or {}
+    legacy_facets: Dict[str, List[Dict[str, Any]]] = {}
+    for name, buckets in raw_facets.items():
+        bucket_rows: List[Dict[str, Any]] = []
+        for bucket in buckets or []:
+            if isinstance(bucket, FacetBucket):
+                bucket_rows.append({"key": bucket.key, "count": bucket.doc_count})
+            elif isinstance(bucket, dict):
+                bucket_rows.append({
+                    "key": bucket.get("key"),
+                    "count": bucket.get("doc_count", bucket.get("count", 0)),
+                })
+        if name in {"entity_type", "entities.type", "entity_types"}:
+            legacy_facets["entity_types"] = bucket_rows
+        else:
+            legacy_facets[name] = bucket_rows
+    legacy_facets.setdefault("entity_types", [])
+
+    if getattr(search_response, "reranked", False):
+        response.headers["X-Reranked"] = "1"
+        response.headers["X-Rerank-Model"] = settings.rerank_model
+        response.headers["X-Rerank-TopK"] = str(min(settings.rerank_topk, len(items)))
+        took_ms = getattr(search_response, "rerank_time_ms", None) or getattr(search_response, "took_ms", None)
+        if took_ms is not None:
+            response.headers["X-Rerank-TimeMs"] = str(took_ms)
+
     return {
-        "results": response.items,
-        "facets": {"entity_types": []},  # Simplified for compatibility
+        "results": items,
+        "facets": legacy_facets,
     }
 
 

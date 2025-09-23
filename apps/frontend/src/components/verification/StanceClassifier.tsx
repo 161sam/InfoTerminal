@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
+import Panel from '@/components/layout/Panel';
+import { LoadingSpinner } from '@/components/ui/loading';
+import { inputStyles, buttonStyles, textStyles, cardStyles, statusStyles, compose } from '@/styles/design-tokens';
 import { 
   Scale, 
   CheckCircle, 
@@ -144,55 +142,48 @@ export function StanceClassifier({
   };
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Scale className="h-5 w-5" />
-          <CardTitle>Stance Classification</CardTitle>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
+    <Panel title="Stance Classification" className={className}>
+      <div className="space-y-6">
         {/* Input Section */}
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium">Claim to Verify</label>
+            <label className={`${textStyles.body} font-medium`}>Claim to Verify</label>
             <textarea
               value={claim}
               onChange={(e) => setClaim(e.target.value)}
               placeholder="Enter the claim to be verified..."
-              className="w-full p-3 border rounded mt-1 min-h-20"
+              className={`${inputStyles.base} mt-1 min-h-20`}
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Evidence Text</label>
+            <label className={`${textStyles.body} font-medium`}>Evidence Text</label>
             <textarea
               value={evidence}
               onChange={(e) => setEvidence(e.target.value)}
               placeholder="Enter the evidence text to analyze..."
-              className="w-full p-3 border rounded mt-1 min-h-24"
+              className={`${inputStyles.base} mt-1 min-h-24`}
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Additional Context (Optional)</label>
+            <label className={`${textStyles.body} font-medium`}>Additional Context (Optional)</label>
             <textarea
               value={context}
               onChange={(e) => setContext(e.target.value)}
               placeholder="Enter any additional context that might help with classification..."
-              className="w-full p-3 border rounded mt-1 min-h-16"
+              className={`${inputStyles.base} mt-1 min-h-16`}
             />
           </div>
 
-          <Button
+          <button
             onClick={handleClassifyStance}
             disabled={isLoading || !claim.trim() || !evidence.trim()}
-            className="w-full"
+            className={`w-full ${compose.button('primary', (isLoading || !claim.trim() || !evidence.trim()) ? 'opacity-50 cursor-not-allowed' : '')}`}
           >
             {isLoading ? (
               <>
-                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                <LoadingSpinner size="sm" variant="primary" layout="inline" />
                 Classifying Stance...
               </>
             ) : (
@@ -201,42 +192,44 @@ export function StanceClassifier({
                 Classify Stance
               </>
             )}
-          </Button>
+          </button>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}>
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              <span className={textStyles.body}>{error}</span>
+            </div>
+          </div>
         )}
 
         {/* Results */}
         {result && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Stance Analysis Result</h3>
+              <h3 className={textStyles.h3}>Stance Analysis Result</h3>
               <div className="flex items-center gap-2">
                 {getStanceIcon(result.stance)}
-                <Badge className={getStanceColor(result.stance)}>
-                  {result.stance.toUpperCase()}
-                </Badge>
+                <span className={`${getStanceColor(result.stance)} px-3 py-1 rounded-full text-sm font-medium uppercase`}>
+                  {result.stance}
+                </span>
               </div>
             </div>
 
             {/* Main Result Card */}
-            <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-900/20">
+            <div className={`${cardStyles.base} ${cardStyles.padding} bg-gray-50 dark:bg-gray-900/20`}>
               <div className="space-y-4">
                 {/* Stance and Confidence */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {getStanceIcon(result.stance)}
                     <div>
-                      <p className="font-medium">
+                      <p className={`${textStyles.body} font-medium`}>
                         Stance: <span className="capitalize">{result.stance}</span>
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className={textStyles.bodySmall}>
                         The evidence {result.stance}s the claim
                       </p>
                     </div>
@@ -246,7 +239,7 @@ export function StanceClassifier({
                     <p className={`font-medium ${getConfidenceLevel(result.confidence).color}`}>
                       {getConfidenceLevel(result.confidence).level} Confidence
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className={textStyles.bodySmall}>
                       {(result.confidence * 100).toFixed(1)}%
                     </p>
                   </div>
@@ -254,77 +247,78 @@ export function StanceClassifier({
 
                 {/* Confidence Progress Bar */}
                 <div>
-                  <div className="flex justify-between text-xs mb-1">
+                  <div className={`flex justify-between ${textStyles.bodySmall} mb-1`}>
                     <span>Confidence Level</span>
                     <span>{(result.confidence * 100).toFixed(1)}%</span>
                   </div>
-                  <Progress 
-                    value={result.confidence * 100} 
-                    className="h-2"
-                  />
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${result.confidence * 100}%` }}
+                    />
+                  </div>
                 </div>
 
                 {/* Evidence Type */}
                 <div className="flex items-center gap-2">
                   {getEvidenceTypeIcon(result.evidence_type)}
-                  <span className="text-sm font-medium">Evidence Type:</span>
-                  <Badge variant="outline" className="capitalize">
+                  <span className={`${textStyles.body} font-medium`}>Evidence Type:</span>
+                  <span className={`${statusStyles.info} px-2 py-1 rounded text-sm font-medium capitalize`}>
                     {result.evidence_type}
-                  </Badge>
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Reasoning */}
             <div className="space-y-2">
-              <h4 className="font-medium">Analysis Reasoning</h4>
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <p className="text-sm">{result.reasoning}</p>
+              <h4 className={`${textStyles.body} font-medium`}>Analysis Reasoning</h4>
+              <div className={`${cardStyles.base} p-3 bg-blue-50 dark:bg-blue-900/20`}>
+                <p className={textStyles.body}>{result.reasoning}</p>
               </div>
             </div>
 
             {/* Key Phrases */}
             {result.key_phrases && result.key_phrases.length > 0 && (
               <div className="space-y-2">
-                <h4 className="font-medium">Key Indicators</h4>
+                <h4 className={`${textStyles.body} font-medium`}>Key Indicators</h4>
                 <div className="flex flex-wrap gap-2">
                   {result.key_phrases.map((phrase, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
+                    <span key={index} className={`${statusStyles.neutral} px-2 py-1 rounded text-sm`}>
                       {phrase}
-                    </Badge>
+                    </span>
                   ))}
                 </div>
               </div>
             )}
 
             {/* Stance Interpretation Guide */}
-            <div className="p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg">
-              <h4 className="text-sm font-medium mb-2">Stance Meanings</h4>
-              <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className={`${cardStyles.base} p-3 bg-gray-50 dark:bg-gray-900/20`}>
+              <h4 className={`${textStyles.body} font-medium mb-2`}>Stance Meanings</h4>
+              <div className="grid grid-cols-2 gap-2">
                 <div className="flex items-center gap-1">
                   <CheckCircle className="h-3 w-3 text-green-500" />
-                  <span><strong>Support:</strong> Evidence confirms the claim</span>
+                  <span className={textStyles.bodySmall}><strong>Support:</strong> Evidence confirms the claim</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <XCircle className="h-3 w-3 text-red-500" />
-                  <span><strong>Contradict:</strong> Evidence refutes the claim</span>
+                  <span className={textStyles.bodySmall}><strong>Contradict:</strong> Evidence refutes the claim</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Minus className="h-3 w-3 text-yellow-500" />
-                  <span><strong>Neutral:</strong> Evidence is neither for nor against</span>
+                  <span className={textStyles.bodySmall}><strong>Neutral:</strong> Evidence is neither for nor against</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <HelpCircle className="h-3 w-3 text-gray-500" />
-                  <span><strong>Unrelated:</strong> Evidence doesn't address the claim</span>
+                  <span className={textStyles.bodySmall}><strong>Unrelated:</strong> Evidence doesn't address the claim</span>
                 </div>
               </div>
             </div>
 
             {/* Actions */}
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
+              <button
+                className={compose.button('secondary', 'text-sm px-3 py-2')}
                 onClick={() => {
                   setClaim('');
                   setEvidence('');
@@ -334,11 +328,10 @@ export function StanceClassifier({
                 }}
               >
                 Clear & Start Over
-              </Button>
+              </button>
               
-              <Button
-                variant="outline"
-                size="sm"
+              <button
+                className={compose.button('secondary', 'text-sm px-3 py-2')}
                 onClick={() => {
                   // This could export or save the analysis
                   const analysisData = {
@@ -352,11 +345,11 @@ export function StanceClassifier({
                 }}
               >
                 Export Analysis
-              </Button>
+              </button>
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </Panel>
   );
 }

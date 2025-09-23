@@ -1,97 +1,304 @@
-// apps/frontend/pages/analytics.tsx - Analytics Dashboard
-import React from 'react';
-import { Calendar, Download, Filter } from 'lucide-react';
+// OSINT Analytics Dashboard - Enhanced with modular components and dossier export
+import React, { useState, useCallback } from 'react';
+import { Download, Filter } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Panel from '@/components/layout/Panel';
-import { GraphAnalytics } from '@/components/analytics/GraphAnalytics';
-import { TimeSeriesChart } from '@/components/analytics/TimeSeriesChart';
-import { NewsTimeline } from '@/components/analytics/NewsTimeline';
-import { GraphSnippet } from '@/components/analytics/GraphSnippet';
+import {
+  FiltersBar,
+  EntityAnalytics,
+  SourceCoverage,
+  EvidenceQuality,
+  WorkflowRunsTable,
+  ActivityTimeline,
+  GeoMap,
+  QueryInsights,
+  GraphAnalytics,
+  AnalyticsFilters,
+  TIME_RANGES,
+  AnalyticsDossierSection,
+  AnalyticsDossierExport
+} from '@/components/analytics';
+import { DossierBuilderModal } from '@/components/dossier/DossierBuilderModal';
+import {
+  useEntityAnalytics,
+  useSourceCoverage,
+  useEvidenceQuality,
+  useWorkflowRuns,
+  useTimeline,
+  useGeoEntities,
+  useQueryInsights,
+  useGraphMetrics
+} from '@/hooks/analytics';
 
 export default function AnalyticsPage() {
-  const handleExport = () => {
-    // Export functionality will be implemented when connected to real data
-    console.log('Export analytics data');
+  const [filters, setFilters] = useState<AnalyticsFilters>({
+    timeRange: '30d',
+    entityTypes: [],
+    sources: [],
+    tags: [],
+    collections: [],
+    workflows: [],
+    confidence: 0.7,
+  });
+
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Initialize hooks to track loading states
+  const entityAnalytics = useEntityAnalytics(filters);
+  const sourceCoverage = useSourceCoverage(filters);
+  const evidenceQuality = useEvidenceQuality(filters);
+  const workflowRuns = useWorkflowRuns(filters);
+  const timeline = useTimeline(filters);
+  const geoEntities = useGeoEntities(filters);
+  const queryInsights = useQueryInsights(filters);
+  const graphMetrics = useGraphMetrics(filters);
+
+  const handleFiltersChange = useCallback((newFilters: Partial<AnalyticsFilters>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  }, []);
+
+  const handleRefreshAll = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+    
+    // Trigger refresh on all hooks
+    entityAnalytics.refresh?.();
+    sourceCoverage.refresh?.();
+    evidenceQuality.refresh?.();
+    workflowRuns.refresh?.();
+    timeline.refresh?.();
+    geoEntities.refresh?.();
+    queryInsights.refresh?.();
+    graphMetrics.refresh?.();
+  }, [
+    entityAnalytics.refresh,
+    sourceCoverage.refresh,
+    evidenceQuality.refresh,
+    workflowRuns.refresh,
+    timeline.refresh,
+    geoEntities.refresh,
+    queryInsights.refresh,
+    graphMetrics.refresh
+  ]);
+
+  const handleOpenDossierExport = () => {
+    setShowDossierModal(true);
   };
 
-  const handleTimeRangeChange = (timeRange: string) => {
-    // Time range filtering will be implemented when connected to real data
-    console.log('Time range changed:', timeRange);
+  const handleDossierExport = async (dossier: AnalyticsDossierExport) => {
+    try {
+      console.log('Exporting dossier:', dossier);
+      
+      // In real implementation: send to backend API
+      // const response = await fetch('/api/dossier/analytics/export', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(dossier),
+      // });
+      // const result = await response.json();
+      // 
+      // // Download file
+      // const link = document.createElement('a');
+      // link.href = result.downloadUrl;
+      // link.download = `${dossier.title.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+      // link.click();
+
+      // For now, create a simple download
+      const content = createDossierContent(dossier);
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${dossier.title.replace(/[^a-z0-9]/gi, '_')}.md`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('Error exporting dossier:', error);
+    }
   };
 
-  const handleFilters = () => {
-    // Filter functionality will be implemented when connected to real data
-    console.log('Open filters');
+  const createDossierContent = (dossier: AnalyticsDossierExport): string => {
+    let content = `# ${dossier.title}\n\n`;
+    
+    if (dossier.description) {
+      content += `${dossier.description}\n\n`;
+    }
+    
+    content += `## Report Metadata\n\n`;
+    content += `- **Generated:** ${new Date(dossier.metadata.generatedAt).toLocaleString()}\n`;
+    content += `- **Generated By:** ${dossier.metadata.generatedBy}\n`;
+    content += `- **Version:** ${dossier.metadata.version}\n`;
+    content += `- **Time Range:** ${dossier.filters.timeRange}\n\n`;
+
+    if (dossier.filters.entityTypes.length > 0) {
+      content += `- **Entity Types:** ${dossier.filters.entityTypes.join(', ')}\n`;
+    }
+    
+    if (dossier.filters.sources.length > 0) {
+      content += `- **Sources:** ${dossier.filters.sources.join(', ')}\n`;
+    }
+    
+    content += `\n## Analytics Sections\n\n`;
+    
+    dossier.sections.forEach(section => {
+      content += `### ${section.name}\n\n`;
+      content += `${section.description}\n\n`;
+      content += `*[Data would be rendered here based on current analytics results]*\n\n`;
+    });
+    
+    return content;
   };
+
+  const availableSections: AnalyticsDossierSection[] = [
+    {
+      id: 'entity-analytics',
+      name: 'Entity Analytics',
+      description: 'Entity distribution, top entities, and discovery trends',
+      enabled: true,
+      data: entityAnalytics.data,
+    },
+    {
+      id: 'source-coverage',
+      name: 'Source Coverage',
+      description: 'Source types, reliability metrics, and coverage analysis',
+      enabled: true,
+      data: sourceCoverage.data,
+    },
+    {
+      id: 'evidence-quality',
+      name: 'Evidence Quality',
+      description: 'Quality scores, verification rates, and reliability assessment',
+      enabled: true,
+      data: evidenceQuality.data,
+    },
+    {
+      id: 'workflow-runs',
+      name: 'Workflow Execution',
+      description: 'Workflow run history, success rates, and performance metrics',
+      enabled: true,
+      data: workflowRuns.data,
+    },
+    {
+      id: 'activity-timeline',
+      name: 'Activity Timeline',
+      description: 'Chronological view of OSINT findings and discoveries',
+      enabled: true,
+      data: timeline.data,
+    },
+    {
+      id: 'geospatial',
+      name: 'Geospatial Analysis',
+      description: 'Geographic distribution and location-based insights',
+      enabled: true,
+      data: geoEntities.data,
+    },
+    {
+      id: 'query-insights',
+      name: 'Query Insights',
+      description: 'Search patterns, performance, and user behavior analysis',
+      enabled: queryInsights.data && queryInsights.data.totalQueries > 0,
+      data: queryInsights.data,
+    },
+  ];
 
   return (
-    <DashboardLayout title="Analytics" subtitle="System performance and usage insights">
+    <DashboardLayout 
+      title="OSINT Analytics" 
+      subtitle="Comprehensive analysis of intelligence gathering activities and findings"
+    >
       <div className="p-6 space-y-8">
         
-        {/* Controls */}
+        {/* Header Controls */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-gray-500" />
-              <select 
-                onChange={(e) => handleTimeRangeChange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
-            </div>
-            <button 
-              onClick={handleFilters}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              <Filter size={16} />
-              Filters
-            </button>
+          <div className="flex items-center gap-2">
+            <Filter size={20} className="text-gray-500" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Analytics Dashboard
+            </h2>
           </div>
           
           <button 
-            onClick={handleExport}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700"
+            onClick={handleOpenDossierExport}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
           >
             <Download size={16} />
-            Export Report
+            Als Dossier exportieren
           </button>
         </div>
 
-        {/* Graph Analytics Section */}
-        <Panel title="Graph Analytics">
-          <GraphAnalytics className="w-full" />
-        </Panel>
+        {/* Global Filters */}
+        <FiltersBar 
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onRefresh={handleRefreshAll}
+        />
 
-        {/* Time Series Analysis */}
+        {/* Analytics Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Panel title="Time Series Analysis">
-            <TimeSeriesChart 
-              data={[]} 
-              onBrush={(range) => console.log('Brush changed:', range)}
+          
+          {/* Entity Analytics */}
+          <Panel title="Entity Analysis" className="lg:col-span-2">
+            <EntityAnalytics filters={filters} />
+          </Panel>
+
+          {/* Source Coverage */}
+          <Panel title="Source Coverage">
+            <SourceCoverage filters={filters} />
+          </Panel>
+
+          {/* Evidence Quality */}
+          <Panel title="Evidence Quality">
+            <EvidenceQuality filters={filters} />
+          </Panel>
+
+          {/* Graph Analytics */}
+          <Panel title="Graph Analytics" className="lg:col-span-2">
+            <GraphAnalytics className="w-full" />
+          </Panel>
+
+          {/* Workflow Runs */}
+          <Panel title="Workflow Execution" className="lg:col-span-2">
+            <WorkflowRunsTable filters={filters} />
+          </Panel>
+
+          {/* Activity Timeline */}
+          <Panel title="Activity Timeline" className="lg:col-span-2">
+            <ActivityTimeline 
+              filters={filters}
+              onEventClick={(event) => console.log('Timeline event clicked:', event)}
             />
           </Panel>
 
-          <Panel title="Graph Overview">
-            <GraphSnippet 
-              data={{ nodes: [], edges: [] }}
-              onNodeClick={(id) => console.log('Node clicked:', id)}
+          {/* Geospatial Map */}
+          <Panel title="Geospatial Analysis" className="lg:col-span-2">
+            <GeoMap 
+              filters={filters}
+              onEntityClick={(entity) => console.log('Geo entity clicked:', entity)}
             />
           </Panel>
+
+          {/* Query Insights - Only show if data available */}
+          {queryInsights.data && queryInsights.data.totalQueries > 0 && (
+            <Panel title="Query Insights" className="lg:col-span-2">
+              <QueryInsights filters={filters} />
+            </Panel>
+          )}
+
         </div>
 
-        {/* News Timeline */}
-        <Panel title="Recent Activity">
-          <NewsTimeline 
-            items={[]}
-            onItemClick={(id) => console.log('News item clicked:', id)}
-          />
-        </Panel>
-
       </div>
+
+      {/* Dossier Export Modal */}
+      <DossierBuilderModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        filters={filters}
+        availableSections={availableSections}
+        onExport={handleDossierExport}
+      />
     </DashboardLayout>
   );
 }

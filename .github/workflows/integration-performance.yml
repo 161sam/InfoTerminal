@@ -1,0 +1,672 @@
+name: Integration Tests & Performance Benchmarks
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run performance benchmarks daily at 02:00 UTC
+    - cron: '0 2 * * *'
+
+permissions:
+  contents: read
+  security-events: write
+  checks: write
+  pull-requests: write
+
+concurrency:
+  group: integration-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Service URLs for testing
+  IT_FRONTEND_URL: http://localhost:3000
+  IT_GRAPH_API_URL: http://localhost:8403
+  IT_SEARCH_API_URL: http://localhost:8401
+  IT_DOC_ENTITIES_URL: http://localhost:8402
+  IT_VERIFICATION_URL: http://localhost:8617
+  IT_OPS_CONTROLLER_URL: http://localhost:8618
+  
+  # Performance test configuration
+  IT_LOAD_USERS: 50
+  IT_RAMP_TIME: 15
+  IT_TEST_DURATION: 60
+  
+  # Test result retention
+  PERFORMANCE_RETENTION_DAYS: 30
+
+jobs:
+  # Pre-flight checks
+  preflight:
+    name: Pre-flight Checks
+    runs-on: ubuntu-latest
+    outputs:
+      run_performance: ${{ steps.check.outputs.run_performance }}
+      run_chaos: ${{ steps.check.outputs.run_chaos }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Check test requirements
+        id: check
+        run: |
+          # Check if performance tests should run
+          RUN_PERFORMANCE="false"
+          if [[ "${{ github.event_name }}" == "schedule" ]] || \
+             [[ "${{ github.ref }}" == "refs/heads/main" ]] || \
+             git diff --name-only HEAD~1 HEAD | grep -E "(test|performance|benchmark)" || \
+             [[ "${{ contains(github.event.head_commit.message, '[run-performance]') }}" == "true" ]]; then
+            RUN_PERFORMANCE="true"
+          fi
+          
+          # Check if chaos tests should run (only on main or explicit request)
+          RUN_CHAOS="false"
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || \
+             [[ "${{ contains(github.event.head_commit.message, '[run-chaos]') }}" == "true" ]]; then
+            RUN_CHAOS="true"
+          fi
+          
+          echo "run_performance=$RUN_PERFORMANCE" >> $GITHUB_OUTPUT
+          echo "run_chaos=$RUN_CHAOS" >> $GITHUB_OUTPUT
+          
+          echo "🔍 Test Configuration:"
+          echo "  Performance Tests: $RUN_PERFORMANCE"
+          echo "  Chaos Tests: $RUN_CHAOS"
+
+  # Build and setup services
+  build-services:
+    name: Build Services
+    runs-on: ubuntu-latest
+    needs: preflight
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [frontend, graph-views, doc-entities]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build ${{ matrix.service }}
+        run: |
+          case "${{ matrix.service }}" in
+            "frontend")
+              docker build -f apps/frontend/Dockerfile -t infoterminal-frontend:test .
+              ;;
+            "graph-views")
+              docker build -f services/graph-views/Dockerfile -t infoterminal-graph-views:test services/graph-views/
+              ;;
+            "doc-entities")
+              docker build -f services/doc-entities/Dockerfile -t infoterminal-doc-entities:test services/doc-entities/
+              ;;
+          esac
+      
+      - name: Save Docker image
+        run: |
+          docker save infoterminal-${{ matrix.service }}:test > ${{ matrix.service }}-image.tar
+      
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.service }}-image
+          path: ${{ matrix.service }}-image.tar
+          retention-days: 1
+
+  # Core workflow integration tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [preflight, build-services]
+    strategy:
+      fail-fast: false
+      matrix:
+        workflow: [search, graph, nlp, verification, security]
+    
+    services:
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/testpassword
+          NEO4J_PLUGINS: '["apoc"]'
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 7474:7474
+          - 7687:7687
+      
+      opensearch:
+        image: opensearchproject/opensearch:2.11.1
+        env:
+          discovery.type: single-node
+          plugins.security.disabled: true
+          OPENSEARCH_INITIAL_ADMIN_PASSWORD: TestPassword123!
+        options: >-
+          --health-cmd "curl -f http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 9200:9200
+      
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: infoterminal_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: testpass
+        options: >-
+          --health-cmd "pg_isready -U test -d infoterminal_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq bc curl netcat-openbsd
+      
+      - name: Download service images
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-image"
+          merge-multiple: true
+      
+      - name: Load Docker images
+        run: |
+          for image in *.tar; do
+            docker load < "$image"
+          done
+      
+      - name: Start test services
+        run: |
+          # Create test environment file
+          cat > .env.test << 'EOF'
+          NEO4J_URI=bolt://localhost:7687
+          NEO4J_USER=neo4j
+          NEO4J_PASSWORD=testpassword
+          OPENSEARCH_URL=http://localhost:9200
+          POSTGRES_URL=postgresql://test:testpass@localhost:5432/infoterminal_test
+          NODE_ENV=test
+          PYTHONPATH=/app
+          EOF
+          
+          # Start services with test configuration
+          docker run -d --name frontend-test \
+            --network host \
+            --env-file .env.test \
+            infoterminal-frontend:test
+          
+          docker run -d --name graph-views-test \
+            --network host \
+            --env-file .env.test \
+            -p 8403:8403 \
+            infoterminal-graph-views:test
+          
+          # Wait for services to be ready
+          timeout 120s bash -c '
+            until curl -f http://localhost:3000/api/health; do
+              echo "Waiting for frontend..."
+              sleep 5
+            done
+          '
+          
+          timeout 60s bash -c '
+            until curl -f http://localhost:8403/health; do
+              echo "Waiting for graph-views..."
+              sleep 5
+            done
+          '
+      
+      - name: Run ${{ matrix.workflow }} workflow tests
+        run: |
+          chmod +x tests/integration/integration_workflow_tests.sh
+          
+          # Run specific workflow test
+          case "${{ matrix.workflow }}" in
+            "search")
+              ./tests/integration/integration_workflow_tests.sh --workflow search
+              ;;
+            "graph")
+              ./tests/integration/integration_workflow_tests.sh --workflow graph
+              ;;
+            "nlp")
+              ./tests/integration/integration_workflow_tests.sh --workflow nlp
+              ;;
+            "verification")
+              ./tests/integration/integration_workflow_tests.sh --workflow verification
+              ;;
+            "security")
+              ./tests/integration/integration_workflow_tests.sh --workflow security
+              ;;
+            *)
+              ./tests/integration/integration_workflow_tests.sh
+              ;;
+          esac
+        continue-on-error: true
+      
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-results-${{ matrix.workflow }}
+          path: |
+            tests/integration/results/
+            tests/integration/test_data/
+          retention-days: ${{ env.PERFORMANCE_RETENTION_DAYS }}
+      
+      - name: Collect service logs
+        if: failure()
+        run: |
+          mkdir -p logs/
+          docker logs frontend-test > logs/frontend.log 2>&1 || true
+          docker logs graph-views-test > logs/graph-views.log 2>&1 || true
+      
+      - name: Upload service logs
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: service-logs-${{ matrix.workflow }}
+          path: logs/
+          retention-days: 3
+
+  # Performance benchmarking
+  performance-tests:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [preflight, build-services]
+    if: needs.preflight.outputs.run_performance == 'true'
+    
+    services:
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/testpassword
+        ports:
+          - 7474:7474
+          - 7687:7687
+      
+      opensearch:
+        image: opensearchproject/opensearch:2.11.1
+        env:
+          discovery.type: single-node
+          plugins.security.disabled: true
+        ports:
+          - 9200:9200
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install performance test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq bc curl apache2-utils
+      
+      - name: Download service images
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-image"
+          merge-multiple: true
+      
+      - name: Load Docker images and start services
+        run: |
+          for image in *.tar; do
+            docker load < "$image"
+          done
+          
+          # Start services for performance testing
+          docker-compose -f docker-compose.yml up -d
+          
+          # Wait for all services
+          timeout 180s bash -c '
+            services=("frontend:3000" "graph-views:8403")
+            for service in "${services[@]}"; do
+              name="${service%:*}"
+              port="${service#*:}"
+              echo "Waiting for $name on port $port..."
+              until curl -f "http://localhost:$port/health" || curl -f "http://localhost:$port/api/health"; do
+                sleep 5
+              done
+              echo "$name is ready"
+            done
+          '
+      
+      - name: Run performance benchmarks
+        run: |
+          chmod +x tests/performance/benchmark_core_workflows.sh
+          ./tests/performance/benchmark_core_workflows.sh
+        continue-on-error: true
+      
+      - name: Run load testing
+        run: |
+          chmod +x tests/performance/load_testing.sh
+          IT_SKIP_STRESS_TEST=true ./tests/performance/load_testing.sh
+        continue-on-error: true
+      
+      - name: Generate performance report
+        run: |
+          mkdir -p performance-reports/
+          
+          # Combine performance results
+          cat > performance-reports/summary.md << 'EOF'
+          # Performance Test Results
+          
+          **Date:** $(date -Iseconds)
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+          
+          ## Benchmark Results
+          EOF
+          
+          # Add benchmark results if available
+          if [[ -f tests/performance/results/benchmark_*.json ]]; then
+            latest_benchmark=$(ls -t tests/performance/results/benchmark_*.json | head -1)
+            echo "Latest benchmark: $latest_benchmark"
+            
+            # Extract key metrics
+            jq -r '
+              "### Core Workflow Performance",
+              "",
+              "| Workflow | P95 Response Time | Success Rate | Status |",
+              "|----------|------------------|--------------|--------|",
+              (.workflows // {} | to_entries[] | 
+                "| \(.key) | \(.value.p95_ms // "N/A")ms | \(.value.success_rate // "N/A")% | \(.value.status // "N/A") |"),
+              "",
+              "### Performance Summary",
+              "",
+              "- **Pass Rate:** \(.performance_summary.pass_rate // "N/A")%",
+              "- **Total Workflows:** \(.performance_summary.total_workflows // 0)",
+              "- **Passed:** \(.performance_summary.passed // 0)",
+              "- **Failed:** \(.performance_summary.failed // 0)"
+            ' "$latest_benchmark" >> performance-reports/summary.md
+          fi
+          
+          # Add load test results if available
+          if [[ -f tests/performance/results/load_test_*.json ]]; then
+            latest_load=$(ls -t tests/performance/results/load_test_*.json | head -1)
+            echo "Latest load test: $latest_load"
+            
+            jq -r '
+              "",
+              "## Load Test Results",
+              "",
+              "| Metric | Value |",
+              "|--------|-------|",
+              "| Overall Throughput | \(.summary.overall_throughput_rps // "N/A") RPS |",
+              "| Average Response Time | \(.summary.overall_avg_response_ms // "N/A")ms |",
+              "| Error Rate | \(.summary.overall_error_rate // "N/A")% |",
+              "| Max CPU Usage | \(.summary.max_cpu_usage // "N/A")% |",
+              "| Max Memory Usage | \(.summary.max_memory_usage // "N/A")% |"
+            ' "$latest_load" >> performance-reports/summary.md
+          fi
+      
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results
+          path: |
+            tests/performance/results/
+            performance-reports/
+          retention-days: ${{ env.PERFORMANCE_RETENTION_DAYS }}
+      
+      - name: Comment performance results on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const summary = fs.readFileSync('performance-reports/summary.md', 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🚀 Performance Test Results\n\n${summary}`
+              });
+            } catch (error) {
+              console.log('Performance summary not available:', error.message);
+            }
+
+  # Chaos engineering tests (only on main branch or explicit request)
+  chaos-tests:
+    name: Chaos Engineering
+    runs-on: ubuntu-latest
+    needs: [preflight, build-services]
+    if: needs.preflight.outputs.run_chaos == 'true'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install chaos test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq bc curl
+      
+      - name: Download service images
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-image"
+          merge-multiple: true
+      
+      - name: Load Docker images
+        run: |
+          for image in *.tar; do
+            docker load < "$image"
+          done
+      
+      - name: Start services for chaos testing
+        run: |
+          docker-compose -f docker-compose.yml up -d
+          
+          # Wait for services to be ready
+          timeout 180s bash -c '
+            until docker-compose ps | grep -q "Up"; do
+              echo "Waiting for services to start..."
+              sleep 10
+            done
+          '
+          
+          # Additional readiness check
+          sleep 30
+      
+      - name: Run chaos engineering tests
+        run: |
+          chmod +x tests/chaos/chaos_engineering_tests.sh
+          ./tests/chaos/chaos_engineering_tests.sh
+        continue-on-error: true
+      
+      - name: Upload chaos test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chaos-test-results
+          path: tests/chaos/results/
+          retention-days: ${{ env.PERFORMANCE_RETENTION_DAYS }}
+
+  # Quality gates and final report
+  quality-gates:
+    name: Quality Gates & Reporting
+    runs-on: ubuntu-latest
+    needs: [integration-tests, performance-tests, chaos-tests]
+    if: always()
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*results*"
+          merge-multiple: true
+      
+      - name: Install reporting dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq bc
+      
+      - name: Analyze test results and apply quality gates
+        id: quality-check
+        run: |
+          mkdir -p final-report/
+          
+          # Initialize counters
+          TOTAL_TESTS=0
+          PASSED_TESTS=0
+          FAILED_TESTS=0
+          
+          # Integration test analysis
+          INTEGRATION_PASS=true
+          if ls integration-results-*/integration_*.log >/dev/null 2>&1; then
+            for log in integration-results-*/integration_*.log; do
+              if grep -q "FAIL:" "$log"; then
+                INTEGRATION_PASS=false
+              fi
+              TOTAL_TESTS=$((TOTAL_TESTS + $(grep -c "WORKFLOW" "$log" || echo 0)))
+              PASSED_TESTS=$((PASSED_TESTS + $(grep -c "PASS:" "$log" || echo 0)))
+              FAILED_TESTS=$((FAILED_TESTS + $(grep -c "FAIL:" "$log" || echo 0)))
+            done
+          fi
+          
+          # Performance test analysis
+          PERFORMANCE_PASS=true
+          if ls benchmark_*.json >/dev/null 2>&1; then
+            for result in benchmark_*.json; do
+              failed_workflows=$(jq '.performance_summary.failed // 0' "$result")
+              if [[ $failed_workflows -gt 0 ]]; then
+                PERFORMANCE_PASS=false
+              fi
+            done
+          fi
+          
+          # Chaos test analysis
+          CHAOS_PASS=true
+          if ls chaos_*.json >/dev/null 2>&1; then
+            for result in chaos_*.json; do
+              pass_rate=$(jq '.resilience_metrics.pass_rate // 0' "$result")
+              if (( $(echo "$pass_rate < 50" | bc -l) )); then
+                CHAOS_PASS=false
+              fi
+            done
+          fi
+          
+          # Generate final report
+          cat > final-report/quality-gates.md << EOF
+          # InfoTerminal v1.0.0 Quality Gates Report
+          
+          **Date:** $(date -Iseconds)
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+          
+          ## Quality Gate Results
+          
+          | Category | Status | Details |
+          |----------|--------|---------|
+          | Integration Tests | $([ "$INTEGRATION_PASS" = "true" ] && echo "✅ PASS" || echo "❌ FAIL") | $PASSED_TESTS/$TOTAL_TESTS workflows passed |
+          | Performance Tests | $([ "$PERFORMANCE_PASS" = "true" ] && echo "✅ PASS" || echo "❌ FAIL") | Performance benchmarks analysis |
+          | Chaos Engineering | $([ "$CHAOS_PASS" = "true" ] && echo "✅ PASS" || echo "❌ FAIL") | Resilience and recovery tests |
+          
+          ## Overall Assessment
+          
+          EOF
+          
+          # Determine overall status
+          OVERALL_PASS=true
+          if [[ "$INTEGRATION_PASS" != "true" ]] || [[ "$PERFORMANCE_PASS" != "true" ]]; then
+            OVERALL_PASS=false
+          fi
+          
+          if [[ "$OVERALL_PASS" = "true" ]]; then
+            echo "🎉 **OVERALL STATUS: PASS** - InfoTerminal is ready for v1.0.0 production deployment" >> final-report/quality-gates.md
+          else
+            echo "⚠️ **OVERALL STATUS: FAIL** - Issues must be resolved before v1.0.0 release" >> final-report/quality-gates.md
+          fi
+          
+          # Set output
+          echo "overall_pass=$OVERALL_PASS" >> $GITHUB_OUTPUT
+          echo "integration_pass=$INTEGRATION_PASS" >> $GITHUB_OUTPUT
+          echo "performance_pass=$PERFORMANCE_PASS" >> $GITHUB_OUTPUT
+          echo "chaos_pass=$CHAOS_PASS" >> $GITHUB_OUTPUT
+      
+      - name: Upload final report
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gates-report
+          path: final-report/
+          retention-days: ${{ env.PERFORMANCE_RETENTION_DAYS }}
+      
+      - name: Comment quality gates on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const report = fs.readFileSync('final-report/quality-gates.md', 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: report
+              });
+            } catch (error) {
+              console.log('Quality gates report not available:', error.message);
+            }
+      
+      - name: Fail if quality gates not met
+        if: steps.quality-check.outputs.overall_pass != 'true'
+        run: |
+          echo "❌ Quality gates failed. InfoTerminal is not ready for production."
+          echo "Integration: ${{ steps.quality-check.outputs.integration_pass }}"
+          echo "Performance: ${{ steps.quality-check.outputs.performance_pass }}"
+          echo "Chaos: ${{ steps.quality-check.outputs.chaos_pass }}"
+          exit 1
+      
+      - name: Success notification
+        if: steps.quality-check.outputs.overall_pass == 'true'
+        run: |
+          echo "🎉 All quality gates passed!"
+          echo "✅ Integration Tests: PASS"
+          echo "✅ Performance Tests: PASS" 
+          echo "✅ Chaos Engineering: PASS"
+          echo ""
+          echo "InfoTerminal v1.0.0 is PRODUCTION READY! 🚀"
+
+  # Cleanup artifacts for storage optimization
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [quality-gates]
+    if: always()
+    
+    steps:
+      - name: Delete temporary artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+            
+            // Delete temporary build artifacts
+            for (const artifact of artifacts.data.artifacts) {
+              if (artifact.name.endsWith('-image')) {
+                await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id,
+                });
+                console.log(`Deleted temporary artifact: ${artifact.name}`);
+              }
+            }

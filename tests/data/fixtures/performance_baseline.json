@@ -1,0 +1,31 @@
+{
+  "name": "Performance Baseline",
+  "description": "Expected performance thresholds for quality gates",
+  "thresholds": {
+    "api_endpoints": {
+      "p95_response_time_ms": 200,
+      "success_rate_percent": 99.0,
+      "throughput_rps": 100
+    },
+    "search_queries": {
+      "p95_response_time_ms": 500,
+      "success_rate_percent": 97.0,
+      "throughput_rps": 50
+    },
+    "graph_queries": {
+      "p95_response_time_ms": 1000,
+      "success_rate_percent": 95.0,
+      "throughput_rps": 25
+    },
+    "nlp_processing": {
+      "p95_response_time_ms": 2000,
+      "success_rate_percent": 90.0,
+      "throughput_rps": 10
+    }
+  },
+  "resource_limits": {
+    "memory_usage_percent": 80,
+    "cpu_usage_percent": 70,
+    "disk_io_mbps": 100
+  }
+}

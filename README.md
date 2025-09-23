@@ -13,6 +13,16 @@
 
 ---
 
+## 🧱 Build-Stabilisierung (lokal)
+
+- TypeScript-Audit: `npm run bs:ts-audit`
+- Build-Validierung: `npm run bs:validate`
+- Final-Check (Produktion): `npm run bs:final`
+
+Details und Reports: `build-stabilization/README.md`
+
+---
+
 ## 🎯 Mission
 
 **InfoTerminal** ist eine modulare OSINT/Intelligence-Plattform, die Nutzer:innen befähigt:

@@ -1,0 +1,40 @@
+{
+  "documents": [
+    {
+      "id": "doc_1",
+      "title": "Federal Reserve Policy Statement July 2024",
+      "content": "The Federal Open Market Committee decided to maintain the target range for the federal funds rate at 5-1/4 to 5-1/2 percent. The Committee continues to be highly attentive to inflation risks. Recent indicators suggest that economic activity has continued to expand at a solid pace. Job gains have remained strong, and the unemployment rate has remained low. Inflation remains elevated.",
+      "source": "Federal Reserve System",
+      "date": "2024-07-31",
+      "type": "policy_statement",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20240731a.htm"
+    },
+    {
+      "id": "doc_2", 
+      "title": "IMF World Economic Outlook Update",
+      "content": "The International Monetary Fund projects global economic growth to slow to 3.1 percent in 2024 from 3.5 percent in 2023. Advanced economies are expected to see growth slow to 1.7 percent in 2024. Emerging market and developing economies are projected to grow by 4.1 percent. Inflation is expected to decline steadily, with global headline inflation forecast to fall to 5.8 percent in 2024.",
+      "source": "International Monetary Fund",
+      "date": "2024-07-16",
+      "type": "economic_forecast",
+      "url": "https://www.imf.org/en/Publications/WEO/Issues/2024/07/16/world-economic-outlook-update-july-2024"
+    },
+    {
+      "id": "doc_3",
+      "title": "Climate Policy and Economic Growth",
+      "content": "Transitioning to renewable energy sources presents both challenges and opportunities for economic growth. Studies indicate that renewable energy investments can create more jobs per dollar spent than fossil fuel investments. However, the transition requires significant upfront capital and policy coordination. Carbon pricing mechanisms and green bonds are emerging as key financial instruments to support this transition.",
+      "source": "Academic Research",
+      "date": "2024-06-15",
+      "type": "research_paper",
+      "topics": ["climate_change", "renewable_energy", "economic_policy"]
+    },
+    {
+      "id": "doc_4",
+      "title": "Artificial Intelligence in Financial Services",
+      "content": "Artificial intelligence and machine learning technologies are transforming financial services. Banks are using AI for fraud detection, risk assessment, and customer service automation. Regulatory bodies are developing frameworks to govern AI use in finance, focusing on transparency, fairness, and systemic risk management. The technology promises increased efficiency but raises concerns about algorithmic bias and job displacement.",
+      "source": "FinTech Analysis",
+      "date": "2024-08-10",
+      "type": "industry_report",
+      "topics": ["artificial_intelligence", "financial_services", "regulation"]
+    }
+  ]
+}
