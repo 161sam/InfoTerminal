@@ -151,8 +151,8 @@ class SortOptions(BaseModel):
     """Standard sort options for list endpoints."""
     field: str = Field(..., description="Field to sort by")
     direction: str = Field(
-        default="asc", 
-        regex="^(asc|desc)$",
+        default="asc",
+        pattern="^(asc|desc)$",
         description="Sort direction: 'asc' or 'desc'"
     )
 

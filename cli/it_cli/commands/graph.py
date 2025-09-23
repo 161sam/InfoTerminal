@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import asyncio
+import json
+from pathlib import Path
 from typing import List
 
 import typer
@@ -129,5 +131,79 @@ def shortest_path(
             resp = await c.post(f"{settings.graph_api}/v1/shortest-path", json=payload)
             resp.raise_for_status()
             console.print_json(data=resp.json())
+
+    _run(_action)
+
+
+@app.command("export-subgraph")
+def export_subgraph(
+    center: str = typer.Option(..., "--center", "-c", help="Center node id"),
+    radius: int = typer.Option(2, help="Traversal radius", min=1, max=5),
+    limit: int = typer.Option(200, help="Maximum nodes/relationships", min=1, max=1000),
+    relationship: List[str] = typer.Option(
+        [],
+        "--relationship",
+        "-r",
+        help="Filter relationships (repeatable)",
+    ),
+    output: Path | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Optional file path to store the export",
+    ),
+    format: str = typer.Option(
+        "json",
+        "--format",
+        "-f",
+        case_sensitive=False,
+        help="Export format: json or markdown",
+    ),
+    timeout_ms: int | None = typer.Option(
+        None,
+        "--timeout-ms",
+        help="Optional query timeout in milliseconds",
+    ),
+) -> None:
+    """Export a dossier-ready subgraph via `/graphs/analysis/subgraph-export`."""
+
+    fmt = format.lower()
+    if fmt not in {"json", "markdown"}:
+        raise typer.BadParameter("format must be json or markdown")
+
+    settings = get_settings()
+
+    async def _action():
+        params = {
+            "center_id": center,
+            "radius": radius,
+            "limit": limit,
+            "format": fmt,
+        }
+        if relationship:
+            params["relationship_type"] = relationship
+        if timeout_ms:
+            params["timeout_ms"] = timeout_ms
+
+        async with client() as c:
+            resp = await c.get(
+                f"{settings.graph_api}/graphs/analysis/subgraph-export",
+                params=params,
+            )
+            resp.raise_for_status()
+            if fmt == "json":
+                data = resp.json()
+                if output:
+                    output.write_text(json.dumps(data, indent=2), encoding="utf-8")
+                    console.print(f"📁 Export saved to {output}")
+                else:
+                    console.print_json(data=data)
+            else:
+                markdown = resp.json().get("markdown", "")
+                if output:
+                    output.write_text(markdown, encoding="utf-8")
+                    console.print(f"📝 Markdown export saved to {output}")
+                else:
+                    console.print(markdown)
 
     _run(_action)

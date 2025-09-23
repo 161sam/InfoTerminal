@@ -244,7 +244,7 @@ http://localhost:3411
    ```
 4. **Dossier-Hook verwenden** – Subgraph-Export anfordern und als Markdown speichern:
    ```bash
-   curl -s "http://localhost:8612/graphs/analysis/subgraph-export?case_id=demo" \
+   curl -s "http://localhost:8612/graphs/analysis/subgraph-export?center_id=demo-node&format=markdown" \
      -H 'Accept: application/json' > exports/demo-subgraph.json
    jq -r '.markdown' exports/demo-subgraph.json > exports/demo-subgraph.md
    ```
