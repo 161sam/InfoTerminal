@@ -1,0 +1,39 @@
+version: 1
+database: graph_views
+dataset_name: graph_analytics_mvp
+schema: public
+table_name: graph_degree_metrics
+sql: |
+  select
+    node_id,
+    label,
+    algorithm,
+    degree,
+    community_id,
+    path_length,
+    computed_at
+  from graph_metrics_view
+columns:
+  - name: node_id
+    type: TEXT
+  - name: label
+    type: TEXT
+  - name: algorithm
+    type: TEXT
+  - name: degree
+    type: FLOAT
+  - name: community_id
+    type: BIGINT
+  - name: path_length
+    type: FLOAT
+  - name: computed_at
+    type: TIMESTAMP
+metrics:
+  - metric_name: avg_degree
+    expression: AVG(degree)
+  - metric_name: node_count
+    expression: COUNT(node_id)
+  - metric_name: community_count
+    expression: COUNT(DISTINCT community_id)
+  - metric_name: avg_path_length
+    expression: AVG(path_length)

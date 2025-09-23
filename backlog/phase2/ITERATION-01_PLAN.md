@@ -9,7 +9,8 @@ status dashboards and revalidates gates without duplicating artefacts.
 
 1. Establish a **prioritised sequence for packages A–L** that respects dependencies, value, and risk mitigation.
 2. Activate the first MVP wave (**Packages A & F**) with lightweight, verifiable increments.
-3. Ensure all work preserves the four delivery gates (Inventory/Policy, Health-Ready-Metrics, API/Docs, Smoke-E2E).
+3. Ensure all work preserves the four delivery gates (Inventory/Policy, Health-Ready-Metrics, API/Docs, Smoke-E2E) with
+   progress tracked in [`WAVE1_DOD_CHECKLIST.md`](WAVE1_DOD_CHECKLIST.md).
 
 ## Prioritised Package Order (Phase 2 Waves)
 
@@ -38,17 +39,19 @@ status dashboards and revalidates gates without duplicating artefacts.
    - Implement subgraph export endpoint returning JSON + Markdown block (`/graphs/analysis/subgraph-export`).
    - Provide CLI snippet (`cli it graph export --case-id ...`) wiring to dossier pipeline.
 3. **Superset Mini-Dashboard**
-   - Create Superset chart definitions (JSON) for degree centrality histogram + community count. Store under `charts/graph/phase2/` and update provisioning script.
+   - Create Superset dataset + chart definitions under `apps/superset/assets/` (`graph_analytics_mvp`).
+   - Charts: degree centrality histogram, community count big number. Dashboard export lives at `apps/superset/assets/dashboard/graph_analytics_mvp.json` and is imported via `apps/superset/assets/scripts/import.sh`.
 4. **Docs & Examples**
    - Update API docs with curl examples, note timeouts/pagination, reference metrics names.
+   - README demo section links to Superset dashboard and Grafana panel for the MVP.
 5. **Observability & Gates**
-   - Ensure metrics surface under `/metrics`; update Grafana dashboard JSON under `grafana/dashboards/graph.json` with new panels.
+   - Ensure metrics surface under `/metrics`; add Grafana dashboard JSON `grafana/dashboards/graph-analytics-mvp.json` with new panels.
 
 **Definition of Done (Wave 1)**
 - [ ] Analytics endpoints covered by unit/integration tests.
 - [ ] `/metrics` exposes counters + histograms with labels (`algorithm`, `status`).
 - [ ] API docs include example requests/responses and export instructions.
-- [ ] Superset dashboard objects checked into repo and referenced in README demo script.
+- [ ] Superset dataset, charts, and dashboard exports checked into repo (`apps/superset/assets/**/*graph_analytics_mvp*`) and referenced in README demo script.
 - [ ] Smoke E2E verifies `curl` → `graph-analysis` → `dossier export` path.
 
 ### Package F – Dossier & Collaboration (MVP scope)
@@ -64,15 +67,15 @@ status dashboards and revalidates gates without duplicating artefacts.
 3. **Audit & Metrics**
    - Emit `dossier_exports_total`, `dossier_export_duration_seconds`, `collab_notes_total` metrics. Wire to `/metrics` and update Grafana dashboards.
 4. **Docs & Demo Assets**
-   - Document export flow with sample Markdown/PDF outputs stored under `examples/dossier/`.
-   - Update README demo script referencing CLI and Superset dashboard.
+   - Document export flow with sample Markdown/PDF outputs stored under `examples/dossier/` and cross-link Superset dataset.
+   - Update README demo script referencing CLI, Superset dashboard, and Grafana board.
 5. **E2E Validation**
    - Extend smoke script (`test_dossier_v02.sh` or new) to cover Search → Graph → Dossier export, verifying PDF checksum.
 
 **Definition of Done (Wave 1)**
 - [ ] Export endpoint returns MD & PDF; templates stored + versioned.
 - [ ] Notes API persists data with audit events logged.
-- [ ] Metrics available and visualised (Grafana panel update + Superset dataset if needed).
+- [ ] Metrics available and visualised (Grafana dashboard `graph-analytics-mvp` + Superset dataset `graph_analytics_mvp`).
 - [ ] Documentation updated (API, how-to, demo script) with screenshots/GIF placeholders.
 - [ ] Smoke E2E demonstrates Search → Graph → Dossier path.
 

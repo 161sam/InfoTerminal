@@ -1,13 +1,27 @@
 # 🌍 Erweiterte Roadmap InfoTerminal
 
+## Phase 2 Execution Order (2025)
+
+| Wave | Pakete | Fokus | Abhängigkeiten |
+| --- | --- | --- | --- |
+| Wave 1 (aktiv) | **A – Ontologie & Graph**, **F – Dossier & Collaboration** | Graph-Analysen (Degree, Louvain, Shortest Path) + Dossier-Lite Export (MD/PDF) und Shared Notes MVP. | Dossier-Export hängt vom neuen Subgraph-Hook des Graph-APIs ab. |
+| Wave 2 | **B – NLP & Resolver**, **C – Geospatial** | Relationsextraktion, Entity-Linking, Geo-Layer mit Bounding-Box-API. | Nutzt Graph-Metriken & Dossier-Hooks aus Wave 1. |
+| Wave 3 | **G – Plugins**, **D – Daten-Ingest & Workflows** | Plugin-Runner (inkl. nmap) + NiFi/n8n Automatisierung. | Baut auf Observability und Export-Flows von Wave 1–2 auf. |
+| Wave 4 | **H – Agenten**, **I – Feeds** | Flowise-Agenten orchestrieren Plugins & NLP, externe Feeds mit Monitoring. | Benötigt stabile Plugins/Ingest. |
+| Wave 5 | **J – Performance & Infra**, **K – Frontend & UX** | Health/Ready/Metrics komplettieren, OIDC/UX-Härtung. | Startet nach stabilen Funktionspaketen. |
+| Wave 6 | **L – Docs & Tests**, **Hardening**, **Release** | Dokumentation angleichen, Security-Gates, Release-Playbook. | Finalisierung nach Feature-Waves. |
+
+Alle Artefakte (Dashboards, Checklisten, Scripts) sind idempotent – wiederholte Ausführung aktualisiert bestehende Objekte statt Duplikate zu erzeugen.
+
 ## 1. Pflicht-Fokus (Gotham-Features + deine Must-Haves)
 
-### 1.1 Ontologie & Graph
+### 1.1 Ontologie & Graph (Wave 1)
 
 * Graph-Datenmodell mit **Entities, Events, Relations**.
-* **Graph-Algorithmen**: Centrality, Communities, Pathfinding, Clustering.
-* **Superset-Dashboards** für Graph-Metriken.
-* Cross-Links: Search ↔ Graph ↔ Dossier.
+* **Graph-Algorithmen** (MVP): Degree-Centrality, Louvain-Communities, Shortest-Path mit Timeout & Pagination.
+* **Superset-Dashboard** `graph_analytics_mvp` + Grafana-Panel `graph-analytics-mvp` für Queries, Dauer, Exporte.
+* Subgraph-Export (`/graphs/analysis/subgraph-export`) liefert JSON/Markdown für das Dossier.
+* Cross-Links: Search ↔ Graph ↔ Dossier (Smoke-E2E `graph-dossier`).
 
 ### 1.2 NLP & AI-Layer
 
@@ -46,15 +60,12 @@
 * Feedback-Loop: User korrigiert Detection → Model verbessert.
 * Export von Video-Snapshots mit Metadaten in Graph.
 
-### 1.6 Collaboration & Dossier
+### 1.6 Collaboration & Dossier (Wave 1)
 
-* **Dossier-Lite v1**: Reports aus Search & Graph; exportierbar PDF/MD.
-* **Collaboration**:
-
-  * Shared Notes pro Case.
-  * Live-Multi-User Edit (CRDT).
-  * Kommentare an Graph-Nodes.
-* **Audit**: Immutable Logs (Loki/Tempo).
+* **Dossier-Lite MVP**: Reports aus Search & Graph; exportierbar PDF/MD per `/dossier/export`.
+* **Collaboration**: Feature-Flag Notes/Kommentare pro Fall, Audit-Events in Logs.
+* **Metrics**: `dossier_exports_total`, `dossier_export_duration_seconds_bucket`, `collab_notes_total`.
+* **Dashboards**: Superset-Dataset `graph_analytics_mvp` stellt Kontext bereit; Grafana zeigt Dossier-Export-Zähler.
 
 ---
 

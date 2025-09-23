@@ -34,6 +34,18 @@ Details und Reports: `build-stabilization/README.md`
 
 ---
 
+## 🚦 Phase 2 – Wave 1 (Pakete A & F)
+
+- **Priorität & Scope:** Graph-Analysen (Degree, Louvain, Shortest Path) und Dossier-Lite Export (Markdown/PDF) plus geteilte Notizen.
+- **Artefakte:**
+  - Planung & DoD: [`backlog/phase2/ITERATION-01_PLAN.md`](backlog/phase2/ITERATION-01_PLAN.md), [`backlog/phase2/WAVE1_DOD_CHECKLIST.md`](backlog/phase2/WAVE1_DOD_CHECKLIST.md)
+  - Superset-Assets: `apps/superset/assets/datasets/graph_analytics_mvp.yaml`, `apps/superset/assets/charts/graph_degree_histogram.json`, `apps/superset/assets/dashboard/graph_analytics_mvp.json`
+  - Grafana: `grafana/dashboards/graph-analytics-mvp.json`
+- **Observability:** Neue Prometheus-Metriken `graph_analysis_queries_total`, `graph_analysis_duration_seconds_bucket`, `graph_subgraph_exports_total`, `dossier_exports_total`, `collab_notes_total`.
+- **Gates:** Inventory/Policy, Health-Ready-Metrics, API/Docs und Smoke-E2E müssen nach jedem Merge grün bleiben (`scripts/generate_inventory.py`, `test_infoterminal_v030_features.sh --suite graph-dossier`).
+
+---
+
 ## ⚙️ InfoTerminal CLI
 
 Die **`infoterminal-cli`** (Typer-basiert, via `pipx` installierbar) ist der zentrale Zugang:
@@ -203,6 +215,52 @@ docker compose --profile infra up -d
 # 3. Frontend öffnen
 http://localhost:3411
 ```
+
+---
+
+## 🕔 5-Minuten-Demo (Offline)
+
+1. **Services starten** – Für den Wave-1-Durchstich reichen Neo4j, Graph-API, Collab-Hub, Superset und Grafana:
+   ```bash
+   # Basis-Services (Neo4j, Graph-API, Collab-Hub)
+   docker compose up -d neo4j graph-api collab-hub
+
+   # Superset (Profil aktivieren)
+   docker compose --profile superset up -d superset
+
+   # Grafana + Prometheus aus dem Observability-Stack
+   docker compose -f docker-compose.yml -f docker-compose.observability.yml \
+     --profile observability up -d grafana prometheus
+   ```
+2. **Beispielgraph laden** – Seeds importieren (idempotent, überschreibt vorhandene Demo-Daten nicht):
+   ```bash
+   python examples/py_cypher_demo.py --file examples/seeds/entities.json
+   ```
+3. **Graph-Analyse triggern** – Degree-Centrality und Louvain Communities abrufen (zeigt auch Metrics-Zähler):
+   ```bash
+   curl -s "http://localhost:8612/graphs/analysis/degree?limit=10" | jq '.results'
+   curl -s "http://localhost:8612/graphs/analysis/communities?limit=5" | jq '.communities'
+   ```
+4. **Dossier-Hook verwenden** – Subgraph-Export anfordern und als Markdown speichern:
+   ```bash
+   curl -s "http://localhost:8612/graphs/analysis/subgraph-export?case_id=demo" \
+     -H 'Accept: application/json' > exports/demo-subgraph.json
+   jq -r '.markdown' exports/demo-subgraph.json > exports/demo-subgraph.md
+   ```
+5. **Dossier-Lite erzeugen** – Export als PDF/MD via Collab-Hub (Feature-Flag aktivieren falls nötig):
+   ```bash
+   curl -s -X POST "http://localhost:8625/dossier/export" \
+     -H 'Content-Type: application/json' \
+     -d '{"case_id":"demo","format":"pdf","source":"graph"}' \
+     -o exports/demo-dossier.pdf
+   ```
+6. **Dashboards prüfen** –
+   - Grafana → Dashboard „Graph Analytics MVP“: Query-Rate, Dauer p95, Subgraph-Exporte.
+   - Superset → Dashboard „graph_analytics_mvp“: Degree-Histogramm, Community-Count.
+
+Die Schritte sind wiederholbar und funktionieren ohne Internet-Zugriff. Alle Exportbefehle sind idempotent – bestehende Artefakte werden überschrieben statt dupliziert.
+
+---
 
 ## 🧹 Dev Hygiene
 

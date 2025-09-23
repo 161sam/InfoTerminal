@@ -1,0 +1,21 @@
+{
+  "slice_name": "graph_degree_histogram",
+  "viz_type": "histogram",
+  "datasource": "graph_analytics_mvp",
+  "params": {
+    "metric": "avg_degree",
+    "column": "degree",
+    "adhoc_filters": [
+      {
+        "expressionType": "SQL",
+        "sqlExpression": "algorithm = 'degree'",
+        "clause": "WHERE",
+        "isExtra": false
+      }
+    ],
+    "row_limit": 5000,
+    "normalize": false,
+    "link_length": 10,
+    "emit_filter": true
+  }
+}
