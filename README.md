@@ -150,6 +150,43 @@ PY
 
    cat tmp/video-graph/video_analysis_*.json | jq '.summary'
    ```
+10. **Agent Chat (Mock → Toolcalls)**
+    ```bash
+    export AGENTS_ENABLED=1
+    uvicorn services.flowise-connector.app.main:app --port 8610 --reload &
+    AGENT_PID=$!
+    sleep 2
+
+    curl -s http://localhost:8610/tools | jq '.tools'
+    curl -s http://localhost:8610/chat \
+      -H 'Content-Type: application/json' \
+      -d '{"message":"Build a dossier for ACME","tool":"dossier.build","tool_params":{"subject":"ACME"}}' | jq '.tool_call'
+    curl -s http://localhost:8610/metrics | rg agent_
+
+    # when finished
+    kill ${AGENT_PID}
+    ```
+
+    Öffne anschließend das Frontend (`pnpm dev -- --port 3411`) und teste das
+    MVP unter http://localhost:3411/agent/mvp – das UI zeigt den Toolcall-Fortschritt
+    sowie Fehlermeldungen (z. B. Rate-Limit nach 6 Requests).
+
+11. **RSS Feed Connector (Mock → Search Index)**
+    ```bash
+    export FEEDS_ENABLED=1
+    export RSS_ENABLED=1
+    uvicorn services.feed-ingestor.app.main:app --port 8626 --reload &
+    FEED_PID=$!
+    sleep 2
+
+    curl -s -X POST "http://localhost:8626/feeds/rss/run" \
+      -H 'Content-Type: application/json' \
+      -d '{"dry_run": false, "feed_url": "https://example.com/rss"}' | jq '.items[0]'
+    curl -s http://localhost:8626/feeds/rss/items | jq '.[] | {id,title,url}'
+    curl -s http://localhost:8626/metrics | rg feed_
+
+    kill ${FEED_PID}
+    ```
 
 > 💡 **Idempotent:** Wiederholtes Ausführen aktualisiert Exporte/Dashboards und überschreibt Artefakte ohne Duplikate.
 

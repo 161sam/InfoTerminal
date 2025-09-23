@@ -15,10 +15,13 @@ os.environ.setdefault("OTEL_SDK_DISABLED", "true")
 os.environ.setdefault("IT_JSON_LOGS", "1")
 os.environ.setdefault("IT_ENV", "test")
 os.environ.setdefault("IT_LOG_SAMPLING", "")
+os.environ.setdefault("AGENTS_ENABLED", "1")
 
 service_dir = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(service_dir))
 import app.main as app_main  # type: ignore  # noqa: E402
+
+from app.main import global_rate_limiter  # noqa: E402
 
 app = app_main.app
 
@@ -33,3 +36,8 @@ async def client():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limiter():
+    global_rate_limiter.reset()

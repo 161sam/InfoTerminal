@@ -14,5 +14,5 @@ dependencies = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-q --strict-markers --disable-warnings --cov=app --cov-report=term-missing --cov-fail-under=92"
+addopts = "-q --strict-markers --disable-warnings --cov=app.main --cov-report=term-missing --cov-fail-under=92"
 asyncio_mode = "auto"

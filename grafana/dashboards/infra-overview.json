@@ -24,6 +24,54 @@
       "targets": [
         { "expr": "sum(increase(kube_pod_container_status_restarts_total[1h])) by (pod)", "datasource": "Prometheus" }
       ]
+    },
+    {
+      "type": "stat",
+      "title": "Agent Tool Calls",
+      "targets": [
+        { "expr": "sum(agent_tool_calls_total)", "datasource": "Prometheus" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Agent Policy Denials",
+      "targets": [
+        { "expr": "sum(agent_policy_denied_total)", "datasource": "Prometheus" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Agent Rate Limit Blocks",
+      "targets": [
+        { "expr": "sum(agent_rate_limit_block_total)", "datasource": "Prometheus" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Feed Items Fetched",
+      "targets": [
+        { "expr": "sum(feed_items_fetched_total)", "datasource": "Prometheus" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Feed Items Ingested",
+      "targets": [
+        { "expr": "sum(feed_items_ingested_total)", "datasource": "Prometheus" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "type": "stat",
+      "title": "Feed Dedup Skipped",
+      "targets": [
+        { "expr": "sum(feed_dedup_skipped_total)", "datasource": "Prometheus" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
     }
   ]
 }

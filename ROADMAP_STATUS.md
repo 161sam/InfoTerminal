@@ -119,12 +119,12 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## H) AI-Agenten
 - **Goal**: Flowise connector, multi-agent playbooks (researcher/verifier/dossier), Assistant UI with tool panels, policy enforcement.
 - **Current Evidence**:
-  - Flowise connector service with agent routers and metrics. 【F:services/flowise-connector/routers/agents_v1.py†L1-L120】
-  - Frontend Next.js API routes proxy agent chat/capabilities. 【F:apps/frontend/pages/api/agent/chat.ts†L1-L120】
-  - Agent feature flags available via `config.ts`. 【F:apps/frontend/src/lib/config.ts†L1-L80】
+-  - Flowise connector MVP exposes static tool allowlist, `/chat` with mocked tool execution, and Prometheus counters. 【F:services/flowise-connector/app/main.py†L47-L306】【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L74】
+-  - Grafana dashboard extended with agent counters; quickstart documents setup and offline demo. 【F:grafana/dashboards/infra-overview.json†L7-L40】【F:docs/agents/quickstart.md†L1-L120】
+-  - Frontend ships `/agent/mvp` single-turn chat with progress badges + API proxy. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L265】【F:apps/frontend/pages/api/agent/mvp-chat.ts†L1-L80】
 - **Gaps / Risks**:
-  - Multi-agent orchestration lacks persistence; policy checks not integrated with OPA.
-  - No guardrails for rate limiting or audit logging.
+-  - Flowise integration still mocked; OPA policies and multi-turn orchestration pending.
+-  - Audit logging and tool telemetry need central sink; cancellation hook currently stub only.
 - **DoD Checklist**:
   - [ ] Observability: Agent invocation metrics + failure alerts.
   - [ ] Tests: Scenario tests for tool chaining and fallback paths.
@@ -135,16 +135,15 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## I) Externe Datenquellen & Cyber-Feeds
 - **Goal**: Integrate news APIs, social streams, MISP/OTX/Shodan connectors with periodic jobs and dashboards.
 - **Current Evidence**:
-  - Federation proxy + open data connectors scaffolded. 【F:services/federation-proxy/app_v1.py†L1-L120】
-  - Plugins directory includes external data tools (openbb, subfinder). 【F:plugins/openbb/manifest.yaml†L1-L80】
-  - NiFi/n8n overlays provide ingest infrastructure. 【F:inventory/services.json†L266-L289】
+  - RSS connector service normalises entries (id/title/url/published_at) with dedup, dry-run flag, exponential backoff, and Prometheus counters. 【F:services/feed-ingestor/app/main.py†L118-L308】【F:services/feed-ingestor/tests/test_rss_connector.py†L1-L180】
+  - Grafana dashboard includes feed metrics; quickstart documents offline demo and feature flags. 【F:grafana/dashboards/infra-overview.json†L7-L64】【F:docs/feeds/quickstart.md†L1-L120】
 - **Gaps / Risks**:
-  - No active scheduling or rate-limit documentation; dashboards missing.
-  - Compliance/privacy assessments absent.
+  - Only RSS implemented; integration with real search/graph stores and credential management pending.
+  - Compliance/privacy assessments absent; threat-intel connectors still missing.
 - **DoD Checklist**:
-  - [ ] Observability: Feed freshness + error metrics.
-  - [ ] Tests: Connector smoke tests with mocked providers.
-  - [ ] Docs: Source configuration guide + stability notes.
+  - [x] Observability: Feed freshness + error metrics. 【F:services/feed-ingestor/app/main.py†L118-L289】
+  - [x] Tests: Connector smoke tests with mocked providers. 【F:services/feed-ingestor/tests/test_rss_connector.py†L1-L200】
+  - [x] Docs: Source configuration guide + stability notes. 【F:docs/feeds/quickstart.md†L1-L120】
   - [ ] Security: Egress policy compliance, credential rotation.
 - **Dependencies**: Packages D (workflows), J (observability), Security hardening.
 

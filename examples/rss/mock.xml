@@ -1,0 +1,14 @@
+<rss version="2.0">
+  <channel>
+    <title>InfoTerminal Mock RSS</title>
+    <link>https://infoterminal.local/mock</link>
+    <description>Offline sample feed used for smoke tests.</description>
+    <item>
+      <title>Mock Headline</title>
+      <link>https://infoterminal.local/mock/headline</link>
+      <guid>mock-001</guid>
+      <pubDate>Wed, 24 Sep 2025 10:00:00 GMT</pubDate>
+      <description>This item demonstrates the RSS connector normalisation.</description>
+    </item>
+  </channel>
+</rss>
