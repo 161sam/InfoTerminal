@@ -1,4 +1,4 @@
-// apps/frontend/src/lib/theme-provider.tsx - Enhanced Theme Provider with Dark Mode
+// apps/frontend/src/lib/theme-provider.tsx - KORRIGIERT - Dark Mode Bug behoben
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -17,40 +17,55 @@ const THEME_KEY = 'ui.theme';
 
 // Helpers to apply theme instantly to the DOM
 const sysPrefersDark = () => (typeof window !== 'undefined') && !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
 const applyTheme = (mode: Theme) => {
   if (typeof document === 'undefined') return;
+  
   const root = document.documentElement;
   const isDark = mode === 'dark' || (mode === 'system' && sysPrefersDark());
+  
+  // Apply dark class to html element (for Tailwind dark mode)
   root.classList.toggle('dark', isDark);
+  
+  // Set data attributes
   root.setAttribute('data-theme', isDark ? 'dark' : 'light');
   root.setAttribute('data-theme-owner', 'tp');
-  document.body?.classList.remove('dark');
+  
+  // KORREKTUR: Auch body synchron halten (für CSS-Variablen)
+  document.body?.classList.toggle('dark', isDark);
+  
+  // Update meta theme-color
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', isDark ? '#1f2937' : '#ffffff');
+  
+  console.log(`🎨 Theme applied: ${mode} (resolved: ${isDark ? 'dark' : 'light'})`);
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    
     // Load theme from localStorage
     let saved: Theme | null = null;
     try {
       saved = localStorage.getItem(THEME_KEY) as Theme;
     } catch {}
-    const initialTheme: Theme = saved && ['light', 'dark', 'system'].includes(saved) ? (saved as Theme) : 'light';
+    
+    const initialTheme: Theme = saved && ['light', 'dark', 'system'].includes(saved) ? (saved as Theme) : 'system';
     setTheme(initialTheme);
-    // nachdem du initial theme bestimmt hast (light/dark/system)
+    
+    // Apply theme immediately
     applyTheme(initialTheme);
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
 
-    const updateTheme = () => {
+    const updateResolvedTheme = () => {
       let newResolvedTheme: 'light' | 'dark';
       
       if (theme === 'system') {
@@ -60,25 +75,35 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }
       
       setResolvedTheme(newResolvedTheme);
+      
+      // WICHTIG: Theme auch hier anwenden
+      applyTheme(theme);
     };
 
-    updateTheme();
-    // Also ensure DOM is updated in this pass
-    applyTheme(theme);
+    updateResolvedTheme();
 
-    // Listen only when user mode is system
+    // Listen for system theme changes when in system mode
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => updateTheme();
+      const handleChange = () => updateResolvedTheme();
       mediaQuery.addEventListener('change', handleChange);
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, [theme, mounted]);
 
   const handleSetTheme = (newTheme: Theme) => {
+    console.log(`🔄 Theme changing from ${theme} to ${newTheme}`);
+    
     setTheme(newTheme);
-    try { localStorage.setItem(THEME_KEY, newTheme); } catch {}
-    // Apply immediately to avoid any flicker
+    
+    // Save to localStorage
+    try { 
+      localStorage.setItem(THEME_KEY, newTheme); 
+    } catch (e) {
+      console.warn('Failed to save theme to localStorage:', e);
+    }
+    
+    // Apply immediately to avoid flicker
     applyTheme(newTheme);
   };
 
@@ -158,6 +183,8 @@ export function ThemeToggle({
   };
 
   const toggleTheme = () => {
+    console.log(`🔄 Toggle clicked: ${theme} -> ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'}`);
+    
     if (theme === 'light') {
       setTheme('dark');
     } else if (theme === 'dark') {
@@ -184,7 +211,10 @@ export function ThemeToggle({
       <div className={`relative ${className}`}>
         <select
           value={theme}
-          onChange={(e) => setTheme(e.target.value as Theme)}
+          onChange={(e) => {
+            console.log(`🔽 Dropdown changed to: ${e.target.value}`);
+            setTheme(e.target.value as Theme);
+          }}
           className="pr-8 pl-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 appearance-none"
         >
           <option value="light">Light</option>

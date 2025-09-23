@@ -40,24 +40,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        method: 'GET',
+        credentials: 'include'
       });
 
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-      } else {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('refresh_token');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -74,20 +64,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include'
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Login failed');
+        throw new Error(error.error || 'Login failed');
       }
 
-      const { user: userData, token, refreshToken } = await response.json();
+      const data = await response.json();
       
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('refresh_token', refreshToken);
-      setUser(userData);
+      // Handle MFA requirement
+      if (data.requires_mfa) {
+        throw new Error('MFA_REQUIRED');
+      }
       
-      notifications.success('Welcome back!', `Logged in as ${userData.name}`);
+      setUser(data.user);
+      
+      notifications.success('Welcome back!', `Logged in as ${data.user.display_name || data.user.email}`);
       
       // Redirect to intended page or dashboard
       const returnTo = router.query.returnTo as string || '/';
@@ -105,19 +99,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, first_name: name }),
+        credentials: 'include'
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Registration failed');
+        throw new Error(error.error || 'Registration failed');
       }
 
-      const { user: userData, token, refreshToken } = await response.json();
+      const data = await response.json();
       
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('refresh_token', refreshToken);
-      setUser(userData);
+      setUser(data.user);
       
       notifications.success('Welcome!', 'Your account has been created successfully');
       router.push('/');
@@ -129,20 +122,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      }
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('refresh_token');
       setUser(null);
       router.push('/login');
       notifications.info('Logged out', 'You have been signed out');
@@ -151,22 +137,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshToken = async () => {
     try {
-      const token = localStorage.getItem('refresh_token');
-      if (!token) throw new Error('No refresh token');
-
       const response = await fetch('/api/auth/refresh', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        credentials: 'include'
       });
 
       if (!response.ok) throw new Error('Token refresh failed');
 
-      const { token: newToken, refreshToken: newRefreshToken } = await response.json();
-      
-      localStorage.setItem('auth_token', newToken);
-      localStorage.setItem('refresh_token', newRefreshToken);
+      // Tokens are automatically updated in cookies by the API route
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('Token refresh failed:', error);
       logout();

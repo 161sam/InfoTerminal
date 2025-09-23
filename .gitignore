@@ -151,3 +151,8 @@ sd.config.yaml
 
 # Archive cleanup directory
 .archive-cleanup/
+
+# Build-stabilization outputs
+build-stabilization/audit-results/
+build-stabilization/validation-results/
+build-stabilization/final-validation/

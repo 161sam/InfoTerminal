@@ -1,19 +1,11 @@
 # Plugins verwalten
 
-Unter `/plugins` lassen sich installierte Plugins einsehen und verwalten. Jede Karte zeigt Name, Version und Anbieter des Plugins.
+Die Seite **/plugins** zeigt registrierte Plugins (aus `plugins/*.yaml`). Für jedes Plugin:
 
-## Aktivieren/Deaktivieren
+- **Status**: Aktiviert pro Benutzer oder global (Rolle `admin`).
+- **Beschreibung & Version**: Metadaten aus der Registry.
+- **Konfiguration**: Formular für nicht-sensitive Parameter. Geheimnisse bleiben in `.env` oder Vaults.
+- **Health**: API-Check gegen den Plugin-Runner (`/v1/plugins/health/<name>`). Warnhinweise erscheinen bei Fehlern.
+- **Aktionen**: Starten (Job anlegen), Logs einsehen, Ergebnisse herunterladen.
 
-Mit dem Schalter kann ein Plugin pro Benutzer aktiviert oder deaktiviert werden. Administratoren können Einstellungen global setzen.
-
-## Konfiguration
-
-Nicht sensible Optionen werden über ein Formular gespeichert. Geheimnisse wie Tokens oder Passwörter müssen weiterhin über Umgebungsvariablen oder einen Vault hinterlegt werden.
-
-## Health
-
-Über den Health‑Check wird der Zustand eines Plugins geprüft. Bei Problemen erscheint eine Warnung.
-
-## Iframe‑Fallback
-
-Einige Plugins stellen eine eigene Oberfläche bereit. Sollte die Einbettung per Iframe scheitern, wird ein Link angeboten, um die Seite in einem neuen Tab zu öffnen.
+Der Plugin-Runner führt Tools isoliert (Docker optional) aus und legt Resultate in `plugins/results` ab.

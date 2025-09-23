@@ -1,0 +1,30 @@
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    ports: ["${IT_PORT_AUTH_SERVICE:-8616}:8080"]
+    env_file: .env
+    environment:
+      # Auth Service specific configuration
+      - AUTH_DATABASE_URL=postgresql://it_user:it_pass@postgres:5432/it_auth
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-secret-key-change-in-production}
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - JWT_REFRESH_TOKEN_EXPIRE_DAYS=7
+      - HOST=0.0.0.0
+      - PORT=8080
+      - ENVIRONMENT=${IT_ENV:-dev}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:3411}
+      - TRUSTED_HOSTS=${TRUSTED_HOSTS:-localhost,127.0.0.1}
+      - USER_REGISTRATION_ENABLED=false
+      - PASSWORD_MIN_LENGTH=8
+      - MFA_ENABLED=true
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped

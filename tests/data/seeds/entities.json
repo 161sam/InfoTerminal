@@ -1,0 +1,98 @@
+{
+  "entities": [
+    {
+      "id": "org_1",
+      "name": "International Monetary Fund",
+      "type": "organization",
+      "aliases": ["IMF"],
+      "properties": {
+        "founded": "1944",
+        "headquarters": "Washington D.C.",
+        "type": "international_organization",
+        "website": "https://www.imf.org"
+      }
+    },
+    {
+      "id": "org_2", 
+      "name": "Federal Reserve System",
+      "type": "organization",
+      "aliases": ["Federal Reserve", "Fed", "US Central Bank"],
+      "properties": {
+        "founded": "1913",
+        "headquarters": "Washington D.C.",
+        "type": "central_bank",
+        "website": "https://www.federalreserve.gov"
+      }
+    },
+    {
+      "id": "person_1",
+      "name": "Jerome Powell",
+      "type": "person",
+      "properties": {
+        "title": "Chair of the Federal Reserve",
+        "appointed": "2018",
+        "education": "Georgetown University",
+        "previous_role": "Investment banker"
+      }
+    },
+    {
+      "id": "concept_1",
+      "name": "Federal Funds Rate",
+      "type": "economic_concept",
+      "properties": {
+        "definition": "Interest rate at which banks lend to each other overnight",
+        "current_range": "5.25-5.50%",
+        "last_change": "2024-07-31"
+      }
+    },
+    {
+      "id": "event_1",
+      "name": "FOMC Meeting July 2024",
+      "type": "event",
+      "properties": {
+        "date": "2024-07-30-31",
+        "location": "Washington D.C.",
+        "outcome": "Rate held at 5.25-5.50%",
+        "next_meeting": "2024-09-17-18"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "from": "person_1",
+      "to": "org_2",
+      "type": "leads",
+      "properties": {
+        "since": "2018",
+        "role": "Chairman"
+      }
+    },
+    {
+      "from": "org_2",
+      "to": "concept_1",
+      "type": "controls",
+      "properties": {
+        "mechanism": "Federal Open Market Committee",
+        "frequency": "8 meetings per year"
+      }
+    },
+    {
+      "from": "event_1",
+      "to": "concept_1",
+      "type": "affected",
+      "properties": {
+        "decision": "no_change",
+        "rationale": "inflation_monitoring"
+      }
+    },
+    {
+      "from": "org_1",
+      "to": "org_2",
+      "type": "cooperates_with",
+      "properties": {
+        "areas": ["global_financial_stability", "crisis_response"],
+        "formal_agreements": true
+      }
+    }
+  ]
+}

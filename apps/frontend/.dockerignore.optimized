@@ -1,0 +1,125 @@
+# InfoTerminal Frontend - Optimized .dockerignore
+# Build System Stabilization - Minimize Docker build context
+
+# Development files and directories
+**/.git
+**/.gitignore
+**/README.md
+**/CHANGELOG.md
+**/LICENSE
+**/*.md
+
+# Node.js and npm
+**/node_modules
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+
+# Next.js build outputs
+**/.next
+**/out
+**/dist
+**/build
+
+# Testing and coverage
+**/coverage
+**/.nyc_output
+**/jest.config.js
+**/test-results
+**/playwright-report
+**/test-results
+
+# Development dependencies
+**/.eslintcache
+**/tsconfig.tsbuildinfo
+
+# Environment and configuration files
+**/.env*.local
+**/.env.development
+**/.env.test
+**/docker-compose*.yml
+**/Dockerfile*
+**/.dockerignore
+
+# IDE and editor files
+**/.vscode
+**/.idea
+**/*.swp
+**/*.swo
+**/*~
+
+# OS generated files
+**/.DS_Store
+**/.DS_Store?
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+**/ehthumbs.db
+**/Thumbs.db
+
+# Temporary files
+**/tmp
+**/temp
+**/*.tmp
+**/*.temp
+**/*.log
+
+# Cache directories
+**/.cache
+**/cache
+**/.parcel-cache
+
+# Backup files
+**/*.bak
+**/*.backup
+**/*.old
+
+# Build tools and CI/CD
+**/.github
+**/scripts
+**/tools
+**/.husky
+**/.pre-commit-config.yaml
+
+# Documentation
+**/docs
+**/documentation
+**/storybook-static
+
+# Other frontend apps (in monorepo)
+**/apps/n8n
+**/apps/superset
+
+# Services (backend)
+**/services
+
+# Data and uploads
+**/data
+**/uploads
+**/public/uploads
+
+# Monitoring and analytics
+**/grafana
+**/monitoring
+**/observability
+
+# Policy and security files
+**/policy
+**/.gitleaks.toml
+**/.secretsguardian.yaml
+
+# Archive and cleanup
+**/.archive-cleanup
+**/reports
+
+# Package manager lockfiles (keep only what's needed)
+# Keep: package-lock.json, pnpm-lock.yaml
+**/yarn.lock
+
+# Deployment files
+**/deploy
+**/charts
+**/infra
+**/k8s
+**/kubernetes

@@ -1,251 +1,282 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+// Modularized Collaboration Workspace Page
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { 
+  MessageSquare, 
+  FileText, 
+  CheckCircle, 
+  Activity,
+  Users 
+} from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Panel from '@/components/layout/Panel';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  CollabWorkspaceList,
+  CollabChatInterface,
+  CollabTeamSidebar,
+  CollabDocumentPanel,
+  CollabTaskPanel,
+  CollabActivityPanel,
+  Workspace,
+  Message,
+  DEMO_WORKSPACES,
+  DEMO_MESSAGES,
+  wsUrl
+} from '@/components/collaboration/panels';
 
-function wsUrl() {
-  const port = process.env.NEXT_PUBLIC_COLLAB_PORT || process.env.IT_PORT_COLLAB || '8625';
-  return `ws://localhost:${port}/ws`;
-}
+type TabType = 'chat' | 'documents' | 'tasks' | 'activity';
 
-export default function CollabPage() {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [text, setText] = useState('');
+export default function CollaborationPage() {
+  // State management
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('chat');
+  const [messages, setMessages] = useState<Message[]>(DEMO_MESSAGES);
+  const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(false);
+  const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
+
+  // WebSocket connection
   const wsRef = useRef<WebSocket | null>(null);
-  const [tasks, setTasks] = useState<{ id: string; text: string; status: 'todo'|'doing'|'done'; priority?: 'low'|'normal'|'high'|'critical'; labels?: string[] }[]>([]);
-  const clientId = useMemo(() => Math.random().toString(36).slice(2), []);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [history, setHistory] = useState<typeof tasks[]>([]);
-  const [future, setFuture] = useState<typeof tasks[]>([]);
-  const [labelEdit, setLabelEdit] = useState<{ id: string; open: boolean; value: string }>({ id: '', open: false, value: '' });
-  const [serverSync, setServerSync] = useState(true);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
 
+  // Initialize WebSocket connection
   useEffect(() => {
-    const url = wsUrl();
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
-    ws.onmessage = (ev) => {
-      try {
-        const msg = JSON.parse(ev.data);
-        setMessages(prev => [...prev, msg]);
-        if (msg.type === 'task_add') {
-          setTasks(prev => prev.some(t => t.id === msg.task?.id) ? prev : [...prev, msg.task]);
-        } else if (msg.type === 'task_move') {
-          setTasks(prev => prev.map(t => t.id === msg.id ? { ...t, status: msg.to } : t));
-        } else if (msg.type === 'task_update') {
-          const ut = msg.task;
-          if (ut?.id) setTasks(prev => prev.map(t => t.id === ut.id ? { ...t, ...ut } : t));
-        } else if (msg.type === 'task_delete') {
-          setTasks(prev => prev.filter(t => t.id !== msg.id));
+    try {
+      const ws = new WebSocket(wsUrl());
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'message') {
+            setMessages(prev => [...prev, data.message]);
+          }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
         }
-      } catch {}
-    };
-    return () => { ws.close(); };
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket disconnected');
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      return () => {
+        ws.close();
+      };
+    } catch (error) {
+      console.error('Failed to connect to WebSocket:', error);
+    }
   }, []);
 
-  // Fetch persisted tasks and labels on mount
-  useEffect(() => {
-    fetch('/api/collab/tasks').then(r => r.json()).then(d => setTasks(d.items || [])).catch(() => {});
-    fetch('/api/collab/labels').then(r => r.json()).then(d => setSuggestions((d.items||[]).map((x:any)=>x.label))).catch(() => {});
-  }, []);
+  // Event handlers
+  const handleSendMessage = useCallback((content: string, attachments?: File[]) => {
+    if (!selectedWorkspace) return;
 
-  // Keyboard shortcuts: undo/redo
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const mod = e.ctrlKey || e.metaKey;
-      if (mod && e.key.toLowerCase() === 'z') {
-        e.preventDefault(); undo();
-      } else if ((mod && e.key.toLowerCase() === 'y') || (mod && e.shiftKey && e.key.toLowerCase() === 'z')) {
-        e.preventDefault(); redo();
-      }
+    const newMessage: Message = {
+      id: `msg-${Date.now()}`,
+      workspaceId: selectedWorkspace.id,
+      userId: '1', // Current user ID
+      userName: 'Dr. Sarah Chen', // Current user name
+      content,
+      type: 'text',
+      timestamp: new Date(),
+      attachments: attachments ? attachments.map(file => ({
+        id: `att-${Date.now()}-${file.name}`,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        url: URL.createObjectURL(file)
+      })) : []
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [history, future, tasks]);
 
-  const snapshot = () => JSON.parse(JSON.stringify(tasks)) as typeof tasks;
-  const pushHistory = () => setHistory(prev => [...prev, snapshot()]);
-  const audit = (entry: any) => { if (serverSync) fetch('/api/collab/audit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) }).catch(()=>{}); };
-  const applySnapshot = (snap: typeof tasks) => setTasks(JSON.parse(JSON.stringify(snap)));
-  const undo = () => {
-    if (!history.length) return;
-    const last = history[history.length - 1];
-    setFuture(prev => [snapshot(), ...prev]);
-    setHistory(prev => prev.slice(0, -1));
-    applySnapshot(last);
-  };
-  const redo = () => {
-    if (!future.length) return;
-    const next = future[0];
-    setHistory(prev => [...prev, snapshot()]);
-    setFuture(prev => prev.slice(1));
-    applySnapshot(next);
-  };
+    // Add message locally
+    setMessages(prev => [...prev, newMessage]);
 
-  const send = () => {
-    if (!text.trim()) return;
-    wsRef.current?.send(JSON.stringify({ type: 'note', text, clientId }));
-    setText('');
-  };
+    // Send via WebSocket
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        type: 'message',
+        workspaceId: selectedWorkspace.id,
+        message: newMessage
+      }));
+    }
+  }, [selectedWorkspace]);
 
-  const addTask = () => {
-    const t = text.trim();
-    if (!t) return;
-    pushHistory(); setFuture([]);
-    audit({ type: 'add', text: t });
-    fetch('/api/collab/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: t }) })
-      .then(r => r.json()).then(task => setTasks(prev => [...prev, task])).catch(() => {});
-    setText('');
-  };
-  const moveTask = (id: string, to: 'todo'|'doing'|'done') => {
-    pushHistory(); setFuture([]);
-    audit({ type: 'move', id, to });
-    fetch(`/api/collab/tasks/${id}/move`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) })
-      .then(() => setTasks(prev => prev.map(t => t.id === id ? { ...t, status: to } : t))).catch(() => {});
-  };
-  const deleteTask = (id: string) => {
-    pushHistory(); setFuture([]);
-    audit({ type: 'delete', id });
-    fetch(`/api/collab/tasks/${id}`, { method: 'DELETE' })
-      .then(() => setTasks(prev => prev.filter(t => t.id !== id))).catch(() => {});
-  };
-
-  const updateTask = (id: string, patch: any) => {
-    pushHistory(); setFuture([]);
-    audit({ type: 'update', id, patch });
-    fetch(`/api/collab/tasks/${id}/update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) })
-      .then(r => r.json()).then((t) => setTasks(prev => prev.map(x => x.id === id ? { ...x, ...t } : x))).catch(() => {});
-  };
-
-  const onDragStart = (e: React.DragEvent, id: string) => {
-    e.dataTransfer.setData('text/task-id', id);
-  };
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-  const onDrop = (e: React.DragEvent, col: 'todo'|'doing'|'done') => {
-    e.preventDefault();
-    const id = e.dataTransfer.getData('text/task-id');
-    if (id) moveTask(id, col);
-  };
-
-  const prioColor = (p?: string) => p === 'high' ? 'border-red-400' : p === 'critical' ? 'border-red-600' : p === 'low' ? 'border-blue-300' : 'border-amber-300';
-  const prioBadge = (p?: string) => p ? (p[0].toUpperCase() + p.slice(1)) : 'Normal';
-  const allLabels = Array.from(new Set(tasks.flatMap(t => t.labels || [])));
-
-  const onTaskKey = (e: React.KeyboardEvent, t: typeof tasks[number]) => {
-    if (e.key === ' ') {
-      e.preventDefault(); setSelectedId(prev => prev === t.id ? null : t.id);
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      const order: ('todo'|'doing'|'done')[] = ['todo','doing','done'];
-      const idx = order.indexOf(t.status);
-      if (e.key === 'ArrowLeft' && idx > 0) moveTask(t.id, order[idx-1]);
-      if (e.key === 'ArrowRight' && idx < order.length-1) moveTask(t.id, order[idx+1]);
+  const handleWorkspaceSelect = async (workspace: Workspace) => {
+    setIsLoadingWorkspace(true);
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setSelectedWorkspace(workspace);
+      // Filter messages for selected workspace
+      const workspaceMessages = DEMO_MESSAGES.filter(m => m.workspaceId === workspace.id);
+      setMessages(workspaceMessages);
+    } catch (error) {
+      console.error('Error loading workspace:', error);
+    } finally {
+      setIsLoadingWorkspace(false);
     }
   };
 
+  const handleCreateWorkspace = async () => {
+    setIsCreatingWorkspace(true);
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Create new workspace');
+      // In real implementation, this would create a workspace and refresh the list
+    } catch (error) {
+      console.error('Error creating workspace:', error);
+    } finally {
+      setIsCreatingWorkspace(false);
+    }
+  };
+
+  const handleMessageAction = (message: Message, action: string) => {
+    console.log('Message action:', action, message);
+    // Handle message actions like reactions, replies, etc.
+  };
+
+  const handleDocumentAction = (document: any, action: string) => {
+    console.log('Document action:', action, document);
+    // Handle document actions like download, share, etc.
+  };
+
+  const handleTaskAction = (task: any, action: string) => {
+    console.log('Task action:', action, task);
+    // Handle task actions like status change, assignment, etc.
+  };
+
+  const handleMemberAction = (member: any, action: string) => {
+    console.log('Member action:', action, member);
+    // Handle member actions like view profile, change role, etc.
+  };
+
+  const workspaceMessages = messages.filter(m => m.workspaceId === selectedWorkspace?.id);
+
   return (
-    <DashboardLayout title="Collaboration" subtitle="Shared notes & audit stream">
-      <div className="max-w-5xl mx-auto p-4 space-y-4">
-        <Panel title="Notes & Tasks">
-          <div className="flex items-center gap-2">
-            <input className="flex-1 border rounded p-2" value={text} onChange={e => setText(e.target.value)} placeholder="Type a note and press send" />
-            <button className="px-4 py-2 bg-primary-600 text-white rounded" onClick={send}>Send Note</button>
-            <button className="px-4 py-2 bg-gray-800 text-white rounded" onClick={addTask}>Add Task</button>
-          </div>
-        </Panel>
-        <Panel title="Board (Drag & Drop / Keyboard)">
-          <div className="flex items-center gap-2 mb-2">
-            <button className="px-3 py-1 text-xs bg-gray-200 rounded" onClick={undo} disabled={!history.length}>Undo</button>
-            <button className="px-3 py-1 text-xs bg-gray-200 rounded" onClick={redo} disabled={!future.length}>Redo</button>
-            <span className="text-xs text-gray-500">Shortcuts: Ctrl/Cmd+Z, Ctrl+Y / Shift+Ctrl/Cmd+Z</span>
-            <label className="ml-auto text-xs flex items-center gap-1">
-              <input type="checkbox" checked={serverSync} onChange={e => setServerSync(e.target.checked)} /> Server Sync (audit)
-            </label>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {(['todo','doing','done'] as const).map(col => (
-              <div key={col} className="border rounded p-2" onDragOver={onDragOver} onDrop={(e) => onDrop(e, col)}>
-                <div className="font-medium capitalize mb-2">{col}</div>
-                <div className="space-y-2 min-h-[200px]">
-                  {tasks.filter(t => t.status === col).map(t => (
-                    <div
-                      key={t.id}
-                      className={`p-2 border-l-4 rounded bg-white ${prioColor(t.priority)} shadow-sm outline-none ${selectedId===t.id?'ring-2 ring-primary-400':''}`}
-                      draggable
-                      onDragStart={(e) => onDragStart(e, t.id)}
-                      tabIndex={0}
-                      onKeyDown={(e) => onTaskKey(e, t)}
-                      onFocus={() => setSelectedId(t.id)}
-                    >
-                      <div className="text-xs flex items-center gap-2 mb-1">
-                        <span className={`px-2 py-0.5 rounded-full ${t.priority==='high'||t.priority==='critical'?'bg-red-100 text-red-700':t.priority==='low'?'bg-blue-100 text-blue-700':'bg-amber-100 text-amber-700'}`}>{prioBadge(t.priority)}</span>
-                        {(t.labels||[]).map((lb, i) => (
-                          <span key={i} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{lb}</span>
-                        ))}
-                        <button className="ml-auto text-xs px-2 py-0.5 bg-gray-100 rounded" onClick={() => setLabelEdit({ id: t.id, open: true, value: '' })}>Labels</button>
-                      </div>
-                      <div className="text-sm">{t.text}</div>
-                      <div className="mt-1 flex gap-1">
-                        {col !== 'todo' && <button className="text-xs px-2 py-1 bg-gray-200 rounded" onClick={() => moveTask(t.id, col === 'doing' ? 'todo' : 'doing')}>{col === 'doing' ? '← Todo' : '← Doing'}</button>}
-                        {col !== 'done' && <button className="text-xs px-2 py-1 bg-gray-200 rounded" onClick={() => moveTask(t.id, col === 'todo' ? 'doing' : 'done')}>{col === 'todo' ? 'Doing →' : 'Done →'}</button>}
-                        <button className="text-xs px-2 py-1 bg-red-200 rounded" onClick={() => deleteTask(t.id)}>Delete</button>
-                        <select value={t.priority||'normal'} onChange={(e) => updateTask(t.id, { priority: e.target.value })} className="text-xs px-2 py-1 border rounded">
-                          <option value="low">Low</option>
-                          <option value="normal">Normal</option>
-                          <option value="high">High</option>
-                          <option value="critical">Critical</option>
-                        </select>
-                      </div>
-                      {labelEdit.open && labelEdit.id===t.id && (
-                        <div className="mt-2 p-2 border rounded bg-gray-50">
-                          <div className="flex items-center gap-2">
-                            <input className="flex-1 border rounded p-1 text-xs" placeholder="Add label..." value={labelEdit.value} onChange={e => setLabelEdit(prev => ({...prev, value: e.target.value}))} list="labels-suggestions" />
-                            <datalist id="labels-suggestions">
-                              {Array.from(new Set([...allLabels, ...suggestions])).map((l, i) => (<option key={i} value={l} />))}
-                            </datalist>
-                            <button className="text-xs px-2 py-1 bg-gray-200 rounded" onClick={() => {
-                              const v = (labelEdit.value||'').trim(); if (!v) return;
-                              const labels = Array.from(new Set([...(t.labels||[]), v]));
-                              updateTask(t.id, { labels });
-                              setLabelEdit({ id: '', open: false, value: '' });
-                            }}>Add</button>
-                            <button className="text-xs px-2 py-1 bg-gray-100 rounded" onClick={() => setLabelEdit({ id: '', open: false, value: '' })}>Close</button>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-1">
-                            {(t.labels||[]).map((lb, i) => (
-                              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-200 text-xs">
-                                {lb}
-                                <button className="text-[10px]" onClick={() => {
-                                  const next = (t.labels||[]).filter(x => x !== lb);
-                                  updateTask(t.id, { labels: next });
-                                }}>✕</button>
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {tasks.filter(t => t.status === col).length === 0 && (
-                    <div className="text-xs text-gray-500">No tasks</div>
-                  )}
+    <DashboardLayout title="Collaboration" subtitle="Real-time workspace collaboration and communication">
+      <div className="flex h-[calc(100vh-12rem)] max-w-7xl mx-auto gap-6">
+        
+        {/* Left Sidebar - Workspaces */}
+        <div className="w-80 flex-shrink-0">
+          <Panel className="h-full">
+            <CollabWorkspaceList
+              workspaces={DEMO_WORKSPACES}
+              selectedWorkspace={selectedWorkspace}
+              onWorkspaceSelect={handleWorkspaceSelect}
+              onCreateWorkspace={handleCreateWorkspace}
+              isCreating={isCreatingWorkspace}
+            />
+          </Panel>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
+          {selectedWorkspace ? (
+            <Panel className="h-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab as any} className="h-full flex flex-col">
+                <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 px-4 pt-4">
+                  <TabsList className="bg-gray-50 dark:bg-gray-800 p-1 rounded-lg">
+                    <TabsTrigger value="chat" className="inline-flex items-center gap-2">
+                      <MessageSquare size={16} />
+                      Chat
+                    </TabsTrigger>
+                    <TabsTrigger value="documents" className="inline-flex items-center gap-2">
+                      <FileText size={16} />
+                      Documents
+                    </TabsTrigger>
+                    <TabsTrigger value="tasks" className="inline-flex items-center gap-2">
+                      <CheckCircle size={16} />
+                      Tasks
+                    </TabsTrigger>
+                    <TabsTrigger value="activity" className="inline-flex items-center gap-2">
+                      <Activity size={16} />
+                      Activity
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                <div className="flex-1 min-h-0">
+                  <TabsContent value="chat" className="h-full m-0 p-0">
+                    <CollabChatInterface
+                      workspace={selectedWorkspace}
+                      messages={workspaceMessages}
+                      onSendMessage={handleSendMessage}
+                      onMessageAction={handleMessageAction}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="documents" className="h-full m-0 p-0">
+                    <CollabDocumentPanel
+                      workspace={selectedWorkspace}
+                      onDocumentAction={handleDocumentAction}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="tasks" className="h-full m-0 p-0">
+                    <CollabTaskPanel
+                      workspace={selectedWorkspace}
+                      onTaskAction={handleTaskAction}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="activity" className="h-full m-0 p-0">
+                    <CollabActivityPanel
+                      workspace={selectedWorkspace}
+                    />
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </Panel>
+          ) : (
+            <Panel className="h-full flex items-center justify-center">
+              {isLoadingWorkspace ? (
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                  <p className="text-gray-500 dark:text-gray-400">Loading workspace...</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <Users size={48} className="mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    Select a Workspace
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    Choose a workspace from the sidebar to start collaborating.
+                  </p>
+                </div>
+              )}
+            </Panel>
+          )}
+        </div>
+
+        {/* Right Sidebar - Team Members */}
+        <div className="w-72 flex-shrink-0">
+          <Panel className="h-full">
+            {selectedWorkspace ? (
+              <CollabTeamSidebar
+                workspace={selectedWorkspace}
+                onMemberAction={handleMemberAction}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <Users size={32} className="mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Team members will appear here
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </Panel>
-        <Panel title="Audit stream">
-          <div className="space-y-2 max-h-[400px] overflow-auto">
-            {messages.map((m, i) => (
-              <div key={i} className="text-sm p-2 border rounded">
-                <pre className="whitespace-pre-wrap">{JSON.stringify(m, null, 2)}</pre>
-              </div>
-            ))}
-            {!messages.length && <div className="text-sm text-gray-500">No messages yet</div>}
-          </div>
-        </Panel>
+            )}
+          </Panel>
+        </div>
       </div>
     </DashboardLayout>
   );

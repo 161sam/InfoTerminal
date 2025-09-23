@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import Panel from '@/components/layout/Panel';
+import { LoadingSpinner } from '@/components/ui/loading';
+import { inputStyles, buttonStyles, textStyles, cardStyles, statusStyles, compose } from '@/styles/design-tokens';
 import { 
   Search, 
   FileText, 
@@ -97,26 +95,19 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
   };
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Search className="h-5 w-5" />
-          <CardTitle>Claim Extraction</CardTitle>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
+    <Panel title="Claim Extraction" className={className}>
+      <div className="space-y-6">
         {/* Input Section */}
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium">Text to Analyze</label>
-            <Textarea
+            <label className={`${textStyles.body} font-medium`}>Text to Analyze</label>
+            <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Enter or paste text to extract verifiable claims from..."
-              className="min-h-32"
+              className={`${inputStyles.base} min-h-32`}
             />
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className={`${textStyles.bodySmall} mt-1`}>
               {inputText.length} characters
             </div>
           </div>
@@ -124,11 +115,11 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
           {/* Settings */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Confidence Threshold</label>
+              <label className={`${textStyles.body} font-medium`}>Confidence Threshold</label>
               <select
                 value={confidenceThreshold}
                 onChange={(e) => setConfidenceThreshold(Number(e.target.value))}
-                className="w-full p-2 border rounded mt-1"
+                className={`${inputStyles.base} mt-1`}
               >
                 <option value={0.5}>0.5 - More claims</option>
                 <option value={0.7}>0.7 - Balanced</option>
@@ -138,11 +129,11 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
             </div>
             
             <div>
-              <label className="text-sm font-medium">Max Claims</label>
+              <label className={`${textStyles.body} font-medium`}>Max Claims</label>
               <select
                 value={maxClaims}
                 onChange={(e) => setMaxClaims(Number(e.target.value))}
-                className="w-full p-2 border rounded mt-1"
+                className={`${inputStyles.base} mt-1`}
               >
                 <option value={5}>5 claims</option>
                 <option value={10}>10 claims</option>
@@ -152,14 +143,14 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
             </div>
           </div>
 
-          <Button
+          <button
             onClick={handleExtractClaims}
             disabled={isLoading || !inputText.trim()}
-            className="w-full"
+            className={`w-full ${compose.button('primary', (isLoading || !inputText.trim()) ? 'opacity-50 cursor-not-allowed' : '')}`}
           >
             {isLoading ? (
               <>
-                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                <LoadingSpinner size="sm" variant="primary" layout="inline" />
                 Extracting Claims...
               </>
             ) : (
@@ -168,74 +159,76 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
                 Extract Claims
               </>
             )}
-          </Button>
+          </button>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}>
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              <span className={textStyles.body}>{error}</span>
+            </div>
+          </div>
         )}
 
         {/* Results */}
         {claims.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Extracted Claims</h3>
-              <Badge variant="outline">
+              <h3 className={textStyles.h3}>Extracted Claims</h3>
+              <span className={`${statusStyles.info} px-3 py-1 rounded-full text-sm font-medium`}>
                 {claims.length} claim{claims.length !== 1 ? 's' : ''} found
-              </Badge>
+              </span>
             </div>
 
             <div className="space-y-3">
               {claims.map((claim) => (
                 <div
                   key={claim.id}
-                  className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
+                  className={`${cardStyles.base} ${cardStyles.padding} hover:shadow-md transition-all`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {getConfidenceIcon(claim.confidence)}
-                      <Badge className={getClaimTypeColor(claim.claim_type)}>
+                      <span className={`${getClaimTypeColor(claim.claim_type)} px-2 py-1 rounded text-sm font-medium`}>
                         {claim.claim_type}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">
+                      </span>
+                      <span className={textStyles.bodySmall}>
                         {(claim.confidence * 100).toFixed(0)}% confidence
                       </span>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">{claim.text}</p>
+                    <p className={`${textStyles.body} font-medium`}>{claim.text}</p>
                     
-                    <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="grid grid-cols-3 gap-2">
                       <div>
-                        <span className="text-muted-foreground">Subject:</span>
-                        <p className="font-medium">{claim.subject}</p>
+                        <span className={textStyles.bodySmall}>Subject:</span>
+                        <p className={`${textStyles.bodySmall} font-medium`}>{claim.subject}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Predicate:</span>
-                        <p className="font-medium">{claim.predicate}</p>
+                        <span className={textStyles.bodySmall}>Predicate:</span>
+                        <p className={`${textStyles.bodySmall} font-medium`}>{claim.predicate}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Object:</span>
-                        <p className="font-medium">{claim.object}</p>
+                        <span className={textStyles.bodySmall}>Object:</span>
+                        <p className={`${textStyles.bodySmall} font-medium`}>{claim.object}</p>
                       </div>
                     </div>
 
                     {(claim.temporal || claim.location) && (
-                      <div className="flex gap-4 text-xs">
+                      <div className={`flex gap-4 ${textStyles.bodySmall}`}>
                         {claim.temporal && (
                           <div>
-                            <span className="text-muted-foreground">When:</span>
+                            <span className={textStyles.bodySmall}>When:</span>
                             <span className="ml-1 font-medium">{claim.temporal}</span>
                           </div>
                         )}
                         {claim.location && (
                           <div>
-                            <span className="text-muted-foreground">Where:</span>
+                            <span className={textStyles.bodySmall}>Where:</span>
                             <span className="ml-1 font-medium">{claim.location}</span>
                           </div>
                         )}
@@ -244,9 +237,8 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
                   </div>
 
                   <div className="mt-3 flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <button
+                      className={compose.button('secondary', 'text-sm px-3 py-1.5')}
                       onClick={() => {
                         // This would trigger evidence search for this claim
                         if (onClaimsExtracted) {
@@ -256,36 +248,36 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
                     >
                       <FileText className="h-3 w-3 mr-1" />
                       Find Evidence
-                    </Button>
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Summary */}
-            <div className="p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg">
-              <h4 className="text-sm font-medium mb-2">Summary</h4>
-              <div className="grid grid-cols-4 gap-4 text-xs">
+            <div className={`${cardStyles.base} p-3 bg-gray-50 dark:bg-gray-900/20`}>
+              <h4 className={`${textStyles.body} font-medium mb-2`}>Summary</h4>
+              <div className={`grid grid-cols-4 gap-4 ${textStyles.bodySmall}`}>
                 <div>
-                  <span className="text-muted-foreground">Factual:</span>
+                  <span className={textStyles.bodySmall}>Factual:</span>
                   <span className="ml-1 font-medium">
                     {claims.filter(c => c.claim_type === 'factual').length}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Opinion:</span>
+                  <span className={textStyles.bodySmall}>Opinion:</span>
                   <span className="ml-1 font-medium">
                     {claims.filter(c => c.claim_type === 'opinion').length}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Prediction:</span>
+                  <span className={textStyles.bodySmall}>Prediction:</span>
                   <span className="ml-1 font-medium">
                     {claims.filter(c => c.claim_type === 'prediction').length}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Avg Confidence:</span>
+                  <span className={textStyles.bodySmall}>Avg Confidence:</span>
                   <span className="ml-1 font-medium">
                     {(claims.reduce((sum, c) => sum + c.confidence, 0) / claims.length * 100).toFixed(0)}%
                   </span>
@@ -294,7 +286,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </Panel>
   );
 }

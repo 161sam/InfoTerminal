@@ -1,0 +1,38 @@
+{
+  "name": "Graph Workflow Test", 
+  "description": "Entity creation and relationship building",
+  "entities": [
+    {
+      "name": "Test_Organization_Fed",
+      "type": "organization",
+      "properties": {
+        "test_marker": "integration_test",
+        "created_at": "2024-01-01T00:00:00Z"
+      }
+    },
+    {
+      "name": "Test_Person_Powell",
+      "type": "person", 
+      "properties": {
+        "test_marker": "integration_test",
+        "role": "central_banker"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "from": "Test_Person_Powell",
+      "to": "Test_Organization_Fed",
+      "type": "leads",
+      "properties": {
+        "test_marker": "integration_test",
+        "since": "2018"
+      }
+    }
+  ],
+  "expected_analytics": {
+    "min_nodes": 2,
+    "min_relationships": 1,
+    "connected_components": 1
+  }
+}

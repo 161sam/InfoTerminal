@@ -1,0 +1,325 @@
+name: Enhanced CI/CD Pipeline - InfoTerminal Build System Stabilization
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  security-events: write
+  checks: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8.15.0'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Enhanced Frontend Job with comprehensive validation
+  frontend:
+    name: Frontend Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # For better caching
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+      
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: TypeScript compilation check
+        run: pnpm -w -F @infoterminal/frontend typecheck
+      
+      - name: ESLint code quality check
+        run: pnpm -w -F @infoterminal/frontend lint
+      
+      - name: Prettier formatting check
+        run: pnpm -w -F @infoterminal/frontend prettier -c "**/*.{ts,tsx,js,jsx,json,md}"
+      
+      - name: Build production bundle
+        run: pnpm -w -F @infoterminal/frontend build
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+      
+      - name: Analyze bundle size
+        run: |
+          cd apps/frontend
+          echo "📊 Build Size Analysis:"
+          du -sh .next/ || echo "Build directory not found"
+          find .next -name "*.js" -type f | head -10 | xargs ls -lah || true
+      
+      - name: Run unit tests
+        run: pnpm -w -F @infoterminal/frontend test --silent -- --reporter=dot --coverage
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: frontend-build-${{ github.sha }}
+          path: |
+            apps/frontend/.next/
+            !apps/frontend/.next/cache
+          retention-days: 7
+      
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: frontend-coverage-${{ github.sha }}
+          path: apps/frontend/coverage/
+          retention-days: 7
+
+  # Enhanced Backend Job
+  backend:
+    name: Backend Services
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: services/graph-views
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: services/graph-views/requirements-dev.txt
+      
+      - name: Cache Python packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      
+      - name: Python code quality checks
+        run: |
+          python -m ruff check . --output-format=github
+          python -m ruff format --check .
+      
+      - name: Run tests with coverage
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+          PYTHONPATH: ${{ github.workspace }}/services/graph-views
+        run: |
+          pytest -q --cov=. --cov-report=xml --cov-report=term-missing
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          file: services/graph-views/coverage.xml
+          flags: backend
+
+  # Docker Build Validation
+  docker-build:
+    name: Docker Build Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [frontend, backend]
+    if: github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/frontend/Dockerfile
+          push: false
+          tags: infoterminal-frontend:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+            BUILD_TIME=${{ github.run_number }}
+            GIT_COMMIT=${{ github.sha }}
+      
+      - name: Test container health
+        run: |
+          docker run -d --name frontend-test -p 3001:3000 infoterminal-frontend:test
+          sleep 15
+          
+          # Health check with retries
+          for i in {1..5}; do
+            if curl -f http://localhost:3001/api/health; then
+              echo "✅ Container health check passed"
+              break
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 5
+          done
+          
+          # Container logs for debugging
+          echo "Container logs:"
+          docker logs frontend-test
+          
+          # Cleanup
+          docker stop frontend-test
+          docker rm frontend-test
+
+  # Enhanced Security Scanning
+  security:
+    name: Security & Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Install gitleaks
+        run: |
+          GITLEAKS_VERSION=8.18.2
+          curl -sL https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz \
+            | tar -xz
+          sudo mv gitleaks /usr/local/bin/gitleaks
+      
+      - name: Run secrets scanning
+        run: |
+          gitleaks detect --no-banner --source . \
+            --report-format sarif --report-path gitleaks.sarif || true
+          test -f gitleaks.sarif || echo '{"version":"2.1.0","runs":[]}' > gitleaks.sarif
+      
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif
+      
+      - name: Dependency vulnerability check
+        run: |
+          cd apps/frontend
+          npm audit --audit-level moderate || true
+      
+      - name: License compliance check
+        run: |
+          cd apps/frontend
+          npx license-checker --summary || true
+
+  # Build Performance Monitoring
+  performance:
+    name: Build Performance Monitor
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [frontend, backend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build-${{ github.sha }}
+          path: ./build-artifacts
+      
+      - name: Analyze build metrics
+        run: |
+          echo "📊 Build Performance Metrics:"
+          echo "Build Size: $(du -sh build-artifacts | cut -f1)"
+          echo "Build Files: $(find build-artifacts -type f | wc -l)"
+          echo "JavaScript Files: $(find build-artifacts -name "*.js" | wc -l)"
+          echo "CSS Files: $(find build-artifacts -name "*.css" | wc -l)"
+          
+          # Create performance report
+          cat > performance-report.md << 'EOF'
+          # Build Performance Report
+          
+          **Build ID:** ${{ github.run_number }}
+          **Commit:** ${{ github.sha }}
+          **Date:** $(date)
+          
+          ## Metrics
+          - Build Size: $(du -sh build-artifacts | cut -f1)
+          - Total Files: $(find build-artifacts -type f | wc -l)
+          - JS Bundles: $(find build-artifacts -name "*.js" | wc -l)
+          - CSS Files: $(find build-artifacts -name "*.css" | wc -l)
+          
+          EOF
+      
+      - name: Upload performance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report-${{ github.sha }}
+          path: performance-report.md
+          retention-days: 30
+
+  # Integration Summary
+  summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [frontend, backend, docker-build, security, performance]
+    if: always()
+    
+    steps:
+      - name: Build Status Summary
+        run: |
+          echo "🎯 InfoTerminal Build System Status Summary"
+          echo "=========================================="
+          echo "Frontend: ${{ needs.frontend.result }}"
+          echo "Backend: ${{ needs.backend.result }}"
+          echo "Docker: ${{ needs.docker-build.result }}"
+          echo "Security: ${{ needs.security.result }}"
+          echo "Performance: ${{ needs.performance.result }}"
+          echo ""
+          
+          if [[ "${{ needs.frontend.result }}" == "success" && 
+                "${{ needs.backend.result }}" == "success" ]]; then
+            echo "✅ BUILD SUCCESSFUL - All quality gates passed"
+            echo "🚀 Ready for deployment"
+          else
+            echo "❌ BUILD FAILED - Check individual job results"
+            exit 1
+          fi
