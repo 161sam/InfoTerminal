@@ -1,5 +1,5 @@
-import sys
 from pathlib import Path
+import sys
 
 import numpy as np
 import pytest
@@ -12,6 +12,8 @@ if str(SERVICE_DIR) not in sys.path:
     sys.path.insert(0, str(SERVICE_DIR))
 if str(ROOT / "services") not in sys.path:
     sys.path.insert(0, str(ROOT / "services"))
+
+sys.modules.pop("metrics", None)
 
 from video_pipeline import VideoPipeline  # type: ignore  # noqa: E402
 

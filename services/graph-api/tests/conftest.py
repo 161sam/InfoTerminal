@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+import importlib.util
 
 import pytest
 
@@ -19,10 +20,27 @@ os.environ.setdefault("IT_LOG_SAMPLING", "")
 
 # make service root importable so we can import the app package
 SERVICE_ROOT = Path(__file__).resolve().parents[1]
-if str(SERVICE_ROOT) not in sys.path:
-    sys.path.insert(0, str(SERVICE_ROOT))
+for path in list(sys.path):
+    if path.endswith("services/graph-views"):
+        sys.path.remove(path)
+if str(SERVICE_ROOT) in sys.path:
+    sys.path.remove(str(SERVICE_ROOT))
+sys.path.insert(0, str(SERVICE_ROOT))
 
-import app as app_module  # type: ignore
+APP_DIR = SERVICE_ROOT / "app"
+for alias in ("app", "graph_api_app"):
+    sys.modules.pop(alias, None)
+sys.modules.pop("metrics", None)
+spec = importlib.util.spec_from_file_location(
+    "graph_api_app",
+    APP_DIR / "__init__.py",
+    submodule_search_locations=[str(APP_DIR)],
+)
+if spec is None or spec.loader is None:
+    raise RuntimeError("Unable to load graph-api app module for tests")
+app_module = importlib.util.module_from_spec(spec)
+sys.modules["graph_api_app"] = app_module
+spec.loader.exec_module(app_module)
 sys.modules.setdefault("app", app_module)
 app = app_module.app
 
