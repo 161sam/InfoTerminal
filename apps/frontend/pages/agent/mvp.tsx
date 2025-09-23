@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Bot, MessageSquare, ShieldAlert } from 'lucide-react';
+import { Bot, CheckCircle, Loader2, MessageSquare, ShieldAlert, XCircle } from 'lucide-react';
 
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { isAgentEnabled } from '@/lib/config';
@@ -27,6 +27,11 @@ interface ChatMessage {
   role: 'user' | 'assistant' | 'tool';
   content: string;
   status?: 'pending' | 'success' | 'error';
+  details?: any;
+}
+
+interface NormalizedError {
+  message: string;
   details?: any;
 }
 
@@ -128,6 +133,27 @@ export default function AgentMvpChatPage() {
 
   const activeConversationId = conversationId || 'demo-seed';
 
+  const normalizeError = (status: number, payload: any): NormalizedError => {
+    if (status === 403) {
+      return {
+        message: 'Request blocked by policy (OPA deny).',
+        details: payload?.details ?? payload
+      };
+    }
+    if (status === 429) {
+      return {
+        message: 'Rate limit exceeded. Try again soon.',
+        details: payload
+      };
+    }
+    const fallback =
+      payload?.message || payload?.detail || payload?.error || 'Agent request denied.';
+    return {
+      message: fallback,
+      details: payload
+    };
+  };
+
   const submitPrompt = async () => {
     if (!prompt.trim()) {
       setErrorMessage('Enter a prompt for the agent.');
@@ -172,9 +198,7 @@ export default function AgentMvpChatPage() {
       const payload = await response.json();
 
       if (!response.ok) {
-        const policyDetail = payload?.detail;
-        const readableError =
-          policyDetail?.message || payload?.error || policyDetail?.error || 'Agent request denied.';
+        const normalizedError = normalizeError(response.status, payload);
         setMessages((prev) =>
           prev.map((message) =>
             message.id === toolMessageId
@@ -182,12 +206,12 @@ export default function AgentMvpChatPage() {
                   ...message,
                   status: 'error',
                   content: `tool_call: ${selectedTool} ❌`,
-                  details: { error: readableError, policy: policyDetail }
+                  details: { error: normalizedError.message, context: normalizedError.details }
                 }
               : message
           )
         );
-        setErrorMessage(readableError);
+        setErrorMessage(normalizedError.message);
         return;
       }
 
@@ -226,7 +250,10 @@ export default function AgentMvpChatPage() {
                 ...message,
                 status: 'error',
                 content: `tool_call: ${selectedTool} ❌`,
-                details: { error: error?.message ?? 'Unknown failure' }
+                details: {
+                  error: 'Agent connector unreachable.',
+                  context: error?.message ? { message: error.message } : undefined
+                }
               }
             : message
         )
@@ -377,6 +404,11 @@ export default function AgentMvpChatPage() {
                 {message.details?.error && (
                   <p className="mt-2 text-xs text-red-600">{message.details.error}</p>
                 )}
+                {message.details?.context && (
+                  <pre className="mt-2 overflow-x-auto rounded-md bg-red-50 p-2 text-[11px] leading-snug text-red-700">
+                    {JSON.stringify(message.details.context, null, 2)}
+                  </pre>
+                )}
                 {message.details?.result && (
                   <div className="mt-3 rounded-md bg-white/80 p-3 text-xs text-gray-700">
                     <div className="font-semibold">Mock result</div>
@@ -386,10 +418,20 @@ export default function AgentMvpChatPage() {
                 {Array.isArray(message.details?.steps) && message.details.steps.length > 0 && (
                   <ul className="mt-3 space-y-1 text-xs text-gray-600">
                     {message.details.steps.map((step: any, index: number) => (
-                      <li key={`${message.id}-step-${index}`} className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-                        <span>
-                          {step.status} – {step.tool} @ {new Date(step.timestamp).toLocaleTimeString()}
+                      <li key={`${message.id}-step-${index}`} className="flex items-center gap-3">
+                        {(() => {
+                          const status = String(step.status || '').toLowerCase();
+                          if (status === 'completed') {
+                            return <CheckCircle className="h-4 w-4 text-emerald-500" aria-hidden />;
+                          }
+                          if (status === 'failed') {
+                            return <XCircle className="h-4 w-4 text-red-500" aria-hidden />;
+                          }
+                          return <Loader2 className="h-4 w-4 animate-spin text-amber-500" aria-hidden />;
+                        })()}
+                        <span className="font-medium capitalize text-gray-700">{step.status || 'pending'}</span>
+                        <span className="text-gray-500">
+                          {step.tool} @ {new Date(step.timestamp).toLocaleTimeString()}
                         </span>
                       </li>
                     ))}
