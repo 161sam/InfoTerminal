@@ -1,6 +1,6 @@
 # 📊 InfoTerminal Phase 2 Kick-off Status
 
-_Last update: 2025-09-23 – generated after running `scripts/generate_inventory.py`._
+_Last update: 2025-09-24 – generated after running `scripts/generate_inventory.py` and refreshing Phase 2 artefacts._
 
 > ℹ️ **Wave tracker:** `backlog/phase2/PACKAGE_SEQUENCE.yaml` lists the active packages and gates for Phase 2.
 
@@ -10,7 +10,7 @@ _Last update: 2025-09-23 – generated after running `scripts/generate_inventory
 - **Observability-Abdeckung – 🔴**: 29 services lack `/healthz`, 31 miss `/readyz`, and 37 have no `/metrics`, leaving alerting coverage incomplete. 【F:inventory/findings.md†L1-L69】
 - **Security-Reife – 🟡**: Auth-service, gateway, and OPA scaffolding exist, yet proxy hardening, plugin isolation, and geospatial data egress reviews are pending consolidation (rows below).
 - **Release-Risiko – 🔴**: Without synchronized docs, backlog issues, or verified ingest-to-dossier flows, v1.0 cannot be certified; alignment tracked in [ROADMAP_STATUS.md](ROADMAP_STATUS.md) and [backlog/README.md](backlog/README.md).
-- **Phase 2 Aktivierung – 🟡**: Wave 1 (Packages A & F) running per [`PACKAGE_SEQUENCE.yaml`](backlog/phase2/PACKAGE_SEQUENCE.yaml); later waves remain queued until gates stay green across consecutive runs.
+- **Phase 2 Aktivierung – 🟡**: Wave 1 (Packages A & F) running per [`PACKAGE_SEQUENCE.yaml`](backlog/phase2/PACKAGE_SEQUENCE.yaml); README enthält jetzt 5-Minuten-Demo (Search → Graph → Dossier) und verweist auf Superset/Grafana Assets. Weitere Waves bleiben blockiert, bis Gates zweimal hintereinander grün sind.
 
 > Baseline artefacts: **STATUS.md**, **DOCS_DIFF.md**, **ROADMAP_STATUS.md**, and the structured epics in **backlog/README.md**.
 

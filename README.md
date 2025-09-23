@@ -6,7 +6,7 @@
 > **Open-Source Intelligence Plattform – modular, sicher, erweiterbar.**
 > – Beyond Gotham – mit offenen Technologien, AI/ML und Ethical Design.
 
-[![Status](https://img.shields.io/badge/status-v0.2--dev-blue)](#)
+[![Status](https://img.shields.io/badge/status-phase--2--wave--1-blue)](#)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](#)
 [![K8s](https://img.shields.io/badge/kubernetes-ready-326ce5)](#)
 [![Python](https://img.shields.io/badge/python-3.10%2B-yellow)](#)
@@ -44,6 +44,40 @@ Details und Reports: `build-stabilization/README.md`
   - Grafana: `grafana/dashboards/graph-analytics-mvp.json`
 - **Observability:** Neue Prometheus-Metriken `graph_analysis_queries_total`, `graph_analysis_duration_seconds_bucket`, `graph_subgraph_exports_total`, `dossier_exports_total`, `collab_notes_total`.
 - **Gates:** Inventory/Policy, Health-Ready-Metrics, API/Docs und Smoke-E2E müssen nach jedem Merge grün bleiben (`scripts/generate_inventory.py`, `test_infoterminal_v030_features.sh --suite graph-dossier`).
+
+## 🧪 5-Minuten-Demo (offline, Wave 1)
+
+> Ziel: In fünf Minuten den End-to-End-Fluss **Search → Graph-Analyse → Dossier-Export** demonstrieren – komplett offline und reproduzierbar.
+
+1. **Services & Seed-Daten starten**
+   ```bash
+   scripts/dev_up.sh graph dossier
+   scripts/fixtures/load_graph_mini.sh
+   ```
+2. **Degree-Centrality prüfen**
+   ```bash
+   curl -s "http://localhost:8612/graphs/analysis/degree?limit=10" |
+     jq '.results[0:3]'
+   ```
+3. **Shortest-Path & Subgraph-Export**
+   ```bash
+   curl -s "http://localhost:8612/graphs/analysis/subgraph-export?center_id=demo-node&format=markdown" \
+     -H 'Accept: application/json' > exports/demo-subgraph.json
+   jq -r '.markdown' exports/demo-subgraph.json > exports/demo-subgraph.md
+   ```
+4. **Dossier-Lite (Markdown & PDF)**
+   ```bash
+   curl -s "http://localhost:8613/dossier/export" \
+     -H 'Content-Type: application/json' \
+     -d '{"case_id":"demo","format":"pdf","source":"graph"}' \
+     -o exports/demo-dossier.pdf
+   ```
+5. **Observability & Dashboards kontrollieren**
+   - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `dossier` prüfen (neue Counter/Histograms).
+   - Grafana: Dashboard **Graph Analytics MVP** (`grafana/dashboards/graph-analytics-mvp.json`).
+   - Superset: Dashboard **Graph Analytics – MVP** (`apps/superset/assets/dashboard/graph_analytics_mvp.json`).
+
+> 💡 **Idempotent:** Wiederholtes Ausführen aktualisiert Exporte/Dashboards und überschreibt Artefakte ohne Duplikate.
 
 ---
 

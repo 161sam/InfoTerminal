@@ -90,14 +90,14 @@ status dashboards and revalidates gates without duplicating artefacts.
 - [ ] Update `ROADMAP_STATUS.md` and `STATUS.md` via generation scripts after each merge.
 - [ ] Record findings in `reports/architecture/phase2-wave1.md` post-review (template TBD).
 
-## Demo Script Placeholder
+## Demo Script (Wave 1)
 
-Will update `README.md` demo section once Wave 1 DoD items land:
-1. Run `scripts/dev_up.sh graph dossier` to start required services.
-2. `scripts/fixtures/load_graph_mini.sh` to seed sample graph.
-3. `curl http://localhost:8612/graphs/analysis/degree?limit=10` (collect metrics).
-4. `cli it dossier export --case demo-case --format pdf` (produces `exports/demo-case.pdf`).
-5. Open Superset dashboard “Graph Analytics – MVP” to view centrality histogram.
+`README.md` enthält den 5-Minuten-Ablauf **Search → Graph → Dossier** (offline, idempotent):
+1. `scripts/dev_up.sh graph dossier` – notwendige Services starten.
+2. `scripts/fixtures/load_graph_mini.sh` – Demo-Graph laden.
+3. `curl http://localhost:8612/graphs/analysis/degree?limit=10` – zentrale Metriken prüfen.
+4. `curl http://localhost:8612/graphs/analysis/subgraph-export?...` – Markdown-Export erzeugen.
+5. `curl http://localhost:8613/dossier/export ...` – PDF exportieren; anschließend Superset/Grafana Dashboards öffnen.
 
 ## Next Steps
 

@@ -1,4 +1,4 @@
-# 🗺️ ROADMAP_STATUS – Phase 2 Kick-off (2025-09-23)
+# 🗺️ ROADMAP_STATUS – Phase 2 Kick-off (2025-09-24)
 
 The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardening and Release. Each section summarises the target state, current implementation evidence, gaps, Definition of Done (DoD), and dependencies.
 
@@ -10,6 +10,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
   - Graph algorithms implemented in `services/graph-api/analytics.py` (degree, betweenness, Louvain). 【F:services/graph-api/analytics.py†L1-L120】
   - Geospatial helpers and Nominatim integration in `services/graph-api/geospatial.py`. 【F:services/graph-api/geospatial.py†L1-L120】
   - Graph-views service exposes configurable metrics and feature flags. 【F:inventory/services.json†L227-L266】
+  - README beschreibt 5-Minuten-Demo für Search → Graph → Dossier inklusive Subgraph-Export. 【F:README.md†L17-L79】
 - **Gaps / Risks**:
   - Frontend graph explorer still targets hard-coded localhost endpoints, bypassing gateway routing. 【F:apps/frontend/src/components/graph/GraphExplorer.tsx†L1-L92】
   - Dossier APIs not yet wired to graph exports; no automated validation of ontology constraints. 【F:services/graph-views/dossier/api.py†L1-L120】
@@ -90,6 +91,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
   - Graph-views dossier API stubs and templates. 【F:services/graph-views/dossier/api.py†L1-L120】
   - Frontend dossier builder with modular panels. 【F:apps/frontend/pages/dossier.tsx†L1-L160】
   - Collab-hub service managing tasks and websocket updates. 【F:services/collab-hub/app/main.py†L1-L120】
+  - README-Demo-Skript exportiert Markdown/PDF aus Graph-Daten (Wave 1). 【F:README.md†L51-L79】
 - **Gaps / Risks**:
   - Dossier exports mock data; collab-hub lacks metrics and audit persistence.
   - Audit logging not integrated with Loki/Tempo.
