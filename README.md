@@ -39,6 +39,7 @@ Details und Reports: `build-stabilization/README.md`
 - **Priorität & Scope:** Graph-Analysen (Degree, Louvain, Shortest Path) und Dossier-Lite Export (Markdown/PDF) plus geteilte Notizen.
 - **Artefakte:**
   - Planung & DoD: [`backlog/phase2/ITERATION-01_PLAN.md`](backlog/phase2/ITERATION-01_PLAN.md), [`backlog/phase2/WAVE1_DOD_CHECKLIST.md`](backlog/phase2/WAVE1_DOD_CHECKLIST.md)
+  - Sequenz: [`backlog/phase2/PACKAGE_SEQUENCE.yaml`](backlog/phase2/PACKAGE_SEQUENCE.yaml)
   - Superset-Assets: `apps/superset/assets/datasets/graph_analytics_mvp.yaml`, `apps/superset/assets/charts/graph_degree_histogram.json`, `apps/superset/assets/dashboard/graph_analytics_mvp.json`
   - Grafana: `grafana/dashboards/graph-analytics-mvp.json`
 - **Observability:** Neue Prometheus-Metriken `graph_analysis_queries_total`, `graph_analysis_duration_seconds_bucket`, `graph_subgraph_exports_total`, `dossier_exports_total`, `collab_notes_total`.

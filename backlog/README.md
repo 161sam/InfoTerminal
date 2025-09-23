@@ -2,7 +2,7 @@
 
 Baseline backlog derived from `STATUS.md`, `DOCS_DIFF.md`, and `ROADMAP_STATUS.md`. Epics map directly to roadmap packages A–L plus Hardening and Release. All issues target **milestone: v1.0** unless stated otherwise.
 
-> **Phase 2 Kick-off:** The risk-reducing execution order for packages A–L and the Wave 1 (A & F) MVP checklist live in [`phase2/ITERATION-01_PLAN.md`](phase2/ITERATION-01_PLAN.md) and [`phase2/WAVE1_DOD_CHECKLIST.md`](phase2/WAVE1_DOD_CHECKLIST.md). Each wave limits concurrent work to two packages and keeps delivery gates green between increments.
+> **Phase 2 Kick-off:** The risk-reducing execution order for packages A–L lives in [`phase2/PACKAGE_SEQUENCE.yaml`](phase2/PACKAGE_SEQUENCE.yaml); planning narrative and Wave 1 (A & F) MVP checklist remain in [`phase2/ITERATION-01_PLAN.md`](phase2/ITERATION-01_PLAN.md) and [`phase2/WAVE1_DOD_CHECKLIST.md`](phase2/WAVE1_DOD_CHECKLIST.md). Each wave limits concurrent work to two packages and keeps delivery gates green between increments.
 
 ## Epic Overview
 

@@ -2,6 +2,8 @@
 
 _Phase 2 start date: 2025-09-23_
 
+> 📄 Machine-readable artefact: [`../backlog/phase2/PACKAGE_SEQUENCE.yaml`](../backlog/phase2/PACKAGE_SEQUENCE.yaml) powers dashboards and keeps reruns idempotent.
+
 This document distils the active execution plan for packages A–L, aligning the roadmap narrative with the generated inventory and
 `ROADMAP_STATUS.md`. Updates are idempotent – rerun the planning scripts to refresh artefacts without duplicating content.
 

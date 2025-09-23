@@ -1,6 +1,8 @@
-# 🗺️ ROADMAP_STATUS – Phase 1 Baseline (2025-09-23)
+# 🗺️ ROADMAP_STATUS – Phase 2 Kick-off (2025-09-23)
 
 The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardening and Release. Each section summarises the target state, current implementation evidence, gaps, Definition of Done (DoD), and dependencies.
+
+> 📌 **Wave ordering reference:** [`backlog/phase2/PACKAGE_SEQUENCE.yaml`](backlog/phase2/PACKAGE_SEQUENCE.yaml) feeds dashboards and checklists for the active wave limit (max two concurrent packages).
 
 ## A) Ontologie & Graph
 - **Goal**: Complete ontology coverage, graph analytics APIs (degree, betweenness, communities, shortest paths), dossier export hooks, and geo-enabled subgraph views.

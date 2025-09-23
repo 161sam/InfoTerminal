@@ -1,0 +1,147 @@
+version: 1
+phase: "2"
+start_date: "2025-09-23"
+notes: |
+  Generated to keep the package order for Phase 2 idempotent.
+  Scripts may consume this file to drive dashboards/checklists without
+  duplicating artefacts across reruns.
+waves:
+  - id: wave-1
+    status: active
+    packages:
+      - code: "A"
+        name: "Ontologie & Graph"
+        value_driver: "Unlock graph analytics endpoints and dossier subgraph export"
+        risk_reduction: "Enables observability on analytics stack and seeds dossier integrations"
+        dependencies: []
+      - code: "F"
+        name: "Dossier & Collaboration"
+        value_driver: "Deliver shareable dossier exports and collaboration notes"
+        risk_reduction: "Validates end-to-end Search → Graph → Dossier flow before later packages rely on it"
+        dependencies:
+          - "A"
+    gates:
+      - "inventory_policy"
+      - "health_ready_metrics"
+      - "api_docs"
+      - "smoke_e2e"
+  - id: wave-2
+    status: queued
+    packages:
+      - code: "B"
+        name: "NLP & Resolver"
+        value_driver: "Relation extraction + entity linking to enrich graph and dossiers"
+        risk_reduction: "Provides confidence scores + metrics before agents/plugins depend on NLP outputs"
+        dependencies:
+          - "A"
+          - "F"
+      - code: "C"
+        name: "Geospatial"
+        value_driver: "Map overlays and bbox queries tied to graph entities"
+        risk_reduction: "Adds geo context incrementally while analytics/dossier pipeline is fresh"
+        dependencies:
+          - "A"
+    gates:
+      - "inventory_policy"
+      - "health_ready_metrics"
+      - "api_docs"
+      - "smoke_e2e"
+  - id: wave-3
+    status: queued
+    packages:
+      - code: "G"
+        name: "Plugins"
+        value_driver: "Registry + sandbox runner (nmap example) with observability"
+        risk_reduction: "Hardens plugin execution before external feeds + agents rely on them"
+        dependencies:
+          - "A"
+          - "F"
+      - code: "D"
+        name: "Daten-Ingest & Workflows"
+        value_driver: "Idempotent NiFi/n8n automation feeding analytics and dossiers"
+        risk_reduction: "Ensures ingest reliability ahead of feed + release work"
+        dependencies:
+          - "F"
+    gates:
+      - "inventory_policy"
+      - "health_ready_metrics"
+      - "api_docs"
+      - "smoke_e2e"
+  - id: wave-4
+    status: queued
+    packages:
+      - code: "H"
+        name: "AI-Agenten"
+        value_driver: "Policy-controlled Flowise agents with audit trails"
+        risk_reduction: "Depends on stable NLP/Plugins to minimise blast radius"
+        dependencies:
+          - "B"
+          - "G"
+      - code: "I"
+        name: "Externe Feeds"
+        value_driver: "Feed connectors with freshness monitoring"
+        risk_reduction: "Builds atop ingest automation and plugin hardening"
+        dependencies:
+          - "D"
+    gates:
+      - "inventory_policy"
+      - "health_ready_metrics"
+      - "api_docs"
+      - "smoke_e2e"
+  - id: wave-5
+    status: queued
+    packages:
+      - code: "J"
+        name: "Performance & Infra"
+        value_driver: "Probe coverage, retry/timeout matrices, performance dashboards"
+        risk_reduction: "Optimises infrastructure after functional packages prove value"
+        dependencies:
+          - "A"
+          - "B"
+          - "F"
+          - "G"
+      - code: "K"
+        name: "Frontend & UX"
+        value_driver: "OIDC wiring, dossier template picker, performance instrumentation"
+        risk_reduction: "Executes once backend APIs are dependable to avoid rework"
+        dependencies:
+          - "F"
+          - "B"
+          - "C"
+    gates:
+      - "inventory_policy"
+      - "health_ready_metrics"
+      - "api_docs"
+      - "smoke_e2e"
+  - id: wave-6
+    status: queued
+    packages:
+      - code: "L"
+        name: "Docs & Tests"
+        value_driver: "Inventory-driven doc refresh, coverage gating, runbooks"
+        risk_reduction: "Finalises knowledge base after features settle"
+        dependencies:
+          - "A"
+          - "B"
+          - "F"
+          - "G"
+          - "J"
+      - code: "Hardening"
+        name: "Security Hardening"
+        value_driver: "Threat model, backup drills, egress policy validation"
+        risk_reduction: "Locks in compliance/security before release"
+        dependencies:
+          - "G"
+          - "J"
+      - code: "Release"
+        name: "Release"
+        value_driver: "Release notes, demo assets, install guides"
+        risk_reduction: "Ensures final packaging only after all gates stable"
+        dependencies:
+          - "L"
+          - "Hardening"
+    gates:
+      - "inventory_policy"
+      - "health_ready_metrics"
+      - "api_docs"
+      - "smoke_e2e"

@@ -1,6 +1,8 @@
-# 📊 InfoTerminal Phase 1 Baseline Status
+# 📊 InfoTerminal Phase 2 Kick-off Status
 
 _Last update: 2025-09-23 – generated after running `scripts/generate_inventory.py`._
+
+> ℹ️ **Wave tracker:** `backlog/phase2/PACKAGE_SEQUENCE.yaml` lists the active packages and gates for Phase 2.
 
 ## Executive Summary (Ampel)
 - **Implementierungsgrad – 🟡**: 52 runtime-relevant services detected; core APIs (search, graph, doc-entities, verification) expose v1 contracts, but frontend workflows, ingest orchestration, and collaboration stacks remain partially stubbed. 【F:inventory/services.json†L1-L266】
@@ -8,6 +10,7 @@ _Last update: 2025-09-23 – generated after running `scripts/generate_inventory
 - **Observability-Abdeckung – 🔴**: 29 services lack `/healthz`, 31 miss `/readyz`, and 37 have no `/metrics`, leaving alerting coverage incomplete. 【F:inventory/findings.md†L1-L69】
 - **Security-Reife – 🟡**: Auth-service, gateway, and OPA scaffolding exist, yet proxy hardening, plugin isolation, and geospatial data egress reviews are pending consolidation (rows below).
 - **Release-Risiko – 🔴**: Without synchronized docs, backlog issues, or verified ingest-to-dossier flows, v1.0 cannot be certified; alignment tracked in [ROADMAP_STATUS.md](ROADMAP_STATUS.md) and [backlog/README.md](backlog/README.md).
+- **Phase 2 Aktivierung – 🟡**: Wave 1 (Packages A & F) running per [`PACKAGE_SEQUENCE.yaml`](backlog/phase2/PACKAGE_SEQUENCE.yaml); later waves remain queued until gates stay green across consecutive runs.
 
 > Baseline artefacts: **STATUS.md**, **DOCS_DIFF.md**, **ROADMAP_STATUS.md**, and the structured epics in **backlog/README.md**.
 
