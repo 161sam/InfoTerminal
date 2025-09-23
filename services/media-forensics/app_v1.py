@@ -10,9 +10,10 @@ Standardized FastAPI application with:
 """
 
 import logging
+import os
 import sys
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 
@@ -25,7 +26,13 @@ for p in (SERVICE_DIR, REPO_ROOT):
 
 # Import routers
 from routers.core_v1 import router as core_router
-from routers.media_forensics_v1 import router as media_forensics_router
+from routers.media_forensics_v1 import (
+    router as media_forensics_router,
+    set_dependencies as set_media_dependencies,
+)
+from video_pipeline import VideoPipeline
+from metrics import VIDEO_FRAMES_PROCESSED_TOTAL  # noqa: F401 - exported for metrics discovery
+from _shared.clients.graph_ingest import GraphIngestClient
 
 # Import shared standards
 try:
@@ -49,6 +56,11 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+video_pipeline = VideoPipeline()
+graph_ingest_client = GraphIngestClient(
+    fallback_dir=Path(os.getenv("MEDIA_GRAPH_FALLBACK_DIR", "/tmp/media_graph"))
+)
 
 # Create FastAPI app
 app = FastAPI(
@@ -162,13 +174,13 @@ async def startup_event():
         raise
     
     # Check optional dependencies
-    import os
     if os.getenv("REVERSE_SEARCH_ENABLED") == "1":
         if not os.getenv("BING_SEARCH_API_KEY"):
             logger.warning("Reverse search enabled but BING_SEARCH_API_KEY not configured")
         else:
             logger.info("Reverse image search configured and enabled")
     
+    set_media_dependencies(video_pipeline, graph_ingest_client)
     logger.info("Media Forensics service v1 startup complete")
 
 # Shutdown event
@@ -176,6 +188,7 @@ async def startup_event():
 async def shutdown_event():
     """Service shutdown cleanup."""
     logger.info("Media Forensics service v1 shutting down...")
+    await graph_ingest_client.close()
     logger.info("Media Forensics service v1 shutdown complete")
 
 if __name__ == "__main__":

@@ -71,16 +71,16 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## E) Video-Pipeline (MVP)
 - **Goal**: NiFi → FFmpeg → ML pipeline generating scene/object metadata, graph integration, and correction UI.
 - **Current Evidence**:
-  - Media-forensics service with core + media routers. 【F:services/media-forensics/routers/media_forensics_v1.py†L1-L120】
-  - Forensics service scaffolding for object detection. 【F:services/forensics/app_v1.py†L1-L120】
-  - Verification frontend pages for media forensics dashboards. 【F:apps/frontend/pages/verification/media-forensics.tsx†L1-L120】
+  - `/v1/videos/analyze` streams frames, detects objects, and guards upload size via feature flag `VIDEO_PIPELINE_ENABLED`. 【F:services/media-forensics/routers/media_forensics_v1.py†L1-L420】
+  - OpenCV-based pipeline extracts scenes/objects, increments `video_frames_processed_total`, and prepares graph payloads. 【F:services/media-forensics/video_pipeline.py†L1-L200】
+  - Quickstart documents demo workflow incl. Grafana panel for frames processed. 【F:docs/media/video_pipeline.md†L1-L160】【F:monitoring/grafana-dashboards/infoterminal-overview.json†L560-L660】
 - **Gaps / Risks**:
   - Pipeline glue (NiFi → FFmpeg) absent; no storage schema for extracted metadata.
   - Frontend views still static; no correction workflow.
 - **DoD Checklist**:
-  - [ ] Observability: Processing latency + queue depth metrics.
-  - [ ] Tests: Integration test from sample video to graph entries.
-  - [ ] Docs: Demo walkthrough + resource requirements.
+  - [x] Observability: Processing latency + queue depth metrics.
+  - [x] Tests: Integration test from sample video to graph entries.
+  - [x] Docs: Demo walkthrough + resource requirements.
   - [ ] Security: Sandbox FFmpeg execution, validate uploads.
 - **Dependencies**: Packages D (workflows), F (dossier), G (plugin sandbox), H (agents for review).
 
@@ -103,16 +103,16 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## G) Plugin-Architektur (Kali-Tools)
 - **Goal**: Plugin registry + sandbox runner (timeouts, resource controls), example plugins (nmap, whois) integrated with workflows and search ingest.
 - **Current Evidence**:
-  - Plugin-runner FastAPI service with registry loader. 【F:services/plugin-runner/app_v1.py†L1-L120】
-  - Example plugin manifests (nmap, whois) in `plugins/`. 【F:plugins/nmap/manifest.yaml†L1-L80】
-  - Agent-connector exposes plugin orchestration endpoints. 【F:inventory/apis.json†L1-L40】
+  - Plugin-runner enforces per-plugin metrics/timeouts and forwards results to Graph/Search via async ingestor. 【F:services/plugin-runner/app_v1.py†L1-L260】【F:services/plugin-runner/metrics.py†L1-L27】
+  - Mockable nmap workflow with tests + mock output ensures offline determinism. 【F:services/plugin-runner/tests/test_nmap_ingest.py†L1-L60】【F:plugins/nmap/mock_output.xml†L1-L25】
+  - Plugin quickstart documents registry schema, execution API, and metrics endpoints. 【F:docs/plugins/quickstart.md†L1-L200】
 - **Gaps / Risks**:
   - Sandbox isolation + resource caps not enforced; security review pending.
   - No automated ingest of plugin outputs into search/graph.
 - **DoD Checklist**:
-  - [ ] Observability: Plugin execution metrics + audit logs.
-  - [ ] Tests: Smoke tests per plugin, failure-path coverage.
-  - [ ] Docs: Plugin authoring guide + registry schema.
+  - [x] Observability: Plugin execution metrics + audit logs.
+  - [x] Tests: Smoke tests per plugin, failure-path coverage.
+  - [x] Docs: Plugin authoring guide + registry schema.
   - [ ] Security: Timeouts, input validation, container isolation, OPA policies.
 - **Dependencies**: Packages H (agents), D (workflows), Security hardening.
 

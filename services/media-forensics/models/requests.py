@@ -102,3 +102,48 @@ class ErrorDetails(BaseModel):
     error_code: str = Field(..., description="Error code")
     message: str = Field(..., description="Error message")
     details: Optional[Dict[str, Any]] = Field(None, description="Additional error details")
+
+
+class VideoAnalysisRequest(BaseModel):
+    """Options for the video analysis pipeline."""
+
+    frame_interval: int = Field(5, ge=1, le=120, description="Process every n-th frame")
+    min_area: int = Field(500, ge=50, le=50000, description="Minimum contour area")
+    max_frames: int = Field(240, ge=1, le=2000, description="Maximum frames to analyse")
+
+
+class BoundingBox(BaseModel):
+    x: int = Field(..., ge=0)
+    y: int = Field(..., ge=0)
+    width: int = Field(..., ge=1)
+    height: int = Field(..., ge=1)
+
+
+class VideoObject(BaseModel):
+    object_id: str = Field(..., description="Object identifier")
+    label: str = Field(..., description="Detected label")
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    bbox: BoundingBox = Field(..., description="Bounding box of the detection")
+
+
+class VideoSceneResult(BaseModel):
+    scene_id: str = Field(..., description="Scene identifier")
+    frame_index: int = Field(..., ge=0)
+    timestamp: float = Field(..., ge=0.0)
+    objects: List[VideoObject] = Field(default_factory=list)
+
+
+class VideoAnalysisSummary(BaseModel):
+    total_frames: int = Field(..., ge=0)
+    frames_processed: int = Field(..., ge=0)
+    objects_detected: int = Field(..., ge=0)
+    frame_interval: int = Field(..., ge=1)
+
+
+class VideoAnalysisResponse(BaseModel):
+    video_id: str = Field(..., description="Identifier of the processed video")
+    filename: str = Field(..., description="Original filename")
+    duration_seconds: float = Field(..., ge=0.0, description="Video duration")
+    scenes: List[VideoSceneResult] = Field(default_factory=list)
+    summary: VideoAnalysisSummary = Field(...)
+    graph_entities: List[Dict[str, Any]] = Field(default_factory=list)
