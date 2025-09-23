@@ -67,15 +67,16 @@ Details und Reports: `build-stabilization/README.md`
    ```
 4. **Dossier-Lite (Markdown & PDF)**
    ```bash
-   curl -s "http://localhost:8613/dossier/export" \
+   curl -s "http://localhost:8625/dossier/export" \
      -H 'Content-Type: application/json' \
-     -d '{"case_id":"demo","format":"pdf","source":"graph"}' \
+     -d '{"case_id":"demo-case","format":"pdf","source":"graph","template":"brief"}' \
      -o exports/demo-dossier.pdf
    ```
 5. **Observability & Dashboards kontrollieren**
-   - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `dossier` prüfen (neue Counter/Histograms).
+   - Prometheus: `/metrics` auf `graph-api`, `graph-views`, `collab-hub` prüfen (neue Counter/Histograms).
    - Grafana: Dashboard **Graph Analytics MVP** (`grafana/dashboards/graph-analytics-mvp.json`).
    - Superset: Dashboard **Graph Analytics – MVP** (`apps/superset/assets/dashboard/graph_analytics_mvp.json`).
+   - Smoke: `scripts/smoke_graph_analysis.sh` verifiziert Degree, Louvain, Shortest Path & Subgraph Export.
 
 > 💡 **Idempotent:** Wiederholtes Ausführen aktualisiert Exporte/Dashboards und überschreibt Artefakte ohne Duplikate.
 

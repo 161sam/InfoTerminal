@@ -55,7 +55,7 @@ status dashboards and revalidates gates without duplicating artefacts.
 - [ ] `/metrics` exposes counters + histograms with labels (`algorithm`, `status`).
 - [ ] API docs include example requests/responses and export instructions.
 - [ ] Superset dataset, charts, and dashboard exports checked into repo (`apps/superset/assets/**/*graph_analytics_mvp*`) and referenced in README demo script.
-- [ ] Smoke E2E verifies `curl` → `graph-analysis` → `dossier export` path.
+- [ ] Smoke E2E (`scripts/smoke_graph_analysis.sh`) verifies `curl` → `graph-analysis` → `dossier export` path.
 
 ### Package F – Dossier & Collaboration (MVP scope)
 
@@ -80,7 +80,7 @@ status dashboards and revalidates gates without duplicating artefacts.
 - [ ] Notes API persists data with audit events logged.
 - [ ] Metrics available and visualised (Grafana dashboard `graph-analytics-mvp` + Superset dataset `graph_analytics_mvp`).
 - [ ] Documentation updated (API, how-to, demo script) with screenshots/GIF placeholders.
-- [ ] Smoke E2E demonstrates Search → Graph → Dossier path.
+- [ ] Smoke E2E demonstrates Search → Graph → Dossier path (`scripts/smoke_graph_analysis.sh`, `scripts/smoke_graph_views.sh`).
 
 ## Governance & Observability Checklist
 
@@ -97,7 +97,7 @@ status dashboards and revalidates gates without duplicating artefacts.
 2. `scripts/fixtures/load_graph_mini.sh` – Demo-Graph laden.
 3. `curl http://localhost:8612/graphs/analysis/degree?limit=10` – zentrale Metriken prüfen.
 4. `curl http://localhost:8612/graphs/analysis/subgraph-export?...` – Markdown-Export erzeugen.
-5. `curl http://localhost:8613/dossier/export ...` – PDF exportieren; anschließend Superset/Grafana Dashboards öffnen.
+5. `curl http://localhost:8625/dossier/export ...` – PDF exportieren; anschließend Superset/Grafana Dashboards öffnen.
 
 ## Next Steps
 
