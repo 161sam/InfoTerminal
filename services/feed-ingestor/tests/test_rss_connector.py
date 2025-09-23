@@ -35,7 +35,8 @@ RSS_SAMPLE = """
 
 def get_counter(counter, **labels):
     if labels:
-        metric = counter._metrics.get(tuple(labels.values()))  # type: ignore[attr-defined]
+        ordered = tuple(labels[name] for name in counter._labelnames)  # type: ignore[attr-defined]
+        metric = counter._metrics.get(ordered)  # type: ignore[attr-defined]
         if metric is None:
             return 0.0
         return metric._value.get()  # type: ignore[attr-defined]
@@ -77,7 +78,9 @@ async def test_pipeline_deduplicates_and_counts(monkeypatch):
     monkeypatch.setattr(pipeline.client, "fetch", fake_fetch)
 
     fetched_before = get_counter(feed_items_fetched_total, source="rss")
-    ingested_before = get_counter(feed_items_ingested_total, target="search")
+    ingested_before = get_counter(
+        feed_items_ingested_total, source="rss", target="search"
+    )
     dedup_before = get_counter(feed_dedup_skipped_total, source="rss")
 
     result_first = await pipeline.run("https://example.com/rss", dry_run=False)
@@ -88,7 +91,9 @@ async def test_pipeline_deduplicates_and_counts(monkeypatch):
     assert result_second.deduped == 1
 
     fetched_after = get_counter(feed_items_fetched_total, source="rss")
-    ingested_after = get_counter(feed_items_ingested_total, target="search")
+    ingested_after = get_counter(
+        feed_items_ingested_total, source="rss", target="search"
+    )
     dedup_after = get_counter(feed_dedup_skipped_total, source="rss")
 
     assert fetched_after == pytest.approx(fetched_before + 2)

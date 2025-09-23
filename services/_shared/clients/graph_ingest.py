@@ -15,6 +15,8 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from datetime import datetime, timezone
+
 import httpx
 
 logger = logging.getLogger(__name__)
@@ -85,6 +87,17 @@ class GraphIngestClient:
         video_id = payload.get("video", {}).get("id", "unknown")
         filename = f"video_analysis_{video_id}.json"
         return await self._submit("/v1/ingest/video", payload, filename)
+
+    async def ingest_threat_indicators(
+        self, payload: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Send threat indicators (e.g. OTX pulses) to the graph service."""
+
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+        filename = f"threat_indicators_{timestamp}.json"
+        return await self._submit(
+            "/v1/ingest/threat-indicators", payload, filename
+        )
 
     async def _submit(
         self, endpoint: str, payload: Dict[str, Any], fallback_filename: str

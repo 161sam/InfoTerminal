@@ -11,9 +11,11 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 from xml.etree import ElementTree as ET
 
@@ -23,6 +25,14 @@ from pydantic import BaseModel, Field
 from prometheus_client import Counter
 from starlette.middleware.cors import CORSMiddleware
 from starlette_exporter import PrometheusMiddleware, handle_metrics
+
+SERVICE_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SERVICE_DIR.parent.parent.parent
+shared_path = REPO_ROOT / "services"
+if str(shared_path) not in sys.path:
+    sys.path.insert(0, str(shared_path))
+
+from _shared.clients.graph_ingest import GraphIngestClient
 
 logger = logging.getLogger("feed-ingestor")
 logging.basicConfig(level=logging.INFO)
@@ -133,6 +143,7 @@ class OTXRunRequest(BaseModel):
 class OTXRunResponse(BaseModel):
     fetched: int
     deduped: int
+    ingested: int
     dry_run: bool
     items: List[OTXIndicator]
 
@@ -188,7 +199,7 @@ feed_items_fetched_total = Counter(
 feed_items_ingested_total = Counter(
     "feed_items_ingested_total",
     "Total items ingested into downstream targets.",
-    labelnames=("target",),
+    labelnames=("source", "target"),
 )
 feed_dedup_skipped_total = Counter(
     "feed_dedup_skipped_total",
@@ -215,6 +226,7 @@ class OTXFetchResult:
     items: List[OTXIndicator]
     fetched: int
     deduped: int
+    ingested: int
 
 
 class RSSParser:
@@ -351,7 +363,9 @@ class FeedPipeline:
                 continue
             if not dry_run:
                 self.store.upsert(item)
-                feed_items_ingested_total.labels(target="search").inc()
+                feed_items_ingested_total.labels(
+                    source="rss", target="search"
+                ).inc()
                 ingested += 1
             stored.append(item)
         return FetchResult(items=stored, fetched=len(items), deduped=deduped, ingested=ingested)
@@ -361,10 +375,13 @@ class FeedPipeline:
 
 
 class OTXPipeline:
-    def __init__(self, store: OTXStore) -> None:
+    def __init__(
+        self, store: OTXStore, ingest_client: Optional[GraphIngestClient] = None
+    ) -> None:
         self.store = store
         self.normalizer = OTXNormalizer()
         self.client = OTXClient()
+        self.ingest_client = ingest_client
 
     async def run(self, api_url: str, dry_run: bool) -> OTXFetchResult:
         payload = await self.client.fetch(api_url)
@@ -379,12 +396,37 @@ class OTXPipeline:
                 feed_dedup_skipped_total.labels(source="otx").inc()
                 continue
             delivered.append(item)
-            if not dry_run:
+        ingested = 0
+        if not dry_run and delivered:
+            if self.ingest_client is not None:
+                try:
+                    response = await self.ingest_client.ingest_threat_indicators(
+                        {"items": [item.model_dump() for item in delivered]}
+                    )
+                    ingested = int(response.get("ingested", len(delivered)))
+                    for item in delivered:
+                        self.store.mark(item)
+                    if ingested:
+                        feed_items_ingested_total.labels(
+                            source="otx", target="graph"
+                        ).inc(ingested)
+                except Exception as exc:  # pragma: no cover - network failure path
+                    logger.warning("otx_graph_ingest_failed", exc_info=exc)
+            else:
+                for item in delivered:
+                    self.store.mark(item)
+                ingested = len(delivered)
+        elif not dry_run:
+            for item in delivered:
                 self.store.mark(item)
-        return OTXFetchResult(items=delivered, fetched=len(items), deduped=deduped)
+        return OTXFetchResult(
+            items=delivered, fetched=len(items), deduped=deduped, ingested=ingested
+        )
 
     async def close(self) -> None:
         await self.client.aclose()
+        if self.ingest_client is not None:
+            await self.ingest_client.close()
 
 
 class ExponentialBackoff:
@@ -408,7 +450,8 @@ rss_pipeline = FeedPipeline(rss_store)
 rss_backoff = ExponentialBackoff()
 
 otx_store = OTXStore()
-otx_pipeline = OTXPipeline(otx_store)
+graph_ingest_client = GraphIngestClient()
+otx_pipeline = OTXPipeline(otx_store, ingest_client=graph_ingest_client)
 otx_backoff = ExponentialBackoff()
 
 app = FastAPI(title="Feed Connector Service", version="0.1.0")
@@ -460,6 +503,7 @@ async def otx_scheduler_loop() -> None:
                 extra={
                     "fetched": result.fetched,
                     "deduped": result.deduped,
+                    "ingested": result.ingested,
                     "dry_run": OTX_DRY_RUN_DEFAULT,
                 },
             )
@@ -555,6 +599,7 @@ async def run_otx(
     return OTXRunResponse(
         fetched=result.fetched,
         deduped=result.deduped,
+        ingested=result.ingested,
         dry_run=dry_run,
         items=result.items,
     )

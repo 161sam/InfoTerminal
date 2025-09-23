@@ -62,3 +62,33 @@ async def test_video_ingest_sets_flag_and_counts(client):
     assert body["objects"] == 1
     assert graph_app.state.video_pipeline_enabled is True
     assert graph_app.state.video_analyses[-1]["video"]["id"] == "video-demo"
+
+
+@pytest.mark.anyio
+async def test_threat_indicator_ingest_is_idempotent(client):
+    graph_app.state.driver = None
+    graph_app.state.threat_indicator_store = {}
+    graph_app.state.threat_indicator_seen = set()
+
+    indicator = {
+        "indicator": "1.2.3.4",
+        "type": "IPv4",
+        "source": "Pulse Alpha",
+        "first_seen": "2024-05-01T00:00:00Z",
+        "tags": ["apt", "ipv4"],
+    }
+
+    first = await client.post(
+        "/v1/ingest/threat-indicators", json={"items": [indicator]}
+    )
+    assert first.status_code == 200
+    assert first.json()["ingested"] == 1
+
+    second = await client.post(
+        "/v1/ingest/threat-indicators", json={"items": [indicator]}
+    )
+    assert second.status_code == 200
+    assert second.json()["ingested"] == 0
+
+    cache = getattr(graph_app.state, "threat_indicator_store")
+    assert len(cache) == 1

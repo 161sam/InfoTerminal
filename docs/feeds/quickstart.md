@@ -51,7 +51,8 @@ Endpoints:
 - `DELETE /feeds/otx/cache` — reset the OTX de-dup cache.
 - `/metrics` — exposes `feed_items_fetched_total{source="rss"}`,
   `feed_items_fetched_total{source="otx"}`,
-  `feed_items_ingested_total{target="search"}` and
+  `feed_items_ingested_total{source="rss",target="search"}`,
+  `feed_items_ingested_total{source="otx",target="graph"}` and
   `feed_dedup_skipped_total{source="rss"|"otx"}`.
 - `/healthz`, `/readyz` — feature flag aware probes with connector metadata.
 
@@ -82,10 +83,10 @@ an exponential backoff (1s, 2s, 4s, … up to 5 minutes) before the next attempt
 Set `RSS_DRY_RUN=1` to validate fetch/normalise without mutating the store.
 
 Similarly, when `OTX_FETCH_INTERVAL>0` the OTX connector runs on the configured
-interval. Because the connector currently performs fetch → normalise only, the
-dry-run flag controls whether the seen-cache is updated between runs. Repeated
-runs with `dry_run=false` skip already-observed indicators using the
-`source:indicator` key.
+interval. Every non-dry-run invocation now forwards the normalised indicators to
+the graph ingestion endpoint and only then marks them as seen. Repeated runs
+with `dry_run=false` skip already-observed indicators using the
+`source:indicator` key while keeping the graph payload idempotent.
 
 ## Metrics & dashboard
 
@@ -94,6 +95,8 @@ connector counters. Look for:
 
 - **Feed Items Fetched (rss)** — total items retrieved from the RSS source.
 - **Feed Items Ingested** — items written into the mock search index.
+- **OTX → Graph Items Ingested** — threat indicators successfully upserted into
+  the graph target.
 - **Feed Dedup Skipped (rss)** — duplicates skipped because the `id` or `url`
   already existed.
 - **Feed Items Fetched (otx)** — total indicators retrieved from the OTX API or
@@ -106,12 +109,14 @@ connector counters. Look for:
    bundled RSS and OTX mock files).
 2. Trigger a manual RSS run via `curl` and observe the response.
 3. Trigger a manual OTX run using the mock pulse; the response should list two
-   indicators.
+   indicators and report `ingested=2` on the first run.
 4. Re-run both commands with `dry_run=false` — the second invocation increments
    `feed_dedup_skipped_total{source="rss"}` and
    `feed_dedup_skipped_total{source="otx"}` due to de-duplication.
-5. Check `/metrics` to ensure the counters increment; the Grafana dashboard now
-   shows five panels across RSS and OTX sources.
+5. Check `/metrics` to ensure the counters increment;
+   `feed_items_ingested_total{source="otx",target="graph"}` should rise with
+   the first OTX ingest. The Grafana dashboard now shows six panels across RSS
+   and OTX sources including the dedicated OTX ingest tile.
 
 ## Tests
 
