@@ -6,28 +6,30 @@ implements the feature set required for the Wave 4 agent MVP:
 * Feature flag guard (`AGENTS_ENABLED`).
 * Static tool registry exposing exactly six tools.
 * Single-turn chat endpoint that issues at most one mocked tool call.
-* Governance primitives: OPA-backed policy enforcement, global rate limit,
-  and cancel hook stub.
+* Governance primitives: OPA-backed policy enforcement, rate limits, and
+  cancel hook stub.
 * Basic safety controls (input sanitisation, max tokens/steps metadata).
-* Prometheus counters for policy denials, tool calls, and rate limits.
+* Prometheus metrics for policy denials, tool calls, rate-limit blocks, and
+  mocked tool execution latency.
 """
 
 from __future__ import annotations
 
+import hashlib
 import os
 import time
 import uuid
 import string
 import logging
-from collections import deque
+from collections import defaultdict, deque
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Deque, Dict, List, Optional
+from typing import Any, Deque, Dict, List, Optional, Tuple
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, root_validator
-from prometheus_client import Counter
+from prometheus_client import Counter, Histogram
 from starlette.responses import JSONResponse
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 
@@ -42,6 +44,14 @@ logging.basicConfig(level=logging.INFO)
 
 RATE_LIMIT_MAX_CALLS = int(os.getenv("AGENT_RATE_LIMIT_MAX", "5"))
 RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("AGENT_RATE_LIMIT_WINDOW", "60"))
+USER_TOOL_RATE_LIMIT_MAX_CALLS = int(
+    os.getenv("AGENT_USER_TOOL_RATE_LIMIT_MAX")
+    or os.getenv("AGENT_RATE_LIMIT_MAX", "5")
+)
+USER_TOOL_RATE_LIMIT_WINDOW_SECONDS = int(
+    os.getenv("AGENT_USER_TOOL_RATE_LIMIT_WINDOW")
+    or os.getenv("AGENT_RATE_LIMIT_WINDOW", "60")
+)
 MAX_STEPS = 1
 MAX_TOKENS = 512
 
@@ -187,6 +197,17 @@ agent_rate_limit_block_total = Counter(
     "agent_rate_limit_block_total",
     "Total number of chat requests rejected by the global rate limit.",
 )
+agent_rate_limited_total = Counter(
+    "agent_rate_limited_total",
+    "Total number of chat requests rejected by rate limits.",
+    labelnames=("scope", "tool", "user_hash"),
+)
+agent_tool_latency_seconds = Histogram(
+    "agent_tool_latency_seconds",
+    "Latency of mocked agent tool executions.",
+    labelnames=("tool", "user_hash"),
+    buckets=(0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5),
+)
 
 # ---------------------------------------------------------------------------
 # Rate limiter implementation
@@ -194,7 +215,11 @@ agent_rate_limit_block_total = Counter(
 
 
 class RateLimitExceededError(RuntimeError):
-    """Raised when the global rate limit budget is exhausted."""
+    """Raised when a rate limit budget is exhausted."""
+
+    def __init__(self, message: str, *, scope: str) -> None:
+        super().__init__(message)
+        self.scope = scope
 
 
 class PolicyDeniedError(RuntimeError):
@@ -222,22 +247,64 @@ class GlobalRateLimiter:
     def reset(self) -> None:
         self._events.clear()
 
-    def check(self) -> None:
+    def check(self, *, user_hash: str = "unknown", tool: Optional[str] = None) -> None:
         now = time.monotonic()
         window_start = now - self.window_seconds
         while self._events and self._events[0] < window_start:
             self._events.popleft()
         if len(self._events) >= self.max_calls:
             agent_rate_limit_block_total.inc()
+            agent_rate_limited_total.labels(
+                scope="global",
+                tool=tool or "__global__",
+                user_hash=user_hash,
+            ).inc()
             raise RateLimitExceededError(
-                f"Rate limit exceeded: {self.max_calls} calls per {self.window_seconds}s"
+                f"Rate limit exceeded (global): {self.max_calls} calls per {self.window_seconds}s",
+                scope="global",
             )
         self._events.append(now)
+
+
+class UserToolRateLimiter:
+    def __init__(self, max_calls: int, window_seconds: int) -> None:
+        self.max_calls = max_calls
+        self.window_seconds = window_seconds
+        self._events: Dict[Tuple[str, str], Deque[float]] = defaultdict(deque)
+
+    def reset(self) -> None:
+        self._events.clear()
+
+    def check(self, *, user_hash: str, tool: str) -> None:
+        key = (user_hash, tool)
+        events = self._events[key]
+        now = time.monotonic()
+        window_start = now - self.window_seconds
+        while events and events[0] < window_start:
+            events.popleft()
+        if len(events) >= self.max_calls:
+            agent_rate_limited_total.labels(
+                scope="user_tool",
+                tool=tool,
+                user_hash=user_hash,
+            ).inc()
+            raise RateLimitExceededError(
+                (
+                    "Rate limit exceeded (user/tool): "
+                    f"{self.max_calls} calls per {self.window_seconds}s"
+                ),
+                scope="user_tool",
+            )
+        events.append(now)
 
 
 global_rate_limiter = GlobalRateLimiter(
     max_calls=RATE_LIMIT_MAX_CALLS,
     window_seconds=RATE_LIMIT_WINDOW_SECONDS,
+)
+user_tool_rate_limiter = UserToolRateLimiter(
+    max_calls=USER_TOOL_RATE_LIMIT_MAX_CALLS,
+    window_seconds=USER_TOOL_RATE_LIMIT_WINDOW_SECONDS,
 )
 
 # ---------------------------------------------------------------------------
@@ -309,6 +376,33 @@ class CancelResponse(BaseModel):
 PRINTABLE_SET = set(string.printable)
 
 
+def compute_user_hash(identifier: str) -> str:
+    """Return a short, stable hash for identifying users in metrics."""
+
+    digest = hashlib.sha256(identifier.encode("utf-8")).hexdigest()
+    return digest[:16]
+
+
+def extract_user_identifier(request: Request) -> str:
+    """Resolve a stable identifier for rate limiting and metrics labelling."""
+
+    header_keys = [
+        "X-User-Id",
+        "X-User-Email",
+        "X-Forwarded-User",
+    ]
+    for header in header_keys:
+        value = request.headers.get(header)
+        if value:
+            return value
+    authorization = request.headers.get("Authorization")
+    if authorization:
+        return authorization
+    if request.client and request.client.host:
+        return request.client.host
+    return "anonymous"
+
+
 def agents_enabled() -> bool:
     return os.getenv("AGENTS_ENABLED", "0") == "1"
 
@@ -360,8 +454,11 @@ def resolve_tool(
     return selected
 
 
-def execute_tool(tool_name: str, params: Dict[str, Any], prompt: str) -> ToolCall:
+def execute_tool(
+    tool_name: str, params: Dict[str, Any], prompt: str, user_hash: str
+) -> ToolCall:
     start_time = datetime.utcnow()
+    perf_start = time.perf_counter()
     agent_tool_calls_total.labels(tool=tool_name).inc()
 
     # Mock execution payload keeps the demo deterministic and offline.
@@ -372,6 +469,8 @@ def execute_tool(tool_name: str, params: Dict[str, Any], prompt: str) -> ToolCal
     }
 
     finished_at = datetime.utcnow()
+    latency = time.perf_counter() - perf_start
+    agent_tool_latency_seconds.labels(tool=tool_name, user_hash=user_hash).observe(latency)
     return ToolCall(
         tool=tool_name,
         params=params,
@@ -436,6 +535,10 @@ def readyz() -> Dict[str, Any]:
         "rate_limit": {
             "max_calls": RATE_LIMIT_MAX_CALLS,
             "window_seconds": RATE_LIMIT_WINDOW_SECONDS,
+            "user_tool": {
+                "max_calls": USER_TOOL_RATE_LIMIT_MAX_CALLS,
+                "window_seconds": USER_TOOL_RATE_LIMIT_WINDOW_SECONDS,
+            },
         },
     }
 
@@ -454,16 +557,13 @@ async def chat(
 ) -> ChatResponse:
     prompt = sanitise_message(chat_request.message)
     conversation_id = chat_request.conversation_id or str(uuid.uuid4())
-
-    try:
-        global_rate_limiter.check()
-    except RateLimitExceededError as exc:
-        logger.warning("rate_limit_block", extra={"conversation_id": conversation_id})
-        raise HTTPException(status_code=429, detail=str(exc)) from exc
+    user_identifier = extract_user_identifier(fastapi_request)
+    user_hash = compute_user_hash(user_identifier)
 
     policy_context = {
         "conversation_id": conversation_id,
         "request_id": fastapi_request.headers.get("X-Request-Id"),
+        "user_hash": user_hash,
     }
 
     selected_tool = resolve_tool(
@@ -472,6 +572,21 @@ async def chat(
         context=policy_context,
     )
     tool_definition = TOOL_REGISTRY[selected_tool]
+
+    try:
+        global_rate_limiter.check(user_hash=user_hash, tool=selected_tool)
+        user_tool_rate_limiter.check(user_hash=user_hash, tool=selected_tool)
+    except RateLimitExceededError as exc:
+        logger.warning(
+            "rate_limit_block",
+            extra={
+                "conversation_id": conversation_id,
+                "scope": exc.scope,
+                "tool": selected_tool,
+                "user_hash": user_hash,
+            },
+        )
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
 
     # Hydrate default parameters when omitted to keep schema deterministic.
     params: Dict[str, Any] = {}
@@ -494,7 +609,7 @@ async def chat(
         }
     ]
 
-    tool_call = execute_tool(selected_tool, params, prompt)
+    tool_call = execute_tool(selected_tool, params, prompt, user_hash)
     steps.append(
         {
             "status": "completed",
@@ -538,6 +653,10 @@ def info() -> Dict[str, Any]:
         "rate_limit": {
             "max_calls": RATE_LIMIT_MAX_CALLS,
             "window_seconds": RATE_LIMIT_WINDOW_SECONDS,
+            "user_tool": {
+                "max_calls": USER_TOOL_RATE_LIMIT_MAX_CALLS,
+                "window_seconds": USER_TOOL_RATE_LIMIT_WINDOW_SECONDS,
+            },
         },
     }
 
@@ -546,10 +665,14 @@ def info() -> Dict[str, Any]:
 __all__ = [
     "TOOL_REGISTRY",
     "global_rate_limiter",
+    "user_tool_rate_limiter",
     "agent_tool_calls_total",
     "agent_policy_denied_total",
     "agent_rate_limit_block_total",
+    "agent_rate_limited_total",
+    "agent_tool_latency_seconds",
     "MAX_STEPS",
     "MAX_TOKENS",
     "app",
+    "compute_user_hash",
 ]

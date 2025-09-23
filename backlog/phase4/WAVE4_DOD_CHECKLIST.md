@@ -18,9 +18,9 @@ instead of duplicating rows._
   `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
   with parameter schema. 【F:services/flowise-connector/app/main.py†L63-L165】
 - [x] `/chat` enforces OPA tool policy (tool + route), max one mocked tool call,
-  global rate-limit (5/min). 【F:services/flowise-connector/app/main.py†L1-L520】
+  global rate-limit (5/min) plus per-user/per-tool guard. 【F:services/flowise-connector/app/main.py†L1-L520】
 - [x] Metrics counters (`agent_tool_calls_total`, `agent_policy_denied_total`,
-  `agent_rate_limit_block_total`) plus Grafana tiles. 【F:services/flowise-connector/app/main.py†L118-L148】【F:grafana/dashboards/infra-overview.json†L7-L40】
+  `agent_rate_limit_block_total`, `agent_rate_limited_total`) and latency histogram with Grafana tiles. 【F:services/flowise-connector/app/main.py†L118-L520】【F:grafana/dashboards/infra-overview.json†L7-L120】
 - [x] Cancel hook stub logs cancellation requests. 【F:services/flowise-connector/app/main.py†L299-L306】
 - [x] API tests cover tool list, allowlist deny, rate limit, metrics exposure.
     【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L86】

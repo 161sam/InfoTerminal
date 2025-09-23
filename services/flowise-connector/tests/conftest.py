@@ -21,7 +21,7 @@ service_dir = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(service_dir))
 import app.main as app_main  # type: ignore  # noqa: E402
 
-from app.main import global_rate_limiter  # noqa: E402
+from app.main import global_rate_limiter, user_tool_rate_limiter  # noqa: E402
 
 app = app_main.app
 
@@ -40,4 +40,9 @@ async def client():
 
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
+    global_rate_limiter.max_calls = app_main.RATE_LIMIT_MAX_CALLS
+    global_rate_limiter.window_seconds = app_main.RATE_LIMIT_WINDOW_SECONDS
     global_rate_limiter.reset()
+    user_tool_rate_limiter.max_calls = app_main.USER_TOOL_RATE_LIMIT_MAX_CALLS
+    user_tool_rate_limiter.window_seconds = app_main.USER_TOOL_RATE_LIMIT_WINDOW_SECONDS
+    user_tool_rate_limiter.reset()

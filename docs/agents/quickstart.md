@@ -35,7 +35,9 @@ Available endpoints:
   plus tool steps.
 - `POST /chat/{conversation_id}/cancel` → stub that logs cancel requests.
 - Metrics: `/metrics` exposes `agent_tool_calls_total`,
-  `agent_policy_denied_total`, `agent_rate_limit_block_total`.
+  `agent_policy_denied_total`, `agent_rate_limit_block_total`,
+  `agent_rate_limited_total`, and the latency histogram
+  `agent_tool_latency_seconds` (labelled by tool and hashed user).
 
 Example request:
 
@@ -91,8 +93,9 @@ red error badge and surface the reason from the backend.
 4. Start the frontend (`pnpm dev`) and visit `/agent/mvp`; submit the same
    prompt to view the tool call progress badge and the mocked summary.
 5. Hit the rate limit by sending six quick requests → the UI surfaces a clear
-   error and the `agent_rate_limit_block_total` counter increments (visible in
-   Grafana’s Infra Overview dashboard panels).
+   error and the `agent_rate_limited_total{scope="global"}` counter increments
+   alongside the legacy `agent_rate_limit_block_total` (visible in Grafana’s
+   Infra Overview dashboard panels).
 
 ## Policy enforcement with OPA
 
@@ -132,7 +135,8 @@ To deny a tool, add an entry with `"effect": "deny"` and customise the
 ## Where to observe metrics
 
 - Prometheus scrape target: Flowise connector (`agent_tool_calls_total`,
-  `agent_policy_denied_total`, `agent_rate_limit_block_total`).
+  `agent_policy_denied_total`, `agent_rate_limit_block_total`,
+  `agent_rate_limited_total`, `agent_tool_latency_seconds`).
 - Grafana dashboard: `grafana/dashboards/infra-overview.json` now ships a tile
   for each counter.
 
