@@ -19,6 +19,13 @@ gitleaks protect --staged --redact --config .gitleaks.toml
 
 Run tests and linters before pushing.
 
+## Phase Flows & Idempotency
+
+- Follow the v1.0 phase cadence: **Phase 1 (Inventory)** → **Phase 2 (Packages A–L)** → **Phase 3 (Hardening)** → **Phase 4 (Release)**. Reference `STATUS.md`, `ROADMAP_STATUS.md`, and `backlog/README.md` when planning work.
+- All automation (scripts, CLI, compose overlays) must be **idempotent**. Regenerate inventories via `python scripts/generate_inventory.py` and ensure repeated runs do not duplicate artefacts.
+- Update documentation alongside code: consult `DOCS_DIFF.md` for required corrections before merging.
+- Observe conventional commits and keep changes scoped to a single artefact/epic when possible.
+
 ## No Binary Files
 
 Pull requests must not contain binary assets. A dedicated CI job rejects commits with detected binaries.

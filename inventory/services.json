@@ -1,0 +1,1449 @@
+{
+  "generated_at": "2025-09-23T10:00:07Z",
+  "services": [
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": true,
+      "language": "unknown",
+      "metrics": true,
+      "name": "_shared",
+      "path": "services/_shared",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": false,
+      "name": "agent-connector",
+      "path": "services/agent-connector",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.sso.yml",
+        "docker-compose.superset-airflow.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "airflow-init"
+      ],
+      "env": [
+        "AIRFLOW__CORE__EXECUTOR",
+        "AIRFLOW__DATABASE__SQL_ALCHEMY_CONN",
+        "AIRFLOW__WEBSERVER__RBAC"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "airflow",
+      "path": null,
+      "ports": [
+        "${IT_PORT_AIRFLOW:-8642}:8080"
+      ],
+      "profiles": [
+        "airflow",
+        "sso"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "depends_on": [
+        "postgres"
+      ],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "airflow-db-init",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "airflow"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "depends_on": [
+        "airflow-db-init"
+      ],
+      "env": [
+        "AIRFLOW__CORE__EXECUTOR",
+        "AIRFLOW__DATABASE__SQL_ALCHEMY_CONN",
+        "AIRFLOW__WEBSERVER__RBAC",
+        "_AIRFLOW_WWW_USER_EMAIL",
+        "_AIRFLOW_WWW_USER_FIRSTNAME",
+        "_AIRFLOW_WWW_USER_LASTNAME",
+        "_AIRFLOW_WWW_USER_PASSWORD",
+        "_AIRFLOW_WWW_USER_USERNAME"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "airflow-init",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "airflow"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "depends_on": [
+        "airflow-init"
+      ],
+      "env": [
+        "AIRFLOW__CORE__EXECUTOR",
+        "AIRFLOW__DATABASE__SQL_ALCHEMY_CONN"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "airflow-scheduler",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "airflow"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "ALEPH_DEBUG"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "aleph",
+      "path": null,
+      "ports": [
+        "${IT_PORT_ALEPH:-8641}:8080"
+      ],
+      "profiles": [
+        "aleph"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "alertmanager",
+      "path": null,
+      "ports": [
+        "${IT_PORT_ALERTMAN:-3414}:9093"
+      ],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "postgres"
+      ],
+      "env": [
+        "AUTH_DATABASE_URL",
+        "CORS_ORIGINS",
+        "ENVIRONMENT",
+        "HOST",
+        "JWT_ACCESS_TOKEN_EXPIRE_MINUTES",
+        "JWT_ALGORITHM",
+        "JWT_REFRESH_TOKEN_EXPIRE_DAYS",
+        "JWT_SECRET_KEY",
+        "MFA_ENABLED",
+        "PASSWORD_MIN_LENGTH",
+        "PORT",
+        "TRUSTED_HOSTS",
+        "USER_REGISTRATION_ENABLED"
+      ],
+      "feature_flags": [
+        "MFA_ENABLED",
+        "USER_REGISTRATION_ENABLED"
+      ],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "auth-service",
+      "path": "services/auth-service",
+      "ports": [
+        "${IT_PORT_AUTH_SERVICE:-8616}:8080"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": true,
+      "language": "unknown",
+      "metrics": false,
+      "name": "cache-manager",
+      "path": "services/cache-manager",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "typer"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "cli",
+      "path": "cli",
+      "ports": [],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": false,
+      "name": "collab-hub",
+      "path": "services/collab-hub",
+      "ports": [
+        "${IT_PORT_COLLAB:-8625}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "common",
+      "path": "services/common",
+      "ports": [],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.nlp.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "postgres"
+      ],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "doc-entities",
+      "path": "services/doc-entities",
+      "ports": [
+        "${IT_PORT_DOC_ENTITIES:-8613}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "EGRESS_BASIC_PASS",
+        "EGRESS_BASIC_USER"
+      ],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": false,
+      "name": "egress-gateway",
+      "path": "services/egress-gateway",
+      "ports": [
+        "${IT_PORT_EGRESS_GATEWAY:-8615}:8615"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": true,
+      "language": "unknown",
+      "metrics": true,
+      "name": "entity-resolution",
+      "path": "services/entity-resolution",
+      "ports": [],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "federation-proxy",
+      "path": "services/federation-proxy",
+      "ports": [
+        "${IT_PORT_FEDERATION:-8628}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": false,
+      "name": "feedback-aggregator",
+      "path": "services/feedback-aggregator",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.agents.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "FLOWISE_TIMEOUT_S",
+        "FLOWISE_URL",
+        "OTEL_EXPORTER_OTLP_ENDPOINT",
+        "OTEL_TRACES_EXPORTER"
+      ],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "flowise-connector",
+      "path": "services/flowise-connector",
+      "ports": [
+        "3417:8080"
+      ],
+      "profiles": [
+        "agents"
+      ],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "forensics",
+      "path": "services/forensics",
+      "ports": [
+        "${IT_PORT_FORENSICS:-8627}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "depends_on": [
+        "ops-controller",
+        "postgres",
+        "verification-service"
+      ],
+      "env": [
+        "DATABASE_URL",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_GRAPH_API_URL",
+        "NEXT_PUBLIC_N8N_URL",
+        "NEXT_PUBLIC_NIFI_URL",
+        "NEXT_PUBLIC_OPS_URL",
+        "NEXT_PUBLIC_VERIFICATION_URL",
+        "NODE_ENV",
+        "OPS_CONTROLLER_URL",
+        "VERIFICATION_SERVICE_URL"
+      ],
+      "feature_flags": [],
+      "frameworks": [
+        "next"
+      ],
+      "healthz": false,
+      "language": "javascript",
+      "metrics": false,
+      "name": "frontend",
+      "path": "apps/frontend",
+      "ports": [
+        "${IT_PORT_FRONTEND:-3000}:3000"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.gateway.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "FLOWISE_TARGET",
+        "GRAPH_TARGET",
+        "OIDC_AUDIENCE",
+        "OIDC_ENABLED",
+        "OIDC_ISSUER",
+        "OPA_AUDIT_URL",
+        "OPA_ENABLED",
+        "OPA_URL",
+        "PORT",
+        "SEARCH_TARGET",
+        "USE_LOCAL_UPSTREAMS"
+      ],
+      "feature_flags": [
+        "OIDC_ENABLED",
+        "OPA_ENABLED"
+      ],
+      "frameworks": [
+        "express"
+      ],
+      "healthz": true,
+      "language": "javascript",
+      "metrics": true,
+      "name": "gateway",
+      "path": "services/gateway",
+      "ports": [
+        "8610:8080"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "depends_on": [
+        "prometheus"
+      ],
+      "env": [
+        "GF_AUTH_ANONYMOUS_ENABLED",
+        "GF_AUTH_ANONYMOUS_ORG_ROLE",
+        "GF_SECURITY_ADMIN_PASSWORD",
+        "GF_SECURITY_ADMIN_USER"
+      ],
+      "feature_flags": [
+        "GF_AUTH_ANONYMOUS_ENABLED"
+      ],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "grafana",
+      "path": null,
+      "ports": [
+        "${IT_PORT_GRAFANA:-3413}:3000"
+      ],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "neo4j"
+      ],
+      "env": [
+        "NEO4J_AUTH",
+        "NEO4J_URL"
+      ],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "graph-api",
+      "path": "services/graph-api",
+      "ports": [
+        "${IT_PORT_GRAPH:-8612}:8612",
+        "${IT_PORT_GRAPH_API:-8612}:8080"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.graph-views.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "postgres"
+      ],
+      "env": [
+        "CORS_ALLOW_ORIGINS",
+        "GRAPH_VIEWS_PORT",
+        "GV_ALLOW_WRITES",
+        "IT_ENABLE_METRICS",
+        "IT_ENV",
+        "IT_FORCE_READY",
+        "IT_OTEL",
+        "NEO4J_DATABASE",
+        "NEO4J_PASSWORD",
+        "NEO4J_URI",
+        "NEO4J_USER",
+        "OTEL_ENABLED",
+        "OTEL_EXPORTER_OTLP_ENDPOINT"
+      ],
+      "feature_flags": [
+        "IT_ENABLE_METRICS",
+        "OTEL_ENABLED"
+      ],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "graph-views",
+      "path": "services/graph-views",
+      "ports": [
+        "${GRAPH_VIEWS_PORT:-8403}:8403"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.graph-views.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "NEO4J_AUTH",
+        "NEO4J_dbms_default__database",
+        "NEO4J_server_config_strict__validation_enabled"
+      ],
+      "feature_flags": [
+        "NEO4J_server_config_strict__validation_enabled"
+      ],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "it-neo4j",
+      "path": null,
+      "ports": [
+        "7474:7474",
+        "7687:7687"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "loki",
+      "path": null,
+      "ports": [
+        "${IT_PORT_LOKI:-3415}:3100"
+      ],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "BING_SEARCH_API_KEY",
+        "MEDIA_MAX_FILE_SIZE",
+        "REVERSE_SEARCH_ENABLED"
+      ],
+      "feature_flags": [
+        "REVERSE_SEARCH_ENABLED"
+      ],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "media-forensics",
+      "path": "services/media-forensics",
+      "ports": [
+        "${IT_PORT_MEDIA_FORENSICS:-8618}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "depends_on": [
+        "postgres",
+        "verification-service"
+      ],
+      "env": [
+        "DB_POSTGRESDB_DATABASE",
+        "DB_POSTGRESDB_HOST",
+        "DB_POSTGRESDB_PASSWORD",
+        "DB_POSTGRESDB_PORT",
+        "DB_POSTGRESDB_USER",
+        "DB_TYPE",
+        "GENERIC_TIMEZONE",
+        "N8N_BASIC_AUTH_ACTIVE",
+        "N8N_BASIC_AUTH_PASSWORD",
+        "N8N_BASIC_AUTH_USER",
+        "N8N_DEFAULT_BINARY_DATA_MODE",
+        "N8N_DIAGNOSTICS_ENABLED",
+        "N8N_HIRING_BANNER_ENABLED",
+        "N8N_HOST",
+        "N8N_PERSONALIZATION_ENABLED",
+        "N8N_PORT",
+        "N8N_PROTOCOL",
+        "N8N_PUBLIC_API_DISABLED",
+        "N8N_SECURE_COOKIE",
+        "N8N_VERSION_NOTIFICATIONS_ENABLED",
+        "WEBHOOK_URL"
+      ],
+      "feature_flags": [
+        "N8N_DIAGNOSTICS_ENABLED",
+        "N8N_HIRING_BANNER_ENABLED",
+        "N8N_PERSONALIZATION_ENABLED",
+        "N8N_PUBLIC_API_DISABLED",
+        "N8N_VERSION_NOTIFICATIONS_ENABLED"
+      ],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "n8n",
+      "path": "apps/n8n",
+      "ports": [
+        "${IT_PORT_N8N:-5678}:5678"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.neo.yml",
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "NEO4J_AUTH",
+        "NEO4J_PLUGINS",
+        "NEO4J_dbms_memory_heap_initial__size",
+        "NEO4J_dbms_memory_heap_max__size",
+        "NEO4J_dbms_memory_pagecache_size",
+        "NEO4J_dbms_security_procedures_unrestricted",
+        "NEO4J_server_memory_heap_initial__size",
+        "NEO4J_server_memory_heap_max__size",
+        "NEO4J_server_memory_pagecache_size"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "neo4j",
+      "path": null,
+      "ports": [
+        "${IT_PORT_NEO4J:-7474}:7474",
+        "${IT_PORT_NEO4J_BOLT:-7687}:7687",
+        "7474:7474",
+        "7687:7687",
+        "8743:7473",
+        "8744:7474",
+        "8767:7687"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "opensearch",
+        "postgres",
+        "verification-service"
+      ],
+      "env": [
+        "NIFI_CLUSTER_IS_NODE",
+        "NIFI_ELECTION_MAX_WAIT",
+        "NIFI_JVM_HEAP_INIT",
+        "NIFI_JVM_HEAP_MAX",
+        "NIFI_SENSITIVE_PROPS_KEY",
+        "NIFI_WEB_HTTPS_PORT",
+        "NIFI_WEB_HTTP_PORT",
+        "NIFI_WEB_PROXY_HOST",
+        "NIFI_ZK_CONNECT_STRING",
+        "SINGLE_USER_CREDENTIALS_PASSWORD",
+        "SINGLE_USER_CREDENTIALS_USERNAME"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "nifi",
+      "path": null,
+      "ports": [
+        "${IT_PORT_NIFI:-8619}:8080",
+        "${IT_PORT_NIFI_CLUSTER:-11443}:11443"
+      ],
+      "profiles": [
+        "nifi"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.sso.yml"
+      ],
+      "depends_on": [
+        "airflow"
+      ],
+      "env": [
+        "OAUTH2_PROXY_CLIENT_ID",
+        "OAUTH2_PROXY_CLIENT_SECRET",
+        "OAUTH2_PROXY_COOKIE_SECRET",
+        "OAUTH2_PROXY_COOKIE_SECURE",
+        "OAUTH2_PROXY_EMAIL_DOMAINS",
+        "OAUTH2_PROXY_HTTP_ADDRESS",
+        "OAUTH2_PROXY_OIDC_ISSUER_URL",
+        "OAUTH2_PROXY_PASS_ACCESS_TOKEN",
+        "OAUTH2_PROXY_PROVIDER",
+        "OAUTH2_PROXY_SET_AUTHORIZATION_HEADER",
+        "OAUTH2_PROXY_SKIP_PROVIDER_BUTTON",
+        "OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY",
+        "OAUTH2_PROXY_UPSTREAMS"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "oauth2-proxy-airflow",
+      "path": null,
+      "ports": [
+        "${IT_PORT_AIRFLOW:-8642}:4180"
+      ],
+      "profiles": [
+        "sso"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.sso.yml"
+      ],
+      "depends_on": [
+        "superset"
+      ],
+      "env": [
+        "OAUTH2_PROXY_CLIENT_ID",
+        "OAUTH2_PROXY_CLIENT_SECRET",
+        "OAUTH2_PROXY_COOKIE_SECRET",
+        "OAUTH2_PROXY_COOKIE_SECURE",
+        "OAUTH2_PROXY_EMAIL_DOMAINS",
+        "OAUTH2_PROXY_HTTP_ADDRESS",
+        "OAUTH2_PROXY_OIDC_ISSUER_URL",
+        "OAUTH2_PROXY_PASS_ACCESS_TOKEN",
+        "OAUTH2_PROXY_PROVIDER",
+        "OAUTH2_PROXY_SET_AUTHORIZATION_HEADER",
+        "OAUTH2_PROXY_SKIP_PROVIDER_BUTTON",
+        "OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY",
+        "OAUTH2_PROXY_UPSTREAMS"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "oauth2-proxy-superset",
+      "path": null,
+      "ports": [
+        "${IT_PORT_SUPERSET:-8644}:4180"
+      ],
+      "profiles": [
+        "sso"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.opa.host.yml",
+        "docker-compose.opa.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "opa",
+      "path": null,
+      "ports": [
+        "8651:8181"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.agents.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "opa-audit-sink",
+      "path": "services/opa-audit-sink",
+      "ports": [],
+      "profiles": [
+        "agents"
+      ],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": false,
+      "name": "openbb-connector",
+      "path": "services/openbb-connector",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "OPENSEARCH_JAVA_OPTS",
+        "bootstrap.memory_lock",
+        "cluster.name",
+        "discovery.type",
+        "node.name",
+        "plugins.security.disabled"
+      ],
+      "feature_flags": [
+        "plugins.security.disabled"
+      ],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "opensearch",
+      "path": null,
+      "ports": [
+        "${IT_PORT_OPENSEARCH:-9200}:9200",
+        "${IT_PORT_OPENSEARCH_PERF:-9600}:9600"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "postgres",
+        "verification-service"
+      ],
+      "env": [
+        "FRONTEND_API_URL",
+        "IT_DOCKER_SOCKET",
+        "IT_N8N_ENABLE",
+        "IT_N8N_URL",
+        "IT_N8N_WEBHOOK_URL",
+        "IT_NIFI_ENABLE",
+        "IT_NIFI_URL",
+        "IT_OPS_COMPOSE_BIN",
+        "IT_OPS_ENABLE",
+        "IT_OPS_LOCK_TIMEOUT_SEC",
+        "IT_OPS_LOG_TAIL_LINES",
+        "IT_OPS_MODE",
+        "IT_OPS_STACKS_FILE",
+        "IT_VERIFICATION_DIRECT",
+        "POSTGRES_URL",
+        "VERIFICATION_SERVICE_URL"
+      ],
+      "feature_flags": [
+        "IT_N8N_ENABLE",
+        "IT_NIFI_ENABLE",
+        "IT_OPS_ENABLE"
+      ],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "ops-controller",
+      "path": "services/ops-controller",
+      "ports": [
+        "${IT_PORT_OPS_CONTROLLER:-8614}:8000",
+        "${IT_PORT_OPS_CONTROLLER:-8618}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": true,
+      "language": "unknown",
+      "metrics": true,
+      "name": "performance-monitor",
+      "path": "services/performance-monitor",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "PLUGINS_DIR",
+        "PLUGIN_DOCKER_ENABLED",
+        "PLUGIN_MAX_CONCURRENT",
+        "PLUGIN_MAX_EXECUTION_TIME",
+        "RESULTS_DIR"
+      ],
+      "feature_flags": [
+        "PLUGIN_DOCKER_ENABLED"
+      ],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": false,
+      "name": "plugin-runner",
+      "path": "services/plugin-runner",
+      "ports": [
+        "${IT_PORT_PLUGIN_RUNNER:-8621}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "policy",
+      "path": "services/policy",
+      "ports": [],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "POSTGRES_DB",
+        "POSTGRES_INITDB_ARGS",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_USER"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "postgres",
+      "path": null,
+      "ports": [
+        "${IT_PORT_POSTGRES:-5432}:5432"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "prometheus",
+      "path": null,
+      "ports": [
+        "${IT_PORT_PROM:-3412}:9090"
+      ],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "depends_on": [
+        "loki"
+      ],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "promtail",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "neo4j",
+        "opensearch"
+      ],
+      "env": [
+        "NEO4J_PASSWORD",
+        "NEO4J_URI",
+        "NEO4J_USER",
+        "OS_URL",
+        "RAG_OS_INDEX"
+      ],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "rag-api",
+      "path": "services/rag-api",
+      "ports": [
+        "${IT_PORT_RAG_API:-8622}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "depends_on": [],
+      "env": [
+        "REDIS_MAXMEMORY",
+        "REDIS_MAXMEMORY_POLICY",
+        "REDIS_PASSWORD"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "redis",
+      "path": null,
+      "ports": [
+        "${IT_PORT_REDIS:-6379}:6379"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "opensearch"
+      ],
+      "env": [
+        "OPENSEARCH_URL",
+        "POSTGRES_URL"
+      ],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "search-api",
+      "path": "services/search-api",
+      "ports": [
+        "${IT_PORT_SEARCH:-8001}:8001",
+        "${IT_PORT_SEARCH_API:-8611}:8080"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.sso.yml",
+        "docker-compose.superset-airflow.yml",
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "superset-init"
+      ],
+      "env": [
+        "SUPERSET_DATABASE_URI",
+        "SUPERSET_LOAD_EXAMPLES",
+        "SUPERSET_SECRET_KEY"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "superset",
+      "path": "apps/superset",
+      "ports": [
+        "${IT_PORT_SUPERSET:-8644}:8088"
+      ],
+      "profiles": [
+        "sso",
+        "superset"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "depends_on": [
+        "postgres"
+      ],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "superset-db-init",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "superset"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "depends_on": [
+        "superset-db-init"
+      ],
+      "env": [
+        "SUPERSET_ADMIN_EMAIL",
+        "SUPERSET_ADMIN_FIRSTNAME",
+        "SUPERSET_ADMIN_LASTNAME",
+        "SUPERSET_ADMIN_PASSWORD",
+        "SUPERSET_ADMIN_USERNAME",
+        "SUPERSET_DATABASE_URI",
+        "SUPERSET_LOAD_EXAMPLES",
+        "SUPERSET_SECRET_KEY"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "superset-init",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "superset"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "tempo",
+      "path": null,
+      "ports": [
+        "${IT_PORT_TEMPO:-3416}:3200"
+      ],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "verification",
+      "path": "services/verification",
+      "ports": [
+        "${IT_PORT_VERIFICATION:-8617}:8617"
+      ],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "depends_on": [
+        "opensearch",
+        "postgres",
+        "redis"
+      ],
+      "env": [
+        "CACHE_ENABLED",
+        "CACHE_TTL_SECONDS",
+        "LOG_LEVEL",
+        "NEO4J_AUTH",
+        "NEO4J_URL",
+        "OPENSEARCH_URL",
+        "POSTGRES_URL",
+        "VERIFICATION_SERVICE_PORT"
+      ],
+      "feature_flags": [
+        "CACHE_ENABLED"
+      ],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "verification-service",
+      "path": null,
+      "ports": [
+        "${IT_PORT_VERIFICATION:-8617}:8617"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [
+        "auth-service",
+        "graph-api",
+        "search-api"
+      ],
+      "env": [
+        "AUTH_SERVICE_URL"
+      ],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": false,
+      "language": "unknown",
+      "metrics": false,
+      "name": "web",
+      "path": null,
+      "ports": [
+        "${IT_PORT_FRONTEND:-3411}:3000"
+      ],
+      "profiles": [],
+      "readyz": false
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": true,
+      "language": "unknown",
+      "metrics": false,
+      "name": "websocket-manager",
+      "path": "services/websocket-manager",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
+      "name": "xai",
+      "path": "services/xai",
+      "ports": [
+        "${IT_PORT_XAI:-8626}:8000"
+      ],
+      "profiles": [],
+      "readyz": true
+    }
+  ]
+}
