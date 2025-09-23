@@ -14,7 +14,10 @@ status dashboards and revalidates gates without duplicating artefacts.
 
 ## Prioritised Package Order (Phase 2 Waves)
 
-| Wave | Active Packages (max 2) | Rationale & Dependencies |
+> ℹ️ **Machine-readable source:** [`PACKAGE_SEQUENCE.yaml`](PACKAGE_SEQUENCE.yaml) captures the same wave ordering with
+> value, risk, dependencies, and gate metadata. Regenerate dashboards/checklists from that file to keep reruns idempotent.
+
+| Wave | Active Packages (max 2) | Value & Risk Rationale |
 | --- | --- | --- |
 | Wave 1 (current) | **A – Ontologie & Graph**, **F – Dossier & Collaboration** | Unlocks graph analytics + dossier exports to prove end-to-end value. F depends on A’s subgraph export hook. Enables demo flow (Search → Graph → Dossier). |
 | Wave 2 | **B – NLP & Resolver**, **C – Geospatial** | Builds on graph hooks from Wave 1. Relation extraction + entity linking feeds dossier context, while geospatial overlays consume graph node metadata. Running together keeps review load manageable while covering complementary data enrichments. |

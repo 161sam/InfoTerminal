@@ -2,6 +2,9 @@
 
 _This checklist is idempotent: rerun after each merge to confirm gates remain green. Update issue references when tasks close._
 
+> 📋 **Wave source of truth:** See [`PACKAGE_SEQUENCE.yaml`](PACKAGE_SEQUENCE.yaml) for the authoritative ordering,
+> gates, and dependencies powering this checklist.
+
 ## Package A – Ontologie & Graph (MVP)
 
 - [ ] `/graphs/analysis/degree` endpoint paginates + enforces timeout guardrails (pytest coverage `services/graph-api/tests/analysis/test_degree.py`).
