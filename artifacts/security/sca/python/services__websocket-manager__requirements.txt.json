@@ -1,0 +1,145 @@
+{
+  "dependencies": [
+    {
+      "name": "fastapi",
+      "version": "0.104.1",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2024-24762",
+            "GHSA-2jv5-9r88-3w3p",
+            "GHSA-qf9m-vfgh-m389"
+          ],
+          "description": "FastAPI is a web framework for building APIs with Python 3.8+ based on standard Python type hints. When using form data, `python-multipart` uses a Regular Expression to parse the HTTP `Content-Type` header, including options. An attacker could send a custom-made `Content-Type` option that is very difficult for the RegEx to process, consuming CPU resources and stalling indefinitely (minutes or more) while holding the main event loop. This means that process can't handle any more requests. It's a ReDoS(Regular expression Denial of Service), it only applies to those reading form data, using `python-multipart`. This vulnerability has been patched in version 0.109.1.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "0.109.1",
+            "9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc"
+          ],
+          "id": "PYSEC-2024-38",
+          "package": "fastapi",
+          "references": [
+            "https://github.com/tiangolo/fastapi/security/advisories/GHSA-qf9m-vfgh-m389",
+            "https://github.com/tiangolo/fastapi/commit/9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc",
+            "https://github.com/tiangolo/fastapi/releases/tag/0.109.1"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-38",
+          "version": "0.104.1"
+        }
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.24.0",
+      "vulns": []
+    },
+    {
+      "name": "pydantic",
+      "version": "2.5.0",
+      "vulns": []
+    },
+    {
+      "name": "redis",
+      "version": "5.0.1",
+      "vulns": []
+    },
+    {
+      "name": "aioredis",
+      "version": "2.0.1",
+      "vulns": []
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.6",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2024-24762",
+            "GHSA-qf9m-vfgh-m389",
+            "PYSEC-2024-38"
+          ],
+          "description": "python-multipart vulnerable to Content-Type Header ReDoS",
+          "ecosystem": "python",
+          "fix_versions": [
+            "0.0.7"
+          ],
+          "id": "GHSA-2jv5-9r88-3w3p",
+          "package": "python-multipart",
+          "references": [
+            "https://github.com/Kludex/python-multipart/security/advisories/GHSA-2jv5-9r88-3w3p",
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-24762",
+            "https://github.com/github/advisory-database/pull/4829",
+            "https://github.com/Kludex/python-multipart/commit/20f0ef6b4e4caf7d69a667c54dff57fe467109a4",
+            "https://github.com/encode/starlette/commit/13e5c26a27f4903924624736abd6131b2da80cc5",
+            "https://github.com/tiangolo/fastapi/commit/9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc",
+            "https://github.com/Kludex/python-multipart",
+            "https://github.com/andrew-d/python-multipart/blob/d3d16dae4b061c34fe9d3c9081d9800c49fc1f7a/multipart/multipart.py#L72-L74",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/fastapi/PYSEC-2024-38.yaml",
+            "https://github.com/tiangolo/fastapi/releases/tag/0.109.1"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-2jv5-9r88-3w3p",
+          "version": "0.0.6"
+        },
+        {
+          "aliases": [
+            "CVE-2024-53981"
+          ],
+          "description": "Denial of service (DoS) via deformation `multipart/form-data` boundary",
+          "ecosystem": "python",
+          "fix_versions": [
+            "0.0.18"
+          ],
+          "id": "GHSA-59g5-xgcq-4qw3",
+          "package": "python-multipart",
+          "references": [
+            "https://github.com/Kludex/python-multipart/security/advisories/GHSA-59g5-xgcq-4qw3",
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-53981",
+            "https://github.com/Kludex/python-multipart/commit/c4fe4d3cebc08c660e57dd709af1ffa7059b3177",
+            "https://github.com/Kludex/python-multipart"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-59g5-xgcq-4qw3",
+          "version": "0.0.6"
+        }
+      ]
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.8.0",
+      "vulns": []
+    }
+  ],
+  "queries": [
+    [
+      "fastapi",
+      "0.104.1"
+    ],
+    [
+      "uvicorn",
+      "0.24.0"
+    ],
+    [
+      "pydantic",
+      "2.5.0"
+    ],
+    [
+      "redis",
+      "5.0.1"
+    ],
+    [
+      "aioredis",
+      "2.0.1"
+    ],
+    [
+      "python-multipart",
+      "0.0.6"
+    ],
+    [
+      "pyjwt",
+      "2.8.0"
+    ]
+  ],
+  "skipped": []
+}

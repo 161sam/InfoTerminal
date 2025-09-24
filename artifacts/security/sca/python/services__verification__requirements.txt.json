@@ -1,0 +1,1160 @@
+{
+  "dependencies": [
+    {
+      "name": "fastapi",
+      "version": "0.104.1",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2024-24762",
+            "GHSA-2jv5-9r88-3w3p",
+            "GHSA-qf9m-vfgh-m389"
+          ],
+          "description": "FastAPI is a web framework for building APIs with Python 3.8+ based on standard Python type hints. When using form data, `python-multipart` uses a Regular Expression to parse the HTTP `Content-Type` header, including options. An attacker could send a custom-made `Content-Type` option that is very difficult for the RegEx to process, consuming CPU resources and stalling indefinitely (minutes or more) while holding the main event loop. This means that process can't handle any more requests. It's a ReDoS(Regular expression Denial of Service), it only applies to those reading form data, using `python-multipart`. This vulnerability has been patched in version 0.109.1.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "0.109.1",
+            "9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc"
+          ],
+          "id": "PYSEC-2024-38",
+          "package": "fastapi",
+          "references": [
+            "https://github.com/tiangolo/fastapi/security/advisories/GHSA-qf9m-vfgh-m389",
+            "https://github.com/tiangolo/fastapi/commit/9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc",
+            "https://github.com/tiangolo/fastapi/releases/tag/0.109.1"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-38",
+          "version": "0.104.1"
+        }
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.24.0",
+      "vulns": []
+    },
+    {
+      "name": "pydantic",
+      "version": "2.5.0",
+      "vulns": []
+    },
+    {
+      "name": "httpx",
+      "version": "0.25.2",
+      "vulns": []
+    },
+    {
+      "name": "transformers",
+      "version": "4.35.2",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2025-3933"
+          ],
+          "description": "Transformers is vulnerable to ReDoS attack through its DonutProcessor class",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.52.1"
+          ],
+          "id": "GHSA-37mw-44qp-f5jm",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-3933",
+            "https://github.com/huggingface/transformers/pull/37788",
+            "https://github.com/huggingface/transformers/commit/ebbe9b12dd75b69f92100d684c47f923ee262a93",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/25282953-5827-4384-bb6f-5790d275721b"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-37mw-44qp-f5jm",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-3568"
+          ],
+          "description": "Transformers Deserialization of Untrusted Data vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.38.0"
+          ],
+          "id": "GHSA-37q5-v5qm-c9v8",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-3568",
+            "https://github.com/huggingface/transformers/commit/693667b8ac8138b83f8adb6522ddaf42fa07c125",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/b3c36992-5264-4d7f-9906-a996efafba8f"
+          ],
+          "severity": "low",
+          "source_id": "GHSA-37q5-v5qm-c9v8",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2023-6730",
+            "PYSEC-2023-300"
+          ],
+          "description": "transformers has a Deserialization of Untrusted Data vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.36.0"
+          ],
+          "id": "GHSA-3863-2447-669p",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2023-6730",
+            "https://github.com/huggingface/transformers/commit/1d63b0ec361e7a38f1339385e8a5a855085532ce",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/transformers/PYSEC-2023-300.yaml",
+            "https://huntr.com/bounties/423611ee-7a2a-442a-babb-3ed2f8385c16"
+          ],
+          "severity": "critical",
+          "source_id": "GHSA-3863-2447-669p",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-6921"
+          ],
+          "description": "Hugging Face Transformers vulnerable to Regular Expression Denial of Service (ReDoS) in the AdamWeightDecay optimizer",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.53.0"
+          ],
+          "id": "GHSA-4w7r-h757-3r74",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-6921",
+            "https://github.com/huggingface/transformers/commit/47c34fba5c303576560cb29767efb452ff12b8be",
+            "https://github.com/huggingface/transformers/commit/d37f7517972f67e3f2194c000ed0f87f064e5099",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/287d15a7-6e7c-45d2-8c05-11e305776f1f"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-4w7r-h757-3r74",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-6638"
+          ],
+          "description": "Hugging Face Transformers is vulnerable to ReDoS through its MarianTokenizer",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.53.0"
+          ],
+          "id": "GHSA-59p9-h35m-wg4g",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-6638",
+            "https://github.com/huggingface/transformers/commit/47c34fba5c303576560cb29767efb452ff12b8be",
+            "https://github.com/huggingface/transformers/commit/d37f7517972f67e3f2194c000ed0f87f064e5099",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/6a6c933f-9ce8-4ded-8b3b-2c1444c61f36"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-59p9-h35m-wg4g",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-12720"
+          ],
+          "description": "Transformers Regular Expression Denial of Service (ReDoS) vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "GHSA-6rvg-6v2m-4j46",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-12720",
+            "https://github.com/huggingface/transformers/commit/deac971c469bcbb182c2e52da0b82fb3bf54cccf",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/4bed1214-7835-4252-a853-22bbad891f98"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-6rvg-6v2m-4j46",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-5197"
+          ],
+          "description": "Hugging Face Transformers Regular Expression Denial of Service (ReDoS) vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.53.0"
+          ],
+          "id": "GHSA-9356-575x-2w9m",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-5197",
+            "https://github.com/huggingface/transformers/commit/701caef704e356dc2f9331cc3fd5df0eccb4720a",
+            "https://github.com/huggingface/transformers/commit/944b56000be5e9b61af8301aa340838770ad8a0b",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/3f8b3fd0-166b-46e7-b60f-60dd9d2678bf"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-9356-575x-2w9m",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-1194"
+          ],
+          "description": "Transformers Regular Expression Denial of Service (ReDoS) vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.50.0"
+          ],
+          "id": "GHSA-fpwr-67px-3qhx",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-1194",
+            "https://github.com/huggingface/transformers/commit/92c5ca9dd70de3ade2af2eb835c96215cc50e815",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/86f58dcd-683f-4adc-a735-849f51e9abb2"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-fpwr-67px-3qhx",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-11394",
+            "PYSEC-2024-229"
+          ],
+          "description": "Deserialization of Untrusted Data in Hugging Face Transformers",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "GHSA-hxxf-235m-72v3",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-11394",
+            "https://github.com/huggingface/transformers/issues/34840",
+            "https://github.com/huggingface/transformers/pull/35296",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/transformers/PYSEC-2024-229.yaml",
+            "https://www.zerodayinitiative.com/advisories/ZDI-24-1515"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-hxxf-235m-72v3",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-3264"
+          ],
+          "description": "Transformers vulnerable to ReDoS attack through its get_imports() function",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.51.0"
+          ],
+          "id": "GHSA-jjph-296x-mrcr",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-3264",
+            "https://github.com/huggingface/transformers/commit/0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+            "https://github.com/huggingface/transformers/commit/126abe3461762e5fc180e7e614391d1b4ab051ca",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/3c6f7822-9992-476d-8cf0-b0b1623427df"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-jjph-296x-mrcr",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-3777"
+          ],
+          "description": "Transformers's Improper Input Validation vulnerability can be exploited through username injection",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.52.1"
+          ],
+          "id": "GHSA-phhr-52qp-3mj4",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-3777",
+            "https://github.com/huggingface/transformers/commit/4dda5f71b35fb70cf602187eef84bb17a50b9082",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/huggingface/transformers/blame/a7d2bbaaa8aac64f7c1ee8c1421cfe84b38359a4/src/transformers/image_utils.py",
+            "https://huntr.com/bounties/ccba0730-9248-4853-b7ff-5c20e6364f09"
+          ],
+          "severity": "low",
+          "source_id": "GHSA-phhr-52qp-3mj4",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-3263"
+          ],
+          "description": "Transformers's ReDoS vulnerability in get_configuration_file can lead to catastrophic backtracking",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.51.0"
+          ],
+          "id": "GHSA-q2wp-rjmx-x6x9",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-3263",
+            "https://github.com/huggingface/transformers/commit/0720e206c6ba28887e4d60ef60a6a089f6c1cc76",
+            "https://github.com/huggingface/transformers/commit/126abe3461762e5fc180e7e614391d1b4ab051ca",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/c7a69150-54f8-4e81-8094-791e7a2a0f29"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-q2wp-rjmx-x6x9",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-2099",
+            "PYSEC-2025-40"
+          ],
+          "description": "Hugging Face Transformers Regular Expression Denial of Service",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.50.0"
+          ],
+          "id": "GHSA-qq3j-4f4f-9583",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-2099",
+            "https://github.com/huggingface/transformers/pull/36648",
+            "https://github.com/huggingface/transformers/commit/8cb522b4190bd556ce51be04942720650b1a3e57",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/transformers/PYSEC-2025-40.yaml",
+            "https://huntr.com/bounties/97b780f3-ffca-424f-ad5d-0e1c57a5bde4"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-qq3j-4f4f-9583",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-11392",
+            "PYSEC-2024-227"
+          ],
+          "description": "Deserialization of Untrusted Data in Hugging Face Transformers",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "GHSA-qxrp-vhvm-j765",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-11392",
+            "https://github.com/huggingface/transformers/issues/34840",
+            "https://github.com/huggingface/transformers/pull/35296",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/transformers/PYSEC-2024-227.yaml",
+            "https://www.zerodayinitiative.com/advisories/ZDI-24-1513"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-qxrp-vhvm-j765",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-6051"
+          ],
+          "description": "Hugging Face Transformers library has Regular Expression Denial of Service",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.53.0"
+          ],
+          "id": "GHSA-rcv9-qm8p-9p6j",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-6051",
+            "https://github.com/huggingface/transformers/pull/38844",
+            "https://github.com/huggingface/transformers/commit/54a02160eb030da9be18231c77791f2eb3a52216",
+            "https://github.com/huggingface/transformers/commit/ba8eaba9865618253f997784aa565b96206426f0",
+            "https://github.com/huggingface/transformers",
+            "https://huntr.com/bounties/af929523-7b59-418a-bf55-301830b2ac9d"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-rcv9-qm8p-9p6j",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2023-7018",
+            "PYSEC-2023-301"
+          ],
+          "description": "transformers has a Deserialization of Untrusted Data vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.36.0"
+          ],
+          "id": "GHSA-v68g-wm8c-6x7j",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2023-7018",
+            "https://github.com/huggingface/transformers/commit/1d63b0ec361e7a38f1339385e8a5a855085532ce",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/transformers/PYSEC-2023-301.yaml",
+            "https://huntr.com/bounties/e1a3e548-e53a-48df-b708-9ee62140963c"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-v68g-wm8c-6x7j",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-11393",
+            "PYSEC-2024-228"
+          ],
+          "description": "Deserialization of Untrusted Data in Hugging Face Transformers",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "GHSA-wrfc-pvp9-mr9g",
+          "package": "transformers",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-11393",
+            "https://github.com/huggingface/transformers/issues/34840",
+            "https://github.com/huggingface/transformers/pull/35296",
+            "https://github.com/huggingface/transformers",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/transformers/PYSEC-2024-228.yaml",
+            "https://www.zerodayinitiative.com/advisories/ZDI-24-1514"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-wrfc-pvp9-mr9g",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2023-6730",
+            "GHSA-3863-2447-669p"
+          ],
+          "description": "Deserialization of Untrusted Data in GitHub repository huggingface/transformers prior to 4.36.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "1d63b0ec361e7a38f1339385e8a5a855085532ce",
+            "4.36.0"
+          ],
+          "id": "PYSEC-2023-300",
+          "package": "transformers",
+          "references": [
+            "https://huntr.com/bounties/423611ee-7a2a-442a-babb-3ed2f8385c16",
+            "https://github.com/huggingface/transformers/commit/1d63b0ec361e7a38f1339385e8a5a855085532ce"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2023-300",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2023-7018",
+            "GHSA-v68g-wm8c-6x7j"
+          ],
+          "description": "Deserialization of Untrusted Data in GitHub repository huggingface/transformers prior to 4.36.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "1d63b0ec361e7a38f1339385e8a5a855085532ce",
+            "4.36.0"
+          ],
+          "id": "PYSEC-2023-301",
+          "package": "transformers",
+          "references": [
+            "https://huntr.com/bounties/e1a3e548-e53a-48df-b708-9ee62140963c",
+            "https://github.com/huggingface/transformers/commit/1d63b0ec361e7a38f1339385e8a5a855085532ce"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2023-301",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-11392",
+            "GHSA-qxrp-vhvm-j765"
+          ],
+          "description": "Hugging Face Transformers MobileViTV2 Deserialization of Untrusted Data Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of Hugging Face Transformers. User interaction is required to exploit this vulnerability in that the target must visit a malicious page or open a malicious file.\n\nThe specific flaw exists within the handling of configuration files. The issue results from the lack of proper validation of user-supplied data, which can result in deserialization of untrusted data. An attacker can leverage this vulnerability to execute code in the context of the current user. Was ZDI-CAN-24322.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "PYSEC-2024-227",
+          "package": "transformers",
+          "references": [
+            "https://www.zerodayinitiative.com/advisories/ZDI-24-1513/"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-227",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-11393",
+            "GHSA-wrfc-pvp9-mr9g"
+          ],
+          "description": "Hugging Face Transformers MaskFormer Model Deserialization of Untrusted Data Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of Hugging Face Transformers. User interaction is required to exploit this vulnerability in that the target must visit a malicious page or open a malicious file.\n\nThe specific flaw exists within the parsing of model files. The issue results from the lack of proper validation of user-supplied data, which can result in deserialization of untrusted data. An attacker can leverage this vulnerability to execute code in the context of the current user. Was ZDI-CAN-25191.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "PYSEC-2024-228",
+          "package": "transformers",
+          "references": [
+            "https://www.zerodayinitiative.com/advisories/ZDI-24-1514/"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-228",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-11394",
+            "GHSA-hxxf-235m-72v3"
+          ],
+          "description": "Hugging Face Transformers Trax Model Deserialization of Untrusted Data Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of Hugging Face Transformers. User interaction is required to exploit this vulnerability in that the target must visit a malicious page or open a malicious file.\n\nThe specific flaw exists within the handling of model files. The issue results from the lack of proper validation of user-supplied data, which can result in deserialization of untrusted data. An attacker can leverage this vulnerability to execute code in the context of the current user. Was ZDI-CAN-25012.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.48.0"
+          ],
+          "id": "PYSEC-2024-229",
+          "package": "transformers",
+          "references": [
+            "https://www.zerodayinitiative.com/advisories/ZDI-24-1515/"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-229",
+          "version": "4.35.2"
+        },
+        {
+          "aliases": [
+            "CVE-2025-2099",
+            "GHSA-qq3j-4f4f-9583"
+          ],
+          "description": "A vulnerability in the `preprocess_string()` function of the `transformers.testing_utils` module in huggingface/transformers version v4.48.3 allows for a Regular Expression Denial of Service (ReDoS) attack. The regular expression used to process code blocks in docstrings contains nested quantifiers, leading to exponential backtracking when processing input with a large number of newline characters. An attacker can exploit this by providing a specially crafted payload, causing high CPU usage and potential application downtime, effectively resulting in a Denial of Service (DoS) scenario.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "4.49.0",
+            "8cb522b4190bd556ce51be04942720650b1a3e57"
+          ],
+          "id": "PYSEC-2025-40",
+          "package": "transformers",
+          "references": [
+            "https://huntr.com/bounties/97b780f3-ffca-424f-ad5d-0e1c57a5bde4",
+            "https://github.com/huggingface/transformers/commit/8cb522b4190bd556ce51be04942720650b1a3e57"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2025-40",
+          "version": "4.35.2"
+        }
+      ]
+    },
+    {
+      "name": "torch",
+      "version": "2.1.1",
+      "vulns": [
+        {
+          "aliases": [
+            "BIT-pytorch-2025-2953",
+            "CVE-2025-2953"
+          ],
+          "description": "PyTorch susceptible to local Denial of Service",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.7.1-rc1"
+          ],
+          "id": "GHSA-3749-ghw9-m3mg",
+          "package": "torch",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-2953",
+            "https://github.com/pytorch/pytorch/issues/149274",
+            "https://github.com/pytorch/pytorch/issues/149274#issue-2923122269",
+            "https://github.com/pytorch/pytorch",
+            "https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models",
+            "https://vuldb.com/?ctiid.302006",
+            "https://vuldb.com/?id.302006",
+            "https://vuldb.com/?submit.521279"
+          ],
+          "severity": "low",
+          "source_id": "GHSA-3749-ghw9-m3mg",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2025-32434",
+            "CVE-2025-32434",
+            "PYSEC-2025-41"
+          ],
+          "description": "PyTorch: `torch.load` with `weights_only=True` leads to remote code execution",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.6.0"
+          ],
+          "id": "GHSA-53q9-r3pm-6pq6",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/security/advisories/GHSA-53q9-r3pm-6pq6",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-32434",
+            "https://github.com/pytorch/pytorch/commit/8d4b8a920a2172523deb95bf20e8e52d50649c04",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/torch/PYSEC-2025-41.yaml",
+            "https://github.com/pytorch/pytorch"
+          ],
+          "severity": "critical",
+          "source_id": "GHSA-53q9-r3pm-6pq6",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-31580",
+            "CVE-2024-31580",
+            "PYSEC-2024-252"
+          ],
+          "description": "PyTorch heap buffer overflow vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.2.0"
+          ],
+          "id": "GHSA-5pcm-hx3q-hm94",
+          "package": "torch",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-31580",
+            "https://github.com/pytorch/pytorch/commit/b5c3a17c2c207ebefcb85043f0cf94be9b2fef81",
+            "https://gist.github.com/1047524396/038c78f2f007345e6f497698ace2aa3d",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/torch/PYSEC-2024-252.yaml",
+            "https://github.com/pytorch/pytorch",
+            "https://security.snyk.io/vuln/SNYK-PYTHON-TORCH-6649934"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-5pcm-hx3q-hm94",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2025-3730",
+            "CVE-2025-3730"
+          ],
+          "description": "PyTorch Improper Resource Shutdown or Release vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.8.0"
+          ],
+          "id": "GHSA-887c-mr87-cxwp",
+          "package": "torch",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-3730",
+            "https://github.com/pytorch/pytorch/issues/150835",
+            "https://github.com/pytorch/pytorch/pull/150981",
+            "https://github.com/pytorch/pytorch/commit/01f226bfb8f2c343f5c614a6bbf685d91160f3af",
+            "https://github.com/timocafe/tewart-pytorch/commit/46fc5d8e360127361211cb237d5f9eef0223e567",
+            "https://github.com/pytorch/pytorch",
+            "https://vuldb.com/?ctiid.305076",
+            "https://vuldb.com/?id.305076",
+            "https://vuldb.com/?submit.553645"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-887c-mr87-cxwp",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-31583",
+            "CVE-2024-31583",
+            "PYSEC-2024-251"
+          ],
+          "description": "Pytorch use-after-free vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.2.0"
+          ],
+          "id": "GHSA-pg7h-5qx3-wjr3",
+          "package": "torch",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-31583",
+            "https://github.com/pytorch/pytorch/commit/9c7071b0e324f9fb68ab881283d6b8d388a4bcd2",
+            "https://gist.github.com/1047524396/43e19a41f2b36503a4a228c32cdbc176",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/torch/PYSEC-2024-251.yaml",
+            "https://github.com/pytorch/pytorch",
+            "https://github.com/pytorch/pytorch/blob/v2.1.2/torch/csrc/jit/mobile/interpreter.cpp#L132",
+            "https://security.snyk.io/vuln/SNYK-PYTHON-TORCH-6619806"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-pg7h-5qx3-wjr3",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-31584",
+            "CVE-2024-31584"
+          ],
+          "description": "Pytorch before v2.2.0 has an Out-of-bounds Read vulnerability via the component torch/csrc/jit/mobile/flatbuffer_loader.cpp.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.2.0",
+            "7c35874ad664e74c8e4252d67521f3986eadb0e6"
+          ],
+          "id": "PYSEC-2024-250",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/commit/7c35874ad664e74c8e4252d67521f3986eadb0e6",
+            "https://github.com/pytorch/pytorch/blob/v2.1.2/torch/csrc/jit/mobile/flatbuffer_loader.cpp#L305"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-250",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-31583",
+            "CVE-2024-31583",
+            "GHSA-pg7h-5qx3-wjr3"
+          ],
+          "description": "Pytorch before version v2.2.0 was discovered to contain a use-after-free vulnerability in torch/csrc/jit/mobile/interpreter.cpp.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.2.0",
+            "9c7071b0e324f9fb68ab881283d6b8d388a4bcd2"
+          ],
+          "id": "PYSEC-2024-251",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/commit/9c7071b0e324f9fb68ab881283d6b8d388a4bcd2",
+            "https://gist.github.com/1047524396/43e19a41f2b36503a4a228c32cdbc176",
+            "https://github.com/pytorch/pytorch/blob/v2.1.2/torch/csrc/jit/mobile/interpreter.cpp#L132"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-251",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-31580",
+            "CVE-2024-31580",
+            "GHSA-5pcm-hx3q-hm94"
+          ],
+          "description": "PyTorch before v2.2.0 was discovered to contain a heap buffer overflow vulnerability in the component /runtime/vararg_functions.cpp. This vulnerability allows attackers to cause a Denial of Service (DoS) via a crafted input.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.2.0",
+            "b5c3a17c2c207ebefcb85043f0cf94be9b2fef81"
+          ],
+          "id": "PYSEC-2024-252",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/commit/b5c3a17c2c207ebefcb85043f0cf94be9b2fef81",
+            "https://gist.github.com/1047524396/038c78f2f007345e6f497698ace2aa3d"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-252",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-48063",
+            "CVE-2024-48063"
+          ],
+          "description": "In PyTorch <=2.4.1, the RemoteModule has Deserialization RCE. NOTE: this is disputed by multiple parties because this is intended behavior in PyTorch distributed computing.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.5.0"
+          ],
+          "id": "PYSEC-2024-259",
+          "package": "torch",
+          "references": [
+            "https://rumbling-slice-eb0.notion.site/Distributed-RPC-Framework-RemoteModule-has-Deserialization-RCE-in-pytorch-pytorch-111e3cda9e8c8021a7d3cbc61ee1a20c",
+            "https://github.com/pytorch/pytorch/issues/129228",
+            "https://gist.github.com/hexian2001/c046c066895a963ecc0a2cf9e1180065",
+            "https://github.com/pytorch/pytorch/security/policy#using-distributed-features"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-259",
+          "version": "2.1.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2025-32434",
+            "CVE-2025-32434",
+            "GHSA-53q9-r3pm-6pq6"
+          ],
+          "description": "PyTorch is a Python package that provides tensor computation with strong GPU acceleration and deep neural networks built on a tape-based autograd system. In version 2.5.1 and prior, a Remote Command Execution (RCE) vulnerability exists in PyTorch when loading a model using torch.load with weights_only=True. This issue has been patched in version 2.6.0.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.6.0"
+          ],
+          "id": "PYSEC-2025-41",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/security/advisories/GHSA-53q9-r3pm-6pq6"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2025-41",
+          "version": "2.1.1"
+        }
+      ]
+    },
+    {
+      "name": "sentence-transformers",
+      "version": "2.2.2",
+      "vulns": []
+    },
+    {
+      "name": "spacy",
+      "version": "3.7.2",
+      "vulns": []
+    },
+    {
+      "name": "datasets",
+      "version": "2.14.7",
+      "vulns": []
+    },
+    {
+      "name": "nltk",
+      "version": "3.8.1",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2024-39705",
+            "PYSEC-2024-167"
+          ],
+          "description": "ntlk unsafe deserialization vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "3.9"
+          ],
+          "id": "GHSA-cgvx-9447-vcch",
+          "package": "nltk",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-39705",
+            "https://github.com/nltk/nltk/issues/2522",
+            "https://github.com/nltk/nltk/issues/3266",
+            "https://github.com/nltk/nltk/commit/441aecb7d33014bd08672232c6c8bb69c2ceaba2",
+            "https://github.com/nltk/nltk",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/nltk/PYSEC-2024-167.yaml",
+            "https://www.vicarius.io/vsociety/posts/rce-in-python-nltk-cve-2024-39705-39706"
+          ],
+          "severity": "high",
+          "source_id": "GHSA-cgvx-9447-vcch",
+          "version": "3.8.1"
+        },
+        {
+          "aliases": [
+            "CVE-2024-39705",
+            "GHSA-cgvx-9447-vcch"
+          ],
+          "description": "NLTK through 3.8.1 allows remote code execution if untrusted packages have pickled Python code, and the integrated data package download functionality is used. This affects, for example, averaged_perceptron_tagger and punkt.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "3.9"
+          ],
+          "id": "PYSEC-2024-167",
+          "package": "nltk",
+          "references": [
+            "https://github.com/nltk/nltk/issues/2522",
+            "https://github.com/nltk/nltk/issues/3266",
+            "https://www.vicarius.io/vsociety/posts/rce-in-python-nltk-cve-2024-39705-39706"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-167",
+          "version": "3.8.1"
+        }
+      ]
+    },
+    {
+      "name": "textstat",
+      "version": "0.7.3",
+      "vulns": []
+    },
+    {
+      "name": "beautifulsoup4",
+      "version": "4.12.2",
+      "vulns": []
+    },
+    {
+      "name": "newspaper3k",
+      "version": "0.2.8",
+      "vulns": []
+    },
+    {
+      "name": "requests",
+      "version": "2.31.0",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2024-47081"
+          ],
+          "description": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.32.4"
+          ],
+          "id": "GHSA-9hjg-9r4m-mvj7",
+          "package": "requests",
+          "references": [
+            "https://github.com/psf/requests/security/advisories/GHSA-9hjg-9r4m-mvj7",
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-47081",
+            "https://github.com/psf/requests/pull/6965",
+            "https://github.com/psf/requests/commit/96ba401c1296ab1dda74a2365ef36d88f7d144ef",
+            "https://github.com/psf/requests",
+            "https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env",
+            "https://seclists.org/fulldisclosure/2025/Jun/2",
+            "http://seclists.org/fulldisclosure/2025/Jun/2",
+            "http://www.openwall.com/lists/oss-security/2025/06/03/11",
+            "http://www.openwall.com/lists/oss-security/2025/06/03/9",
+            "http://www.openwall.com/lists/oss-security/2025/06/04/1",
+            "http://www.openwall.com/lists/oss-security/2025/06/04/6"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-9hjg-9r4m-mvj7",
+          "version": "2.31.0"
+        },
+        {
+          "aliases": [
+            "CVE-2024-35195"
+          ],
+          "description": "Requests `Session` object does not verify requests after making first request with verify=False",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.32.0"
+          ],
+          "id": "GHSA-9wx4-h78v-vm56",
+          "package": "requests",
+          "references": [
+            "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56",
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-35195",
+            "https://github.com/psf/requests/pull/6655",
+            "https://github.com/psf/requests/commit/a58d7f2ffb4d00b46dca2d70a3932a0b37e22fac",
+            "https://github.com/psf/requests",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/IYLSNK5TL46Q6XPRVMHVWS63MVJQOK4Q",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/N7WP6EYDSUOCOJYHDK5NX43PYZ4SNHGZ"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-9wx4-h78v-vm56",
+          "version": "2.31.0"
+        }
+      ]
+    },
+    {
+      "name": "wikipedia",
+      "version": "1.4.0",
+      "vulns": []
+    },
+    {
+      "name": "google-search-results",
+      "version": "2.4.2",
+      "vulns": []
+    },
+    {
+      "name": "asyncpg",
+      "version": "0.29.0",
+      "vulns": []
+    },
+    {
+      "name": "sqlalchemy",
+      "version": "2.0.23",
+      "vulns": []
+    },
+    {
+      "name": "structlog",
+      "version": "23.2.0",
+      "vulns": []
+    },
+    {
+      "name": "prometheus-client",
+      "version": "0.19.0",
+      "vulns": []
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.0.0",
+      "vulns": []
+    },
+    {
+      "name": "pyyaml",
+      "version": "6.0.1",
+      "vulns": []
+    },
+    {
+      "name": "numpy",
+      "version": "1.24.4",
+      "vulns": []
+    },
+    {
+      "name": "scikit-learn",
+      "version": "1.3.2",
+      "vulns": [
+        {
+          "aliases": [
+            "CVE-2024-5206",
+            "PYSEC-2024-110"
+          ],
+          "description": "scikit-learn sensitive data leakage vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "1.5.0"
+          ],
+          "id": "GHSA-jw8x-6495-233v",
+          "package": "scikit-learn",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-5206",
+            "https://github.com/scikit-learn/scikit-learn/commit/70ca21f106b603b611da73012c9ade7cd8e438b8",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/scikit-learn/PYSEC-2024-110.yaml",
+            "https://github.com/scikit-learn/scikit-learn",
+            "https://huntr.com/bounties/14bc0917-a85b-4106-a170-d09d5191517c"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-jw8x-6495-233v",
+          "version": "1.3.2"
+        },
+        {
+          "aliases": [
+            "CVE-2024-5206",
+            "GHSA-jw8x-6495-233v"
+          ],
+          "description": "A sensitive data leakage vulnerability was identified in scikit-learn's TfidfVectorizer, specifically in versions up to and including 1.4.1.post1, which was fixed in version 1.5.0. The vulnerability arises from the unexpected storage of all tokens present in the training data within the `stop_words_` attribute, rather than only storing the subset of tokens required for the TF-IDF technique to function. This behavior leads to the potential leakage of sensitive information, as the `stop_words_` attribute could contain tokens that were meant to be discarded and not stored, such as passwords or keys. The impact of this vulnerability varies based on the nature of the data being processed by the vectorizer.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "1.5.0",
+            "70ca21f106b603b611da73012c9ade7cd8e438b8"
+          ],
+          "id": "PYSEC-2024-110",
+          "package": "scikit-learn",
+          "references": [
+            "https://huntr.com/bounties/14bc0917-a85b-4106-a170-d09d5191517c",
+            "https://github.com/scikit-learn/scikit-learn/commit/70ca21f106b603b611da73012c9ade7cd8e438b8"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-110",
+          "version": "1.3.2"
+        }
+      ]
+    },
+    {
+      "name": "pandas",
+      "version": "2.1.3",
+      "vulns": []
+    },
+    {
+      "name": "redis",
+      "version": "5.0.1",
+      "vulns": []
+    },
+    {
+      "name": "python-dateutil",
+      "version": "2.8.2",
+      "vulns": []
+    }
+  ],
+  "queries": [
+    [
+      "fastapi",
+      "0.104.1"
+    ],
+    [
+      "uvicorn",
+      "0.24.0"
+    ],
+    [
+      "pydantic",
+      "2.5.0"
+    ],
+    [
+      "httpx",
+      "0.25.2"
+    ],
+    [
+      "transformers",
+      "4.35.2"
+    ],
+    [
+      "torch",
+      "2.1.1"
+    ],
+    [
+      "sentence-transformers",
+      "2.2.2"
+    ],
+    [
+      "spacy",
+      "3.7.2"
+    ],
+    [
+      "datasets",
+      "2.14.7"
+    ],
+    [
+      "nltk",
+      "3.8.1"
+    ],
+    [
+      "textstat",
+      "0.7.3"
+    ],
+    [
+      "beautifulsoup4",
+      "4.12.2"
+    ],
+    [
+      "newspaper3k",
+      "0.2.8"
+    ],
+    [
+      "requests",
+      "2.31.0"
+    ],
+    [
+      "wikipedia",
+      "1.4.0"
+    ],
+    [
+      "google-search-results",
+      "2.4.2"
+    ],
+    [
+      "asyncpg",
+      "0.29.0"
+    ],
+    [
+      "sqlalchemy",
+      "2.0.23"
+    ],
+    [
+      "structlog",
+      "23.2.0"
+    ],
+    [
+      "prometheus-client",
+      "0.19.0"
+    ],
+    [
+      "python-dotenv",
+      "1.0.0"
+    ],
+    [
+      "pyyaml",
+      "6.0.1"
+    ],
+    [
+      "numpy",
+      "1.24.4"
+    ],
+    [
+      "scikit-learn",
+      "1.3.2"
+    ],
+    [
+      "pandas",
+      "2.1.3"
+    ],
+    [
+      "redis",
+      "5.0.1"
+    ],
+    [
+      "python-dateutil",
+      "2.8.2"
+    ]
+  ],
+  "skipped": []
+}

@@ -1,0 +1,97 @@
+{
+  "dependencies": [
+    {
+      "name": "fastapi",
+      "version": "0.116.1",
+      "vulns": []
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.36.0",
+      "vulns": []
+    },
+    {
+      "name": "neo4j",
+      "version": "5.28.2",
+      "vulns": []
+    },
+    {
+      "name": "pydantic",
+      "version": "2.11.9",
+      "vulns": []
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "vulns": []
+    },
+    {
+      "name": "pytest",
+      "version": "8.4.2",
+      "vulns": []
+    },
+    {
+      "name": "pytest-cov",
+      "version": "7.0.0",
+      "vulns": []
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "1.2.0",
+      "vulns": []
+    },
+    {
+      "name": "anyio",
+      "version": "4.10.0",
+      "vulns": []
+    },
+    {
+      "name": "ruff",
+      "version": "0.13.1",
+      "vulns": []
+    }
+  ],
+  "queries": [
+    [
+      "fastapi",
+      "0.116.1"
+    ],
+    [
+      "uvicorn",
+      "0.36.0"
+    ],
+    [
+      "neo4j",
+      "5.28.2"
+    ],
+    [
+      "pydantic",
+      "2.11.9"
+    ],
+    [
+      "httpx",
+      "0.28.1"
+    ],
+    [
+      "pytest",
+      "8.4.2"
+    ],
+    [
+      "pytest-cov",
+      "7.0.0"
+    ],
+    [
+      "pytest-asyncio",
+      "1.2.0"
+    ],
+    [
+      "anyio",
+      "4.10.0"
+    ],
+    [
+      "ruff",
+      "0.13.1"
+    ]
+  ],
+  "skipped": []
+}

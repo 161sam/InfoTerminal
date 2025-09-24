@@ -1,0 +1,10 @@
+{
+  "dependencies": [],
+  "queries": [],
+  "skipped": [
+    "dbt-postgres",
+    "requests",
+    "pandas",
+    "pyarrow"
+  ]
+}

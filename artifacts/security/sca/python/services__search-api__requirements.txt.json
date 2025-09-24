@@ -1,0 +1,168 @@
+{
+  "dependencies": [
+    {
+      "name": "sentence-transformers",
+      "version": "2.2.2",
+      "vulns": []
+    },
+    {
+      "name": "torch",
+      "version": "2.3.1",
+      "vulns": [
+        {
+          "aliases": [
+            "BIT-pytorch-2025-2953",
+            "CVE-2025-2953"
+          ],
+          "description": "PyTorch susceptible to local Denial of Service",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.7.1-rc1"
+          ],
+          "id": "GHSA-3749-ghw9-m3mg",
+          "package": "torch",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-2953",
+            "https://github.com/pytorch/pytorch/issues/149274",
+            "https://github.com/pytorch/pytorch/issues/149274#issue-2923122269",
+            "https://github.com/pytorch/pytorch",
+            "https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models",
+            "https://vuldb.com/?ctiid.302006",
+            "https://vuldb.com/?id.302006",
+            "https://vuldb.com/?submit.521279"
+          ],
+          "severity": "low",
+          "source_id": "GHSA-3749-ghw9-m3mg",
+          "version": "2.3.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2025-32434",
+            "CVE-2025-32434",
+            "PYSEC-2025-41"
+          ],
+          "description": "PyTorch: `torch.load` with `weights_only=True` leads to remote code execution",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.6.0"
+          ],
+          "id": "GHSA-53q9-r3pm-6pq6",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/security/advisories/GHSA-53q9-r3pm-6pq6",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-32434",
+            "https://github.com/pytorch/pytorch/commit/8d4b8a920a2172523deb95bf20e8e52d50649c04",
+            "https://github.com/pypa/advisory-database/tree/main/vulns/torch/PYSEC-2025-41.yaml",
+            "https://github.com/pytorch/pytorch"
+          ],
+          "severity": "critical",
+          "source_id": "GHSA-53q9-r3pm-6pq6",
+          "version": "2.3.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2025-3730",
+            "CVE-2025-3730"
+          ],
+          "description": "PyTorch Improper Resource Shutdown or Release vulnerability",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.8.0"
+          ],
+          "id": "GHSA-887c-mr87-cxwp",
+          "package": "torch",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-3730",
+            "https://github.com/pytorch/pytorch/issues/150835",
+            "https://github.com/pytorch/pytorch/pull/150981",
+            "https://github.com/pytorch/pytorch/commit/01f226bfb8f2c343f5c614a6bbf685d91160f3af",
+            "https://github.com/timocafe/tewart-pytorch/commit/46fc5d8e360127361211cb237d5f9eef0223e567",
+            "https://github.com/pytorch/pytorch",
+            "https://vuldb.com/?ctiid.305076",
+            "https://vuldb.com/?id.305076",
+            "https://vuldb.com/?submit.553645"
+          ],
+          "severity": "medium",
+          "source_id": "GHSA-887c-mr87-cxwp",
+          "version": "2.3.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2024-48063",
+            "CVE-2024-48063"
+          ],
+          "description": "In PyTorch <=2.4.1, the RemoteModule has Deserialization RCE. NOTE: this is disputed by multiple parties because this is intended behavior in PyTorch distributed computing.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.5.0"
+          ],
+          "id": "PYSEC-2024-259",
+          "package": "torch",
+          "references": [
+            "https://rumbling-slice-eb0.notion.site/Distributed-RPC-Framework-RemoteModule-has-Deserialization-RCE-in-pytorch-pytorch-111e3cda9e8c8021a7d3cbc61ee1a20c",
+            "https://github.com/pytorch/pytorch/issues/129228",
+            "https://gist.github.com/hexian2001/c046c066895a963ecc0a2cf9e1180065",
+            "https://github.com/pytorch/pytorch/security/policy#using-distributed-features"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2024-259",
+          "version": "2.3.1"
+        },
+        {
+          "aliases": [
+            "BIT-pytorch-2025-32434",
+            "CVE-2025-32434",
+            "GHSA-53q9-r3pm-6pq6"
+          ],
+          "description": "PyTorch is a Python package that provides tensor computation with strong GPU acceleration and deep neural networks built on a tape-based autograd system. In version 2.5.1 and prior, a Remote Command Execution (RCE) vulnerability exists in PyTorch when loading a model using torch.load with weights_only=True. This issue has been patched in version 2.6.0.",
+          "ecosystem": "python",
+          "fix_versions": [
+            "2.6.0"
+          ],
+          "id": "PYSEC-2025-41",
+          "package": "torch",
+          "references": [
+            "https://github.com/pytorch/pytorch/security/advisories/GHSA-53q9-r3pm-6pq6"
+          ],
+          "severity": "unknown",
+          "source_id": "PYSEC-2025-41",
+          "version": "2.3.1"
+        }
+      ]
+    },
+    {
+      "name": "torchvision",
+      "version": "0.18.1",
+      "vulns": []
+    }
+  ],
+  "queries": [
+    [
+      "sentence-transformers",
+      "2.2.2"
+    ],
+    [
+      "torch",
+      "2.3.1"
+    ],
+    [
+      "torchvision",
+      "0.18.1"
+    ]
+  ],
+  "skipped": [
+    "fastapi>=0.111",
+    "uvicorn>=0.30",
+    "opensearch-py>=2.5",
+    "python-jose[cryptography]>=3.3",
+    "httpx>=0.27",
+    "cachetools>=5.3",
+    "numpy>=1.24",
+    "prometheus-client==0.20.*",
+    "starlette-exporter==0.15.*",
+    "opentelemetry-sdk",
+    "opentelemetry-instrumentation-fastapi",
+    "opentelemetry-exporter-otlp",
+    "opentelemetry-instrumentation-requests"
+  ]
+}

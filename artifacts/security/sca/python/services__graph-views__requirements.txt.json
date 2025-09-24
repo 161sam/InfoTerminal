@@ -1,0 +1,8 @@
+{
+  "dependencies": [],
+  "queries": [],
+  "skipped": [
+    "weasyprint",
+    "markdown"
+  ]
+}
