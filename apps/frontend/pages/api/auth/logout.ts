@@ -1,49 +1,44 @@
-// pages/api/auth/logout.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:8080";
+import {
+  clearAuthCookies,
+  ensureNoCache,
+  getClientId,
+  getOidcMetadata,
+  getRedirectUri,
+} from "@/server/oidc";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const authToken = req.cookies.auth_token;
+    clearAuthCookies(res);
+    ensureNoCache(res);
 
-    if (authToken) {
-      // Notify auth service about logout
+    let endSessionUrl: string | null = null;
+    const { idToken } = (req.body as { idToken?: string }) || {};
+
+    if (idToken) {
       try {
-        await fetch(`${AUTH_SERVICE_URL}/auth/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-            "X-Request-ID": generateRequestId(),
-          },
-        });
+        const metadata = await getOidcMetadata();
+        if (metadata.end_session_endpoint) {
+          const params = new URLSearchParams({
+            id_token_hint: idToken,
+            post_logout_redirect_uri: getRedirectUri(),
+            client_id: getClientId(),
+          });
+          endSessionUrl = `${metadata.end_session_endpoint}?${params.toString()}`;
+        }
       } catch (error) {
-        // Continue with logout even if service call fails
-        console.error("Auth service logout error:", error);
+        console.warn("Failed to resolve OIDC end session endpoint", error);
       }
     }
 
-    // Clear cookies
-    const isProduction = process.env.NODE_ENV === "production";
-    const domain = process.env.COOKIE_DOMAIN;
-
-    res.setHeader("Set-Cookie", [
-      `auth_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict${isProduction ? "; Secure" : ""}${domain ? `; Domain=${domain}` : ""}`,
-      `refresh_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict${isProduction ? "; Secure" : ""}${domain ? `; Domain=${domain}` : ""}`,
-    ]);
-
-    return res.status(200).json({ success: true, message: "Logged out successfully" });
-  } catch (error) {
-    console.error("Logout error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(200).json({ success: true, endSessionUrl });
+  } catch (error: any) {
+    console.error("Logout handler failed", error);
+    return res.status(500).json({ error: error?.message || "Logout failed" });
   }
-}
-
-function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }

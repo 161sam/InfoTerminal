@@ -230,27 +230,23 @@ function PluginCard({
         <div className="space-y-3 pt-2 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={enabled}
-                  onChange={(e) => handleToggle(e.target.checked)}
-                  disabled={isUpdating}
-                  className="sr-only"
+              <button
+                type="button"
+                role="switch"
+                aria-checked={enabled}
+                aria-label={`Toggle ${plugin.name}`}
+                onClick={() => handleToggle(!enabled)}
+                disabled={isUpdating}
+                className={`w-11 h-6 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
+                  enabled ? "bg-primary-600" : "bg-gray-200 dark:bg-gray-700"
+                } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+              >
+                <span
+                  className={`block w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${
+                    enabled ? "translate-x-6" : "translate-x-1"
+                  } mt-1`}
                 />
-                <div
-                  onClick={() => !isUpdating && handleToggle(!enabled)}
-                  className={`w-11 h-6 rounded-full cursor-pointer transition-colors ${
-                    enabled ? "bg-primary-600" : "bg-gray-200 dark:bg-gray-700"
-                  } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
-                >
-                  <div
-                    className={`w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${
-                      enabled ? "translate-x-6" : "translate-x-1"
-                    } mt-1`}
-                  />
-                </div>
-              </div>
+              </button>
               <span className="text-sm text-gray-600 dark:text-slate-400">
                 {enabled ? "Enabled" : "Disabled"}
               </span>

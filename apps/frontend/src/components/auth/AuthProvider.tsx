@@ -1,24 +1,45 @@
 // apps/frontend/src/components/auth/AuthProvider.tsx
-import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useNotifications } from "@/lib/notifications";
+import type { User } from "@/types/auth";
+import {
+  clearOidcRequest,
+  generatePkcePair,
+  generateState,
+  storeOidcRequest,
+} from "@/lib/oidc/client";
+import { Loader2, ShieldCheck } from "lucide-react";
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  roles: string[];
-  permissions: string[];
-  preferences?: Record<string, any>;
+const AUTH_REQUIRED =
+  process.env.NEXT_PUBLIC_AUTH_REQUIRED === "1" ||
+  process.env.NEXT_PUBLIC_AUTH_REQUIRED?.toLowerCase() === "true";
+
+const GUEST_USER: User = {
+  id: "guest",
+  email: "guest@local",
+  name: "Guest",
+  roles: ["guest"],
+  permissions: [],
+};
+
+const REFRESH_MARGIN_SECONDS = 60;
+
+interface SessionPayload {
+  accessToken: string;
+  expiresIn: number;
+  idToken?: string | null;
+  user?: User | null;
 }
 
 export interface AuthContextType {
   user: User | null;
+  accessToken: string | null;
+  idToken: string | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  login: (returnTo?: string) => Promise<void>;
+  completeLogin: (session: SessionPayload) => void;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
   hasRole: (role: string) => boolean;
@@ -27,149 +48,246 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const initialUser = AUTH_REQUIRED ? null : GUEST_USER;
+
+const logMissingProvider = () => {
+  if (process.env.NODE_ENV !== "production") {
+    console.warn("useAuth called outside of AuthProvider – returning guest session");
+  }
+};
+
+const defaultAuthContext: AuthContextType = {
+  user: initialUser,
+  accessToken: null,
+  idToken: null,
+  loading: false,
+  isAuthenticated: Boolean(initialUser),
+  login: async () => {
+    logMissingProvider();
+  },
+  completeLogin: () => {
+    logMissingProvider();
+  },
+  logout: async () => {
+    logMissingProvider();
+  },
+  refreshToken: async () => {
+    logMissingProvider();
+  },
+  hasRole: () => false,
+  hasPermission: () => false,
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(initialUser);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [idToken, setIdToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(AUTH_REQUIRED);
   const router = useRouter();
   const notifications = useNotifications();
 
-  // Check if user is authenticated on mount
-  useEffect(() => {
-    checkAuth();
+  const refreshTimer = useRef<NodeJS.Timeout | null>(null);
+  const refreshSessionRef = useRef<() => Promise<void>>(async () => Promise.resolve());
+
+  const clearSession = useCallback(() => {
+    if (refreshTimer.current) {
+      clearTimeout(refreshTimer.current);
+      refreshTimer.current = null;
+    }
+    setAccessToken(null);
+    setIdToken(null);
+    setUser(AUTH_REQUIRED ? null : GUEST_USER);
+    setLoading(false);
   }, []);
 
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("/api/auth/me", {
-        method: "GET",
-        credentials: "include",
-      });
+  const scheduleRefresh = useCallback((expiresIn: number) => {
+    if (!AUTH_REQUIRED) return;
+    if (!expiresIn || Number.isNaN(expiresIn)) return;
+    if (refreshTimer.current) {
+      clearTimeout(refreshTimer.current);
+    }
+    const delaySeconds = Math.max(expiresIn - REFRESH_MARGIN_SECONDS, 30);
+    refreshTimer.current = setTimeout(() => {
+      refreshSessionRef.current().catch((error) => console.warn("Token refresh failed", error));
+    }, delaySeconds * 1000);
+  }, []);
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-    } finally {
+  const applySession = useCallback(
+    (session: SessionPayload) => {
+      setAccessToken(session.accessToken);
+      setIdToken(session.idToken ?? null);
+      setUser(session.user ?? null);
       setLoading(false);
-    }
-  };
+      scheduleRefresh(session.expiresIn);
+      clearOidcRequest();
+    },
+    [scheduleRefresh],
+  );
 
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Login failed");
-      }
-
-      const data = await response.json();
-
-      // Handle MFA requirement
-      if (data.requires_mfa) {
-        throw new Error("MFA_REQUIRED");
-      }
-
-      setUser(data.user);
-
-      notifications.success(
-        "Welcome back!",
-        `Logged in as ${data.user.display_name || data.user.email}`,
-      );
-
-      // Redirect to intended page or dashboard
-      const returnTo = (router.query.returnTo as string) || "/";
-      router.push(returnTo);
-    } catch (error: any) {
-      notifications.error("Login Failed", error.message);
-      throw error;
-    }
-  };
-
-  const register = async (email: string, password: string, name: string) => {
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, first_name: name }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Registration failed");
-      }
-
-      const data = await response.json();
-
-      setUser(data.user);
-
-      notifications.success("Welcome!", "Your account has been created successfully");
-      router.push("/");
-    } catch (error: any) {
-      notifications.error("Registration Failed", error.message);
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      setUser(null);
-      router.push("/login");
-      notifications.info("Logged out", "You have been signed out");
-    }
-  };
-
-  const refreshToken = async () => {
+  const refreshToken = useCallback(async () => {
+    if (!AUTH_REQUIRED) return;
     try {
       const response = await fetch("/api/auth/refresh", {
         method: "POST",
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
       });
 
-      if (!response.ok) throw new Error("Token refresh failed");
+      if (!response.ok) {
+        if (response.status === 401) {
+          clearSession();
+        }
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody?.error || "Token refresh failed");
+      }
 
-      // Tokens are automatically updated in cookies by the API route
       const data = await response.json();
-      return data;
+      applySession(data);
     } catch (error) {
       console.error("Token refresh failed:", error);
-      logout();
+      clearSession();
     }
-  };
+  }, [applySession, clearSession]);
 
-  const hasRole = (role: string) => {
-    return user?.roles.includes(role) || false;
-  };
+  refreshSessionRef.current = refreshToken;
 
-  const hasPermission = (permission: string) => {
-    return user?.permissions.includes(permission) || false;
-  };
+  const checkAuth = useCallback(async () => {
+    if (!AUTH_REQUIRED) {
+      setUser(GUEST_USER);
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await fetch("/api/auth/session", {
+        method: "GET",
+        credentials: "include",
+      });
 
-  const value = {
+      if (!response.ok) {
+        clearSession();
+        return;
+      }
+
+      const data = await response.json();
+      applySession(data);
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      clearSession();
+    }
+  }, [applySession, clearSession]);
+
+  useEffect(() => {
+    checkAuth();
+    return () => {
+      if (refreshTimer.current) {
+        clearTimeout(refreshTimer.current);
+      }
+    };
+  }, [checkAuth]);
+
+  const login = useCallback(
+    async (returnTo?: string) => {
+      if (!AUTH_REQUIRED) {
+        const target = returnTo || router.asPath || "/";
+        router.push(target);
+        return;
+      }
+      if (typeof window === "undefined") return;
+
+      try {
+        const response = await fetch("/api/auth/oidc/config");
+        if (!response.ok) {
+          throw new Error("Failed to load OIDC configuration");
+        }
+        const config = await response.json();
+        const { codeVerifier, codeChallenge } = await generatePkcePair();
+        const state = generateState();
+        const redirectUri = config.redirectUri as string;
+
+        storeOidcRequest({
+          codeVerifier,
+          state,
+          returnTo: returnTo || router.asPath,
+        });
+
+        const params = new URLSearchParams({
+          response_type: "code",
+          client_id: config.clientId,
+          redirect_uri: redirectUri,
+          scope: config.scope || "openid profile email",
+          code_challenge: codeChallenge,
+          code_challenge_method: "S256",
+          state,
+        });
+
+        const authorizationEndpoint =
+          config.authorizationEndpoint || `${config.issuer}/protocol/openid-connect/auth`;
+
+        window.location.href = `${authorizationEndpoint}?${params.toString()}`;
+      } catch (error: any) {
+        console.error("Failed to start login", error);
+        notifications.error("Login failed", error?.message || "Unable to start login flow");
+        clearOidcRequest();
+      }
+    },
+    [notifications, router],
+  );
+
+  const completeLogin = useCallback(
+    (session: SessionPayload) => {
+      applySession(session);
+    },
+    [applySession],
+  );
+
+  const logout = useCallback(async () => {
+    if (typeof window === "undefined") return;
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ idToken }),
+      });
+      const data = response.ok ? await response.json() : null;
+      clearSession();
+      notifications.info("Logged out", "You have been signed out");
+      if (data?.endSessionUrl) {
+        window.location.href = data.endSessionUrl as string;
+        return;
+      }
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      clearSession();
+      router.push("/login");
+    } finally {
+      clearOidcRequest();
+    }
+  }, [idToken, clearSession, notifications, router]);
+
+  const hasRole = useCallback(
+    (role: string) => {
+      return Boolean(user?.roles?.includes(role));
+    },
+    [user?.roles],
+  );
+
+  const hasPermission = useCallback(
+    (permission: string) => {
+      return Boolean(user?.permissions?.includes(permission));
+    },
+    [user?.permissions],
+  );
+
+  const value: AuthContextType = {
     user,
+    accessToken,
+    idToken,
     loading,
     isAuthenticated: !!user,
     login,
-    register,
+    completeLogin,
     logout,
     refreshToken,
     hasRole,
@@ -182,474 +300,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    return defaultAuthContext;
   }
   return context;
 }
 
-// Login Form Component
-import { ArrowRight, Loader2 } from "lucide-react";
-import { Form, EmailInput, PasswordInput, useForm } from "@/components/forms/FormComponents";
-
 export function LoginForm() {
   const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [starting, setStarting] = useState(false);
 
-  const { values, errors, touched, setValue, setFieldTouched, validateAll } = useForm(
-    { email: "", password: "" },
-    {
-      email: [
-        { type: "required" },
-        {
-          type: "regex",
-          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          message: "Invalid email address",
-        },
-      ],
-      password: [
-        { type: "required" },
-        {
-          type: "custom",
-          validate: (v) =>
-            typeof v === "string" && v.length >= 8 ? true : "Minimum length is 8 characters",
-        },
-      ],
-    },
-  );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateAll()) return;
-
-    setIsLoading(true);
+  const handleLogin = async () => {
     try {
-      await login(values.email, values.password);
-    } catch (error) {
-      // Error handled by AuthProvider
+      setStarting(true);
+      await login();
     } finally {
-      setIsLoading(false);
+      setStarting(false);
     }
   };
 
   return (
     <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Sign In</h2>
-        <p className="text-gray-600 dark:text-gray-400">Welcome back to InfoTerminal</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Sign in</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Use your organisation single sign-on to access InfoTerminal.
+        </p>
       </div>
 
-      <Form onSubmit={handleSubmit}>
-        <EmailInput
-          label="Email Address"
-          name="email"
-          value={values.email}
-          onChange={(value) => setValue("email", value)}
-          onBlur={() => setFieldTouched("email")}
-          error={touched.email ? errors.email : null}
-          placeholder="Enter your email"
-          required
-        />
-
-        <PasswordInput
-          label="Password"
-          name="password"
-          value={values.password}
-          onChange={(value) => setValue("password", value)}
-          onBlur={() => setFieldTouched("password")}
-          error={touched.password ? errors.password : null}
-          placeholder="Enter your password"
-          required
-        />
-
-        <div className="flex items-center justify-between">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-            />
-            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
-          </label>
-
-          <button
-            type="button"
-            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500"
-          >
-            Forgot password?
-          </button>
-        </div>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 size={18} className="animate-spin" />
-              Signing in...
-            </>
-          ) : (
-            <>
-              Sign In
-              <ArrowRight size={18} />
-            </>
-          )}
-        </button>
-
-        <div className="text-center">
-          <span className="text-sm text-gray-600 dark:text-gray-400">Don't have an account? </span>
-          <button
-            type="button"
-            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium"
-          >
-            Sign up
-          </button>
-        </div>
-      </Form>
-    </div>
-  );
-}
-
-// Register Form Component
-export function RegisterForm() {
-  const { register } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { values, errors, touched, setValue, setFieldTouched, validateAll } = useForm(
-    { name: "", email: "", password: "", confirmPassword: "" },
-    {
-      name: [
-        { type: "required" },
-        {
-          type: "custom",
-          validate: (v) =>
-            typeof v === "string" && v.length >= 2 ? true : "Minimum length is 2 characters",
-        },
-      ],
-      email: [
-        { type: "required" },
-        {
-          type: "regex",
-          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          message: "Invalid email address",
-        },
-      ],
-      password: [
-        { type: "required" },
-        {
-          type: "custom",
-          validate: (v) =>
-            typeof v === "string" && v.length >= 8 ? true : "Minimum length is 8 characters",
-        },
-      ],
-      confirmPassword: [
-        { type: "required" },
-        {
-          type: "custom",
-          validate: (v, form) => (v === (form as any)?.password ? true : "Passwords do not match"),
-        },
-      ],
-    },
-  );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateAll()) return;
-
-    setIsLoading(true);
-    try {
-      await register(values.email, values.password, values.name);
-    } catch (error) {
-      // Error handled by AuthProvider
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Create Account</h2>
-        <p className="text-gray-600 dark:text-gray-400">Join InfoTerminal today</p>
-      </div>
-
-      <Form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Full Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={values.name}
-              onChange={(e) => setValue("name", e.target.value)}
-              onBlur={() => setFieldTouched("name")}
-              placeholder="Enter your full name"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-            />
-            {touched.name && errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-            )}
-          </div>
-
-          <EmailInput
-            label="Email Address"
-            name="email"
-            value={values.email}
-            onChange={(value) => setValue("email", value)}
-            onBlur={() => setFieldTouched("email")}
-            error={touched.email ? errors.email : null}
-            placeholder="Enter your email"
-            required
-          />
-
-          <PasswordInput
-            label="Password"
-            name="password"
-            value={values.password}
-            onChange={(value) => setValue("password", value)}
-            onBlur={() => setFieldTouched("password")}
-            error={touched.password ? errors.password : null}
-            placeholder="Create a password"
-            helpText="At least 8 characters"
-            required
-          />
-
-          <PasswordInput
-            label="Confirm Password"
-            name="confirmPassword"
-            value={values.confirmPassword}
-            onChange={(value) => setValue("confirmPassword", value)}
-            onBlur={() => setFieldTouched("confirmPassword")}
-            error={touched.confirmPassword ? errors.confirmPassword : null}
-            placeholder="Confirm your password"
-            required
-          />
-        </div>
-
-        <div className="flex items-start gap-3">
-          <input
-            type="checkbox"
-            required
-            className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-          />
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            I agree to the{" "}
-            <button
-              type="button"
-              className="text-primary-600 dark:text-primary-400 hover:text-primary-500"
-            >
-              Terms of Service
-            </button>{" "}
-            and{" "}
-            <button
-              type="button"
-              className="text-primary-600 dark:text-primary-400 hover:text-primary-500"
-            >
-              Privacy Policy
-            </button>
-          </span>
-        </div>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 size={18} className="animate-spin" />
-              Creating account...
-            </>
-          ) : (
-            <>
-              Create Account
-              <ArrowRight size={18} />
-            </>
-          )}
-        </button>
-
-        <div className="text-center">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{" "}
-          </span>
-          <button
-            type="button"
-            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium"
-          >
-            Sign in
-          </button>
-        </div>
-      </Form>
-    </div>
-  );
-}
-
-// Auth Guard Component
-interface AuthGuardProps {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-  requireRoles?: string[];
-  requirePermissions?: string[];
-}
-
-export function AuthGuard({
-  children,
-  fallback,
-  requireRoles = [],
-  requirePermissions = [],
-}: AuthGuardProps) {
-  const { user, loading, isAuthenticated, hasRole, hasPermission } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push(`/login?returnTo=${encodeURIComponent(router.asPath)}`);
-    }
-  }, [loading, isAuthenticated, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <Loader2 size={24} className="animate-spin text-primary-600" />
-          <span className="text-gray-600">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return fallback || null;
-  }
-
-  // Check role requirements
-  if (requireRoles.length > 0 && !requireRoles.some((role) => hasRole(role))) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
-          <p className="text-gray-600">You don't have permission to access this page.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Check permission requirements
-  if (
-    requirePermissions.length > 0 &&
-    !requirePermissions.some((permission) => hasPermission(permission))
-  ) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
-          <p className="text-gray-600">You don't have permission to access this page.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-}
-
-// User Profile Dropdown
-import { Fragment } from "react";
-import { User as UserIcon, Settings, LogOut, Shield } from "lucide-react";
-
-export function UserProfileDropdown() {
-  const { user, logout } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  if (!user) return null;
-
-  return (
-    <div ref={dropdownRef} className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        type="button"
+        onClick={handleLogin}
+        disabled={starting}
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {user.avatar ? (
-          <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+        {starting ? (
+          <>
+            <Loader2 size={18} className="animate-spin" />
+            Redirecting…
+          </>
         ) : (
-          <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
-            <UserIcon size={16} className="text-white" />
-          </div>
+          <>
+            <ShieldCheck size={18} />
+            Continue with SSO
+          </>
         )}
-        <div className="text-left">
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
-        </div>
       </button>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
-            {user.roles.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {user.roles.map((role) => (
-                  <span
-                    key={role}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-100 dark:bg-primary-900/20 text-primary-800 dark:text-primary-300 text-xs rounded-full"
-                  >
-                    <Shield size={10} />
-                    {role}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              // Navigate to profile
-            }}
-            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <UserIcon size={16} />
-            Profile
-          </button>
-
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              // Navigate to settings
-            }}
-            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <Settings size={16} />
-            Settings
-          </button>
-
-          <hr className="border-gray-200 dark:border-gray-700 my-1" />
-
-          <button
-            onClick={logout}
-            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-          >
-            <LogOut size={16} />
-            Sign out
-          </button>
-        </div>
-      )}
     </div>
   );
 }
+
+export function RegisterForm() {
+  return (
+    <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center space-y-4">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Provisioned by your administrator
+      </h2>
+      <p className="text-gray-600 dark:text-gray-400">
+        Accounts are managed centrally via the identity provider. Contact your platform
+        administrator to request access or role updates.
+      </p>
+    </div>
+  );
+}
+
+export type { SessionPayload as AuthSessionPayload };

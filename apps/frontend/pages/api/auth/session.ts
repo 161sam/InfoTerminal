@@ -7,16 +7,15 @@ import {
 } from "@/server/oidc";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+  if (req.method !== "GET") {
+    res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   const refreshToken = req.cookies?.refresh_token;
-
   if (!refreshToken) {
     ensureNoCache(res);
-    return res.status(401).json({ error: "No refresh token" });
+    return res.status(401).json({ error: "Not authenticated" });
   }
 
   try {
@@ -29,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (status === 401) {
       clearAuthCookies(res);
     }
-    const responseBody = error?.payload || { error: error?.message || "Token refresh failed" };
+    const responseBody = error?.payload || { error: error?.message || "Session restore failed" };
     return res.status(status).json(responseBody);
   }
 }

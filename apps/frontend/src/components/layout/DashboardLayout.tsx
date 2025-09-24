@@ -97,6 +97,8 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                 type="button"
                 className={buttonStyles.mobileMenu}
                 aria-label="Open sidebar"
+                aria-controls="mobile-sidebar"
+                aria-expanded={sidebarOpen}
                 onClick={() => setSidebarOpen(true)}
               >
                 <Menu size={20} />
@@ -154,6 +156,8 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
     { name: "threat-intelligence", displayName: "Threat Intelligence" },
   ]);
 
+  const resolvedPath = typeof currentPath === "string" ? currentPath : "";
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -180,9 +184,9 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {items.map((item) => {
           const isActive =
-            currentPath === item.href ||
-            (item.subItems && item.subItems.some((sub) => currentPath.startsWith(sub.href)));
-          const cp = currentPath;
+            resolvedPath === item.href ||
+            (item.subItems && item.subItems.some((sub) => resolvedPath.startsWith(sub.href ?? "")));
+          const cp = resolvedPath;
 
           // Special handling for plugins
           if (item.key === "plugins") {
