@@ -213,6 +213,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 - **Evidence**:
   - OPA policies and tests exist under `policy/`. 【F:policy/README.md†L1-L80】【F:policy/tests/rbac_test.rego†L1-L80】
   - Egress gateway supports proxy rotation endpoints. 【F:services/egress-gateway/app.py†L120-L210】
+  - SCA gate `vuln_policy_sca` auditiert alle Python/Node-Abhängigkeiten via `scripts/run_vuln_policy_sca.py`; die CI kommentiert `artifacts/security/sca/pr_comment.md` und der aktuelle Report verzeichnet 5 kritische/25 hohe Findings. Ablauf & Bedienung sind in `docs/security/vulnerability_scanning.md` dokumentiert. 【F:scripts/run_vuln_policy_sca.py†L1-L486】【F:artifacts/security/sca/sca_summary.json†L1-L40】【F:docs/security/vulnerability_scanning.md†L1-L80】
 - **Gaps**:
   - Threat model doc missing; no automated backup verification scripts.
 - **DoD Checklist**:

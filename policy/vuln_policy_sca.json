@@ -1,0 +1,4 @@
+{
+  "fail_threshold": "high",
+  "warn_threshold": "medium"
+}

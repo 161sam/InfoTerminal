@@ -1,0 +1,20 @@
+{
+  "dependencies": [],
+  "queries": [],
+  "skipped": [
+    "fastapi>=0.116",
+    "uvicorn[standard]>=0.30",
+    "pydantic",
+    "starlette-exporter>=0.15",
+    "spacy>=3.4",
+    "transformers",
+    "torch",
+    "rapidfuzz>=3.9",
+    "opentelemetry-sdk>=1.26.0",
+    "opentelemetry-exporter-otlp>=1.26.0",
+    "opentelemetry-instrumentation-fastapi>=0.46b0",
+    "opentelemetry-instrumentation-requests>=0.46b0",
+    "opentelemetry-instrumentation-logging>=0.46b0",
+    "prometheus-client>=0.20"
+  ]
+}
