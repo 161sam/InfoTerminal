@@ -4,6 +4,10 @@
   "main": "index.ts",
   "engines": { "node": ">=20" },
   "dependencies": {
+    "@opentelemetry/auto-instrumentations-node": "^0.51.1",
+    "@opentelemetry/exporter-jaeger": "^0.51.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.51.1",
+    "@opentelemetry/sdk-node": "^0.51.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.3.1",

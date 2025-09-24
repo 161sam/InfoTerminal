@@ -23,6 +23,7 @@ def setup_otel(app: FastAPI, service_name: str, version: Optional[str] = None) -
     os.environ.setdefault("OTEL_TRACES_SAMPLER", "parentbased_traceidratio")
     os.environ.setdefault("OTEL_TRACES_SAMPLER_ARG", "0.1")
     os.environ.setdefault("OTEL_SERVICE_NAME", service_name)
+    os.environ.setdefault("OTEL_PROPAGATORS", "tracecontext,baggage")
 
     try:
         from opentelemetry import trace
@@ -32,7 +33,7 @@ def setup_otel(app: FastAPI, service_name: str, version: Optional[str] = None) -
         from opentelemetry.instrumentation.requests import RequestsInstrumentor
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
-        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
         from opentelemetry.sdk.trace.sampling import ParentBased, TraceIdRatioBased
     except Exception as exc:  # pragma: no cover - optional dependency
         logging.getLogger(__name__).warning("opentelemetry not available: %s", exc)
@@ -51,10 +52,34 @@ def setup_otel(app: FastAPI, service_name: str, version: Optional[str] = None) -
     ratio = float(os.getenv("OTEL_TRACES_SAMPLER_ARG", "0.1"))
     sampler = ParentBased(TraceIdRatioBased(ratio))
     provider = TracerProvider(resource=resource, sampler=sampler)
-    exporter = OTLPSpanExporter(
-        endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
-        protocol=os.getenv("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf"),
-    )
+
+    exporter: SpanExporter
+    exporter_type = os.getenv("IT_OTEL_EXPORTER", "otlp").lower()
+    if exporter_type == "jaeger":
+        try:
+            from opentelemetry.exporter.jaeger.thrift import JaegerExporter  # type: ignore
+
+            exporter = JaegerExporter(
+                collector_endpoint=os.getenv(
+                    "OTEL_EXPORTER_JAEGER_ENDPOINT",
+                    "http://jaeger:14268/api/traces",
+                ),
+                username=os.getenv("OTEL_EXPORTER_JAEGER_USER"),
+                password=os.getenv("OTEL_EXPORTER_JAEGER_PASSWORD"),
+            )
+        except Exception as exc:  # pragma: no cover - optional dependency
+            logging.getLogger(__name__).warning(
+                "jaeger exporter not available, falling back to otlp: %s", exc
+            )
+            exporter = OTLPSpanExporter(
+                endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+                protocol=os.getenv("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf"),
+            )
+    else:
+        exporter = OTLPSpanExporter(
+            endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+            protocol=os.getenv("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf"),
+        )
     provider.add_span_processor(BatchSpanProcessor(exporter))
     trace.set_tracer_provider(provider)
 

@@ -24,6 +24,27 @@
       "targets": [
         { "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m]))", "datasource": "Prometheus" }
       ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Trace p95 latency",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(tempo_spanmetrics_latency_bucket{service=\"gateway\"}[5m])) by (le))",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top endpoints (spans/min)",
+      "targets": [
+        {
+          "expr": "topk(5, sum(rate(tempo_spanmetrics_spans_total{service=\"gateway\"}[5m])) by (span_name))",
+          "datasource": "Prometheus"
+        }
+      ],
+      "transformations": []
     }
   ]
 }

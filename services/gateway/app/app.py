@@ -1,3 +1,4 @@
+import asyncio
 import os
 import json
 import time
@@ -8,8 +9,56 @@ import httpx
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import registry as prom_registry
 from .auth import auth_context
 from _shared.audit import audit_log
+
+try:  # Optional: shared setup may not be available during tests
+    from _shared.obs.otel_boot import setup_otel
+except Exception:  # pragma: no cover - fallback for local tooling
+    def setup_otel(*_args, **_kwargs):
+        return None
+
+
+def _current_trace_ids() -> tuple[str | None, str | None]:
+    """Return the formatted trace and span identifiers if a span is active."""
+
+    try:
+        from opentelemetry.trace import get_current_span  # type: ignore
+
+        span = get_current_span()
+        ctx = span.get_span_context()
+        if not getattr(ctx, "trace_id", 0):
+            return None, None
+        trace_id = f"{ctx.trace_id:032x}"
+        span_id = f"{ctx.span_id:016x}" if getattr(ctx, "span_id", 0) else None
+        return trace_id, span_id
+    except Exception:  # pragma: no cover - otel optional
+        return None, None
+
+
+def _w3c_propagation_headers(request: Request) -> dict[str, str]:
+    """Extract W3C propagation headers from the inbound request."""
+
+    headers: dict[str, str] = {}
+    traceparent = request.headers.get("traceparent")
+    tracestate = request.headers.get("tracestate")
+    if traceparent:
+        headers["traceparent"] = traceparent
+    if tracestate:
+        headers["tracestate"] = tracestate
+    return headers
+
+
+def _parse_traceparent(traceparent: str | None) -> tuple[str | None, str | None]:
+    if not traceparent:
+        return None, None
+    parts = traceparent.split("-")
+    if len(parts) >= 3:
+        trace_id = parts[1] if len(parts[1]) == 32 else None
+        span_id = parts[2] if len(parts[2]) == 16 else None
+        return trace_id, span_id
+    return None, None
 
 AUTH_REQUIRED = os.getenv("IT_AUTH_REQUIRED", "0") == "1"
 TENANCY_MODE = os.getenv("IT_TENANCY_MODE", "single")
@@ -19,16 +68,37 @@ CUTOFF = os.getenv("IT_DEPRECATION_CUTOFF_DATE", "")
 OPA_URL = os.getenv("OPA_URL", "")
 SENSITIVE_PREFIXES = ["/plugins/invoke", "/graph-api/alg"]
 
+def _metric_registry():
+    return getattr(prom_registry, "REGISTRY", None)
+
+
+def _unregister_metric(name: str) -> None:
+    registry = _metric_registry()
+    if not registry:
+        return
+    collector = getattr(registry, "_names_to_collectors", {}).get(name)
+    if collector is not None:
+        try:
+            registry.unregister(collector)
+        except KeyError:  # pragma: no cover - defensive cleanup
+            pass
+
+
+_unregister_metric("gateway_requests_total")
+_unregister_metric("gateway_request_duration_seconds")
+
 REQUEST_COUNT = Counter(
     "gateway_requests_total",
     "Total requests",
     ["method", "path", "status"],
+    registry=_metric_registry(),
 )
 REQUEST_LATENCY = Histogram(
     "gateway_request_duration_seconds",
     "Request latency",
     ["method", "path", "status"],
     buckets=[0.1, 0.3, 1, 3, 10],
+    registry=_metric_registry(),
 )
 
 
@@ -43,7 +113,10 @@ async def opa_check(request: Request) -> bool:
     }
     try:
         async with httpx.AsyncClient(timeout=5) as client:
-            r = await client.post(OPA_URL, json={"input": input_data})
+            headers = dict(getattr(request.state, "trace_headers", {}))
+            if rid := getattr(request.state, "request_id", None):
+                headers.setdefault("X-Request-Id", rid)
+            r = await client.post(OPA_URL, json={"input": input_data}, headers=headers)
             r.raise_for_status()
             data = r.json()
             return bool(data.get("result"))
@@ -52,6 +125,7 @@ async def opa_check(request: Request) -> bool:
 
 
 app = FastAPI(title="gateway")
+setup_otel(app, service_name="gateway", version=os.getenv("IT_SERVICE_VERSION"))
 
 
 @app.middleware("http")
@@ -74,6 +148,7 @@ async def oidc_middleware(request: Request, call_next):
 
     rid = request.headers.get("x-request-id") or str(uuid.uuid4())
     request.state.request_id = rid
+    request.state.trace_headers = _w3c_propagation_headers(request)
     start = time.time()
     ctx = await auth_context(request)
     if AUTH_REQUIRED and not ctx:
@@ -101,6 +176,15 @@ async def oidc_middleware(request: Request, call_next):
     resp.headers["X-API-Version"] = "v1"
     resp.headers["X-Tenant-Id"] = request.state.tenant_id
     resp.headers["X-Request-Id"] = rid
+    trace_id, span_id = _current_trace_ids()
+    if not trace_id:
+        trace_id, span_id = _parse_traceparent(
+            getattr(request.state, "trace_headers", {}).get("traceparent")
+        )
+    if trace_id:
+        resp.headers.setdefault("X-Trace-Id", trace_id)
+    if span_id:
+        resp.headers.setdefault("X-Span-Id", span_id)
     if ctx:
         resp.headers["X-User-Id"] = request.state.user_id
         resp.headers["X-Scopes"] = " ".join(request.state.scopes)
@@ -111,19 +195,20 @@ async def oidc_middleware(request: Request, call_next):
     }
     REQUEST_COUNT.labels(**labels).inc()
     REQUEST_LATENCY.labels(**labels).observe(time.time() - start)
-    logging.getLogger("gateway").info(
-        json.dumps(
-            {
-                "service": "gateway",
-                "request_id": rid,
-                "user": getattr(request.state, "user_id", "anon"),
-                "tenant": request.state.tenant_id,
-                "path": path,
-                "method": request.method,
-                "status": resp.status_code,
-            }
-        )
-    )
+    log_payload = {
+        "service": "gateway",
+        "request_id": rid,
+        "user": getattr(request.state, "user_id", "anon"),
+        "tenant": request.state.tenant_id,
+        "path": path,
+        "method": request.method,
+        "status": resp.status_code,
+    }
+    if trace_id:
+        log_payload["trace_id"] = trace_id
+    if span_id:
+        log_payload["span_id"] = span_id
+    logging.getLogger("gateway").info(json.dumps(log_payload))
     return resp
 
 
@@ -142,6 +227,26 @@ async def metrics():
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
+@app.get("/demo/trace")
+async def demo_trace():
+    """Simple endpoint used to validate trace export wiring."""
+
+    tracer = None
+    try:
+        from opentelemetry import trace  # type: ignore
+
+        tracer = trace.get_tracer("gateway.demo")
+    except Exception:  # pragma: no cover - otel optional
+        tracer = None
+
+    if tracer:
+        with tracer.start_as_current_span("demo-work"):
+            await asyncio.sleep(0)
+    else:
+        await asyncio.sleep(0)
+    return {"status": "ok"}
+
+
 def _extract_roles(request: Request) -> list[str]:
     claims = getattr(request.state, "claims", {}) or {}
     roles = []
@@ -158,12 +263,13 @@ if os.getenv("IT_OPS_ENABLE", "0") == "1":
     @app.api_route("/ops/{path:path}", methods=["GET", "POST"])
     async def ops_proxy(path: str, request: Request):
         roles = ",".join(_extract_roles(request))
-        headers = {
+        headers = dict(getattr(request.state, "trace_headers", {}))
+        headers.update({
             "X-Roles": roles,
             "X-Request-Id": request.headers.get("X-Request-Id", ""),
             "X-User-Id": getattr(request.state, "user_id", ""),
             "X-Tenant-Id": request.state.tenant_id,
-        }
+        })
         url = f"http://ops-controller:8000/ops/{path}"
         audit_log(
             "ops.proxy",
