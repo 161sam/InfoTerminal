@@ -16,8 +16,12 @@ import {
   EXAMPLE_ITEMS,
   createDossierPayload,
 } from "@/components/dossier/panels";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { useProtectedRoute } from "@/lib/auth/guards";
+import { withAuthGuard } from "@/server/guards/auth";
 
 export default function DossierPage() {
+  const guardStatus = useProtectedRoute();
   // State management
   const [title, setTitle] = useState("Investigation Report");
   const [items, setItems] = useState<DossierItem[]>([]);
@@ -141,6 +145,16 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
     // Handle export logic
   };
 
+  if (guardStatus === "checking" || guardStatus === "redirecting") {
+    return (
+      <DashboardLayout title="Dossier Creation" subtitle="Generate comprehensive intelligence reports">
+        <div className="py-24 flex justify-center">
+          <LoadingSpinner layout="block" text="Checking your session…" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout
       title="Dossier Creation"
@@ -225,3 +239,5 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps = withAuthGuard();

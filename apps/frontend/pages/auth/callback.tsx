@@ -63,6 +63,7 @@ export default function OidcCallbackPage() {
             code,
             codeVerifier: stored.codeVerifier,
             redirectUri,
+            remember: stored.remember,
           }),
         });
 

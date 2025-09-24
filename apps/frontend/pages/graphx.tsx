@@ -31,6 +31,9 @@ import {
   GraphSidebar,
 } from "@/components/graph/panels";
 import config from "@/lib/config";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { useProtectedRoute } from "@/lib/auth/guards";
+import { withAuthGuard } from "@/server/guards/auth";
 
 interface GraphData {
   nodes: Array<{ id: string; label: string; type?: string; properties?: any }>;
@@ -50,6 +53,7 @@ async function pingService(url?: string): Promise<Status> {
 }
 
 export default function ConsolidatedGraphPage() {
+  const guardStatus = useProtectedRoute();
   const [activeMainTab, setActiveMainTab] = useState<string>("graph");
   const [activeGraphTab, setActiveGraphTab] = useState<string>("explorer");
   const [graphStatus, setGraphStatus] = useState<Status>();
@@ -100,6 +104,16 @@ export default function ConsolidatedGraphPage() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  if (guardStatus === "checking" || guardStatus === "redirecting") {
+    return (
+      <DashboardLayout title="Graph Analysis" subtitle="Visualize, analyze and explore your knowledge graph">
+        <div className="py-24 flex justify-center">
+          <LoadingSpinner layout="block" text="Checking your session…" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout
@@ -254,3 +268,5 @@ export default function ConsolidatedGraphPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps = withAuthGuard();

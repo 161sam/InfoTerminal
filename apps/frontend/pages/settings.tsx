@@ -18,6 +18,9 @@ import type { SettingsTab } from "@/components/settings/navigation/SettingsTabNa
 import { loadEndpoints, defaultEndpoints } from "@/lib/endpoints";
 import { SERVICE_ENDPOINTS, calculateEndpointSummary } from "@/lib/settings/serviceEndpoints";
 import { useActiveTab } from "@/hooks/useActiveTab";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { useProtectedRoute } from "@/lib/auth/guards";
+import { withAuthGuard } from "@/server/guards/auth";
 
 const SETTINGS_TABS: SettingsTab[] = [
   "endpoints",
@@ -33,6 +36,7 @@ const SETTINGS_TABS: SettingsTab[] = [
 const SETTINGS_TAB_PARAM = "tab";
 
 export default function SettingsPage() {
+  const guardStatus = useProtectedRoute();
   const router = useRouter();
   const [activeTab, setActiveTab] = useActiveTab<SettingsTab>({
     defaultTab: "endpoints",
@@ -128,6 +132,16 @@ export default function SettingsPage() {
     }
   };
 
+  if (guardStatus === "checking" || guardStatus === "redirecting") {
+    return (
+      <DashboardLayout title="Settings" subtitle="Configure your intelligence platform">
+        <div className="py-24 flex justify-center">
+          <LoadingSpinner layout="block" text="Checking your session…" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout title="Settings" subtitle="Configure your intelligence platform">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -143,3 +157,5 @@ export default function SettingsPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps = withAuthGuard();

@@ -71,6 +71,19 @@ redirects back to the original page.
 You can trigger a logout by visiting `/logout` or using the avatar menu. The logout route
 clears the refresh cookie and offers the IdP end-session URL when available.
 
+### Session renewal, route guards & remember-me
+
+- The login form exposes a **Stay signed in for 30 days** toggle. When enabled the
+  backend issues a `refresh_token` cookie with a 30-day TTL (instead of the default 7
+  days) plus a companion `it_remember_me` flag. Subsequent silent refreshes honour this
+  preference until logout.
+- Search, Graph, Dossier and Settings pages now ship SSR/CSR guards. Requests without a
+  valid refresh cookie are redirected to `/login?returnTo=…` on the server, while the
+  client-side guard shows a neutral loading spinner before enforcing the redirect.
+- A global fetch interceptor catches `401` responses, calls `/api/auth/refresh`, and
+  retries the original request once. If the refresh fails, the session is cleared and the
+  user is routed back to `/login`.
+
 ## 4. CSRF and SameSite policy
 
 The refresh cookie is issued with `SameSite=Lax` during development to allow local
