@@ -1,6 +1,6 @@
 // apps/frontend/src/components/ui/ErrorBoundary.tsx
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 
 interface Props {
   children: ReactNode;
@@ -16,7 +16,7 @@ interface State {
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -26,10 +26,10 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
     this.props.onError?.(error, errorInfo);
-    
+
     // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
-      console.error('Error Boundary caught an error:', error, errorInfo);
+    if (process.env.NODE_ENV === "production") {
+      console.error("Error Boundary caught an error:", error, errorInfo);
     }
   }
 
@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private handleGoHome = () => {
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   public render() {
@@ -53,13 +53,14 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="p-3 bg-red-100 dark:bg-red-900/20 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <AlertTriangle size={24} className="text-red-600 dark:text-red-400" />
             </div>
-            
+
             <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Something went wrong
             </h1>
-            
+
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              An unexpected error occurred. Please try refreshing the page or go back to the homepage.
+              An unexpected error occurred. Please try refreshing the page or go back to the
+              homepage.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -70,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 <RefreshCw size={16} />
                 Try Again
               </button>
-              
+
               <button
                 onClick={this.handleGoHome}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
@@ -81,7 +82,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {/* Error Details (Development Only) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mt-6 text-left">
                 <summary className="text-sm text-gray-500 dark:text-gray-400 cursor-pointer">
                   Error Details (Development)
@@ -108,24 +109,32 @@ export class ErrorBoundary extends Component<Props, State> {
 }
 
 // Skeleton Loading Components
-export function SkeletonText({ lines = 1, className = '' }: { lines?: number; className?: string }) {
+export function SkeletonText({
+  lines = 1,
+  className = "",
+}: {
+  lines?: number;
+  className?: string;
+}) {
   return (
     <div className={`animate-pulse ${className}`}>
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
           className={`bg-gray-200 dark:bg-gray-700 rounded h-4 ${
-            i < lines - 1 ? 'mb-2' : ''
-          } ${i === lines - 1 ? 'w-3/4' : 'w-full'}`}
+            i < lines - 1 ? "mb-2" : ""
+          } ${i === lines - 1 ? "w-3/4" : "w-full"}`}
         />
       ))}
     </div>
   );
 }
 
-export function SkeletonCard({ className = '' }: { className?: string }) {
+export function SkeletonCard({ className = "" }: { className?: string }) {
   return (
-    <div className={`animate-pulse bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`animate-pulse bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
         <div className="flex-1">
@@ -142,13 +151,19 @@ export function SkeletonCard({ className = '' }: { className?: string }) {
   );
 }
 
-export function SkeletonTable({ rows = 5, columns = 4, className = '' }: { 
-  rows?: number; 
-  columns?: number; 
+export function SkeletonTable({
+  rows = 5,
+  columns = 4,
+  className = "",
+}: {
+  rows?: number;
+  columns?: number;
   className?: string;
 }) {
   return (
-    <div className={`animate-pulse bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`animate-pulse bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
         <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
@@ -160,9 +175,13 @@ export function SkeletonTable({ rows = 5, columns = 4, className = '' }: {
               <div
                 key={colIndex}
                 className={`h-4 bg-gray-200 dark:bg-gray-700 rounded ${
-                  colIndex === 0 ? 'w-1/4' :
-                  colIndex === 1 ? 'w-1/3' :
-                  colIndex === 2 ? 'w-1/4' : 'w-1/6'
+                  colIndex === 0
+                    ? "w-1/4"
+                    : colIndex === 1
+                      ? "w-1/3"
+                      : colIndex === 2
+                        ? "w-1/4"
+                        : "w-1/6"
                 }`}
               />
             ))}
@@ -174,28 +193,38 @@ export function SkeletonTable({ rows = 5, columns = 4, className = '' }: {
 }
 
 // Loading Spinner Component
-export function LoadingSpinner({ size = 'md', className = '' }: { 
-  size?: 'sm' | 'md' | 'lg'; 
+export function LoadingSpinner({
+  size = "md",
+  className = "",
+}: {
+  size?: "sm" | "md" | "lg";
   className?: string;
 }) {
   const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12'
+    sm: "w-4 h-4",
+    md: "w-8 h-8",
+    lg: "w-12 h-12",
   };
 
   return (
-    <div className={`animate-spin rounded-full border-2 border-gray-300 border-t-primary-600 ${sizeClasses[size]} ${className}`} />
+    <div
+      className={`animate-spin rounded-full border-2 border-gray-300 border-t-primary-600 ${sizeClasses[size]} ${className}`}
+    />
   );
 }
 
 // Loading Overlay
-export function LoadingOverlay({ message = 'Loading...', className = '' }: { 
-  message?: string; 
+export function LoadingOverlay({
+  message = "Loading...",
+  className = "",
+}: {
+  message?: string;
   className?: string;
 }) {
   return (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${className}`}>
+    <div
+      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${className}`}
+    >
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center gap-4 shadow-xl">
         <LoadingSpinner size="md" />
         <span className="text-gray-900 dark:text-gray-100 font-medium">{message}</span>
@@ -210,7 +239,7 @@ export function EmptyState({
   title,
   description,
   action,
-  className = ''
+  className = "",
 }: {
   icon?: React.ComponentType<{ size?: number | string; className?: string }>;
   title: string;
@@ -226,17 +255,13 @@ export function EmptyState({
       <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
         <Icon size={24} className="text-gray-400" />
       </div>
-      
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-        {title}
-      </h3>
-      
+
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+
       {description && (
-        <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-sm mx-auto">
-          {description}
-        </p>
+        <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-sm mx-auto">{description}</p>
       )}
-      
+
       {action && (
         <button
           onClick={action.onClick}
@@ -250,30 +275,30 @@ export function EmptyState({
 }
 
 // Progress Bar Component
-export function ProgressBar({ 
-  progress, 
-  className = '', 
-  color = 'primary',
+export function ProgressBar({
+  progress,
+  className = "",
+  color = "primary",
   showLabel = false,
-  size = 'md'
-}: { 
-  progress: number; 
+  size = "md",
+}: {
+  progress: number;
   className?: string;
-  color?: 'primary' | 'success' | 'warning' | 'error';
+  color?: "primary" | "success" | "warning" | "error";
   showLabel?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }) {
   const colorClasses = {
-    primary: 'bg-primary-600',
-    success: 'bg-green-600',
-    warning: 'bg-yellow-600',
-    error: 'bg-red-600'
+    primary: "bg-primary-600",
+    success: "bg-green-600",
+    warning: "bg-yellow-600",
+    error: "bg-red-600",
   };
 
   const sizeClasses = {
-    sm: 'h-1',
-    md: 'h-2',
-    lg: 'h-3'
+    sm: "h-1",
+    md: "h-2",
+    lg: "h-3",
   };
 
   const clampedProgress = Math.min(100, Math.max(0, progress));
@@ -286,8 +311,10 @@ export function ProgressBar({
           <span>{Math.round(clampedProgress)}%</span>
         </div>
       )}
-      
-      <div className={`w-full bg-gray-200 dark:bg-gray-700 rounded-full ${sizeClasses[size]} overflow-hidden`}>
+
+      <div
+        className={`w-full bg-gray-200 dark:bg-gray-700 rounded-full ${sizeClasses[size]} overflow-hidden`}
+      >
         <div
           className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ease-out`}
           style={{ width: `${clampedProgress}%` }}
@@ -300,35 +327,35 @@ export function ProgressBar({
 // Status Badge Component
 export function StatusBadge({
   status,
-  size = 'md',
-  variant = 'default',
-  className = ''
+  size = "md",
+  variant = "default",
+  className = "",
 }: {
-  status: 'online' | 'offline' | 'away' | 'busy' | 'success' | 'warning' | 'error' | 'info';
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'dot' | 'pill';
+  status: "online" | "offline" | "away" | "busy" | "success" | "warning" | "error" | "info";
+  size?: "sm" | "md" | "lg";
+  variant?: "default" | "dot" | "pill";
   className?: string;
 }) {
   const statusConfig = {
-    online: { color: 'bg-green-500', label: 'Online' },
-    offline: { color: 'bg-gray-500', label: 'Offline' },
-    away: { color: 'bg-yellow-500', label: 'Away' },
-    busy: { color: 'bg-red-500', label: 'Busy' },
-    success: { color: 'bg-green-500', label: 'Success' },
-    warning: { color: 'bg-yellow-500', label: 'Warning' },
-    error: { color: 'bg-red-500', label: 'Error' },
-    info: { color: 'bg-blue-500', label: 'Info' }
+    online: { color: "bg-green-500", label: "Online" },
+    offline: { color: "bg-gray-500", label: "Offline" },
+    away: { color: "bg-yellow-500", label: "Away" },
+    busy: { color: "bg-red-500", label: "Busy" },
+    success: { color: "bg-green-500", label: "Success" },
+    warning: { color: "bg-yellow-500", label: "Warning" },
+    error: { color: "bg-red-500", label: "Error" },
+    info: { color: "bg-blue-500", label: "Info" },
   };
 
   const sizeClasses = {
-    sm: variant === 'dot' ? 'w-2 h-2' : 'w-3 h-3',
-    md: variant === 'dot' ? 'w-3 h-3' : 'w-4 h-4',
-    lg: variant === 'dot' ? 'w-4 h-4' : 'w-5 h-5'
+    sm: variant === "dot" ? "w-2 h-2" : "w-3 h-3",
+    md: variant === "dot" ? "w-3 h-3" : "w-4 h-4",
+    lg: variant === "dot" ? "w-4 h-4" : "w-5 h-5",
   };
 
   const config = statusConfig[status];
 
-  if (variant === 'dot') {
+  if (variant === "dot") {
     return (
       <span
         className={`inline-block ${config.color} ${sizeClasses[size]} rounded-full ${className}`}
@@ -337,15 +364,21 @@ export function StatusBadge({
     );
   }
 
-  if (variant === 'pill') {
+  if (variant === "pill") {
     return (
-      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-        status === 'success' || status === 'online' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
-        status === 'warning' || status === 'away' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
-        status === 'error' || status === 'busy' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
-        status === 'info' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' :
-        'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-      } ${className}`}>
+      <span
+        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+          status === "success" || status === "online"
+            ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+            : status === "warning" || status === "away"
+              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400"
+              : status === "error" || status === "busy"
+                ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
+                : status === "info"
+                  ? "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                  : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400"
+        } ${className}`}
+      >
         <span className={`${config.color} ${sizeClasses[size]} rounded-full`} />
         {config.label}
       </span>
@@ -361,11 +394,11 @@ export function StatusBadge({
 }
 
 // Connection Status Hook
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useOnlineStatus() {
   const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true
+    typeof navigator !== "undefined" ? navigator.onLine : true,
   );
 
   useEffect(() => {
@@ -373,12 +406,12 @@ export function useOnlineStatus() {
       setIsOnline(navigator.onLine);
     }
 
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
 
     return () => {
-      window.removeEventListener('online', updateOnlineStatus);
-      window.removeEventListener('offline', updateOnlineStatus);
+      window.removeEventListener("online", updateOnlineStatus);
+      window.removeEventListener("offline", updateOnlineStatus);
     };
   }, []);
 
@@ -386,13 +419,15 @@ export function useOnlineStatus() {
 }
 
 // Connection Status Component
-export function ConnectionStatus({ className = '' }: { className?: string }) {
+export function ConnectionStatus({ className = "" }: { className?: string }) {
   const isOnline = useOnlineStatus();
-  
+
   if (isOnline) return null;
 
   return (
-    <div className={`fixed top-16 left-4 right-4 lg:left-auto lg:right-4 lg:w-80 bg-red-500 text-white p-3 rounded-lg shadow-lg z-40 ${className}`}>
+    <div
+      className={`fixed top-16 left-4 right-4 lg:left-auto lg:right-4 lg:w-80 bg-red-500 text-white p-3 rounded-lg shadow-lg z-40 ${className}`}
+    >
       <div className="flex items-center gap-2">
         <StatusBadge status="offline" size="sm" variant="dot" />
         <span className="text-sm font-medium">No internet connection</span>

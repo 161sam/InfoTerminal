@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Search, Network, ArrowRight } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import Button from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/ui/loading';
-import { getEgo, getShortestPath } from '@/lib/api';
-import { toast } from '@/components/ui/toast';
+import React, { useState } from "react";
+import { Search, Network, ArrowRight } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import Button from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { getEgo, getShortestPath } from "@/lib/api";
+import { toast } from "@/components/ui/toast";
 
 interface GraphData {
   nodes: Array<{ id: string; label: string; type?: string; properties?: any }>;
@@ -18,7 +18,7 @@ interface GraphExplorerProps {
 const ENTITY_EXAMPLES = [
   { label: "Person", key: "id", value: "alice", description: "Sample person node" },
   { label: "Organization", key: "name", value: "ACME Corp", description: "Company entity" },
-  { label: "Location", key: "name", value: "London", description: "Geographic location" }
+  { label: "Location", key: "name", value: "London", description: "Geographic location" },
 ];
 
 export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
@@ -26,48 +26,48 @@ export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEntityType, setSelectedEntityType] = useState("Person");
   const [isLoadingGraph, setIsLoadingGraph] = useState(false);
-  
+
   // Path finding state
   const [pathConfig, setPathConfig] = useState({
     srcLabel: "Person",
-    srcKey: "id", 
+    srcKey: "id",
     srcValue: "",
     dstLabel: "Person",
     dstKey: "id",
     dstValue: "",
     maxLength: 4,
-    directed: false
+    directed: false,
   });
 
   const loadEntityNetwork = async (entityType: string, searchValue?: string) => {
     setIsLoadingGraph(true);
     try {
-      const { data } = await getEgo({ 
-        label: entityType, 
-        key: searchValue ? "name" : "id", 
-        value: searchValue || "alice", 
-        depth: 2, 
-        limit: 50 
+      const { data } = await getEgo({
+        label: entityType,
+        key: searchValue ? "name" : "id",
+        value: searchValue || "alice",
+        depth: 2,
+        limit: 50,
       });
 
       const nodes = (data.nodes || []).map((n: any) => ({
         id: String(n.id),
         label: n.properties?.name || String(n.id),
-        type: n.labels?.[0] || 'Unknown'
+        type: n.labels?.[0] || "Unknown",
       }));
 
       const edges = (data.relationships || []).map((r: any) => ({
         id: String(r.id),
         source: String(r.start),
         target: String(r.end),
-        type: r.type
+        type: r.type,
       }));
 
       const graphData = { nodes, edges };
       onGraphData?.(graphData);
-      toast(`Loaded ${nodes.length} nodes and ${edges.length} edges`, { variant: 'success' });
+      toast(`Loaded ${nodes.length} nodes and ${edges.length} edges`, { variant: "success" });
     } catch (e: any) {
-      toast(`Failed to load network: ${e?.message}`, { variant: 'error' });
+      toast(`Failed to load network: ${e?.message}`, { variant: "error" });
     } finally {
       setIsLoadingGraph(false);
     }
@@ -75,37 +75,37 @@ export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
 
   const findShortestPath = async () => {
     if (!pathConfig.srcValue || !pathConfig.dstValue) {
-      toast("Please enter both source and destination values", { variant: 'error' });
+      toast("Please enter both source and destination values", { variant: "error" });
       return;
     }
 
     setIsLoadingGraph(true);
     try {
       const { data } = await getShortestPath(pathConfig);
-      
+
       const nodes = (data.nodes || []).map((n: any) => ({
         id: String(n.id),
         label: n.properties?.name || String(n.id),
-        type: n.labels?.[0] || 'Unknown'
+        type: n.labels?.[0] || "Unknown",
       }));
 
       const edges = (data.relationships || []).map((r: any) => ({
         id: String(r.id),
         source: String(r.start),
         target: String(r.end),
-        type: r.type
+        type: r.type,
       }));
 
       const graphData = { nodes, edges };
       onGraphData?.(graphData);
-      
+
       if (nodes.length === 0) {
-        toast("No path found between the specified nodes", { variant: 'error' });
+        toast("No path found between the specified nodes", { variant: "error" });
       } else {
-        toast(`Found path with ${nodes.length} nodes`, { variant: 'success' });
+        toast(`Found path with ${nodes.length} nodes`, { variant: "success" });
       }
     } catch (e: any) {
-      toast(`Path finding failed: ${e?.message}`, { variant: 'error' });
+      toast(`Path finding failed: ${e?.message}`, { variant: "error" });
     } finally {
       setIsLoadingGraph(false);
     }
@@ -130,7 +130,7 @@ export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
                 <option value="Location">Location</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Search Value
@@ -143,7 +143,7 @@ export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
-            
+
             <div className="flex items-end">
               <Button
                 onClick={() => loadEntityNetwork(selectedEntityType, searchTerm)}
@@ -190,46 +190,46 @@ export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
               <input
                 placeholder="Source Label (e.g., Person)"
                 value={pathConfig.srcLabel}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, srcLabel: e.target.value }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, srcLabel: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
               <input
                 placeholder="Key (e.g., id)"
                 value={pathConfig.srcKey}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, srcKey: e.target.value }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, srcKey: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
               <input
                 placeholder="Value (e.g., alice)"
                 value={pathConfig.srcValue}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, srcValue: e.target.value }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, srcValue: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
             </div>
-            
+
             <div className="space-y-3">
               <h5 className="font-medium text-gray-900 dark:text-slate-100">Target Entity</h5>
               <input
                 placeholder="Target Label (e.g., Person)"
                 value={pathConfig.dstLabel}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, dstLabel: e.target.value }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, dstLabel: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
               <input
                 placeholder="Key (e.g., id)"
                 value={pathConfig.dstKey}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, dstKey: e.target.value }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, dstKey: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
               <input
                 placeholder="Value (e.g., bob)"
                 value={pathConfig.dstValue}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, dstValue: e.target.value }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, dstValue: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
@@ -240,24 +240,26 @@ export default function GraphExplorer({ onGraphData }: GraphExplorerProps) {
                 min="1"
                 max="10"
                 value={pathConfig.maxLength}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, maxLength: parseInt(e.target.value) }))}
+                onChange={(e) =>
+                  setPathConfig((prev) => ({ ...prev, maxLength: parseInt(e.target.value) }))
+                }
                 className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm"
               />
             </div>
-            
+
             <div className="flex items-center gap-2 pt-6">
               <input
                 type="checkbox"
                 id="directed"
                 checked={pathConfig.directed}
-                onChange={(e) => setPathConfig(prev => ({ ...prev, directed: e.target.checked }))}
+                onChange={(e) => setPathConfig((prev) => ({ ...prev, directed: e.target.checked }))}
                 className="rounded"
               />
               <label htmlFor="directed" className="text-sm text-gray-700 dark:text-slate-300">
                 Directed Graph
               </label>
             </div>
-            
+
             <div className="pt-6">
               <Button onClick={findShortestPath} disabled={isLoadingGraph}>
                 {isLoadingGraph ? (

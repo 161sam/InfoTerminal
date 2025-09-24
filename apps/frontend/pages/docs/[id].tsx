@@ -1,44 +1,46 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import EntityHighlighter from '@/components/docs/EntityHighlighter';
-import DocCard from '@/components/docs/DocCard';
-import { DocRecord } from '@/types/docs';
-import EntityBadgeList, { BadgeItem } from '@/components/entities/EntityBadgeList';
-import { uniqueEntities } from '@/lib/entities';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import EntityHighlighter from "@/components/docs/EntityHighlighter";
+import DocCard from "@/components/docs/DocCard";
+import { DocRecord } from "@/types/docs";
+import EntityBadgeList, { BadgeItem } from "@/components/entities/EntityBadgeList";
+import { uniqueEntities } from "@/lib/entities";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 
 export default function DocPage() {
   const router = useRouter();
   const { query } = router;
-  const id = (query.id as string) || '';
+  const id = (query.id as string) || "";
   const [doc, setDoc] = useState<DocRecord | null>(null);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (!id) return;
     fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/docs/${encodeURIComponent(id)}`)
       .then(async (r) => {
-        if (!r.ok) throw new Error('not found');
+        if (!r.ok) throw new Error("not found");
         return r.json();
       })
       .then(setDoc)
-      .catch(() => setError('Dokument nicht gefunden'));
+      .catch(() => setError("Dokument nicht gefunden"));
   }, [id]);
 
-  if (error) return (
-    <DashboardLayout title="Document">
-      <div className="max-w-5xl text-red-600 dark:text-red-400">{error}</div>
-    </DashboardLayout>
-  );
-  if (!doc) return (
-    <DashboardLayout title="Document">
-      <div className="max-w-5xl">Lade...</div>
-    </DashboardLayout>
-  );
+  if (error)
+    return (
+      <DashboardLayout title="Document">
+        <div className="max-w-5xl text-red-600 dark:text-red-400">{error}</div>
+      </DashboardLayout>
+    );
+  if (!doc)
+    return (
+      <DashboardLayout title="Document">
+        <div className="max-w-5xl">Lade...</div>
+      </DashboardLayout>
+    );
 
   const badges: BadgeItem[] = uniqueEntities(
-    doc.entities.map((e) => ({ label: e.label, value: e.text || '' })),
+    doc.entities.map((e) => ({ label: e.label, value: e.text || "" })),
   );
 
   const handleBadgeClick = (item: BadgeItem) => {

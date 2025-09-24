@@ -1,7 +1,7 @@
 // Hook for evidence quality analytics
-import { useState, useEffect, useCallback } from 'react';
-import { analyticsApi } from '../../lib/api-client';
-import { EvidenceQuality, AnalyticsFilters } from '../analytics/types';
+import { useState, useEffect, useCallback } from "react";
+import { analyticsApi } from "../../lib/api-client";
+import { EvidenceQuality, AnalyticsFilters } from "../analytics/types";
 
 export function useEvidenceQuality(filters: AnalyticsFilters) {
   const [data, setData] = useState<EvidenceQuality | null>(null);
@@ -16,7 +16,7 @@ export function useEvidenceQuality(filters: AnalyticsFilters) {
 
     try {
       const response = await analyticsApi.getEvidenceQuality(filters);
-      
+
       if (response.success && response.data) {
         setData(response.data);
       } else {
@@ -35,15 +35,15 @@ export function useEvidenceQuality(filters: AnalyticsFilters) {
           },
           recommendations: [],
         });
-        
+
         if (response.error) {
-          console.warn('Evidence quality service unavailable:', response.error);
+          console.warn("Evidence quality service unavailable:", response.error);
         }
       }
     } catch (err) {
-      console.warn('Error fetching evidence quality:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      
+      console.warn("Error fetching evidence quality:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
+
       setData({
         overallScore: 0,
         totalClaims: 0,

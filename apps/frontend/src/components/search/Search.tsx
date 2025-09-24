@@ -1,35 +1,47 @@
 // apps/frontend/src/components/search/Search.tsx
-import React, { useState, useEffect } from 'react';
-import { Search as SearchIcon, Filter, SortDesc, Sparkles, X, Loader2 } from 'lucide-react';
-import { useSearch } from '@/hooks/useSearch';
-import { useSearchParams } from '@/hooks/useSearchParams';
-import EntityBadge from '../entities/EntityBadge';
-import { normalizeLabel } from '@/lib/entities';
-import SearchResultCard from './SearchResultCard';
-import FacetPanel from './FacetPanel';
-import FilterChips from './FilterChips';
+import React, { useState, useEffect } from "react";
+import { Search as SearchIcon, Filter, SortDesc, Sparkles, X, Loader2 } from "lucide-react";
+import { useSearch } from "@/hooks/useSearch";
+import { useSearchParams } from "@/hooks/useSearchParams";
+import EntityBadge from "../entities/EntityBadge";
+import { normalizeLabel } from "@/lib/entities";
+import SearchResultCard from "./SearchResultCard";
+import FacetPanel from "./FacetPanel";
+import FilterChips from "./FilterChips";
 
 export default function Search() {
   const { params, set } = useSearchParams();
-  const [query, setQuery] = useState((params.q as string) || '');
+  const [query, setQuery] = useState((params.q as string) || "");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   const searchParams = {
     q: query,
-    page: parseInt((params.page as string) || '1', 10),
-    pageSize: parseInt((params.pageSize as string) || '20', 10),
-    sort: (params.sort as string) || 'relevance',
-    rerank: params.rerank === '1',
+    page: parseInt((params.page as string) || "1", 10),
+    pageSize: parseInt((params.pageSize as string) || "20", 10),
+    sort: (params.sort as string) || "relevance",
+    rerank: params.rerank === "1",
     filters: {} as Record<string, string[]>,
-    entity: Array.isArray(params.entity) ? params.entity as string[] : params.entity ? [params.entity as string] : undefined,
-    value: Array.isArray(params.value) ? params.value as string[] : params.value ? [params.value as string] : undefined
+    entity: Array.isArray(params.entity)
+      ? (params.entity as string[])
+      : params.entity
+        ? [params.entity as string]
+        : undefined,
+    value: Array.isArray(params.value)
+      ? (params.value as string[])
+      : params.value
+        ? [params.value as string]
+        : undefined,
   };
 
   // Extract filters from params
   Object.entries(params).forEach(([key, value]) => {
-    if (key.startsWith('filter.')) {
-      const facetName = key.replace('filter.', '');
-      const filterValues = Array.isArray(value) ? value as string[] : value ? [value as string] : [];
+    if (key.startsWith("filter.")) {
+      const facetName = key.replace("filter.", "");
+      const filterValues = Array.isArray(value)
+        ? (value as string[])
+        : value
+          ? [value as string]
+          : [];
       searchParams.filters[facetName] = filterValues;
     }
   });
@@ -40,45 +52,45 @@ export default function Search() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (query !== params.q) {
-        set('q', query || undefined);
-        set('page', 1);
+        set("q", query || undefined);
+        set("page", 1);
       }
     }, 300);
     return () => clearTimeout(timeoutId);
   }, [query, params.q, set]);
 
   const handleSortChange = (sort: string) => {
-    set('sort', sort);
-    set('page', 1);
+    set("sort", sort);
+    set("page", 1);
   };
 
   const toggleRerank = () => {
-    set('rerank', params.rerank === '1' ? undefined : '1');
-    set('page', 1);
+    set("rerank", params.rerank === "1" ? undefined : "1");
+    set("page", 1);
   };
 
   const handleFilterToggle = (facet: string, value: string) => {
     const key = `filter.${facet}`;
     const current = searchParams.filters[facet] || [];
-    const updated = current.includes(value) 
-      ? current.filter(v => v !== value)
+    const updated = current.includes(value)
+      ? current.filter((v) => v !== value)
       : [...current, value];
-    
-    set(key, updated.length ? updated.join(',') : undefined);
-    set('page', 1);
+
+    set(key, updated.length ? updated.join(",") : undefined);
+    set("page", 1);
   };
 
   const handlePageChange = (page: number) => {
-    set('page', page);
+    set("page", page);
   };
 
   const clearAllFilters = () => {
-    Object.keys(params).forEach(key => {
-      if (key.startsWith('filter.') || key === 'entity' || key === 'value') {
+    Object.keys(params).forEach((key) => {
+      if (key.startsWith("filter.") || key === "entity" || key === "value") {
         set(key, undefined);
       }
     });
-    set('page', 1);
+    set("page", 1);
   };
 
   return (
@@ -115,16 +127,19 @@ export default function Search() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
-                showFilters 
-                  ? 'bg-primary-50 border-primary-200 text-primary-700' 
-                  : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600\n    text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                showFilters
+                  ? "bg-primary-50 border-primary-200 text-primary-700"
+                  : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600\n    text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
               <Filter size={16} />
               Filters
               {data?.aggregations && Object.keys(data.aggregations).length > 0 && (
                 <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded-full">
-                  {Object.values(data.aggregations).reduce((sum, buckets) => sum + buckets.length, 0)}
+                  {Object.values(data.aggregations).reduce(
+                    (sum, buckets) => sum + buckets.length,
+                    0,
+                  )}
                 </span>
               )}
             </button>
@@ -133,8 +148,8 @@ export default function Search() {
               onClick={toggleRerank}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                 searchParams.rerank
-                  ? 'bg-purple-50 border-purple-200 text-purple-700'
-                  : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600\n    text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? "bg-purple-50 border-purple-200 text-purple-700"
+                  : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600\n    text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
               <Sparkles size={16} />
@@ -167,18 +182,18 @@ export default function Search() {
           onRemove={(facet, value) => {
             const key = `filter.${facet}`;
             const current = searchParams.filters[facet] || [];
-            const updated = current.filter(v => v !== value);
-            set(key, updated.length ? updated.join(',') : undefined);
+            const updated = current.filter((v) => v !== value);
+            set(key, updated.length ? updated.join(",") : undefined);
           }}
           onRemoveEntity={(entity) => {
             const current = searchParams.entity || [];
-            const updated = current.filter(e => e !== entity);
-            set('entity', updated.length ? updated : undefined);
+            const updated = current.filter((e) => e !== entity);
+            set("entity", updated.length ? updated : undefined);
           }}
           onRemoveValue={(value) => {
             const current = searchParams.value || [];
-            const updated = current.filter(v => v !== value);
-            set('value', updated.length ? updated : undefined);
+            const updated = current.filter((v) => v !== value);
+            set("value", updated.length ? updated : undefined);
           }}
           onClearAll={clearAllFilters}
         />
@@ -190,11 +205,21 @@ export default function Search() {
           <p className="text-sm text-gray-600">
             {data.total > 0 ? (
               <>
-                Found <span className="font-medium text-gray-900">{data.total.toLocaleString()}</span> results
-                {typeof data.tookMs === 'number' && (
-                  <> in <span className="font-medium text-gray-900">{data.tookMs}</span> ms</>
+                Found{" "}
+                <span className="font-medium text-gray-900">{data.total.toLocaleString()}</span>{" "}
+                results
+                {typeof data.tookMs === "number" && (
+                  <>
+                    {" "}
+                    in <span className="font-medium text-gray-900">{data.tookMs}</span> ms
+                  </>
                 )}
-                {query && <> for "<span className="font-medium text-gray-900">{query}</span>"</>}
+                {query && (
+                  <>
+                    {" "}
+                    for "<span className="font-medium text-gray-900">{query}</span>"
+                  </>
+                )}
               </>
             ) : (
               <>No results found{query && <> for "{query}"</>}</>
@@ -229,7 +254,7 @@ export default function Search() {
         )}
 
         {/* Results */}
-        <div className={showFilters && data?.aggregations ? 'lg:col-span-3' : 'lg:col-span-4'}>
+        <div className={showFilters && data?.aggregations ? "lg:col-span-3" : "lg:col-span-4"}>
           {data?.items && data.items.length > 0 ? (
             <>
               <div className="space-y-4">
@@ -237,7 +262,7 @@ export default function Search() {
                   <SearchResultCard key={item.id} item={item} />
                 ))}
               </div>
-              
+
               {/* Pagination */}
               {data.total > searchParams.pageSize && (
                 <div className="mt-8 flex items-center justify-center">
@@ -250,12 +275,15 @@ export default function Search() {
                 </div>
               )}
             </>
-          ) : !loading && query && (
-            <div className="text-center py-12">
-              <SearchIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-4 text-lg font-medium text-gray-900">No results found</h3>
-              <p className="mt-2 text-gray-500">Try adjusting your search terms or filters.</p>
-            </div>
+          ) : (
+            !loading &&
+            query && (
+              <div className="text-center py-12">
+                <SearchIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-4 text-lg font-medium text-gray-900">No results found</h3>
+                <p className="mt-2 text-gray-500">Try adjusting your search terms or filters.</p>
+              </div>
+            )
           )}
         </div>
       </div>
@@ -276,9 +304,11 @@ function SearchPagination({ page, pageSize, total, onPageChange }: SearchPaginat
   const endItem = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 sm:px-6 rounded-lg
+    <div
+      className="flex items-center justify-between px-4 py-3 sm:px-6 rounded-lg
                  bg-white dark:bg-gray-900
-                 border border-gray-200 dark:border-gray-800">
+                 border border-gray-200 dark:border-gray-800"
+    >
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => onPageChange(page - 1)}
@@ -303,16 +333,16 @@ function SearchPagination({ page, pageSize, total, onPageChange }: SearchPaginat
           Next
         </button>
       </div>
-      
+
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{startItem}</span> to{' '}
-            <span className="font-medium">{endItem}</span> of{' '}
+            Showing <span className="font-medium">{startItem}</span> to{" "}
+            <span className="font-medium">{endItem}</span> of{" "}
             <span className="font-medium">{total}</span> results
           </p>
         </div>
-        
+
         <div>
           <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
             <button
@@ -322,27 +352,27 @@ function SearchPagination({ page, pageSize, total, onPageChange }: SearchPaginat
             >
               Previous
             </button>
-            
+
             {/* Page numbers */}
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const pageNum = Math.max(1, page - 2) + i;
               if (pageNum > totalPages) return null;
-              
+
               return (
                 <button
                   key={pageNum}
                   onClick={() => onPageChange(pageNum)}
                   className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
                     pageNum === page
-                      ? 'z-10 bg-primary-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
-                      : 'text-gray-900 dark:text-gray-100 ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-offset-0'
+                      ? "z-10 bg-primary-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                      : "text-gray-900 dark:text-gray-100 ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus:z-20 focus:outline-offset-0"
                   }`}
                 >
                   {pageNum}
                 </button>
               );
             })}
-            
+
             <button
               onClick={() => onPageChange(page + 1)}
               disabled={page === totalPages}

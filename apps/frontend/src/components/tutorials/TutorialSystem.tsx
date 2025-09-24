@@ -1,16 +1,24 @@
 /**
  * Interactive Tutorial System
- * 
+ *
  * Provides guided walkthroughs for OSINT scenarios using intro.js
  * Tracks user progress and adapts to user behavior
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { introJs } from 'intro.js';
-import 'intro.js/minified/introjs.min.css';
-import { Play, Pause, RotateCcw, BookOpen, CheckCircle, AlertCircle, HelpCircle } from 'lucide-react';
-import { OSINTScenario, ScenarioStep, StepType } from '@/types/scenarios';
-import UserJourneyTracker from '@/lib/user-journey-tracker';
+import React, { useState, useEffect, useCallback } from "react";
+import { introJs } from "intro.js";
+import "intro.js/minified/introjs.min.css";
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  BookOpen,
+  CheckCircle,
+  AlertCircle,
+  HelpCircle,
+} from "lucide-react";
+import { OSINTScenario, ScenarioStep, StepType } from "@/types/scenarios";
+import UserJourneyTracker from "@/lib/user-journey-tracker";
 
 interface TutorialSystemProps {
   scenario: OSINTScenario;
@@ -33,7 +41,7 @@ interface TutorialResults {
 
 interface StepProgress {
   stepId: string;
-  status: 'pending' | 'active' | 'completed' | 'error';
+  status: "pending" | "active" | "completed" | "error";
   startTime?: number;
   endTime?: number;
   hintsUsed: number;
@@ -45,7 +53,7 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
   scenario,
   onComplete,
   onExit,
-  isVisible
+  isVisible,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -56,7 +64,7 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
   const [showStepPanel, setShowStepPanel] = useState(true);
   const [introInstance, setIntroInstance] = useState<any>(null);
   const [userActions, setUserActions] = useState<string[]>([]);
-  
+
   const { trackWorkflowStep, trackClick } = UserJourneyTracker.useUserJourney();
 
   // Initialize tutorial
@@ -64,7 +72,7 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
     if (isVisible && scenario) {
       initializeTutorial();
     }
-    
+
     return () => {
       if (introInstance) {
         introInstance.exit();
@@ -73,20 +81,20 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
   }, [isVisible, scenario]);
 
   const initializeTutorial = () => {
-    const progress = scenario.steps.map(step => ({
+    const progress = scenario.steps.map((step) => ({
       stepId: step.id,
-      status: 'pending' as const,
+      status: "pending" as const,
       hintsUsed: 0,
       errors: 0,
-      userActions: []
+      userActions: [],
     }));
-    
+
     setStepProgress(progress);
     setTutorialStartTime(Date.now());
     setCurrentStepIndex(0);
-    
+
     // Track tutorial start
-    trackWorkflowStep(scenario.id, 'tutorial_started');
+    trackWorkflowStep(scenario.id, "tutorial_started");
   };
 
   if (!isVisible) return null;

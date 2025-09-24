@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Bot, CheckCircle, Loader2, MessageSquare, ShieldAlert, XCircle } from 'lucide-react';
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { Bot, CheckCircle, Loader2, MessageSquare, ShieldAlert, XCircle } from "lucide-react";
 
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { isAgentEnabled } from '@/lib/config';
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { isAgentEnabled } from "@/lib/config";
 
 interface ToolParameter {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'boolean';
+  type: "text" | "number" | "boolean";
   required?: boolean;
   placeholder?: string;
 }
@@ -24,9 +24,9 @@ interface ToolOption {
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'tool';
+  role: "user" | "assistant" | "tool";
   content: string;
-  status?: 'pending' | 'success' | 'error';
+  status?: "pending" | "success" | "error";
   details?: any;
 }
 
@@ -37,57 +37,72 @@ interface NormalizedError {
 
 const TOOL_OPTIONS: ToolOption[] = [
   {
-    id: 'search',
-    label: 'search',
-    description: 'Mocked document search over the offline knowledge base.',
+    id: "search",
+    label: "search",
+    description: "Mocked document search over the offline knowledge base.",
     parameters: [
-      { name: 'query', label: 'Query', type: 'text', required: true, placeholder: 'e.g. renewable energy policy' },
-      { name: 'limit', label: 'Limit', type: 'number', placeholder: '5' }
+      {
+        name: "query",
+        label: "Query",
+        type: "text",
+        required: true,
+        placeholder: "e.g. renewable energy policy",
+      },
+      { name: "limit", label: "Limit", type: "number", placeholder: "5" },
     ],
-    defaultParams: { limit: 5 }
+    defaultParams: { limit: 5 },
   },
   {
-    id: 'graph.query',
-    label: 'graph.query',
-    description: 'Run a canned Cypher query against the demo graph dataset.',
+    id: "graph.query",
+    label: "graph.query",
+    description: "Run a canned Cypher query against the demo graph dataset.",
     parameters: [
-      { name: 'cypher', label: 'Cypher', type: 'text', required: true, placeholder: 'MATCH (n) RETURN n LIMIT 5' }
+      {
+        name: "cypher",
+        label: "Cypher",
+        type: "text",
+        required: true,
+        placeholder: "MATCH (n) RETURN n LIMIT 5",
+      },
     ],
-    defaultParams: { parameters: {} }
+    defaultParams: { parameters: {} },
   },
   {
-    id: 'dossier.build',
-    label: 'dossier.build',
-    description: 'Compose a dossier summary using search + graph mocks.',
+    id: "dossier.build",
+    label: "dossier.build",
+    description: "Compose a dossier summary using search + graph mocks.",
     parameters: [
-      { name: 'subject', label: 'Subject', type: 'text', required: true, placeholder: 'ACME Corp' },
-      { name: 'include_sources', label: 'Include sources', type: 'boolean' }
+      { name: "subject", label: "Subject", type: "text", required: true, placeholder: "ACME Corp" },
+      { name: "include_sources", label: "Include sources", type: "boolean" },
     ],
-    defaultParams: { include_sources: true }
-  }
+    defaultParams: { include_sources: true },
+  },
 ];
 
 const initialMessage: ChatMessage = {
-  id: 'intro',
-  role: 'assistant',
-  content: 'Select a tool, type a prompt, and submit to execute a single mocked tool call.'
+  id: "intro",
+  role: "assistant",
+  content: "Select a tool, type a prompt, and submit to execute a single mocked tool call.",
 };
 
 export default function AgentMvpChatPage() {
   const agentEnabled = isAgentEnabled();
   const router = useRouter();
-  const [selectedTool, setSelectedTool] = useState<string>('dossier.build');
-  const [prompt, setPrompt] = useState<string>('Draft a dossier overview for ACME Corp');
-  const [conversationId, setConversationId] = useState<string>('demo-seed');
+  const [selectedTool, setSelectedTool] = useState<string>("dossier.build");
+  const [prompt, setPrompt] = useState<string>("Draft a dossier overview for ACME Corp");
+  const [conversationId, setConversationId] = useState<string>("demo-seed");
   const [formValues, setFormValues] = useState<Record<string, string | boolean>>({
-    subject: 'ACME Corp',
-    include_sources: true
+    subject: "ACME Corp",
+    include_sources: true,
   });
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const toolConfig = useMemo(() => TOOL_OPTIONS.find((tool) => tool.id === selectedTool) ?? TOOL_OPTIONS[0], [selectedTool]);
+  const toolConfig = useMemo(
+    () => TOOL_OPTIONS.find((tool) => tool.id === selectedTool) ?? TOOL_OPTIONS[0],
+    [selectedTool],
+  );
 
   const handleToolChange = (toolId: string) => {
     setSelectedTool(toolId);
@@ -95,14 +110,17 @@ export default function AgentMvpChatPage() {
     if (!tool) {
       return;
     }
-    const defaults = Object.entries(tool.defaultParams).reduce<Record<string, string | boolean>>((acc, [key, value]) => {
-      if (typeof value === 'boolean') {
-        acc[key] = value;
-      } else {
-        acc[key] = String(value ?? '');
-      }
-      return acc;
-    }, {});
+    const defaults = Object.entries(tool.defaultParams).reduce<Record<string, string | boolean>>(
+      (acc, [key, value]) => {
+        if (typeof value === "boolean") {
+          acc[key] = value;
+        } else {
+          acc[key] = String(value ?? "");
+        }
+        return acc;
+      },
+      {},
+    );
     setFormValues(defaults);
   };
 
@@ -110,16 +128,16 @@ export default function AgentMvpChatPage() {
     const params: Record<string, unknown> = {};
     toolConfig.parameters.forEach((param) => {
       const raw = formValues[param.name];
-      if (raw === undefined || raw === '') {
+      if (raw === undefined || raw === "") {
         return;
       }
-      if (param.type === 'number') {
+      if (param.type === "number") {
         const parsed = Number(raw);
         if (!Number.isNaN(parsed)) {
           params[param.name] = parsed;
         }
-      } else if (param.type === 'boolean') {
-        params[param.name] = raw === true || raw === 'true';
+      } else if (param.type === "boolean") {
+        params[param.name] = raw === true || raw === "true";
       } else {
         params[param.name] = raw;
       }
@@ -131,52 +149,52 @@ export default function AgentMvpChatPage() {
     setConversationId(`demo-${Date.now()}`);
   }, []);
 
-  const activeConversationId = conversationId || 'demo-seed';
+  const activeConversationId = conversationId || "demo-seed";
 
   const normalizeError = (status: number, payload: any): NormalizedError => {
     if (status === 403) {
       return {
-        message: 'Request blocked by policy (OPA deny).',
-        details: payload?.details ?? payload
+        message: "Request blocked by policy (OPA deny).",
+        details: payload?.details ?? payload,
       };
     }
     if (status === 429) {
       return {
-        message: 'Rate limit exceeded. Try again soon.',
-        details: payload
+        message: "Rate limit exceeded. Try again soon.",
+        details: payload,
       };
     }
     const fallback =
-      payload?.message || payload?.detail || payload?.error || 'Agent request denied.';
+      payload?.message || payload?.detail || payload?.error || "Agent request denied.";
     return {
       message: fallback,
-      details: payload
+      details: payload,
     };
   };
 
   const submitPrompt = async () => {
     if (!prompt.trim()) {
-      setErrorMessage('Enter a prompt for the agent.');
+      setErrorMessage("Enter a prompt for the agent.");
       return;
     }
     if (!agentEnabled) {
-      setErrorMessage('Agent features are disabled.');
+      setErrorMessage("Agent features are disabled.");
       return;
     }
 
     const params = parseFormValues();
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
-      role: 'user',
-      content: prompt.trim()
+      role: "user",
+      content: prompt.trim(),
     };
     const toolMessageId = `tool-${Date.now()}`;
     const toolMessage: ChatMessage = {
       id: toolMessageId,
-      role: 'tool',
+      role: "tool",
       content: `tool_call: ${selectedTool}`,
-      status: 'pending',
-      details: { params }
+      status: "pending",
+      details: { params },
     };
 
     setMessages((prev) => [...prev, userMessage, toolMessage]);
@@ -184,15 +202,15 @@ export default function AgentMvpChatPage() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch('/api/agent/mvp-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/agent/mvp-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: prompt.trim(),
           tool: selectedTool,
           toolParams: params,
-          conversationId: activeConversationId
-        })
+          conversationId: activeConversationId,
+        }),
       });
 
       const payload = await response.json();
@@ -204,12 +222,12 @@ export default function AgentMvpChatPage() {
             message.id === toolMessageId
               ? {
                   ...message,
-                  status: 'error',
+                  status: "error",
                   content: `tool_call: ${selectedTool} ❌`,
-                  details: { error: normalizedError.message, context: normalizedError.details }
+                  details: { error: normalizedError.message, context: normalizedError.details },
                 }
-              : message
-          )
+              : message,
+          ),
         );
         setErrorMessage(normalizedError.message);
         return;
@@ -220,26 +238,26 @@ export default function AgentMvpChatPage() {
           message.id === toolMessageId
             ? {
                 ...message,
-                status: 'success',
+                status: "success",
                 content: `tool_call: ${selectedTool} ✅`,
                 details: {
                   params,
                   result: payload.tool_call?.result,
-                  steps: payload.steps
-                }
+                  steps: payload.steps,
+                },
               }
-            : message
-        )
+            : message,
+        ),
       );
 
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: payload.reply || 'No reply returned from agent.',
+        role: "assistant",
+        content: payload.reply || "No reply returned from agent.",
         details: {
           steps: payload.steps,
-          toolCall: payload.tool_call
-        }
+          toolCall: payload.tool_call,
+        },
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error: any) {
@@ -248,17 +266,17 @@ export default function AgentMvpChatPage() {
           message.id === toolMessageId
             ? {
                 ...message,
-                status: 'error',
+                status: "error",
                 content: `tool_call: ${selectedTool} ❌`,
                 details: {
-                  error: 'Agent connector unreachable.',
-                  context: error?.message ? { message: error.message } : undefined
-                }
+                  error: "Agent connector unreachable.",
+                  context: error?.message ? { message: error.message } : undefined,
+                },
               }
-            : message
-        )
+            : message,
+        ),
       );
-      setErrorMessage('Agent connector unreachable.');
+      setErrorMessage("Agent connector unreachable.");
     } finally {
       setSubmitting(false);
     }
@@ -271,11 +289,16 @@ export default function AgentMvpChatPage() {
           <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-amber-500" />
           <h2 className="mb-2 text-xl font-semibold">Agent services disabled</h2>
           <p className="text-sm text-gray-600">
-            Enable the agent stack by exporting <code className="rounded bg-gray-100 px-1">AGENTS_ENABLED=1</code> before starting the
+            Enable the agent stack by exporting{" "}
+            <code className="rounded bg-gray-100 px-1">AGENTS_ENABLED=1</code> before starting the
             Flowise connector service.
           </p>
           <p className="mt-4 text-sm text-gray-500">
-            Review <Link href="/docs" className="text-primary-600 underline">docs/agents/quickstart.md</Link> for setup steps.
+            Review{" "}
+            <Link href="/docs" className="text-primary-600 underline">
+              docs/agents/quickstart.md
+            </Link>{" "}
+            for setup steps.
           </p>
         </div>
       </DashboardLayout>
@@ -283,7 +306,10 @@ export default function AgentMvpChatPage() {
   }
 
   return (
-    <DashboardLayout title="Agent MVP Chat" subtitle="Single-turn agent demo with mocked tool calls">
+    <DashboardLayout
+      title="Agent MVP Chat"
+      subtitle="Single-turn agent demo with mocked tool calls"
+    >
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px,1fr]">
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800">
@@ -319,14 +345,14 @@ export default function AgentMvpChatPage() {
               {toolConfig.parameters.map((param) => (
                 <div key={param.name}>
                   <label className="text-sm font-medium text-gray-700">{param.label}</label>
-                  {param.type === 'boolean' ? (
+                  {param.type === "boolean" ? (
                     <select
                       className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none"
-                      value={formValues[param.name] ? 'true' : 'false'}
+                      value={formValues[param.name] ? "true" : "false"}
                       onChange={(event) =>
                         setFormValues((prev) => ({
                           ...prev,
-                          [param.name]: event.target.value === 'true'
+                          [param.name]: event.target.value === "true",
                         }))
                       }
                     >
@@ -336,13 +362,13 @@ export default function AgentMvpChatPage() {
                   ) : (
                     <input
                       className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none"
-                      type={param.type === 'number' ? 'number' : 'text'}
+                      type={param.type === "number" ? "number" : "text"}
                       placeholder={param.placeholder}
-                      value={String(formValues[param.name] ?? '')}
+                      value={String(formValues[param.name] ?? "")}
                       onChange={(event) =>
                         setFormValues((prev) => ({
                           ...prev,
-                          [param.name]: event.target.value
+                          [param.name]: event.target.value,
                         }))
                       }
                       required={param.required}
@@ -363,7 +389,7 @@ export default function AgentMvpChatPage() {
               onClick={submitPrompt}
               disabled={submitting}
             >
-              <MessageSquare className="h-4 w-4" /> {submitting ? 'Executing…' : 'Send prompt'}
+              <MessageSquare className="h-4 w-4" /> {submitting ? "Executing…" : "Send prompt"}
             </button>
           </div>
         </section>
@@ -375,11 +401,11 @@ export default function AgentMvpChatPage() {
               <div
                 key={message.id}
                 className={`rounded-lg border p-4 text-sm shadow-sm ${
-                  message.role === 'user'
-                    ? 'border-primary-200 bg-primary-50'
-                    : message.role === 'assistant'
-                    ? 'border-emerald-200 bg-emerald-50'
-                    : 'border-gray-200 bg-gray-50'
+                  message.role === "user"
+                    ? "border-primary-200 bg-primary-50"
+                    : message.role === "assistant"
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-gray-200 bg-gray-50"
                 }`}
               >
                 <div className="mb-2 flex items-center justify-between">
@@ -387,16 +413,16 @@ export default function AgentMvpChatPage() {
                   {message.status && (
                     <span
                       className={`text-xs font-medium ${
-                        message.status === 'pending'
-                          ? 'text-amber-600'
-                          : message.status === 'success'
-                          ? 'text-emerald-600'
-                          : 'text-red-600'
+                        message.status === "pending"
+                          ? "text-amber-600"
+                          : message.status === "success"
+                            ? "text-emerald-600"
+                            : "text-red-600"
                       }`}
                     >
-                      {message.status === 'pending' && 'in progress'}
-                      {message.status === 'success' && 'completed'}
-                      {message.status === 'error' && 'error'}
+                      {message.status === "pending" && "in progress"}
+                      {message.status === "success" && "completed"}
+                      {message.status === "error" && "error"}
                     </span>
                   )}
                 </div>
@@ -420,16 +446,20 @@ export default function AgentMvpChatPage() {
                     {message.details.steps.map((step: any, index: number) => (
                       <li key={`${message.id}-step-${index}`} className="flex items-center gap-3">
                         {(() => {
-                          const status = String(step.status || '').toLowerCase();
-                          if (status === 'completed') {
+                          const status = String(step.status || "").toLowerCase();
+                          if (status === "completed") {
                             return <CheckCircle className="h-4 w-4 text-emerald-500" aria-hidden />;
                           }
-                          if (status === 'failed') {
+                          if (status === "failed") {
                             return <XCircle className="h-4 w-4 text-red-500" aria-hidden />;
                           }
-                          return <Loader2 className="h-4 w-4 animate-spin text-amber-500" aria-hidden />;
+                          return (
+                            <Loader2 className="h-4 w-4 animate-spin text-amber-500" aria-hidden />
+                          );
                         })()}
-                        <span className="font-medium capitalize text-gray-700">{step.status || 'pending'}</span>
+                        <span className="font-medium capitalize text-gray-700">
+                          {step.status || "pending"}
+                        </span>
                         <span className="text-gray-500">
                           {step.tool} @ {new Date(step.timestamp).toLocaleTimeString()}
                         </span>
@@ -446,8 +476,8 @@ export default function AgentMvpChatPage() {
         </section>
       </div>
       <div className="mx-auto mt-8 max-w-5xl rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow-sm">
-        Looking for the full agent console? Return to{' '}
-        <button className="text-primary-600 underline" onClick={() => router.push('/agent')}>
+        Looking for the full agent console? Return to{" "}
+        <button className="text-primary-600 underline" onClick={() => router.push("/agent")}>
           the main agent platform
         </button>
         .

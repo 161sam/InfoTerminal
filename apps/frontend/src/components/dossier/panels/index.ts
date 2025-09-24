@@ -1,9 +1,9 @@
 // Dossier panels index - export all components
-export { DossierTemplateSelector } from './DossierTemplateSelector';
-export { DossierItemManager } from './DossierItemManager';
-export { DossierSettingsPanel } from './DossierSettingsPanel';
-export { DossierExportPanel } from './DossierExportPanel';
-export { DossierPreviewPanel } from './DossierPreviewPanel';
+export { DossierTemplateSelector } from "./DossierTemplateSelector";
+export { DossierItemManager } from "./DossierItemManager";
+export { DossierSettingsPanel } from "./DossierSettingsPanel";
+export { DossierExportPanel } from "./DossierExportPanel";
+export { DossierPreviewPanel } from "./DossierPreviewPanel";
 
 // Re-export types and utilities
 export type {
@@ -12,8 +12,8 @@ export type {
   DossierSettings,
   GeneratedDossier,
   DossierExportOptions,
-  DossierGenerationPayload
-} from '@/lib/dossier/dossier-config';
+  DossierGenerationPayload,
+} from "@/lib/dossier/dossier-config";
 
 export {
   ITEM_TYPE_COLORS,
@@ -29,5 +29,5 @@ export {
   formatConfidence,
   createDossierPayload,
   validateDossierItems,
-  estimateDossierSize
-} from '@/lib/dossier/dossier-config';
+  estimateDossierSize,
+} from "@/lib/dossier/dossier-config";

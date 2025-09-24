@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import path from 'path';
+import type { NextApiRequest, NextApiResponse } from "next";
+import fs from "fs";
+import path from "path";
 import {
   listDemoFiles,
   fileSha1,
@@ -9,7 +9,7 @@ import {
   ingestToAleph,
   annotateText,
   loadSeeds,
-} from '@/lib/demoLoader';
+} from "@/lib/demoLoader";
 
 type LoadOpts = {
   ingestAleph?: boolean;
@@ -53,15 +53,15 @@ export async function loadDemo(opts: LoadOpts) {
       }
     }
     if (o.annotate) {
-      if (file.endsWith('.txt')) {
+      if (file.endsWith(".txt")) {
         try {
-          const text = fs.readFileSync(file, 'utf-8');
-          await annotateText(text, { title: filename, aleph_id, source: 'demo-loader' });
+          const text = fs.readFileSync(file, "utf-8");
+          await annotateText(text, { title: filename, aleph_id, source: "demo-loader" });
         } catch (e: any) {
           notes.push(`annotate failed for ${filename}: ${e.message}`);
         }
       } else {
-        notes.push('pdf has no text, skipped annotate');
+        notes.push("pdf has no text, skipped annotate");
       }
     }
     state[hash] = { file: filename, aleph_id };
@@ -79,11 +79,11 @@ export async function loadDemo(opts: LoadOpts) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEMO_LOADER !== '1') {
-    res.status(403).json({ ok: false, error: 'disabled' });
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_DEMO_LOADER !== "1") {
+    res.status(403).json({ ok: false, error: "disabled" });
     return;
   }
-  if (req.method !== 'POST') {
+  if (req.method !== "POST") {
     res.status(405).json({ ok: false });
     return;
   }

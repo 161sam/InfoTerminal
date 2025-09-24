@@ -1,14 +1,14 @@
 /**
  * Feedback Widget Component
- * 
+ *
  * Provides easy feedback collection with rating and comment functionality.
  * Integrates with UserJourneyTracker for contextual feedback.
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, Star, Send, AlertCircle, CheckCircle, Lightbulb } from 'lucide-react';
-import UserJourneyTracker from '@/lib/user-journey-tracker';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, MessageCircle, Star, Send, AlertCircle, CheckCircle, Lightbulb } from "lucide-react";
+import UserJourneyTracker from "@/lib/user-journey-tracker";
 
 interface FeedbackWidgetProps {
   isOpen: boolean;
@@ -20,7 +20,12 @@ interface FeedbackWidgetProps {
   };
 }
 
-type FeedbackType = 'bug_report' | 'feature_request' | 'usability_issue' | 'performance_issue' | 'general_feedback';
+type FeedbackType =
+  | "bug_report"
+  | "feature_request"
+  | "usability_issue"
+  | "performance_issue"
+  | "general_feedback";
 
 interface FeedbackData {
   type: FeedbackType;
@@ -34,50 +39,50 @@ interface FeedbackData {
 
 const feedbackTypes = [
   {
-    id: 'bug_report' as FeedbackType,
-    label: 'Bug Report',
+    id: "bug_report" as FeedbackType,
+    label: "Bug Report",
     icon: AlertCircle,
-    color: 'text-red-500',
-    description: 'Something is broken or not working correctly'
+    color: "text-red-500",
+    description: "Something is broken or not working correctly",
   },
   {
-    id: 'feature_request' as FeedbackType,
-    label: 'Feature Request',
+    id: "feature_request" as FeedbackType,
+    label: "Feature Request",
     icon: Lightbulb,
-    color: 'text-yellow-500',
-    description: 'Suggest a new feature or improvement'
+    color: "text-yellow-500",
+    description: "Suggest a new feature or improvement",
   },
   {
-    id: 'usability_issue' as FeedbackType,
-    label: 'Usability Issue',
+    id: "usability_issue" as FeedbackType,
+    label: "Usability Issue",
     icon: MessageCircle,
-    color: 'text-blue-500',
-    description: 'Something is confusing or hard to use'
+    color: "text-blue-500",
+    description: "Something is confusing or hard to use",
   },
   {
-    id: 'performance_issue' as FeedbackType,
-    label: 'Performance Issue',
+    id: "performance_issue" as FeedbackType,
+    label: "Performance Issue",
     icon: AlertCircle,
-    color: 'text-orange-500',
-    description: 'Something is slow or unresponsive'
+    color: "text-orange-500",
+    description: "Something is slow or unresponsive",
   },
   {
-    id: 'general_feedback' as FeedbackType,
-    label: 'General Feedback',
+    id: "general_feedback" as FeedbackType,
+    label: "General Feedback",
     icon: MessageCircle,
-    color: 'text-gray-500',
-    description: 'General comments or suggestions'
-  }
+    color: "text-gray-500",
+    description: "General comments or suggestions",
+  },
 ];
 
 const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, context }) => {
-  const [step, setStep] = useState<'type' | 'details' | 'submitting' | 'success'>('type');
+  const [step, setStep] = useState<"type" | "details" | "submitting" | "success">("type");
   const [selectedType, setSelectedType] = useState<FeedbackType | null>(null);
   const [formData, setFormData] = useState<FeedbackData>({
-    type: 'general_feedback',
-    title: '',
-    description: '',
-    rating: undefined
+    type: "general_feedback",
+    title: "",
+    description: "",
+    rating: undefined,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,13 +90,13 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
   // Reset form when widget opens
   useEffect(() => {
     if (isOpen) {
-      setStep('type');
+      setStep("type");
       setSelectedType(null);
       setFormData({
-        type: 'general_feedback',
-        title: '',
-        description: '',
-        rating: undefined
+        type: "general_feedback",
+        title: "",
+        description: "",
+        rating: undefined,
       });
       setErrors({});
     }
@@ -99,34 +104,34 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
 
   const handleTypeSelection = (type: FeedbackType) => {
     setSelectedType(type);
-    setFormData(prev => ({ ...prev, type }));
-    setStep('details');
+    setFormData((prev) => ({ ...prev, type }));
+    setStep("details");
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
+      newErrors.title = "Title is required";
     } else if (formData.title.length < 5) {
-      newErrors.title = 'Title must be at least 5 characters';
+      newErrors.title = "Title must be at least 5 characters";
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = "Description is required";
     } else if (formData.description.length < 10) {
-      newErrors.description = 'Description must be at least 10 characters';
+      newErrors.description = "Description must be at least 10 characters";
     }
 
-    if (formData.type === 'bug_report') {
+    if (formData.type === "bug_report") {
       if (!formData.stepsToReproduce?.trim()) {
-        newErrors.stepsToReproduce = 'Steps to reproduce are required for bug reports';
+        newErrors.stepsToReproduce = "Steps to reproduce are required for bug reports";
       }
       if (!formData.expectedBehavior?.trim()) {
-        newErrors.expectedBehavior = 'Expected behavior is required for bug reports';
+        newErrors.expectedBehavior = "Expected behavior is required for bug reports";
       }
       if (!formData.actualBehavior?.trim()) {
-        newErrors.actualBehavior = 'Actual behavior is required for bug reports';
+        newErrors.actualBehavior = "Actual behavior is required for bug reports";
       }
     }
 
@@ -138,7 +143,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    setStep('submitting');
+    setStep("submitting");
 
     try {
       // Get user journey tracker instance
@@ -153,7 +158,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         language: navigator.language,
         cookiesEnabled: navigator.cookieEnabled,
-        onlineStatus: navigator.onLine
+        onlineStatus: navigator.onLine,
       };
 
       // Prepare feedback payload
@@ -173,16 +178,16 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
         tags: [
           ...(context?.feature ? [context.feature] : []),
           ...(context?.workflowStep ? [`workflow-${context.workflowStep}`] : []),
-          `page-${context?.page || 'unknown'}`
-        ]
+          `page-${context?.page || "unknown"}`,
+        ],
       };
 
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
+      const response = await fetch("/api/feedback", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(feedbackPayload)
+        body: JSON.stringify(feedbackPayload),
       });
 
       if (!response.ok) {
@@ -190,37 +195,36 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
       }
 
       const result = await response.json();
-      
+
       // Track feedback submission
       tracker.trackAction({
-        actionType: 'feedback_submitted',
-        element: 'feedback-widget',
+        actionType: "feedback_submitted",
+        element: "feedback-widget",
         metadata: {
           feedbackId: result.id,
           feedbackType: formData.type,
           rating: formData.rating,
-          hasStepsToReproduce: !!formData.stepsToReproduce
-        }
+          hasStepsToReproduce: !!formData.stepsToReproduce,
+        },
       });
 
-      setStep('success');
-      
+      setStep("success");
+
       // Auto-close after success
       setTimeout(() => {
         onClose();
       }, 3000);
-
     } catch (error) {
-      console.error('Failed to submit feedback:', error);
-      setErrors({ submit: 'Failed to submit feedback. Please try again.' });
-      setStep('details');
+      console.error("Failed to submit feedback:", error);
+      setErrors({ submit: "Failed to submit feedback. Please try again." });
+      setStep("details");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleRatingClick = (rating: number) => {
-    setFormData(prev => ({ ...prev, rating }));
+    setFormData((prev) => ({ ...prev, rating }));
   };
 
   const renderStarRating = () => (
@@ -234,8 +238,8 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
             onClick={() => handleRatingClick(star)}
             className={`w-6 h-6 transition-colors ${
               formData.rating && star <= formData.rating
-                ? 'text-yellow-400'
-                : 'text-gray-300 hover:text-yellow-400'
+                ? "text-yellow-400"
+                : "text-gray-300 hover:text-yellow-400"
             }`}
           >
             <Star fill="currentColor" />
@@ -267,10 +271,10 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
             <div className="flex items-center space-x-2">
               <MessageCircle className="w-5 h-5 text-blue-500" />
               <h3 className="text-lg font-semibold text-gray-900">
-                {step === 'type' && 'What kind of feedback do you have?'}
-                {step === 'details' && 'Tell us more'}
-                {step === 'submitting' && 'Submitting feedback...'}
-                {step === 'success' && 'Thank you!'}
+                {step === "type" && "What kind of feedback do you have?"}
+                {step === "details" && "Tell us more"}
+                {step === "submitting" && "Submitting feedback..."}
+                {step === "success" && "Thank you!"}
               </h3>
             </div>
             <button
@@ -284,7 +288,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
 
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
             {/* Step 1: Type Selection */}
-            {step === 'type' && (
+            {step === "type" && (
               <div className="space-y-3">
                 {feedbackTypes.map((type) => {
                   const IconComponent = type.icon;
@@ -295,14 +299,14 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
                       className="w-full text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
                     >
                       <div className="flex items-start space-x-3">
-                        <IconComponent className={`w-5 h-5 mt-1 ${type.color} group-hover:scale-110 transition-transform`} />
+                        <IconComponent
+                          className={`w-5 h-5 mt-1 ${type.color} group-hover:scale-110 transition-transform`}
+                        />
                         <div>
                           <h4 className="font-medium text-gray-900 group-hover:text-blue-900">
                             {type.label}
                           </h4>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {type.description}
-                          </p>
+                          <p className="text-sm text-gray-600 mt-1">{type.description}</p>
                         </div>
                       </div>
                     </button>
@@ -312,7 +316,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
             )}
 
             {/* Step 2: Details Form */}
-            {step === 'details' && (
+            {step === "details" && (
               <div className="space-y-4">
                 {context && (
                   <div className="bg-blue-50 p-3 rounded-lg text-sm">
@@ -325,40 +329,34 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
                 )}
 
                 {/* Rating */}
-                <div className="space-y-2">
-                  {renderStarRating()}
-                </div>
+                <div className="space-y-2">{renderStarRating()}</div>
 
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Title *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Title *</label>
                   <input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.title ? 'border-red-300' : 'border-gray-300'
+                      errors.title ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="Brief summary of your feedback"
                     maxLength={200}
                   />
-                  {errors.title && (
-                    <p className="text-sm text-red-600">{errors.title}</p>
-                  )}
+                  {errors.title && <p className="text-sm text-red-600">{errors.title}</p>}
                 </div>
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Description *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Description *</label>
                   <textarea
                     value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, description: e.target.value }))
+                    }
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.description ? 'border-red-300' : 'border-gray-300'
+                      errors.description ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="Please provide details about your feedback"
                     rows={4}
@@ -373,17 +371,19 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
                 </div>
 
                 {/* Bug Report Specific Fields */}
-                {formData.type === 'bug_report' && (
+                {formData.type === "bug_report" && (
                   <>
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-gray-700">
                         Steps to Reproduce *
                       </label>
                       <textarea
-                        value={formData.stepsToReproduce || ''}
-                        onChange={(e) => setFormData(prev => ({ ...prev, stepsToReproduce: e.target.value }))}
+                        value={formData.stepsToReproduce || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, stepsToReproduce: e.target.value }))
+                        }
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.stepsToReproduce ? 'border-red-300' : 'border-gray-300'
+                          errors.stepsToReproduce ? "border-red-300" : "border-gray-300"
                         }`}
                         placeholder="1. First step&#10;2. Second step&#10;3. ..."
                         rows={3}
@@ -398,10 +398,12 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
                         Expected Behavior *
                       </label>
                       <textarea
-                        value={formData.expectedBehavior || ''}
-                        onChange={(e) => setFormData(prev => ({ ...prev, expectedBehavior: e.target.value }))}
+                        value={formData.expectedBehavior || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, expectedBehavior: e.target.value }))
+                        }
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.expectedBehavior ? 'border-red-300' : 'border-gray-300'
+                          errors.expectedBehavior ? "border-red-300" : "border-gray-300"
                         }`}
                         placeholder="What should have happened?"
                         rows={2}
@@ -416,10 +418,12 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
                         Actual Behavior *
                       </label>
                       <textarea
-                        value={formData.actualBehavior || ''}
-                        onChange={(e) => setFormData(prev => ({ ...prev, actualBehavior: e.target.value }))}
+                        value={formData.actualBehavior || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, actualBehavior: e.target.value }))
+                        }
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.actualBehavior ? 'border-red-300' : 'border-gray-300'
+                          errors.actualBehavior ? "border-red-300" : "border-gray-300"
                         }`}
                         placeholder="What actually happened?"
                         rows={2}
@@ -440,7 +444,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
                 {/* Action Buttons */}
                 <div className="flex space-x-3 pt-4">
                   <button
-                    onClick={() => setStep('type')}
+                    onClick={() => setStep("type")}
                     className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                     disabled={isSubmitting}
                   >
@@ -459,7 +463,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
             )}
 
             {/* Step 3: Submitting */}
-            {step === 'submitting' && (
+            {step === "submitting" && (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
                 <p className="text-gray-600">Submitting your feedback...</p>
@@ -467,7 +471,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
             )}
 
             {/* Step 4: Success */}
-            {step === 'success' && (
+            {step === "success" && (
               <div className="text-center py-8">
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                 <h4 className="text-lg font-semibold text-gray-900 mb-2">

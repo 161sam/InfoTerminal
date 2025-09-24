@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from "next";
 
 function envInt(name: string, def: number): number {
   const v = process.env[name];
@@ -25,38 +25,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let ok = false;
     let version: string | undefined;
     switch (name) {
-      case 'aleph': {
-        const port = envInt('IT_PORT_ALEPH', 8641);
+      case "aleph": {
+        const port = envInt("IT_PORT_ALEPH", 8641);
         const r = await timedFetch(`http://localhost:${port}/`, { timeoutMs: 2500 });
         ok = r.ok;
         break;
       }
-      case 'superset': {
-        const port = envInt('IT_PORT_SUPERSET', 8644);
+      case "superset": {
+        const port = envInt("IT_PORT_SUPERSET", 8644);
         const r = await timedFetch(`http://localhost:${port}/health`, { timeoutMs: 2500 });
         ok = r.ok;
         break;
       }
-      case 'nifi': {
-        const port = envInt('IT_PORT_NIFI', 8619);
-        const r = await timedFetch(`http://localhost:${port}/nifi-api/system-diagnostics`, { timeoutMs: 2500 });
+      case "nifi": {
+        const port = envInt("IT_PORT_NIFI", 8619);
+        const r = await timedFetch(`http://localhost:${port}/nifi-api/system-diagnostics`, {
+          timeoutMs: 2500,
+        });
         ok = r.ok;
         break;
       }
-      case 'airflow': {
-        const port = envInt('IT_PORT_AIRFLOW', 8642);
+      case "airflow": {
+        const port = envInt("IT_PORT_AIRFLOW", 8642);
         const r = await timedFetch(`http://localhost:${port}/health`, { timeoutMs: 2500 });
         ok = r.ok;
         break;
       }
       default: {
         // Proxy health to plugin-runner for tool plugins if needed in future
-        return res.status(404).json({ status: 'unknown' });
+        return res.status(404).json({ status: "unknown" });
       }
     }
-    return res.status(200).json({ status: ok ? 'up' : 'down', version });
+    return res.status(200).json({ status: ok ? "up" : "down", version });
   } catch {
-    return res.status(200).json({ status: 'down' });
+    return res.status(200).json({ status: "down" });
   }
 }
-

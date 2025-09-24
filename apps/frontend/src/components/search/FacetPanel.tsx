@@ -1,7 +1,7 @@
 // apps/frontend/src/components/search/FacetPanel.tsx
-import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Search, X } from 'lucide-react';
-import type { Aggregations } from '@/types/search';
+import React, { useState } from "react";
+import { ChevronDown, ChevronRight, Search, X } from "lucide-react";
+import type { Aggregations } from "@/types/search";
 
 interface Props {
   aggregations?: Aggregations;
@@ -34,14 +34,14 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
   };
 
   const updateSearchTerm = (facetName: string, term: string) => {
-    setSearchTerms(prev => ({
+    setSearchTerms((prev) => ({
       ...prev,
-      [facetName]: term
+      [facetName]: term,
     }));
   };
 
   const clearSearchTerm = (facetName: string) => {
-    setSearchTerms(prev => {
+    setSearchTerms((prev) => {
       const { [facetName]: _, ...rest } = prev;
       return rest;
     });
@@ -49,26 +49,27 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
 
   const getDisplayName = (facetName: string): string => {
     const displayNames: Record<string, string> = {
-      'entity_types': 'Entity Types',
-      'source': 'Sources',
-      'author': 'Authors',
-      'date': 'Date',
-      'type': 'Document Type',
-      'language': 'Language',
-      'category': 'Category',
-      'tags': 'Tags'
+      entity_types: "Entity Types",
+      source: "Sources",
+      author: "Authors",
+      date: "Date",
+      type: "Document Type",
+      language: "Language",
+      category: "Category",
+      tags: "Tags",
     };
-    
-    return displayNames[facetName] || facetName.charAt(0).toUpperCase() + facetName.slice(1).replace('_', ' ');
+
+    return (
+      displayNames[facetName] ||
+      facetName.charAt(0).toUpperCase() + facetName.slice(1).replace("_", " ")
+    );
   };
 
   const getFilteredBuckets = (facetName: string, buckets: any[]) => {
-    const searchTerm = searchTerms[facetName]?.toLowerCase() || '';
+    const searchTerm = searchTerms[facetName]?.toLowerCase() || "";
     if (!searchTerm) return buckets;
-    
-    return buckets.filter(bucket => 
-      bucket.key.toLowerCase().includes(searchTerm)
-    );
+
+    return buckets.filter((bucket) => bucket.key.toLowerCase().includes(searchTerm));
   };
 
   const getTotalSelected = () => {
@@ -86,7 +87,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
             </span>
           )}
         </h3>
-        
+
         <div className="flex items-center gap-2">
           <label className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <input
@@ -99,14 +100,14 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
           </label>
         </div>
       </div>
-      
+
       <div className="space-y-4">
         {Object.entries(aggregations).map(([facetName, buckets]) => {
           const isExpanded = expandedFacets.has(facetName);
           const selectedCount = selectedFilters[facetName]?.length || 0;
           const filteredBuckets = getFilteredBuckets(facetName, buckets);
-          const searchTerm = searchTerms[facetName] || '';
-          
+          const searchTerm = searchTerms[facetName] || "";
+
           return (
             <div key={facetName} className="border border-gray-200 dark:border-gray-800 rounded-lg">
               <button
@@ -124,9 +125,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                   )}
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {buckets.length}
-                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{buckets.length}</span>
                   {isExpanded ? (
                     <ChevronDown size={16} className="text-gray-400" />
                   ) : (
@@ -134,13 +133,16 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                   )}
                 </div>
               </button>
-              
+
               {isExpanded && (
                 <div className="border-t border-gray-200 dark:border-gray-800 p-3">
                   {/* Search within facet */}
                   {buckets.length > 5 && (
                     <div className="relative mb-3">
-                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                      <Search
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                        size={14}
+                      />
                       <input
                         type="text"
                         value={searchTerm}
@@ -158,19 +160,20 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                       )}
                     </div>
                   )}
-                  
+
                   {/* Facet values */}
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {filteredBuckets.length > 0 ? (
                       filteredBuckets.map((bucket) => {
-                        const isSelected = selectedFilters[facetName]?.includes(bucket.key) ?? false;
+                        const isSelected =
+                          selectedFilters[facetName]?.includes(bucket.key) ?? false;
                         const isDisabled = bucket.doc_count === 0;
-                        
+
                         return (
                           <label
                             key={bucket.key}
                             className={`flex items-center justify-between cursor-pointer group ${
-                              isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                           >
                             <div className="flex items-center min-w-0 flex-1">
@@ -181,22 +184,26 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                                 onChange={() => !isDisabled && onToggle(facetName, bucket.key)}
                                 className="mr-2 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
                               />
-                              <span 
+                              <span
                                 className={`text-sm truncate ${
-                                  isSelected ? 'font-medium text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'
+                                  isSelected
+                                    ? "font-medium text-gray-900 dark:text-gray-100"
+                                    : "text-gray-700 dark:text-gray-300"
                                 }`}
                                 title={bucket.key}
                               >
                                 {bucket.key}
                               </span>
                             </div>
-                            
+
                             {showCounts && (
-                              <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                                isSelected 
-                                  ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300' 
-                                  : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'
-                              }`}>
+                              <span
+                                className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+                                  isSelected
+                                    ? "bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300"
+                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                                }`}
+                              >
                                 {bucket.doc_count.toLocaleString()}
                               </span>
                             )}
@@ -209,12 +216,12 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                       </p>
                     )}
                   </div>
-                  
+
                   {/* Show more/less for long lists */}
                   {buckets.length > 10 && !searchTerm && (
                     <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
                       <button
-                        onClick={() => updateSearchTerm(facetName, '')}
+                        onClick={() => updateSearchTerm(facetName, "")}
                         className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
                       >
                         View all {buckets.length} options
@@ -227,14 +234,14 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
           );
         })}
       </div>
-      
+
       {/* Clear all filters */}
       {getTotalSelected() > 0 && (
         <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-800">
           <button
             onClick={() => {
-              Object.keys(selectedFilters).forEach(facetName => {
-                selectedFilters[facetName].forEach(value => {
+              Object.keys(selectedFilters).forEach((facetName) => {
+                selectedFilters[facetName].forEach((value) => {
                   onToggle(facetName, value);
                 });
               });

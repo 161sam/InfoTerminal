@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Shield,
   Globe,
@@ -8,17 +8,17 @@ import {
   CheckCircle,
   Activity,
   RefreshCw,
-} from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { LoadingSpinner } from '@/components/ui/loading';
-import { IncognitoMode } from '@/components/security/IncognitoMode';
-import { EphemeralSession } from '@/components/security/EphemeralSession';
-import { DataWipeControls } from '@/components/security/DataWipeControls';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { IncognitoMode } from "@/components/security/IncognitoMode";
+import { EphemeralSession } from "@/components/security/EphemeralSession";
+import { DataWipeControls } from "@/components/security/DataWipeControls";
+import { cn } from "@/lib/utils";
 
 interface SecurityStatus {
   egressGateway: {
-    status: 'healthy' | 'degraded' | 'offline';
+    status: "healthy" | "degraded" | "offline";
     torAvailable: boolean;
     vpnCount: number;
     proxyCount: number;
@@ -37,13 +37,13 @@ interface SecurityStatus {
 }
 
 const tabs = [
-  { id: 'overview', label: 'Overview', icon: Shield },
-  { id: 'incognito', label: 'Incognito Mode', icon: EyeOff },
-  { id: 'containers', label: 'Ephemeral Sessions', icon: Container },
-  { id: 'wipe', label: 'Data Wipe', icon: Shield },
+  { id: "overview", label: "Overview", icon: Shield },
+  { id: "incognito", label: "Incognito Mode", icon: EyeOff },
+  { id: "containers", label: "Ephemeral Sessions", icon: Container },
+  { id: "wipe", label: "Data Wipe", icon: Shield },
 ] as const;
 
-type SecurityTab = (typeof tabs)[number]['id'];
+type SecurityTab = (typeof tabs)[number]["id"];
 
 export interface SecurityPanelProps {
   className?: string;
@@ -51,11 +51,11 @@ export interface SecurityPanelProps {
 
 const FALLBACK_STATUS: SecurityStatus = {
   egressGateway: {
-    status: 'offline',
+    status: "offline",
     torAvailable: false,
     vpnCount: 0,
     proxyCount: 0,
-    anonymityLevel: 'none',
+    anonymityLevel: "none",
   },
   incognitoMode: {
     active: false,
@@ -68,25 +68,25 @@ const FALLBACK_STATUS: SecurityStatus = {
 };
 
 export function SecurityPanel({ className }: SecurityPanelProps) {
-  const [activeTab, setActiveTab] = useState<SecurityTab>('overview');
+  const [activeTab, setActiveTab] = useState<SecurityTab>("overview");
   const [securityStatus, setSecurityStatus] = useState<SecurityStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
 
   const loadSecurityStatus = useCallback(async () => {
     try {
-      const response = await fetch('/api/security/status');
+      const response = await fetch("/api/security/status");
       if (response.ok) {
         const status = await response.json();
         setSecurityStatus(status);
       } else {
         setSecurityStatus({
           egressGateway: {
-            status: 'healthy',
+            status: "healthy",
             torAvailable: true,
             vpnCount: 3,
             proxyCount: 5,
-            anonymityLevel: 'high',
+            anonymityLevel: "high",
           },
           incognitoMode: {
             active: false,
@@ -100,7 +100,7 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
       }
       setLastRefresh(Date.now());
     } catch (error) {
-      console.error('Failed to load security status:', error);
+      console.error("Failed to load security status:", error);
       setSecurityStatus(FALLBACK_STATUS);
     } finally {
       setIsLoading(false);
@@ -121,11 +121,11 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'healthy':
+      case "healthy":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'degraded':
+      case "degraded":
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'offline':
+      case "offline":
         return <AlertTriangle className="h-4 w-4 text-red-500" />;
       default:
         return <Activity className="h-4 w-4 text-gray-500" />;
@@ -134,20 +134,20 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy':
-        return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-300';
-      case 'degraded':
-        return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'offline':
-        return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-300';
+      case "healthy":
+        return "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-300";
+      case "degraded":
+        return "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-900/30 text-yellow-800 dark:text-yellow-300";
+      case "offline":
+        return "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-300";
       default:
-        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-900/30 text-gray-800 dark:text-gray-300';
+        return "bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-900/30 text-gray-800 dark:text-gray-300";
     }
   };
 
   if (isLoading && !securityStatus) {
     return (
-      <div className={cn('p-6', className)}>
+      <div className={cn("p-6", className)}>
         <LoadingSpinner
           layout="block"
           variant="primary"
@@ -160,7 +160,7 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-800">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -170,10 +170,10 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors',
+                "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors",
                 isActive
-                  ? 'text-blue-600 border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                  : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+                  ? "text-blue-600 border-blue-600 bg-blue-50 dark:bg-blue-900/20"
+                  : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -191,12 +191,12 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
             disabled={isLoading}
             className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
           >
-            <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
+            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
           </button>
         </div>
       </div>
 
-      {activeTab === 'overview' && securityStatus && (
+      {activeTab === "overview" && securityStatus && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Panel>
@@ -207,8 +207,8 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                 </div>
                 <div
                   className={cn(
-                    'flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border',
-                    getStatusColor(securityStatus.egressGateway.status)
+                    "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border",
+                    getStatusColor(securityStatus.egressGateway.status),
                   )}
                 >
                   {getStatusIcon(securityStatus.egressGateway.status)}
@@ -218,7 +218,7 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Tor Available</span>
-                  <span>{securityStatus.egressGateway.torAvailable ? 'Yes' : 'No'}</span>
+                  <span>{securityStatus.egressGateway.torAvailable ? "Yes" : "No"}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">VPN Pools</span>
@@ -245,13 +245,13 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                 </div>
                 <div
                   className={cn(
-                    'px-2 py-1 rounded-full text-xs font-medium',
+                    "px-2 py-1 rounded-full text-xs font-medium",
                     securityStatus.incognitoMode.active
-                      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                      ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                      : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
                   )}
                 >
-                  {securityStatus.incognitoMode.active ? 'Active' : 'Inactive'}
+                  {securityStatus.incognitoMode.active ? "Active" : "Inactive"}
                 </div>
               </div>
               <div className="space-y-2">
@@ -266,7 +266,9 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                     {securityStatus.incognitoMode.timeRemaining && (
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-500">Time Remaining</span>
-                        <span>{Math.floor(securityStatus.incognitoMode.timeRemaining / 60000)}m</span>
+                        <span>
+                          {Math.floor(securityStatus.incognitoMode.timeRemaining / 60000)}m
+                        </span>
                       </div>
                     )}
                   </>
@@ -284,13 +286,13 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                 </div>
                 <div
                   className={cn(
-                    'px-2 py-1 rounded-full text-xs font-medium',
+                    "px-2 py-1 rounded-full text-xs font-medium",
                     securityStatus.dataProtection.memoryOnlyMode
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                      : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
                   )}
                 >
-                  {securityStatus.dataProtection.memoryOnlyMode ? 'Secured' : 'Standard'}
+                  {securityStatus.dataProtection.memoryOnlyMode ? "Secured" : "Standard"}
                 </div>
               </div>
               <div className="space-y-2">
@@ -300,11 +302,15 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Memory-Only Mode</span>
-                  <span>{securityStatus.dataProtection.memoryOnlyMode ? 'Enabled' : 'Disabled'}</span>
+                  <span>
+                    {securityStatus.dataProtection.memoryOnlyMode ? "Enabled" : "Disabled"}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Auto-Wipe</span>
-                  <span>{securityStatus.dataProtection.autoWipeEnabled ? 'Enabled' : 'Disabled'}</span>
+                  <span>
+                    {securityStatus.dataProtection.autoWipeEnabled ? "Enabled" : "Disabled"}
+                  </span>
                 </div>
               </div>
             </Panel>
@@ -322,7 +328,9 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                   <Globe className="h-5 w-5 text-blue-500" />
                   <h4 className="font-medium">Anonymous Egress</h4>
                 </div>
-                <p className="text-sm text-gray-600">Tor, VPN, and proxy routing for anonymous OSINT research</p>
+                <p className="text-sm text-gray-600">
+                  Tor, VPN, and proxy routing for anonymous OSINT research
+                </p>
               </div>
 
               <div className="p-4 border rounded-lg">
@@ -330,7 +338,9 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                   <EyeOff className="h-5 w-5 text-purple-500" />
                   <h4 className="font-medium">Incognito Mode</h4>
                 </div>
-                <p className="text-sm text-gray-600">Ephemeral sessions with automatic data wiping</p>
+                <p className="text-sm text-gray-600">
+                  Ephemeral sessions with automatic data wiping
+                </p>
               </div>
 
               <div className="p-4 border rounded-lg">
@@ -338,20 +348,22 @@ export function SecurityPanel({ className }: SecurityPanelProps) {
                   <Container className="h-5 w-5 text-green-500" />
                   <h4 className="font-medium">Isolated Containers</h4>
                 </div>
-                <p className="text-sm text-gray-600">Secure, ephemeral containers for sensitive operations</p>
+                <p className="text-sm text-gray-600">
+                  Secure, ephemeral containers for sensitive operations
+                </p>
               </div>
             </div>
           </Panel>
         </div>
       )}
 
-      {activeTab === 'incognito' && <IncognitoMode />}
+      {activeTab === "incognito" && <IncognitoMode />}
 
-      {activeTab === 'containers' && (
+      {activeTab === "containers" && (
         <EphemeralSession sessionId={securityStatus?.incognitoMode.sessionId} />
       )}
 
-      {activeTab === 'wipe' && (
+      {activeTab === "wipe" && (
         <DataWipeControls sessionId={securityStatus?.incognitoMode.sessionId} />
       )}
     </div>

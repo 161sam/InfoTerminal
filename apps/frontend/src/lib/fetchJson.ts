@@ -1,4 +1,8 @@
-export async function fetchJson<T>(url: string, options: RequestInit = {}, timeout = 10000): Promise<T> {
+export async function fetchJson<T>(
+  url: string,
+  options: RequestInit = {},
+  timeout = 10000,
+): Promise<T> {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   try {

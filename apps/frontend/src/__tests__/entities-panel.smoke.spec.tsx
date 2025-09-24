@@ -26,4 +26,3 @@ describe("Entities page surfaces", () => {
     expect(root.querySelectorAll(".dark\\:bg-gray-900").length).toBeGreaterThan(0);
   });
 });
-

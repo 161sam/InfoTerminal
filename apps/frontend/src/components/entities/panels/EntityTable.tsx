@@ -1,7 +1,7 @@
 // Entity table/grid component for displaying filtered entities
-import { User } from 'lucide-react';
-import { Entity } from '@/lib/entities/entity-config';
-import { EntityCard } from './EntityCard';
+import { User } from "lucide-react";
+import { Entity } from "@/lib/entities/entity-config";
+import { EntityCard } from "./EntityCard";
 
 interface EntityTableProps {
   entities: Entity[];
@@ -32,9 +32,9 @@ export function EntityTable({ entities, onEntityAction, isLoading = false }: Ent
                 <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded"></div>
               </div>
             </div>
-            
+
             <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full mb-4"></div>
-            
+
             <div className="grid grid-cols-4 gap-4">
               {[...Array(4)].map((_, i) => (
                 <div key={i}>
@@ -70,14 +70,10 @@ export function EntityTable({ entities, onEntityAction, isLoading = false }: Ent
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4">
         {entities.map((entity) => (
-          <EntityCard
-            key={entity.id}
-            entity={entity}
-            onAction={onEntityAction}
-          />
+          <EntityCard key={entity.id} entity={entity} onAction={onEntityAction} />
         ))}
       </div>
-      
+
       {/* Results summary */}
       <div className="text-center text-sm text-gray-500 dark:text-slate-400 pt-4 border-t border-gray-200 dark:border-gray-700">
         Showing {entities.length} entities

@@ -1,5 +1,5 @@
 // pages/api/verification/credibility.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from "next";
 
 interface CredibilityResponse {
   credibility_score: number;
@@ -12,28 +12,28 @@ interface CredibilityResponse {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CredibilityResponse | { error: string }>
+  res: NextApiResponse<CredibilityResponse | { error: string }>,
 ) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
     const { url } = req.query;
 
-    if (!url || typeof url !== 'string') {
-      return res.status(400).json({ error: 'URL parameter is required' });
+    if (!url || typeof url !== "string") {
+      return res.status(400).json({ error: "URL parameter is required" });
     }
 
     // Validate URL format
     try {
       new URL(url);
     } catch {
-      return res.status(400).json({ error: 'Invalid URL format' });
+      return res.status(400).json({ error: "Invalid URL format" });
     }
 
     // Call verification service
-    const verificationServiceUrl = process.env.VERIFICATION_SERVICE_URL || 'http://localhost:8617';
+    const verificationServiceUrl = process.env.VERIFICATION_SERVICE_URL || "http://localhost:8617";
     const encodedUrl = encodeURIComponent(url);
     const response = await fetch(`${verificationServiceUrl}/verify/credibility/${encodedUrl}`);
 
@@ -45,136 +45,126 @@ export default async function handler(
 
     const credibilityResult = await response.json();
     res.status(200).json(credibilityResult);
-
   } catch (error) {
-    console.error('Failed to assess credibility:', error);
-    
+    console.error("Failed to assess credibility:", error);
+
     // Fallback: Create mock credibility assessment
     try {
       const mockCredibility = generateMockCredibility(req.query.url as string);
       res.status(200).json(mockCredibility);
     } catch {
-      res.status(500).json({ error: 'Failed to assess credibility' });
+      res.status(500).json({ error: "Failed to assess credibility" });
     }
   }
 }
 
 function generateMockCredibility(url: string): CredibilityResponse {
   const domain = extractDomain(url);
-  
+
   // Define known credible sources
   const credibleSources: { [key: string]: CredibilityResponse } = {
-    'reuters.com': {
+    "reuters.com": {
       credibility_score: 0.95,
-      bias_rating: 'center',
-      factual_reporting: 'high',
-      transparency_score: 0.90,
+      bias_rating: "center",
+      factual_reporting: "high",
+      transparency_score: 0.9,
       authority_indicators: [
-        'Established news organization',
-        'Professional editorial standards',
-        'Fact-checking protocols',
-        'Transparent correction policy'
+        "Established news organization",
+        "Professional editorial standards",
+        "Fact-checking protocols",
+        "Transparent correction policy",
       ],
-      red_flags: []
+      red_flags: [],
     },
-    'ap.org': {
+    "ap.org": {
       credibility_score: 0.95,
-      bias_rating: 'center',
-      factual_reporting: 'high',
+      bias_rating: "center",
+      factual_reporting: "high",
       transparency_score: 0.92,
       authority_indicators: [
-        'Associated Press - major news agency',
-        'High journalistic standards',
-        'Global news network',
-        'Fact-checking protocols'
+        "Associated Press - major news agency",
+        "High journalistic standards",
+        "Global news network",
+        "Fact-checking protocols",
       ],
-      red_flags: []
+      red_flags: [],
     },
-    'bbc.com': {
+    "bbc.com": {
       credibility_score: 0.88,
-      bias_rating: 'center',
-      factual_reporting: 'high',
+      bias_rating: "center",
+      factual_reporting: "high",
       transparency_score: 0.85,
       authority_indicators: [
-        'Public service broadcaster',
-        'Editorial guidelines',
-        'International reputation',
-        'Multiple fact-checkers'
+        "Public service broadcaster",
+        "Editorial guidelines",
+        "International reputation",
+        "Multiple fact-checkers",
       ],
-      red_flags: []
+      red_flags: [],
     },
-    'cnn.com': {
+    "cnn.com": {
       credibility_score: 0.72,
-      bias_rating: 'left',
-      factual_reporting: 'medium',
-      transparency_score: 0.70,
+      bias_rating: "left",
+      factual_reporting: "medium",
+      transparency_score: 0.7,
       authority_indicators: [
-        'Major news network',
-        'Professional journalists',
-        'Editorial oversight'
+        "Major news network",
+        "Professional journalists",
+        "Editorial oversight",
       ],
-      red_flags: [
-        'Some partisan content',
-        'Opinion mixed with news'
-      ]
+      red_flags: ["Some partisan content", "Opinion mixed with news"],
     },
-    'foxnews.com': {
+    "foxnews.com": {
       credibility_score: 0.68,
-      bias_rating: 'right',
-      factual_reporting: 'medium',
+      bias_rating: "right",
+      factual_reporting: "medium",
       transparency_score: 0.65,
-      authority_indicators: [
-        'Major news network',
-        'Professional production'
-      ],
+      authority_indicators: ["Major news network", "Professional production"],
       red_flags: [
-        'Strong partisan lean',
-        'Opinion programming dominance',
-        'Factual reporting concerns'
-      ]
+        "Strong partisan lean",
+        "Opinion programming dominance",
+        "Factual reporting concerns",
+      ],
     },
-    'wikipedia.org': {
-      credibility_score: 0.80,
-      bias_rating: 'center',
-      factual_reporting: 'high',
+    "wikipedia.org": {
+      credibility_score: 0.8,
+      bias_rating: "center",
+      factual_reporting: "high",
       transparency_score: 0.95,
       authority_indicators: [
-        'Collaborative editing',
-        'Citation requirements',
-        'Transparent editing history',
-        'Neutral point of view policy'
+        "Collaborative editing",
+        "Citation requirements",
+        "Transparent editing history",
+        "Neutral point of view policy",
       ],
-      red_flags: [
-        'Anyone can edit',
-        'Potential for vandalism'
-      ]
+      red_flags: ["Anyone can edit", "Potential for vandalism"],
     },
-    'nature.com': {
+    "nature.com": {
       credibility_score: 0.98,
-      bias_rating: 'center',
-      factual_reporting: 'high',
+      bias_rating: "center",
+      factual_reporting: "high",
       transparency_score: 0.95,
       authority_indicators: [
-        'Peer-reviewed scientific journal',
-        'Rigorous editorial process',
-        'World-renowned publication',
-        'Expert reviewers'
+        "Peer-reviewed scientific journal",
+        "Rigorous editorial process",
+        "World-renowned publication",
+        "Expert reviewers",
       ],
-      red_flags: []
+      red_flags: [],
     },
-    'pubmed.ncbi.nlm.nih.gov': {
+    "pubmed.ncbi.nlm.nih.gov": {
       credibility_score: 0.98,
-      bias_rating: 'center',
-      factual_reporting: 'high',
+      bias_rating: "center",
+      factual_reporting: "high",
       transparency_score: 0.98,
       authority_indicators: [
-        'Government medical database',
-        'Peer-reviewed sources only',
-        'National Institutes of Health',
-        'Scientific rigor'
+        "Government medical database",
+        "Peer-reviewed sources only",
+        "National Institutes of Health",
+        "Scientific rigor",
       ],
-      red_flags: []
-    }
+      red_flags: [],
+    },
   };
 
   // Check if domain is in our known sources
@@ -184,10 +174,10 @@ function generateMockCredibility(url: string): CredibilityResponse {
   }
 
   // Check for partial matches
-  const partialMatch = Object.keys(credibleSources).find(key => 
-    domain.includes(key.split('.')[0]) || key.includes(domain.split('.')[0])
+  const partialMatch = Object.keys(credibleSources).find(
+    (key) => domain.includes(key.split(".")[0]) || key.includes(domain.split(".")[0]),
   );
-  
+
   if (partialMatch) {
     return credibleSources[partialMatch];
   }
@@ -198,66 +188,66 @@ function generateMockCredibility(url: string): CredibilityResponse {
 
 function generateUnknownDomainAssessment(domain: string, url: string): CredibilityResponse {
   let credibilityScore = 0.5; // Start neutral
-  let biasRating = 'unknown';
-  let factualReporting = 'unknown';
+  let biasRating = "unknown";
+  let factualReporting = "unknown";
   let transparencyScore = 0.5;
   const authorityIndicators: string[] = [];
   const redFlags: string[] = [];
 
   // Domain analysis
-  if (domain.endsWith('.edu')) {
+  if (domain.endsWith(".edu")) {
     credibilityScore += 0.3;
     transparencyScore += 0.3;
-    authorityIndicators.push('Educational institution');
-    factualReporting = 'high';
-  } else if (domain.endsWith('.gov')) {
+    authorityIndicators.push("Educational institution");
+    factualReporting = "high";
+  } else if (domain.endsWith(".gov")) {
     credibilityScore += 0.4;
     transparencyScore += 0.4;
-    authorityIndicators.push('Government source');
-    factualReporting = 'high';
-    biasRating = 'center';
-  } else if (domain.endsWith('.org')) {
+    authorityIndicators.push("Government source");
+    factualReporting = "high";
+    biasRating = "center";
+  } else if (domain.endsWith(".org")) {
     credibilityScore += 0.1;
     transparencyScore += 0.1;
-    authorityIndicators.push('Organization');
+    authorityIndicators.push("Organization");
   }
 
   // HTTPS check
-  if (url.startsWith('https://')) {
+  if (url.startsWith("https://")) {
     credibilityScore += 0.1;
     transparencyScore += 0.1;
-    authorityIndicators.push('Secure connection');
+    authorityIndicators.push("Secure connection");
   } else {
-    redFlags.push('Insecure connection (HTTP)');
+    redFlags.push("Insecure connection (HTTP)");
     credibilityScore -= 0.1;
   }
 
   // Check for suspicious patterns
-  const suspiciousKeywords = ['fake', 'clickbait', 'shocking', 'unbelievable', 'secret'];
+  const suspiciousKeywords = ["fake", "clickbait", "shocking", "unbelievable", "secret"];
   const urlLower = url.toLowerCase();
-  
-  if (suspiciousKeywords.some(keyword => urlLower.includes(keyword))) {
+
+  if (suspiciousKeywords.some((keyword) => urlLower.includes(keyword))) {
     credibilityScore -= 0.3;
-    redFlags.push('Suspicious URL keywords');
+    redFlags.push("Suspicious URL keywords");
   }
 
   // Check for common news site patterns
-  if (domain.includes('news') || domain.includes('times') || domain.includes('post')) {
+  if (domain.includes("news") || domain.includes("times") || domain.includes("post")) {
     credibilityScore += 0.1;
-    authorityIndicators.push('News organization');
+    authorityIndicators.push("News organization");
   }
 
   // Check for blog patterns
-  if (domain.includes('blog') || domain.includes('wordpress') || domain.includes('blogspot')) {
+  if (domain.includes("blog") || domain.includes("wordpress") || domain.includes("blogspot")) {
     credibilityScore -= 0.1;
-    redFlags.push('Blog or personal website');
+    redFlags.push("Blog or personal website");
   }
 
   // Check for social media
-  const socialPlatforms = ['facebook', 'twitter', 'instagram', 'tiktok', 'youtube'];
-  if (socialPlatforms.some(platform => domain.includes(platform))) {
+  const socialPlatforms = ["facebook", "twitter", "instagram", "tiktok", "youtube"];
+  if (socialPlatforms.some((platform) => domain.includes(platform))) {
     credibilityScore -= 0.2;
-    redFlags.push('Social media platform');
+    redFlags.push("Social media platform");
   }
 
   // Ensure scores are within bounds
@@ -265,13 +255,13 @@ function generateUnknownDomainAssessment(domain: string, url: string): Credibili
   transparencyScore = Math.max(0, Math.min(1, transparencyScore));
 
   // Set factual reporting based on credibility score if unknown
-  if (factualReporting === 'unknown') {
+  if (factualReporting === "unknown") {
     if (credibilityScore >= 0.8) {
-      factualReporting = 'high';
+      factualReporting = "high";
     } else if (credibilityScore >= 0.6) {
-      factualReporting = 'medium';
+      factualReporting = "medium";
     } else {
-      factualReporting = 'low';
+      factualReporting = "low";
     }
   }
 
@@ -281,14 +271,14 @@ function generateUnknownDomainAssessment(domain: string, url: string): Credibili
     factual_reporting: factualReporting,
     transparency_score: transparencyScore,
     authority_indicators: authorityIndicators,
-    red_flags: redFlags
+    red_flags: redFlags,
   };
 }
 
 function extractDomain(url: string): string {
   try {
     const parsedUrl = new URL(url);
-    return parsedUrl.hostname.toLowerCase().replace(/^www\./, '');
+    return parsedUrl.hostname.toLowerCase().replace(/^www\./, "");
   } catch {
     return url.toLowerCase();
   }

@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
-import { Copy, Check, Eye, Code, Palette, Book } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent, SubTabs, MainTabs, NavigationTabs, CardTabs } from '@/components/ui/tabs';
-import { LoadingSpinner, Skeleton, ErrorState, EmptyState, TabLoadingSkeleton, GraphLoadingSkeleton } from '@/components/ui/loading';
-import Button from '@/components/ui/button';
-import Panel from '@/components/layout/Panel';
-import { PageLayout, TabbedPageLayout, DashboardLayout } from '@/components/layout/PageLayout';
-import DarkModeCompatibilityTest from './DarkModeTest';
+import React, { useState } from "react";
+import { Copy, Check, Eye, Code, Palette, Book } from "lucide-react";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  SubTabs,
+  MainTabs,
+  NavigationTabs,
+  CardTabs,
+} from "@/components/ui/tabs";
+import {
+  LoadingSpinner,
+  Skeleton,
+  ErrorState,
+  EmptyState,
+  TabLoadingSkeleton,
+  GraphLoadingSkeleton,
+} from "@/components/ui/loading";
+import Button from "@/components/ui/button";
+import Panel from "@/components/layout/Panel";
+import { PageLayout, TabbedPageLayout, DashboardLayout } from "@/components/layout/PageLayout";
+import DarkModeCompatibilityTest from "./DarkModeTest";
 
 interface ComponentExampleProps {
   title: string;
@@ -33,23 +49,15 @@ function ComponentExample({ title, description, code, children }: ComponentExamp
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setShowCode(!showCode)}
-            >
+            <Button size="sm" variant="secondary" onClick={() => setShowCode(!showCode)}>
               {showCode ? <Eye size={14} /> : <Code size={14} />}
-              {showCode ? 'Preview' : 'Code'}
+              {showCode ? "Preview" : "Code"}
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={copyCode}
-            >
+            <Button size="sm" variant="outline" onClick={copyCode}>
               {copied ? <Check size={14} /> : <Copy size={14} />}
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? "Copied!" : "Copy"}
             </Button>
           </div>
         </div>
@@ -62,9 +70,7 @@ function ComponentExample({ title, description, code, children }: ComponentExamp
             <code className="text-gray-900 dark:text-gray-100">{code}</code>
           </pre>
         ) : (
-          <div className="space-y-4">
-            {children}
-          </div>
+          <div className="space-y-4">{children}</div>
         )}
       </div>
     </div>
@@ -72,34 +78,33 @@ function ComponentExample({ title, description, code, children }: ComponentExamp
 }
 
 export function ComponentShowcase() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [demoTab, setDemoTab] = useState('default');
-  const [subTab, setSubTab] = useState('explorer');
+  const [activeTab, setActiveTab] = useState("overview");
+  const [demoTab, setDemoTab] = useState("default");
+  const [subTab, setSubTab] = useState("explorer");
 
   return (
-    <PageLayout 
-      title="Design System Showcase" 
+    <PageLayout
+      title="Design System Showcase"
       description="Interactive component library for InfoTerminal"
       showBreadcrumbs={false}
     >
       <div className="max-w-7xl mx-auto space-y-8">
-        
         {/* Hero Section */}
         <div className="text-center py-12 bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl border border-primary-200 dark:border-primary-800">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             InfoTerminal Design System
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            A comprehensive component library built for consistency, accessibility, and performance. 
+            A comprehensive component library built for consistency, accessibility, and performance.
             Explore all components with live examples and ready-to-use code.
           </p>
-          
+
           <div className="flex items-center justify-center gap-4 mt-8">
-            <Button onClick={() => setActiveTab('components')}>
+            <Button onClick={() => setActiveTab("components")}>
               <Book size={16} className="mr-2" />
               Browse Components
             </Button>
-            <Button variant="secondary" onClick={() => setActiveTab('dark-mode')}>
+            <Button variant="secondary" onClick={() => setActiveTab("dark-mode")}>
               <Palette size={16} className="mr-2" />
               Dark Mode Test
             </Button>
@@ -118,13 +123,20 @@ export function ComponentShowcase() {
           {/* Overview Tab */}
           <TabsContent value="overview">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
               <Panel title="🎨 Design Principles">
                 <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                  <li>• <strong>Consistency:</strong> Unified visual language</li>
-                  <li>• <strong>Accessibility:</strong> WCAG 2.1 AA compliant</li>
-                  <li>• <strong>Performance:</strong> Lightweight and efficient</li>
-                  <li>• <strong>Clarity:</strong> Meaningful naming conventions</li>
+                  <li>
+                    • <strong>Consistency:</strong> Unified visual language
+                  </li>
+                  <li>
+                    • <strong>Accessibility:</strong> WCAG 2.1 AA compliant
+                  </li>
+                  <li>
+                    • <strong>Performance:</strong> Lightweight and efficient
+                  </li>
+                  <li>
+                    • <strong>Clarity:</strong> Meaningful naming conventions
+                  </li>
                 </ul>
               </Panel>
 
@@ -155,7 +167,7 @@ export function ComponentShowcase() {
                     Import components from our design system:
                   </p>
                   <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-xs">
-{`import { Tabs, TabsList } from 
+                    {`import { Tabs, TabsList } from 
   '@/components/ui/tabs';`}
                   </pre>
                 </div>
@@ -165,14 +177,15 @@ export function ComponentShowcase() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   All components support dark mode with proper contrast ratios and accessibility.
                 </p>
-                <Button size="sm" onClick={() => setActiveTab('dark-mode')}>
+                <Button size="sm" onClick={() => setActiveTab("dark-mode")}>
                   Test Dark Mode
                 </Button>
               </Panel>
 
               <Panel title="📱 Mobile Responsive">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  Components adapt automatically to different screen sizes using mobile-first design.
+                  Components adapt automatically to different screen sizes using mobile-first
+                  design.
                 </p>
                 <div className="flex gap-2">
                   <div className="w-4 h-6 bg-primary-200 dark:bg-primary-800 rounded-sm" />
@@ -195,13 +208,13 @@ export function ComponentShowcase() {
           {/* Components Tab */}
           <TabsContent value="components">
             <div className="space-y-12">
-              
               {/* Tab Components */}
               <section>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Tab Navigation</h2>
-                
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+                  Tab Navigation
+                </h2>
+
                 <div className="space-y-8">
-                  
                   {/* Default Tabs */}
                   <ComponentExample
                     title="Default Tabs"
@@ -219,7 +232,9 @@ export function ComponentShowcase() {
                       <TabsList>
                         <TabsTrigger value="default">Default</TabsTrigger>
                         <TabsTrigger value="active">Active</TabsTrigger>
-                        <TabsTrigger value="disabled" disabled>Disabled</TabsTrigger>
+                        <TabsTrigger value="disabled" disabled>
+                          Disabled
+                        </TabsTrigger>
                       </TabsList>
                       <TabsContent value="default">
                         <p className="text-gray-600 dark:text-gray-400 p-4">Default tab content</p>
@@ -292,12 +307,8 @@ export function ComponentShowcase() {
                   >
                     <CardTabs defaultValue="basic">
                       <TabsList>
-                        <TabsTrigger value="basic">
-                          Basic Plan
-                        </TabsTrigger>
-                        <TabsTrigger value="pro">
-                          Pro Plan
-                        </TabsTrigger>
+                        <TabsTrigger value="basic">Basic Plan</TabsTrigger>
+                        <TabsTrigger value="pro">Pro Plan</TabsTrigger>
                       </TabsList>
                     </CardTabs>
                   </ComponentExample>
@@ -306,10 +317,11 @@ export function ComponentShowcase() {
 
               {/* Loading Components */}
               <section>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Loading States</h2>
-                
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+                  Loading States
+                </h2>
+
                 <div className="space-y-8">
-                  
                   {/* Spinner Variants */}
                   <ComponentExample
                     title="Loading Spinners"
@@ -325,10 +337,10 @@ export function ComponentShowcase() {
                         <LoadingSpinner variant="success" layout="inline" text="Success" />
                         <LoadingSpinner variant="warning" layout="inline" text="Warning" />
                       </div>
-                      
-                      <LoadingSpinner 
-                        layout="card" 
-                        text="Processing Data" 
+
+                      <LoadingSpinner
+                        layout="card"
+                        text="Processing Data"
                         subText="This may take a few moments"
                         size="lg"
                       />
@@ -349,7 +361,7 @@ export function ComponentShowcase() {
                         <Skeleton lines={3} />
                         <Skeleton width="60%" height={16} />
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Skeleton height={120} />
                         <Skeleton height={120} />
@@ -382,16 +394,16 @@ export function ComponentShowcase() {
                         message="The service is responding slowly. Please wait or try again."
                         action={{
                           label: "Retry",
-                          onClick: () => console.log('Retry clicked')
+                          onClick: () => console.log("Retry clicked"),
                         }}
                       />
-                      
+
                       <EmptyState
                         title="No Results Found"
                         message="Try adjusting your search criteria"
                         action={{
                           label: "Clear Filters",
-                          onClick: () => console.log('Clear filters')
+                          onClick: () => console.log("Clear filters"),
                         }}
                       />
                     </div>
@@ -405,10 +417,11 @@ export function ComponentShowcase() {
           <TabsContent value="layouts">
             <div className="space-y-12">
               <section>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Layout Components</h2>
-                
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+                  Layout Components
+                </h2>
+
                 <div className="space-y-8">
-                  
                   {/* PageLayout */}
                   <ComponentExample
                     title="PageLayout"
@@ -448,13 +461,17 @@ export function ComponentShowcase() {
                   >
                     <div className="space-y-4">
                       <div className="flex gap-2">
-                        <div className="px-3 py-2 bg-primary-100 dark:bg-primary-900/30 rounded text-sm">Explorer</div>
-                        <div className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded text-sm">Query</div>
+                        <div className="px-3 py-2 bg-primary-100 dark:bg-primary-900/30 rounded text-sm">
+                          Explorer
+                        </div>
+                        <div className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded text-sm">
+                          Query
+                        </div>
                       </div>
                       <div className="h-32 bg-gray-50 dark:bg-gray-900 rounded" />
                     </div>
                   </ComponentExample>
-                  
+
                   {/* Panel */}
                   <ComponentExample
                     title="Panel Component"

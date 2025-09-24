@@ -1,20 +1,16 @@
 // Collaboration activity feed panel
-import { useState } from 'react';
-import { 
-  Activity, 
-  MessageSquare, 
-  FileText, 
-  CheckCircle, 
-  UserPlus, 
+import { useState } from "react";
+import {
+  Activity,
+  MessageSquare,
+  FileText,
+  CheckCircle,
+  UserPlus,
   Clock,
   Filter,
-  User
-} from 'lucide-react';
-import { 
-  Workspace, 
-  ActivityItem,
-  formatTimestamp
-} from '@/lib/collaboration/collab-config';
+  User,
+} from "lucide-react";
+import { Workspace, ActivityItem, formatTimestamp } from "@/lib/collaboration/collab-config";
 
 interface CollabActivityPanelProps {
   workspace: Workspace;
@@ -22,22 +18,22 @@ interface CollabActivityPanelProps {
 }
 
 export function CollabActivityPanel({ workspace, activities = [] }: CollabActivityPanelProps) {
-  const [filterType, setFilterType] = useState<string>('all');
+  const [filterType, setFilterType] = useState<string>("all");
 
-  const filteredActivities = activities.filter(activity =>
-    filterType === 'all' || activity.type === filterType
+  const filteredActivities = activities.filter(
+    (activity) => filterType === "all" || activity.type === filterType,
   );
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'message':
+      case "message":
         return <MessageSquare size={16} className="text-blue-500" />;
-      case 'task_created':
-      case 'task_updated':
+      case "task_created":
+      case "task_updated":
         return <CheckCircle size={16} className="text-green-500" />;
-      case 'document_uploaded':
+      case "document_uploaded":
         return <FileText size={16} className="text-purple-500" />;
-      case 'member_joined':
+      case "member_joined":
         return <UserPlus size={16} className="text-orange-500" />;
       default:
         return <Activity size={16} className="text-gray-400" />;
@@ -46,17 +42,17 @@ export function CollabActivityPanel({ workspace, activities = [] }: CollabActivi
 
   const getActivityColor = (type: string) => {
     switch (type) {
-      case 'message':
-        return 'border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10';
-      case 'task_created':
-      case 'task_updated':
-        return 'border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/10';
-      case 'document_uploaded':
-        return 'border-purple-200 bg-purple-50 dark:border-purple-900/30 dark:bg-purple-900/10';
-      case 'member_joined':
-        return 'border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10';
+      case "message":
+        return "border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10";
+      case "task_created":
+      case "task_updated":
+        return "border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/10";
+      case "document_uploaded":
+        return "border-purple-200 bg-purple-50 dark:border-purple-900/30 dark:bg-purple-900/10";
+      case "member_joined":
+        return "border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10";
       default:
-        return 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800';
+        return "border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800";
     }
   };
 
@@ -64,34 +60,34 @@ export function CollabActivityPanel({ workspace, activities = [] }: CollabActivi
     // Generate some mock activities for demonstration
     const mockActivities: ActivityItem[] = [
       {
-        id: '1',
+        id: "1",
         workspaceId: workspace.id,
-        type: 'message',
-        description: 'sent a message in the workspace',
+        type: "message",
+        description: "sent a message in the workspace",
         actor: workspace.members[0],
         timestamp: new Date(Date.now() - 300000), // 5 minutes ago
       },
       {
-        id: '2',
+        id: "2",
         workspaceId: workspace.id,
-        type: 'task_created',
+        type: "task_created",
         description: 'created a new task "Analyze threat vectors"',
         actor: workspace.members[1],
         timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
       },
       {
-        id: '3',
+        id: "3",
         workspaceId: workspace.id,
-        type: 'document_uploaded',
-        description: 'uploaded preliminary-analysis.pdf',
+        type: "document_uploaded",
+        description: "uploaded preliminary-analysis.pdf",
         actor: workspace.members[0],
         timestamp: new Date(Date.now() - 3600000), // 1 hour ago
       },
       {
-        id: '4',
+        id: "4",
         workspaceId: workspace.id,
-        type: 'member_joined',
-        description: 'joined the workspace',
+        type: "member_joined",
+        description: "joined the workspace",
         actor: workspace.members[2],
         timestamp: new Date(Date.now() - 86400000), // 1 day ago
       },
@@ -106,9 +102,7 @@ export function CollabActivityPanel({ workspace, activities = [] }: CollabActivi
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <Activity size={48} className="mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Activity Feed
-          </h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Activity Feed</h3>
           <p className="text-gray-500 dark:text-gray-400">
             Track all workspace activities, updates, and team interactions in real-time.
           </p>
@@ -122,12 +116,8 @@ export function CollabActivityPanel({ workspace, activities = [] }: CollabActivi
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Activity Feed
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Recent workspace activity
-          </p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Activity Feed</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Recent workspace activity</p>
         </div>
         <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
           <Filter size={16} />
@@ -154,11 +144,7 @@ export function CollabActivityPanel({ workspace, activities = [] }: CollabActivi
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-3">
           {displayActivities.map((activity, index) => (
-            <ActivityCard
-              key={activity.id}
-              activity={activity}
-              isFirst={index === 0}
-            />
+            <ActivityCard key={activity.id} activity={activity} isFirst={index === 0} />
           ))}
         </div>
       </div>
@@ -194,8 +180,8 @@ function ActivityCard({ activity, isFirst }: ActivityCardProps) {
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                 {activity.actor.avatar ? (
-                  <img 
-                    src={activity.actor.avatar} 
+                  <img
+                    src={activity.actor.avatar}
                     alt={activity.actor.name}
                     className="w-6 h-6 rounded-full object-cover"
                   />
@@ -211,10 +197,8 @@ function ActivityCard({ activity, isFirst }: ActivityCardProps) {
               {formatTimestamp(activity.timestamp)}
             </span>
           </div>
-          
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            {activity.description}
-          </p>
+
+          <p className="text-sm text-gray-700 dark:text-gray-300">{activity.description}</p>
 
           {/* Additional metadata */}
           {activity.metadata && (
@@ -234,30 +218,30 @@ function ActivityCard({ activity, isFirst }: ActivityCardProps) {
 
 function getActivityColor(type: string): string {
   switch (type) {
-    case 'message':
-      return 'border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10';
-    case 'task_created':
-    case 'task_updated':
-      return 'border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/10';
-    case 'document_uploaded':
-      return 'border-purple-200 bg-purple-50 dark:border-purple-900/30 dark:bg-purple-900/10';
-    case 'member_joined':
-      return 'border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10';
+    case "message":
+      return "border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10";
+    case "task_created":
+    case "task_updated":
+      return "border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/10";
+    case "document_uploaded":
+      return "border-purple-200 bg-purple-50 dark:border-purple-900/30 dark:bg-purple-900/10";
+    case "member_joined":
+      return "border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10";
     default:
-      return 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800';
+      return "border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800";
   }
 }
 
 function getActivityIcon(type: string) {
   switch (type) {
-    case 'message':
+    case "message":
       return <MessageSquare size={16} className="text-blue-500" />;
-    case 'task_created':
-    case 'task_updated':
+    case "task_created":
+    case "task_updated":
       return <CheckCircle size={16} className="text-green-500" />;
-    case 'document_uploaded':
+    case "document_uploaded":
       return <FileText size={16} className="text-purple-500" />;
-    case 'member_joined':
+    case "member_joined":
       return <UserPlus size={16} className="text-orange-500" />;
     default:
       return <Activity size={16} className="text-gray-400" />;

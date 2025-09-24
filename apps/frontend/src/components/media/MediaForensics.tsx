@@ -1,27 +1,27 @@
 // Media Forensics Components for InfoTerminal
 // Provides image analysis, EXIF extraction, and forensic capabilities
 
-import React, { useState, useCallback, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Progress } from '../ui/progress';
-import { 
-  Upload, 
-  Image as ImageIcon, 
-  Search, 
-  Download, 
-  RefreshCw, 
-  AlertTriangle, 
-  Camera, 
-  Map, 
-  Calendar, 
+import React, { useState, useCallback, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Progress } from "../ui/progress";
+import {
+  Upload,
+  Image as ImageIcon,
+  Search,
+  Download,
+  RefreshCw,
+  AlertTriangle,
+  Camera,
+  Map,
+  Calendar,
   Hash,
   Eye,
   ExternalLink,
-  Zap
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
 
 interface ExifData {
   [key: string]: any;
@@ -83,42 +83,42 @@ interface MediaForensicsProps {
   className?: string;
 }
 
-export const MediaForensics: React.FC<MediaForensicsProps> = ({ 
-  apiBaseUrl = 'http://localhost:8618',
-  className = ''
+export const MediaForensics: React.FC<MediaForensicsProps> = ({
+  apiBaseUrl = "http://localhost:8618",
+  className = "",
 }) => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [activeTab, setActiveTab] = useState('analyze');
+  const [activeTab, setActiveTab] = useState("analyze");
   const [error, setError] = useState<string | null>(null);
-  
+
   // Analysis state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [analysisResult, setAnalysisResult] = useState<ImageAnalysisResult | null>(null);
   const [includeReverseSearch, setIncludeReverseSearch] = useState(false);
-  
+
   // Comparison state
   const [compareFile1, setCompareFile1] = useState<File | null>(null);
   const [compareFile2, setCompareFile2] = useState<File | null>(null);
   const [comparisonResult, setComparisonResult] = useState<ComparisonResult | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const compareFile1Ref = useRef<HTMLInputElement>(null);
   const compareFile2Ref = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback((file: File, setter: (file: File | null) => void) => {
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file');
+    if (!file.type.startsWith("image/")) {
+      setError("Please select a valid image file");
       return;
     }
-    
+
     // Validate file size (50MB limit)
     if (file.size > 50 * 1024 * 1024) {
-      setError('File size must be less than 50MB');
+      setError("File size must be less than 50MB");
       return;
     }
-    
+
     setter(file);
     setError(null);
   }, []);
@@ -132,17 +132,17 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
 
     try {
       const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('include_reverse_search', includeReverseSearch.toString());
+      formData.append("file", selectedFile);
+      formData.append("include_reverse_search", includeReverseSearch.toString());
 
       // Simulate progress
       const progressInterval = setInterval(() => {
-        setProgress(prev => Math.min(prev + 10, 90));
+        setProgress((prev) => Math.min(prev + 10, 90));
       }, 200);
 
       const response = await fetch(`${apiBaseUrl}/image/analyze`, {
-        method: 'POST',
-        body: formData
+        method: "POST",
+        body: formData,
       });
 
       clearInterval(progressInterval);
@@ -156,7 +156,7 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
       const result = await response.json();
       setAnalysisResult(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      setError(err instanceof Error ? err.message : "Analysis failed");
     } finally {
       setLoading(false);
       setTimeout(() => setProgress(0), 1000);
@@ -172,17 +172,17 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
 
     try {
       const formData = new FormData();
-      formData.append('file1', compareFile1);
-      formData.append('file2', compareFile2);
+      formData.append("file1", compareFile1);
+      formData.append("file2", compareFile2);
 
       // Simulate progress
       const progressInterval = setInterval(() => {
-        setProgress(prev => Math.min(prev + 15, 90));
+        setProgress((prev) => Math.min(prev + 15, 90));
       }, 150);
 
       const response = await fetch(`${apiBaseUrl}/image/compare`, {
-        method: 'POST',
-        body: formData
+        method: "POST",
+        body: formData,
       });
 
       clearInterval(progressInterval);
@@ -196,7 +196,7 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
       const result = await response.json();
       setComparisonResult(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Comparison failed');
+      setError(err instanceof Error ? err.message : "Comparison failed");
     } finally {
       setLoading(false);
       setTimeout(() => setProgress(0), 1000);
@@ -204,9 +204,9 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
   };
 
   const downloadResults = (data: any, filename: string) => {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
@@ -216,17 +216,14 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
   };
 
   const renderFileUpload = (
-    file: File | null, 
+    file: File | null,
     onFileSelect: (file: File) => void,
     inputRef: React.RefObject<HTMLInputElement>,
-    label: string
+    label: string,
   ) => (
     <Card className="border-dashed border-2 hover:border-blue-400 transition-colors">
       <CardContent className="pt-6">
-        <div 
-          className="text-center cursor-pointer"
-          onClick={() => inputRef.current?.click()}
-        >
+        <div className="text-center cursor-pointer" onClick={() => inputRef.current?.click()}>
           <input
             type="file"
             ref={inputRef}
@@ -237,7 +234,7 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
               if (file) onFileSelect(file);
             }}
           />
-          
+
           {file ? (
             <div className="space-y-4">
               <div className="flex items-center justify-center w-16 h-16 mx-auto bg-blue-100 rounded-full">
@@ -249,10 +246,14 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
                   {(file.size / 1024 / 1024).toFixed(2)} MB
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={(e) => {
-                e.stopPropagation();
-                onFileSelect(null as any);
-              }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFileSelect(null as any);
+                }}
+              >
                 Remove
               </Button>
             </div>
@@ -263,9 +264,7 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
               </div>
               <div>
                 <div className="font-medium">{label}</div>
-                <div className="text-sm text-gray-500">
-                  Drag & drop or click to select
-                </div>
+                <div className="text-sm text-gray-500">Drag & drop or click to select</div>
                 <div className="text-xs text-gray-400 mt-1">
                   Supports: JPG, PNG, BMP, TIFF, WebP (max 50MB)
                 </div>
@@ -288,15 +287,13 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
       <CardContent>
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {Object.keys(exifData).length === 0 ? (
-            <div className="text-center text-gray-500 py-4">
-              No EXIF data found
-            </div>
+            <div className="text-center text-gray-500 py-4">No EXIF data found</div>
           ) : (
             Object.entries(exifData).map(([key, value]) => (
               <div key={key} className="grid grid-cols-3 gap-4 text-sm">
                 <div className="font-medium text-gray-700">{key}</div>
                 <div className="col-span-2 break-all">
-                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                  {typeof value === "object" ? JSON.stringify(value) : String(value)}
                 </div>
               </div>
             ))
@@ -318,15 +315,11 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium">MD5 Hash</label>
-            <div className="font-mono text-xs bg-gray-50 p-2 rounded">
-              {analysis.md5_hash}
-            </div>
+            <div className="font-mono text-xs bg-gray-50 p-2 rounded">{analysis.md5_hash}</div>
           </div>
           <div>
             <label className="text-sm font-medium">SHA256 Hash</label>
-            <div className="font-mono text-xs bg-gray-50 p-2 rounded">
-              {analysis.sha256_hash}
-            </div>
+            <div className="font-mono text-xs bg-gray-50 p-2 rounded">{analysis.sha256_hash}</div>
           </div>
         </div>
 
@@ -337,7 +330,7 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
           </div>
           <div>
             <label className="font-medium">Transparency</label>
-            <div>{analysis.has_transparency ? 'Yes' : 'No'}</div>
+            <div>{analysis.has_transparency ? "Yes" : "No"}</div>
           </div>
           {analysis.estimated_jpeg_quality && (
             <div>
@@ -401,20 +394,18 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
       </CardHeader>
       <CardContent>
         {results.length === 0 ? (
-          <div className="text-center text-gray-500 py-4">
-            No reverse search results found
-          </div>
+          <div className="text-center text-gray-500 py-4">No reverse search results found</div>
         ) : (
           <div className="space-y-3">
             {results.map((result, idx) => (
               <div key={idx} className="flex items-center gap-3 p-3 border rounded">
                 {result.thumbnail && (
-                  <img 
-                    src={result.thumbnail} 
-                    alt="" 
+                  <img
+                    src={result.thumbnail}
+                    alt=""
                     className="w-16 h-16 object-cover rounded"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).style.display = "none";
                     }}
                   />
                 )}
@@ -445,10 +436,10 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
             selectedFile,
             (file) => handleFileSelect(file, setSelectedFile),
             fileInputRef,
-            "Upload Image for Analysis"
+            "Upload Image for Analysis",
           )}
         </div>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Analysis Options</CardTitle>
@@ -465,12 +456,8 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
                 Include reverse image search
               </label>
             </div>
-            
-            <Button 
-              onClick={analyzeImage} 
-              disabled={!selectedFile || loading}
-              className="w-full"
-            >
+
+            <Button onClick={analyzeImage} disabled={!selectedFile || loading} className="w-full">
               {loading ? (
                 <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
               ) : (
@@ -480,9 +467,11 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
             </Button>
 
             {analysisResult && (
-              <Button 
-                variant="outline" 
-                onClick={() => downloadResults(analysisResult, `analysis_${analysisResult.filename}.json`)}
+              <Button
+                variant="outline"
+                onClick={() =>
+                  downloadResults(analysisResult, `analysis_${analysisResult.filename}.json`)
+                }
                 className="w-full"
               >
                 <Download className="h-4 w-4 mr-2" />
@@ -521,7 +510,9 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
                 </div>
                 <div>
                   <label className="font-medium">Dimensions</label>
-                  <div>{analysisResult.dimensions.width} × {analysisResult.dimensions.height}</div>
+                  <div>
+                    {analysisResult.dimensions.width} × {analysisResult.dimensions.height}
+                  </div>
                 </div>
                 <div>
                   <label className="font-medium">File Size</label>
@@ -538,7 +529,7 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {renderPerceptualHashes(analysisResult.perceptual_hash)}
-            {analysisResult.reverse_search_results && 
+            {analysisResult.reverse_search_results &&
               renderReverseSearchResults(analysisResult.reverse_search_results)}
           </div>
         </div>
@@ -553,21 +544,21 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
           compareFile1,
           (file) => handleFileSelect(file, setCompareFile1),
           compareFile1Ref,
-          "Upload First Image"
+          "Upload First Image",
         )}
-        
+
         {renderFileUpload(
           compareFile2,
           (file) => handleFileSelect(file, setCompareFile2),
           compareFile2Ref,
-          "Upload Second Image"
+          "Upload Second Image",
         )}
       </div>
 
       <Card>
         <CardContent className="pt-6">
-          <Button 
-            onClick={compareImages} 
+          <Button
+            onClick={compareImages}
             disabled={!compareFile1 || !compareFile2 || loading}
             className="w-full"
           >
@@ -600,10 +591,10 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Comparison Results
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
-                onClick={() => downloadResults(comparisonResult, 'image_comparison.json')}
+                onClick={() => downloadResults(comparisonResult, "image_comparison.json")}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download
@@ -616,12 +607,14 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
                 {comparisonResult.similarity_score.toFixed(1)}%
               </div>
               <div className="text-lg">Similarity Score</div>
-              <Badge 
-                className={`mt-2 ${comparisonResult.likely_match 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'}`}
+              <Badge
+                className={`mt-2 ${
+                  comparisonResult.likely_match
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
               >
-                {comparisonResult.likely_match ? 'Likely Match' : 'Different Images'}
+                {comparisonResult.likely_match ? "Likely Match" : "Different Images"}
               </Badge>
             </div>
 
@@ -633,8 +626,13 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
                 <CardContent>
                   <div className="space-y-2 text-sm">
                     <div>Format: {comparisonResult.analysis.formats.image1}</div>
-                    <div>Dimensions: {comparisonResult.analysis.dimensions1.width} × {comparisonResult.analysis.dimensions1.height}</div>
-                    <div>Hash: <code className="text-xs">{comparisonResult.analysis.hash1}</code></div>
+                    <div>
+                      Dimensions: {comparisonResult.analysis.dimensions1.width} ×{" "}
+                      {comparisonResult.analysis.dimensions1.height}
+                    </div>
+                    <div>
+                      Hash: <code className="text-xs">{comparisonResult.analysis.hash1}</code>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -646,8 +644,13 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
                 <CardContent>
                   <div className="space-y-2 text-sm">
                     <div>Format: {comparisonResult.analysis.formats.image2}</div>
-                    <div>Dimensions: {comparisonResult.analysis.dimensions2.width} × {comparisonResult.analysis.dimensions2.height}</div>
-                    <div>Hash: <code className="text-xs">{comparisonResult.analysis.hash2}</code></div>
+                    <div>
+                      Dimensions: {comparisonResult.analysis.dimensions2.width} ×{" "}
+                      {comparisonResult.analysis.dimensions2.height}
+                    </div>
+                    <div>
+                      Hash: <code className="text-xs">{comparisonResult.analysis.hash2}</code>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -660,11 +663,15 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
               </div>
               <div>
                 <div className="font-medium">Same Dimensions</div>
-                <div className="text-lg">{comparisonResult.analysis.same_dimensions ? 'Yes' : 'No'}</div>
+                <div className="text-lg">
+                  {comparisonResult.analysis.same_dimensions ? "Yes" : "No"}
+                </div>
               </div>
               <div>
                 <div className="font-medium">Size Difference</div>
-                <div className="text-lg">{(comparisonResult.analysis.size_difference / 1024).toFixed(1)} KB</div>
+                <div className="text-lg">
+                  {(comparisonResult.analysis.size_difference / 1024).toFixed(1)} KB
+                </div>
               </div>
             </div>
           </CardContent>
@@ -680,11 +687,11 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
           <TabsTrigger value="analyze">Image Analysis</TabsTrigger>
           <TabsTrigger value="compare">Compare Images</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="analyze" className="mt-6">
           {renderAnalysisTab()}
         </TabsContent>
-        
+
         <TabsContent value="compare" className="mt-6">
           {renderComparisonTab()}
         </TabsContent>

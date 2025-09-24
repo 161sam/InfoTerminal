@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { User, LogOut, Settings, Users, ChevronDown, Shield, Clock } from 'lucide-react';
-import { useAuth } from '@/components/auth/AuthProvider';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import LoginModal from './LoginModal';
+import React, { useState, useEffect, useRef } from "react";
+import { User, LogOut, Settings, Users, ChevronDown, Shield, Clock } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import LoginModal from "./LoginModal";
 
 interface HeaderUserButtonProps {
   className?: string;
@@ -24,8 +24,8 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
     };
 
     if (showMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showMenu]);
 
@@ -50,26 +50,23 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
           onClick={() => setShowLoginModal(true)}
           className={cn(
             "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors",
-            className
+            className,
           )}
         >
           <User size={16} />
           <span className="hidden sm:inline">Login</span>
         </button>
-        
-        <LoginModal
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-        />
+
+        <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       </>
     );
   }
 
-  const displayName = user.name || user.email?.split('@')[0] || 'User';
+  const displayName = user.name || user.email?.split("@")[0] || "User";
   const userInitials = displayName
-    .split(' ')
-    .map(n => n[0])
-    .join('')
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -89,8 +86,8 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
         {/* User Avatar */}
         <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
           {user.avatar ? (
-            <img 
-              src={user.avatar} 
+            <img
+              src={user.avatar}
               alt={displayName}
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -100,23 +97,23 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
             </span>
           )}
         </div>
-        
+
         {/* User Info - Desktop */}
         <div className="hidden sm:block text-left min-w-0">
           <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
             {displayName}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {user.roles?.[0] || 'User'}
+            {user.roles?.[0] || "User"}
           </div>
         </div>
-        
-        <ChevronDown 
-          size={16} 
+
+        <ChevronDown
+          size={16}
           className={cn(
             "text-gray-400 transition-transform duration-200",
-            showMenu && "rotate-180"
-          )} 
+            showMenu && "rotate-180",
+          )}
         />
       </button>
 
@@ -128,8 +125,8 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
                 {user.avatar ? (
-                  <img 
-                    src={user.avatar} 
+                  <img
+                    src={user.avatar}
                     alt={displayName}
                     className="w-10 h-10 rounded-full object-cover"
                   />
@@ -148,7 +145,7 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
                 </div>
                 {user.roles && user.roles.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {user.roles.map(role => (
+                    {user.roles.map((role) => (
                       <span
                         key={role}
                         className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-xs rounded-full"
@@ -173,7 +170,7 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
               <Settings size={16} />
               Profile Settings
             </Link>
-            
+
             <Link
               href="/settings?tab=user-management"
               className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

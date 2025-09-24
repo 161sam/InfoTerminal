@@ -1,5 +1,10 @@
-import config, { DIRECT_ENDPOINTS, OTHER_ENDPOINTS, GATEWAY_URL, GATEWAY_ENABLED_DEFAULT } from './config';
-import { isBrowser } from './safe';
+import config, {
+  DIRECT_ENDPOINTS,
+  OTHER_ENDPOINTS,
+  GATEWAY_URL,
+  GATEWAY_ENABLED_DEFAULT,
+} from "./config";
+import { isBrowser } from "./safe";
 
 export interface EndpointSettings {
   SEARCH_API: string;
@@ -15,8 +20,8 @@ export interface GatewaySetting {
   url: string;
 }
 
-const STORAGE_KEY_ENDPOINTS = 'it.settings.endpoints';
-export const GATEWAY_STORAGE_KEY = 'it.settings.gateway';
+const STORAGE_KEY_ENDPOINTS = "it.settings.endpoints";
+export const GATEWAY_STORAGE_KEY = "it.settings.gateway";
 
 export const defaultEndpoints: EndpointSettings = {
   ...DIRECT_ENDPOINTS,
@@ -56,17 +61,17 @@ export function loadGateway(): GatewaySetting {
 export function saveGateway(setting: GatewaySetting) {
   if (!isBrowser()) return;
   localStorage.setItem(GATEWAY_STORAGE_KEY, JSON.stringify(setting));
-  window.dispatchEvent(new Event('it-gateway-change'));
+  window.dispatchEvent(new Event("it-gateway-change"));
 }
 
 export function sanitizeUrl(url: string): string {
-  return url.trim().replace(/\/$/, '');
+  return url.trim().replace(/\/$/, "");
 }
 
 export function validateUrl(url: string): boolean {
   try {
     const u = new URL(url);
-    return u.protocol === 'http:' || u.protocol === 'https:';
+    return u.protocol === "http:" || u.protocol === "https:";
   } catch {
     return false;
   }

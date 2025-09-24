@@ -1,13 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import { paths } from '@/lib/demoLoader';
+import type { NextApiRequest, NextApiResponse } from "next";
+import fs from "fs";
+import { paths } from "@/lib/demoLoader";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEMO_LOADER !== '1') {
-    res.status(403).json({ ok: false, error: 'disabled' });
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_DEMO_LOADER !== "1") {
+    res.status(403).json({ ok: false, error: "disabled" });
     return;
   }
-  if (req.method !== 'POST') {
+  if (req.method !== "POST") {
     res.status(405).json({ ok: false });
     return;
   }

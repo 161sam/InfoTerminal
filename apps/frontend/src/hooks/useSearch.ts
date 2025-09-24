@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import type { SearchResponse } from '../types/search';
-import useEndpoints from './useEndpoints';
-import { sanitizeUrl } from '@/lib/endpoints';
+import { useEffect, useState } from "react";
+import type { SearchResponse } from "../types/search";
+import useEndpoints from "./useEndpoints";
+import { sanitizeUrl } from "@/lib/endpoints";
 
-const DEFAULT_FACETS = ['entity_types', 'source'];
+const DEFAULT_FACETS = ["entity_types", "source"];
 
 export interface UseSearchInput {
   q?: string;
@@ -32,12 +32,12 @@ export function useSearch(params: UseSearchInput) {
         const pageSize = params.pageSize ?? 20;
 
         const filters: Record<string, string[]> = { ...(params.filters || {}) };
-        if (params.entity) filters['entity_type'] = params.entity;
-        if (params.value) filters['value'] = params.value;
+        if (params.entity) filters["entity_type"] = params.entity;
+        if (params.value) filters["value"] = params.value;
 
         let sort: any = undefined;
-        if (params.sort && params.sort !== 'relevance') {
-            sort = { field: 'meta.created_at', order: params.sort === 'date_desc' ? 'desc' : 'asc' };
+        if (params.sort && params.sort !== "relevance") {
+          sort = { field: "meta.created_at", order: params.sort === "date_desc" ? "desc" : "asc" };
         }
 
         const body: any = {
@@ -49,12 +49,12 @@ export function useSearch(params: UseSearchInput) {
         };
         if (sort) body.sort = sort;
 
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (params.rerank) headers['X-Rerank'] = '1';
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (params.rerank) headers["X-Rerank"] = "1";
 
         const base = sanitizeUrl(SEARCH_API);
         const res = await fetch(`${base}/query`, {
-          method: 'POST',
+          method: "POST",
           headers,
           body: JSON.stringify(body),
           signal: controller.signal,
@@ -63,7 +63,7 @@ export function useSearch(params: UseSearchInput) {
         const json = (await res.json()) as SearchResponse;
         setData(json);
       } catch (e: any) {
-        if (e.name !== 'AbortError') {
+        if (e.name !== "AbortError") {
           setError(e);
         }
       } finally {
@@ -79,8 +79,8 @@ export function useSearch(params: UseSearchInput) {
     params.page,
     params.pageSize,
     JSON.stringify(params.filters),
-    params.entity?.join(','),
-    params.value?.join(','),
+    params.entity?.join(","),
+    params.value?.join(","),
     SEARCH_API,
   ]);
 

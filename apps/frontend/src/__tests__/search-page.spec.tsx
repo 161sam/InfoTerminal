@@ -1,14 +1,14 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import type { NextRouter } from 'next/router';
-import SearchPage from '../../pages/search';
+import { render, screen, waitFor } from "@testing-library/react";
+import type { NextRouter } from "next/router";
+import SearchPage from "../../pages/search";
 
 function createMockRouter(router: Partial<NextRouter>): NextRouter {
   return {
-    basePath: '',
-    pathname: '/search',
-    route: '/search',
+    basePath: "",
+    pathname: "/search",
+    route: "/search",
     query: {},
-    asPath: '/search',
+    asPath: "/search",
     push: vi.fn(),
     replace: vi.fn(),
     reload: vi.fn(),
@@ -25,16 +25,16 @@ function createMockRouter(router: Partial<NextRouter>): NextRouter {
   } as NextRouter;
 }
 
-vi.mock('next/router', () => ({
-  useRouter: () => createMockRouter({ query: { q: 'acme' } }),
+vi.mock("next/router", () => ({
+  useRouter: () => createMockRouter({ query: { q: "acme" } }),
 }));
 
-test('renders search results from API', async () => {
+test("renders search results from API", async () => {
   (global as any).fetch = vi.fn().mockResolvedValue({
     ok: true,
-    json: async () => ({ items: [{ id: '1', title: 'Doc 1' }], total: 1, aggregations: {} }),
+    json: async () => ({ items: [{ id: "1", title: "Doc 1" }], total: 1, aggregations: {} }),
   });
   render(<SearchPage />);
   await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-  await waitFor(() => expect(screen.getByText('Doc 1')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText("Doc 1")).toBeInTheDocument());
 });

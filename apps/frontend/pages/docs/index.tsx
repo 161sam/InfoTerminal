@@ -1,6 +1,6 @@
-import DocumentUploader from '@/components/docs/DocumentUploader';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
+import DocumentUploader from "@/components/docs/DocumentUploader";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 
 export default function DocsPage() {
   return (

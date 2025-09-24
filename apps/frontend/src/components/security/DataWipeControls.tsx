@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Trash2, 
-  AlertTriangle, 
-  HardDrive, 
+import React, { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Trash2,
+  AlertTriangle,
+  HardDrive,
   Database,
   FileText,
   Image,
   Download,
-  Clock
-} from 'lucide-react';
+  Clock,
+} from "lucide-react";
 
 interface DataCategory {
   id: string;
@@ -58,20 +58,22 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
 
   const scanDataCategories = async () => {
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`/api/security/incognito/${sessionId}/data-scan`);
       if (response.ok) {
         const data = await response.json();
-        setDataCategories(data.categories.map((cat: any) => ({
-          ...cat,
-          selected: true, // Default to selecting all for wiping
-          icon: getCategoryIcon(cat.id)
-        })));
+        setDataCategories(
+          data.categories.map((cat: any) => ({
+            ...cat,
+            selected: true, // Default to selecting all for wiping
+            icon: getCategoryIcon(cat.id),
+          })),
+        );
         setLastScan(Date.now());
       }
     } catch (error) {
-      console.error('Failed to scan data categories:', error);
+      console.error("Failed to scan data categories:", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,59 +81,63 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
 
   const getCategoryIcon = (categoryId: string): React.ReactNode => {
     switch (categoryId) {
-      case 'documents': return <FileText className="h-4 w-4" />;
-      case 'images': return <Image className="h-4 w-4" />;
-      case 'downloads': return <Download className="h-4 w-4" />;
-      case 'database': return <Database className="h-4 w-4" />;
-      case 'cache': return <HardDrive className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case "documents":
+        return <FileText className="h-4 w-4" />;
+      case "images":
+        return <Image className="h-4 w-4" />;
+      case "downloads":
+        return <Download className="h-4 w-4" />;
+      case "database":
+        return <Database className="h-4 w-4" />;
+      case "cache":
+        return <HardDrive className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
   };
 
   const handleCategoryToggle = (categoryId: string, checked: boolean) => {
-    setDataCategories(prev => 
-      prev.map(cat => 
-        cat.id === categoryId ? { ...cat, selected: checked } : cat
-      )
+    setDataCategories((prev) =>
+      prev.map((cat) => (cat.id === categoryId ? { ...cat, selected: checked } : cat)),
     );
   };
 
   const handleSelectAll = (checked: boolean) => {
-    setDataCategories(prev => 
-      prev.map(cat => ({ ...cat, selected: checked }))
-    );
+    setDataCategories((prev) => prev.map((cat) => ({ ...cat, selected: checked })));
   };
 
   const handleWipeSelected = async () => {
-    const selectedCategories = dataCategories.filter(cat => cat.selected);
-    
+    const selectedCategories = dataCategories.filter((cat) => cat.selected);
+
     if (selectedCategories.length === 0) {
       return;
     }
 
     // Check if any sensitive data is selected
-    const hasSensitive = selectedCategories.some(cat => cat.sensitive);
+    const hasSensitive = selectedCategories.some((cat) => cat.sensitive);
     if (hasSensitive && !confirmationRequired) {
       setConfirmationRequired(true);
       return;
     }
 
     setIsWiping(true);
-    setWipeProgress(selectedCategories.map(cat => ({
-      category: cat.id,
-      progress: 0,
-      completed: false
-    })));
+    setWipeProgress(
+      selectedCategories.map((cat) => ({
+        category: cat.id,
+        progress: 0,
+        completed: false,
+      })),
+    );
 
     try {
       for (const category of selectedCategories) {
         await wipeCategory(category);
       }
-      
+
       // Refresh data after wiping
       await scanDataCategories();
     } catch (error) {
-      console.error('Wipe operation failed:', error);
+      console.error("Wipe operation failed:", error);
     } finally {
       setIsWiping(false);
       setConfirmationRequired(false);
@@ -140,35 +146,31 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
 
   const wipeCategory = async (category: DataCategory) => {
     const response = await fetch(`/api/security/data-wipe/${category.id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sessionId,
         secure: category.sensitive,
-        overwritePasses: category.sensitive ? 3 : 1
-      })
+        overwritePasses: category.sensitive ? 3 : 1,
+      }),
     });
 
     if (!response.ok) {
-      setWipeProgress(prev => 
-        prev.map(p => 
-          p.category === category.id 
-            ? { ...p, error: 'Failed to wipe category' }
-            : p
-        )
+      setWipeProgress((prev) =>
+        prev.map((p) =>
+          p.category === category.id ? { ...p, error: "Failed to wipe category" } : p,
+        ),
       );
       return;
     }
 
     // Simulate progress updates (in real implementation, this would come from WebSocket)
     for (let progress = 0; progress <= 100; progress += 10) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      setWipeProgress(prev => 
-        prev.map(p => 
-          p.category === category.id 
-            ? { ...p, progress, completed: progress === 100 }
-            : p
-        )
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      setWipeProgress((prev) =>
+        prev.map((p) =>
+          p.category === category.id ? { ...p, progress, completed: progress === 100 } : p,
+        ),
       );
     }
   };
@@ -191,13 +193,13 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
     if (days > 0) return `${days}d ago`;
     if (hours > 0) return `${hours}h ago`;
     if (minutes > 0) return `${minutes}m ago`;
-    return 'Just now';
+    return "Just now";
   };
 
-  const selectedCategories = dataCategories.filter(cat => cat.selected);
+  const selectedCategories = dataCategories.filter((cat) => cat.selected);
   const totalSelectedSize = selectedCategories.reduce((sum, cat) => sum + cat.size, 0);
   const totalSelectedFiles = selectedCategories.reduce((sum, cat) => sum + cat.fileCount, 0);
-  const hasSensitiveSelected = selectedCategories.some(cat => cat.sensitive);
+  const hasSensitiveSelected = selectedCategories.some((cat) => cat.sensitive);
 
   return (
     <Card className={className}>
@@ -242,16 +244,14 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
             <p className="text-muted-foreground">Scanning data categories...</p>
           </div>
         ) : dataCategories.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            No data found to wipe
-          </div>
+          <div className="text-center py-8 text-muted-foreground">No data found to wipe</div>
         ) : (
           <div className="space-y-4">
             {/* Select All */}
             <div className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex items-center gap-3">
                 <Checkbox
-                  checked={dataCategories.every(cat => cat.selected)}
+                  checked={dataCategories.every((cat) => cat.selected)}
                   onCheckedChange={handleSelectAll}
                 />
                 <span className="font-medium">Select All Categories</span>
@@ -266,13 +266,13 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
               {dataCategories.map((category) => (
                 <div
                   key={category.id}
-                  className={`p-4 border rounded-lg ${category.selected ? 'bg-blue-50 dark:bg-blue-950/20' : ''}`}
+                  className={`p-4 border rounded-lg ${category.selected ? "bg-blue-50 dark:bg-blue-950/20" : ""}`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={category.selected}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked) =>
                           handleCategoryToggle(category.id, checked as boolean)
                         }
                       />
@@ -288,12 +288,10 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium">{formatSize(category.size)}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {category.fileCount} files
-                      </p>
+                      <p className="text-xs text-muted-foreground">{category.fileCount} files</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <p>{category.description}</p>
                     <div className="flex items-center gap-1">
@@ -305,7 +303,7 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
                   {/* Progress for active wipes */}
                   {isWiping && category.selected && (
                     <div className="mt-3">
-                      {wipeProgress.map((progress) => 
+                      {wipeProgress.map((progress) =>
                         progress.category === category.id ? (
                           <div key={progress.category} className="space-y-2">
                             <div className="flex justify-between text-sm">
@@ -317,7 +315,7 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
                               <p className="text-sm text-red-600">{progress.error}</p>
                             )}
                           </div>
-                        ) : null
+                        ) : null,
                       )}
                     </div>
                   )}
@@ -353,8 +351,8 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              You are about to wipe sensitive data. This action cannot be undone.
-              Are you sure you want to proceed?
+              You are about to wipe sensitive data. This action cannot be undone. Are you sure you
+              want to proceed?
             </AlertDescription>
             <div className="flex gap-2 mt-3">
               <Button
@@ -365,11 +363,7 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
               >
                 Confirm Wipe
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setConfirmationRequired(false)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setConfirmationRequired(false)}>
                 Cancel
               </Button>
             </div>
@@ -385,9 +379,9 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
             className="flex items-center gap-2"
           >
             <Trash2 className="h-4 w-4" />
-            {isWiping ? 'Wiping...' : `Wipe Selected (${selectedCategories.length})`}
+            {isWiping ? "Wiping..." : `Wipe Selected (${selectedCategories.length})`}
           </Button>
-          
+
           {hasSensitiveSelected && (
             <Badge variant="destructive" className="self-center">
               Contains sensitive data

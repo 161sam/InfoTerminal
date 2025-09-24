@@ -1,10 +1,10 @@
 // apps/frontend/src/components/search/SearchResultCard.tsx
-import React from 'react';
-import Link from 'next/link';
-import { Network, ExternalLink, FileText, Calendar, User } from 'lucide-react';
-import type { SearchHit } from '@/types/search';
-import EntityBadge from '../entities/EntityBadge';
-import { normalizeLabel } from '@/lib/entities';
+import React from "react";
+import Link from "next/link";
+import { Network, ExternalLink, FileText, Calendar, User } from "lucide-react";
+import type { SearchHit } from "@/types/search";
+import EntityBadge from "../entities/EntityBadge";
+import { normalizeLabel } from "@/lib/entities";
 
 interface SearchResultCardProps {
   item: SearchHit;
@@ -32,15 +32,17 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
               </span>
             )}
           </h3>
-          
+
           {/* Snippet with highlights */}
           {item.highlights && item.highlights.length > 0 ? (
             <div className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">
               {item.highlights.map((highlight, index) => (
-                <p 
-                  key={index} 
-                  dangerouslySetInnerHTML={{ 
-                    __html: highlight.fragments.join(' ... ').replace(/<(?!\/?(em|mark|strong)>)/g, '&lt;')
+                <p
+                  key={index}
+                  dangerouslySetInnerHTML={{
+                    __html: highlight.fragments
+                      .join(" ... ")
+                      .replace(/<(?!\/?(em|mark|strong)>)/g, "&lt;"),
                   }}
                 />
               ))}
@@ -48,16 +50,12 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
           ) : item.snippet ? (
             <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">{item.snippet}</p>
           ) : null}
-          
+
           {/* Entity Types */}
           {item.entity_types && item.entity_types.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-3">
               {item.entity_types.slice(0, 3).map((type, index) => (
-                <EntityBadge 
-                  key={index}
-                  label={normalizeLabel(type)} 
-                  size="sm"
-                />
+                <EntityBadge key={index} label={normalizeLabel(type)} size="sm" />
               ))}
               {item.entity_types.length > 3 && (
                 <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
@@ -85,7 +83,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
               )}
             </div>
           )}
-          
+
           {/* Metadata */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             {item.source && (
@@ -94,21 +92,21 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
                 Source: <span className="font-medium">{item.source}</span>
               </span>
             )}
-            
+
             {item.meta?.created_at && (
               <span className="inline-flex items-center gap-1">
                 <Calendar size={14} />
                 {new Date(item.meta.created_at).toLocaleDateString()}
               </span>
             )}
-            
+
             {item.meta?.author && (
               <span className="inline-flex items-center gap-1">
                 <User size={14} />
                 {item.meta.author}
               </span>
             )}
-            
+
             {item.score && item.score > 0 && (
               <span className="text-primary-600 dark:text-primary-400">
                 Relevance: {(item.score * 100).toFixed(1)}%
@@ -116,7 +114,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
             )}
           </div>
         </div>
-        
+
         {/* Actions */}
         <div className="ml-4 flex-shrink-0 flex items-center gap-2">
           {item.node_id && (
@@ -129,7 +127,7 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
               Graph
             </Link>
           )}
-          
+
           {item.meta?.external_url && (
             <a
               href={item.meta.external_url}
@@ -143,12 +141,12 @@ export default function SearchResultCard({ item }: SearchResultCardProps) {
           )}
         </div>
       </div>
-      
+
       {/* Progress bar for score visualization */}
       {item.score && item.score > 0 && (
         <div className="mt-4">
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-            <div 
+            <div
               className="bg-primary-600 dark:bg-primary-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(item.score * 100, 100)}%` }}
             />

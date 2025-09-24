@@ -1,8 +1,8 @@
 // apps/frontend/src/components/upload/UploadBox.tsx
-import React, { useRef, useState } from 'react';
-import { Upload as UploadIcon, CheckCircle, XCircle, Clock, X, RotateCcw } from 'lucide-react';
-import useFileUpload from '@/hooks/useFileUpload';
-import UploadProgressBar from './UploadProgressBar';
+import React, { useRef, useState } from "react";
+import { Upload as UploadIcon, CheckCircle, XCircle, Clock, X, RotateCcw } from "lucide-react";
+import useFileUpload from "@/hooks/useFileUpload";
+import UploadProgressBar from "./UploadProgressBar";
 
 type Props = {
   accept?: string[];
@@ -13,7 +13,7 @@ type Props = {
 type UploadItem = {
   id: string;
   fileName: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
+  status: "pending" | "uploading" | "success" | "error";
   progress: number;
   doc_id?: string;
   doc_url?: string;
@@ -60,7 +60,7 @@ export default function UploadBox({ accept, multiple, onComplete }: Props) {
         }}
         onClick={() => inputRef.current?.click()}
         className={`p-6 text-center cursor-pointer border-2 border-dashed rounded ${
-          drag ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
+          drag ? "border-blue-400 bg-blue-50" : "border-gray-300"
         }`}
       >
         <UploadIcon className="mx-auto mb-2" aria-hidden="true" />
@@ -70,7 +70,7 @@ export default function UploadBox({ accept, multiple, onComplete }: Props) {
           type="file"
           className="hidden"
           multiple={multiple}
-          accept={accept?.join(',')}
+          accept={accept?.join(",")}
           onChange={(e) => handleFiles(e.target.files)}
         />
       </div>
@@ -83,21 +83,21 @@ export default function UploadBox({ accept, multiple, onComplete }: Props) {
               <div className="flex items-center justify-between">
                 <span>{u.fileName}</span>
                 <div className="flex items-center space-x-2">
-                  {(u.status === 'pending' || u.status === 'uploading') && (
+                  {(u.status === "pending" || u.status === "uploading") && (
                     <Clock className="w-4 h-4" aria-hidden="true" />
                   )}
-                  {u.status === 'success' && (
+                  {u.status === "success" && (
                     <CheckCircle className="w-4 h-4 text-green-600" aria-hidden="true" />
                   )}
-                  {u.status === 'error' && (
+                  {u.status === "error" && (
                     <XCircle className="w-4 h-4 text-red-600" aria-hidden="true" />
                   )}
-                  {u.status === 'uploading' && (
+                  {u.status === "uploading" && (
                     <button onClick={() => cancelUpload(u.id)} aria-label="Cancel">
                       <X className="w-4 h-4" />
                     </button>
                   )}
-                  {u.status === 'error' && (
+                  {u.status === "error" && (
                     <button onClick={() => retryUpload(u.id)} aria-label="Retry">
                       <RotateCcw className="w-4 h-4" />
                     </button>
@@ -107,13 +107,13 @@ export default function UploadBox({ accept, multiple, onComplete }: Props) {
 
               <UploadProgressBar progress={u.progress} status={u.status} />
 
-              {u.status === 'success' && (
-                <a className="text-blue-600 underline text-sm" href={href ?? '#'}>
+              {u.status === "success" && (
+                <a className="text-blue-600 underline text-sm" href={href ?? "#"}>
                   Zum Dokument
                 </a>
               )}
 
-              {u.status === 'error' && u.message && (
+              {u.status === "error" && u.message && (
                 <p className="text-red-600 text-sm">{u.message}</p>
               )}
             </li>

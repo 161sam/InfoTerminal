@@ -1,26 +1,26 @@
-import fs from 'fs';
-import path from 'path';
-import { beforeEach, expect, test, vi } from 'vitest';
-import { loadDemo } from '../../pages/api/demo/load';
-import * as loader from '@/lib/demoLoader';
+import fs from "fs";
+import path from "path";
+import { beforeEach, expect, test, vi } from "vitest";
+import { loadDemo } from "../../pages/api/demo/load";
+import * as loader from "@/lib/demoLoader";
 
 const loadedFile = loader.paths.LOADED_FILE;
-const root = path.join(process.cwd(), '..', '..');
+const root = path.join(process.cwd(), "..", "..");
 
 beforeEach(() => {
   fs.mkdirSync(path.dirname(loadedFile), { recursive: true });
-  fs.writeFileSync(loadedFile, '{}');
+  fs.writeFileSync(loadedFile, "{}");
 });
 
-test('loads two files and skips on second run', async () => {
-  vi.spyOn(loader, 'listDemoFiles').mockReturnValue([
-    path.join(root, 'examples', 'docs', 'demo1.pdf'),
-    path.join(root, 'examples', 'docs', 'demo2.txt'),
+test("loads two files and skips on second run", async () => {
+  vi.spyOn(loader, "listDemoFiles").mockReturnValue([
+    path.join(root, "examples", "docs", "demo1.pdf"),
+    path.join(root, "examples", "docs", "demo2.txt"),
   ]);
   const fetchMock = vi
     .fn()
-    .mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'a1' }) })
-    .mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'b1' }) })
+    .mockResolvedValueOnce({ ok: true, json: async () => ({ id: "a1" }) })
+    .mockResolvedValueOnce({ ok: true, json: async () => ({ id: "b1" }) })
     .mockResolvedValueOnce({ ok: true, json: async () => ({}) });
   global.fetch = fetchMock as any;
   const r1 = await loadDemo({});

@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useState } from 'react';
-import Panel from '@/components/layout/Panel';
-import { LoadingSpinner } from '@/components/ui/loading';
-import { inputStyles, buttonStyles, textStyles, cardStyles, statusStyles, compose } from '@/styles/design-tokens';
-import { 
-  Search, 
-  FileText, 
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Zap
-} from 'lucide-react';
+import React, { useState } from "react";
+import Panel from "@/components/layout/Panel";
+import { LoadingSpinner } from "@/components/ui/loading";
+import {
+  inputStyles,
+  buttonStyles,
+  textStyles,
+  cardStyles,
+  statusStyles,
+  compose,
+} from "@/styles/design-tokens";
+import { Search, FileText, AlertCircle, CheckCircle, XCircle, Clock, Zap } from "lucide-react";
 
 interface Claim {
   id: string;
@@ -32,7 +31,7 @@ interface ClaimExtractorProps {
 }
 
 export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorProps) {
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [claims, setClaims] = useState<Claim[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +40,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
 
   const handleExtractClaims = async () => {
     if (!inputText.trim()) {
-      setError('Please enter some text to analyze');
+      setError("Please enter some text to analyze");
       return;
     }
 
@@ -49,30 +48,30 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
     setError(null);
 
     try {
-      const response = await fetch('/api/verification/extract-claims', {
-        method: 'POST',
+      const response = await fetch("/api/verification/extract-claims", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           text: inputText,
           confidence_threshold: confidenceThreshold,
-          max_claims: maxClaims
-        })
+          max_claims: maxClaims,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to extract claims');
+        throw new Error("Failed to extract claims");
       }
 
       const extractedClaims = await response.json();
       setClaims(extractedClaims);
-      
+
       if (onClaimsExtracted) {
         onClaimsExtracted(extractedClaims);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -80,11 +79,16 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
 
   const getClaimTypeColor = (type: string) => {
     switch (type) {
-      case 'factual': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'opinion': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
-      case 'prediction': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
-      case 'causal': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+      case "factual":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+      case "opinion":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+      case "prediction":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+      case "causal":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
@@ -107,9 +111,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
               placeholder="Enter or paste text to extract verifiable claims from..."
               className={`${inputStyles.base} min-h-32`}
             />
-            <div className={`${textStyles.bodySmall} mt-1`}>
-              {inputText.length} characters
-            </div>
+            <div className={`${textStyles.bodySmall} mt-1`}>{inputText.length} characters</div>
           </div>
 
           {/* Settings */}
@@ -127,7 +129,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
                 <option value={0.9}>0.9 - Very high confidence</option>
               </select>
             </div>
-            
+
             <div>
               <label className={`${textStyles.body} font-medium`}>Max Claims</label>
               <select
@@ -146,7 +148,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
           <button
             onClick={handleExtractClaims}
             disabled={isLoading || !inputText.trim()}
-            className={`w-full ${compose.button('primary', (isLoading || !inputText.trim()) ? 'opacity-50 cursor-not-allowed' : '')}`}
+            className={`w-full ${compose.button("primary", isLoading || !inputText.trim() ? "opacity-50 cursor-not-allowed" : "")}`}
           >
             {isLoading ? (
               <>
@@ -164,7 +166,9 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
 
         {/* Error Alert */}
         {error && (
-          <div className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}>
+          <div
+            className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}
+          >
             <div className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
               <span className={textStyles.body}>{error}</span>
@@ -178,7 +182,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
             <div className="flex items-center justify-between">
               <h3 className={textStyles.h3}>Extracted Claims</h3>
               <span className={`${statusStyles.info} px-3 py-1 rounded-full text-sm font-medium`}>
-                {claims.length} claim{claims.length !== 1 ? 's' : ''} found
+                {claims.length} claim{claims.length !== 1 ? "s" : ""} found
               </span>
             </div>
 
@@ -191,7 +195,9 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {getConfidenceIcon(claim.confidence)}
-                      <span className={`${getClaimTypeColor(claim.claim_type)} px-2 py-1 rounded text-sm font-medium`}>
+                      <span
+                        className={`${getClaimTypeColor(claim.claim_type)} px-2 py-1 rounded text-sm font-medium`}
+                      >
                         {claim.claim_type}
                       </span>
                       <span className={textStyles.bodySmall}>
@@ -202,7 +208,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
 
                   <div className="space-y-2">
                     <p className={`${textStyles.body} font-medium`}>{claim.text}</p>
-                    
+
                     <div className="grid grid-cols-3 gap-2">
                       <div>
                         <span className={textStyles.bodySmall}>Subject:</span>
@@ -238,7 +244,7 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
 
                   <div className="mt-3 flex gap-2">
                     <button
-                      className={compose.button('secondary', 'text-sm px-3 py-1.5')}
+                      className={compose.button("secondary", "text-sm px-3 py-1.5")}
                       onClick={() => {
                         // This would trigger evidence search for this claim
                         if (onClaimsExtracted) {
@@ -261,25 +267,29 @@ export function ClaimExtractor({ onClaimsExtracted, className }: ClaimExtractorP
                 <div>
                   <span className={textStyles.bodySmall}>Factual:</span>
                   <span className="ml-1 font-medium">
-                    {claims.filter(c => c.claim_type === 'factual').length}
+                    {claims.filter((c) => c.claim_type === "factual").length}
                   </span>
                 </div>
                 <div>
                   <span className={textStyles.bodySmall}>Opinion:</span>
                   <span className="ml-1 font-medium">
-                    {claims.filter(c => c.claim_type === 'opinion').length}
+                    {claims.filter((c) => c.claim_type === "opinion").length}
                   </span>
                 </div>
                 <div>
                   <span className={textStyles.bodySmall}>Prediction:</span>
                   <span className="ml-1 font-medium">
-                    {claims.filter(c => c.claim_type === 'prediction').length}
+                    {claims.filter((c) => c.claim_type === "prediction").length}
                   </span>
                 </div>
                 <div>
                   <span className={textStyles.bodySmall}>Avg Confidence:</span>
                   <span className="ml-1 font-medium">
-                    {(claims.reduce((sum, c) => sum + c.confidence, 0) / claims.length * 100).toFixed(0)}%
+                    {(
+                      (claims.reduce((sum, c) => sum + c.confidence, 0) / claims.length) *
+                      100
+                    ).toFixed(0)}
+                    %
                   </span>
                 </div>
               </div>

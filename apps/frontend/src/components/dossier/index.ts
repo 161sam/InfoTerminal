@@ -1,10 +1,10 @@
 // Enhanced dossier components with analytics export support
-export { DossierTemplateSelector } from './panels/DossierTemplateSelector';
-export { DossierItemManager } from './panels/DossierItemManager';
-export { DossierSettingsPanel } from './panels/DossierSettingsPanel';
-export { DossierExportPanel } from './panels/DossierExportPanel';
-export { DossierPreviewPanel } from './panels/DossierPreviewPanel';
-export { default as DossierBuilderModal } from './DossierBuilderModal';
+export { DossierTemplateSelector } from "./panels/DossierTemplateSelector";
+export { DossierItemManager } from "./panels/DossierItemManager";
+export { DossierSettingsPanel } from "./panels/DossierSettingsPanel";
+export { DossierExportPanel } from "./panels/DossierExportPanel";
+export { DossierPreviewPanel } from "./panels/DossierPreviewPanel";
+export { default as DossierBuilderModal } from "./DossierBuilderModal";
 
 // Re-export types and utilities
 export type {
@@ -13,8 +13,8 @@ export type {
   DossierSettings,
   GeneratedDossier,
   DossierExportOptions,
-  DossierGenerationPayload
-} from '@/lib/dossier/dossier-config';
+  DossierGenerationPayload,
+} from "@/lib/dossier/dossier-config";
 
 export {
   ITEM_TYPE_COLORS,
@@ -30,16 +30,13 @@ export {
   formatConfidence,
   createDossierPayload,
   validateDossierItems,
-  estimateDossierSize
-} from '@/lib/dossier/dossier-config';
+  estimateDossierSize,
+} from "@/lib/dossier/dossier-config";
 
 // Analytics export functionality
-export { 
-  analyticsDossierExporter,
-  AnalyticsDossierExporter 
-} from '@/lib/dossier/analytics-export';
+export { analyticsDossierExporter, AnalyticsDossierExporter } from "@/lib/dossier/analytics-export";
 
-export type { 
+export type {
   DossierExportOptions as AnalyticsDossierExportOptions,
-  ExportResult as AnalyticsExportResult 
-} from '@/lib/dossier/analytics-export';
+  ExportResult as AnalyticsExportResult,
+} from "@/lib/dossier/analytics-export";

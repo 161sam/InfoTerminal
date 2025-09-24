@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import EntityBadge from './EntityBadge';
-import { EntityLabel } from '@/lib/entities';
+import { useMemo } from "react";
+import EntityBadge from "./EntityBadge";
+import { EntityLabel } from "@/lib/entities";
 
 export type BadgeItem = {
   label: EntityLabel;
@@ -19,13 +19,13 @@ export default function EntityBadgeList({ items, onBadgeClick, collapseAfter = 1
   const deduped = useMemo(() => {
     const map = new Map<string, BadgeItem>();
     for (const it of items) {
-      const key = `${it.label}:${(it.value || '').toLowerCase()}`;
+      const key = `${it.label}:${(it.value || "").toLowerCase()}`;
       const existing = map.get(key);
       if (existing) existing.count = (existing.count || 1) + (it.count || 1);
       else map.set(key, { ...it, count: it.count || 1 });
     }
     return Array.from(map.values()).sort((a, b) => {
-      if (a.label === b.label) return (a.value || '').localeCompare(b.value || '');
+      if (a.label === b.label) return (a.value || "").localeCompare(b.value || "");
       return a.label.localeCompare(b.label);
     });
   }, [items]);
@@ -56,4 +56,3 @@ export default function EntityBadgeList({ items, onBadgeClick, collapseAfter = 1
     </div>
   );
 }
-

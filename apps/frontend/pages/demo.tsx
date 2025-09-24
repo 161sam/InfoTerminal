@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useDemoLoader } from '@/hooks/useDemoLoader';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
+import { useState } from "react";
+import { useDemoLoader } from "@/hooks/useDemoLoader";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 
 export default function DemoPage() {
   const { loading, result, loadDemo } = useDemoLoader();
@@ -34,12 +34,8 @@ export default function DemoPage() {
                 </label>
               ))}
             </div>
-            <button
-              className="btn btn-primary"
-              onClick={() => loadDemo(opts)}
-              disabled={loading}
-            >
-              {loading ? 'Lade…' : 'Demo-Daten laden'}
+            <button className="btn btn-primary" onClick={() => loadDemo(opts)} disabled={loading}>
+              {loading ? "Lade…" : "Demo-Daten laden"}
             </button>
             {loading && <div>Loading...</div>}
             {result && (

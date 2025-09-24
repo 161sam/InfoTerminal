@@ -1,15 +1,15 @@
 // apps/frontend/src/components/forms/FormComponents.tsx
-import React, { useId, useState } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import { Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
-import { validateField, type ValidatorMap, type ValidationRule } from '@/lib/validation';
+import React, { useId, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Mail } from "lucide-react";
+import { validateField, type ValidatorMap, type ValidationRule } from "@/lib/validation";
 
-export { validateField } from '@/lib/validation';
+export { validateField } from "@/lib/validation";
 export type { ValidationRule, ValidatorMap };
 
 // Input -------------------------------------------------------------------
 
-export type InputProps = Omit<React.ComponentProps<'input'>, 'value' | 'onChange'> & {
+export type InputProps = Omit<React.ComponentProps<"input">, "value" | "onChange"> & {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -30,20 +30,20 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       error,
       icon: Icon,
       rightElement,
-      type = 'text',
+      type = "text",
       className,
       id,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
     const autoId = useId();
     const inputId = id ?? `input-${autoId}`;
-    const inputType = type === 'password' && showPassword ? 'text' : type;
+    const inputType = type === "password" && showPassword ? "text" : type;
 
     return (
-      <div className={`space-y-1 ${className ?? ''}`}>
+      <div className={`space-y-1 ${className ?? ""}`}>
         <label
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor={inputId}
@@ -68,24 +68,28 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onChange={(e) => onChange(e.target.value)}
             className={`
               w-full px-3 py-2 border rounded-lg transition-colors
-              ${Icon ? 'pl-10' : ''}
-              ${type === 'password' || rightElement ? 'pr-10' : ''}
-              ${error
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                : 'border-gray-300 dark:border-gray-600'}
-              ${rest.disabled
-                ? 'bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed'
-                : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
+              ${Icon ? "pl-10" : ""}
+              ${type === "password" || rightElement ? "pr-10" : ""}
+              ${
+                error
+                  ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                  : "border-gray-300 dark:border-gray-600"
+              }
+              ${
+                rest.disabled
+                  ? "bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed"
+                  : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              }
               focus:outline-none focus:ring-2 focus:ring-opacity-20
             `}
           />
 
-          {type === 'password' && (
+          {type === "password" && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              aria-label={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
+              aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -106,23 +110,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
-export const EmailInput = React.forwardRef<HTMLInputElement, Omit<InputProps, 'type' | 'icon'>>(
-  (props, ref) => <Input {...props} ref={ref} type="email" icon={Mail} />
+export const EmailInput = React.forwardRef<HTMLInputElement, Omit<InputProps, "type" | "icon">>(
+  (props, ref) => <Input {...props} ref={ref} type="email" icon={Mail} />,
 );
-EmailInput.displayName = 'EmailInput';
+EmailInput.displayName = "EmailInput";
 
-export const PasswordInput = React.forwardRef<HTMLInputElement, Omit<InputProps, 'type'>>(
-  (props, ref) => <Input {...props} ref={ref} type="password" />
+export const PasswordInput = React.forwardRef<HTMLInputElement, Omit<InputProps, "type">>(
+  (props, ref) => <Input {...props} ref={ref} type="password" />,
 );
-PasswordInput.displayName = 'PasswordInput';
+PasswordInput.displayName = "PasswordInput";
 
 // Form --------------------------------------------------------------------
 
-export type FormProps = React.ComponentProps<'form'>;
+export type FormProps = React.ComponentProps<"form">;
 
 export function Form({ children, ...rest }: FormProps) {
   return (

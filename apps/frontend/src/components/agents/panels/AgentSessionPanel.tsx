@@ -1,7 +1,7 @@
-import React from 'react';
-import { Download, Trash2 } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { Message, AgentCapability, AgentStatus } from './types';
+import React from "react";
+import { Download, Trash2 } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { Message, AgentCapability, AgentStatus } from "./types";
 
 interface AgentSessionPanelProps {
   messages: Message[];
@@ -13,16 +13,16 @@ interface AgentSessionPanelProps {
   onClearConversation: () => void;
 }
 
-export default function AgentSessionPanel({ 
-  messages, 
-  sessionId, 
-  selectedAgent, 
+export default function AgentSessionPanel({
+  messages,
+  sessionId,
+  selectedAgent,
   agentStatus,
   agentCapabilities,
   onExportConversation,
-  onClearConversation
+  onClearConversation,
 }: AgentSessionPanelProps) {
-  const currentCapability = agentCapabilities.find(c => c.id === selectedAgent);
+  const currentCapability = agentCapabilities.find((c) => c.id === selectedAgent);
 
   return (
     <Panel title="Session Management">
@@ -35,7 +35,7 @@ export default function AgentSessionPanel({
           <div className="flex items-center justify-between">
             <span className="text-gray-600 dark:text-slate-400">Agent</span>
             <span className="font-medium text-gray-900 dark:text-slate-100">
-              {currentCapability?.displayName || 'None'}
+              {currentCapability?.displayName || "None"}
             </span>
           </div>
           {agentStatus.version && (
@@ -55,7 +55,7 @@ export default function AgentSessionPanel({
             </div>
           )}
         </div>
-        
+
         <div className="flex gap-2">
           <button
             onClick={onExportConversation}

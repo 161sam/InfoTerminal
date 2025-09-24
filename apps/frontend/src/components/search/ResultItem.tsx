@@ -1,9 +1,9 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import type { SearchHit } from '@/types/search';
-import EntityBadge from '../entities/EntityBadge';
-import { displayValue, normalizeLabel } from '@/lib/entities';
-import { buildSearchUrl } from '@/lib/searchNav';
+import Link from "next/link";
+import { useRouter } from "next/router";
+import type { SearchHit } from "@/types/search";
+import EntityBadge from "../entities/EntityBadge";
+import { displayValue, normalizeLabel } from "@/lib/entities";
+import { buildSearchUrl } from "@/lib/searchNav";
 
 interface Props {
   hit: SearchHit;
@@ -11,8 +11,8 @@ interface Props {
 
 function Highlights({ hit }: { hit: SearchHit }) {
   if (hit.highlights && hit.highlights.length) {
-    const text = hit.highlights.map(h => h.fragments.join(' ... ')).join(' ... ');
-    const safe = text.replace(/<(?!\/?(em|mark)>)/g, '&lt;');
+    const text = hit.highlights.map((h) => h.fragments.join(" ... ")).join(" ... ");
+    const safe = text.replace(/<(?!\/?(em|mark)>)/g, "&lt;");
     return <p dangerouslySetInnerHTML={{ __html: safe }} />;
   }
   if (hit.snippet) return <p>{hit.snippet}</p>;
@@ -42,17 +42,11 @@ export default function ResultItem({ hit }: Props) {
           const label = normalizeLabel(e.label);
           const value = displayValue(e.value || e.text);
           const href = buildSearchUrl(query, { addValue: value });
-          return (
-            <EntityBadge key={idx} label={label} value={value} href={href} clickable />
-          );
+          return <EntityBadge key={idx} label={label} value={value} href={href} clickable />;
         })}
         {hit.source && <span>{hit.source} </span>}
-        {hit.node_id && (
-          <Link href={`/graphx?focus=${hit.node_id}`}>Graph</Link>
-        )}
-        {hit.score !== undefined && (
-          <small> score: {hit.score.toFixed(2)}</small>
-        )}
+        {hit.node_id && <Link href={`/graphx?focus=${hit.node_id}`}>Graph</Link>}
+        {hit.score !== undefined && <small> score: {hit.score.toFixed(2)}</small>}
       </div>
     </article>
   );

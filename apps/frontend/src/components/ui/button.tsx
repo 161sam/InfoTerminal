@@ -22,25 +22,25 @@ const Button: React.FC<ButtonProps> = ({
     variant === "primary"
       ? "bg-primary-600 text-white hover:bg-primary-700"
       : variant === "secondary"
-      ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-      : variant === "destructive"
-      ? "bg-red-600 text-white hover:bg-red-700"
-      : variant === "ghost"
-      ? "bg-transparent text-gray-700 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-gray-800"
-      : variant === "link"
-      ? "bg-transparent text-primary-600 hover:underline dark:text-primary-400"
-      : variant === "default"
-      ? "bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
-      : "border border-gray-300 text-gray-700 bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:text-slate-200 dark:hover:bg-gray-800"; // outline
+        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+        : variant === "destructive"
+          ? "bg-red-600 text-white hover:bg-red-700"
+          : variant === "ghost"
+            ? "bg-transparent text-gray-700 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-gray-800"
+            : variant === "link"
+              ? "bg-transparent text-primary-600 hover:underline dark:text-primary-400"
+              : variant === "default"
+                ? "bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                : "border border-gray-300 text-gray-700 bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:text-slate-200 dark:hover:bg-gray-800"; // outline
 
   const sizeClasses =
     size === "sm"
       ? "px-3 py-1.5 text-xs"
       : size === "lg"
-      ? "px-5 py-3 text-base"
-      : size === "icon"
-      ? "h-9 w-9 p-0"
-      : "px-4 py-2 text-sm"; // md
+        ? "px-5 py-3 text-base"
+        : size === "icon"
+          ? "h-9 w-9 p-0"
+          : "px-4 py-2 text-sm"; // md
 
   return (
     <button

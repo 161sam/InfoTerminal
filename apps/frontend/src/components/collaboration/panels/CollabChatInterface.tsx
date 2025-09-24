@@ -1,22 +1,22 @@
 // Collaboration chat interface panel
-import { useState, useEffect, useRef } from 'react';
-import { 
-  Search, 
-  MoreVertical, 
-  User, 
-  Paperclip, 
-  Download, 
-  Smile, 
-  MessageCircle, 
-  Send 
-} from 'lucide-react';
-import { 
-  Workspace, 
-  Message, 
+import { useState, useEffect, useRef } from "react";
+import {
+  Search,
+  MoreVertical,
+  User,
+  Paperclip,
+  Download,
+  Smile,
+  MessageCircle,
+  Send,
+} from "lucide-react";
+import {
+  Workspace,
+  Message,
   WORKSPACE_COLORS,
   formatTimestamp,
-  formatFileSize
-} from '@/lib/collaboration/collab-config';
+  formatFileSize,
+} from "@/lib/collaboration/collab-config";
 
 interface CollabChatInterfaceProps {
   workspace: Workspace;
@@ -25,20 +25,20 @@ interface CollabChatInterfaceProps {
   onMessageAction?: (message: Message, action: string) => void;
 }
 
-export function CollabChatInterface({ 
-  workspace, 
-  messages, 
+export function CollabChatInterface({
+  workspace,
+  messages,
   onSendMessage,
-  onMessageAction 
+  onMessageAction,
 }: CollabChatInterfaceProps) {
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -46,7 +46,7 @@ export function CollabChatInterface({
     if (!newMessage.trim() && selectedFiles.length === 0) return;
 
     onSendMessage(newMessage, selectedFiles.length > 0 ? selectedFiles : undefined);
-    setNewMessage('');
+    setNewMessage("");
     setSelectedFiles([]);
   };
 
@@ -57,12 +57,12 @@ export function CollabChatInterface({
   };
 
   const removeFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const onlineCount = workspace.members.filter(m => m.status === 'online').length;
+  const onlineCount = workspace.members.filter((m) => m.status === "online").length;
   const colorClass = WORKSPACE_COLORS[workspace.color as keyof typeof WORKSPACE_COLORS];
-  const colorIndicator = colorClass.split(' ')[0]; // Extract just the background color
+  const colorIndicator = colorClass.split(" ")[0]; // Extract just the background color
 
   return (
     <div className="flex flex-col h-full">
@@ -71,23 +71,19 @@ export function CollabChatInterface({
         <div className="flex items-center gap-3">
           <div className={`w-4 h-4 rounded-full ${colorIndicator}`} />
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
-              {workspace.name}
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {onlineCount} online
-            </p>
+            <h3 className="font-semibold text-gray-900 dark:text-white">{workspace.name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{onlineCount} online</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <button 
+          <button
             className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             title="Search messages"
           >
             <Search size={16} />
           </button>
-          <button 
+          <button
             className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             title="More options"
           >
@@ -110,9 +106,10 @@ export function CollabChatInterface({
           </div>
         ) : (
           messages.map((message, index) => {
-            const isConsecutive = index > 0 && 
+            const isConsecutive =
+              index > 0 &&
               messages[index - 1].userId === message.userId &&
-              (message.timestamp.getTime() - messages[index - 1].timestamp.getTime()) < 300000;
+              message.timestamp.getTime() - messages[index - 1].timestamp.getTime() < 300000;
 
             return (
               <MessageBubble
@@ -143,14 +140,15 @@ export function CollabChatInterface({
             </p>
             <div className="space-y-1">
               {selectedFiles.map((file, index) => (
-                <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                >
                   <Paperclip size={14} className="text-gray-400" />
                   <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
                     {file.name}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {formatFileSize(file.size)}
-                  </span>
+                  <span className="text-xs text-gray-500">{formatFileSize(file.size)}</span>
                   <button
                     onClick={() => removeFile(index)}
                     className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
@@ -176,7 +174,7 @@ export function CollabChatInterface({
                 className="w-full p-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none"
                 rows={1}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSendMessage(e);
                   }
@@ -199,7 +197,7 @@ export function CollabChatInterface({
               </button>
             </div>
           </div>
-          
+
           <button
             type="submit"
             disabled={!newMessage.trim() && selectedFiles.length === 0}
@@ -222,13 +220,13 @@ interface MessageBubbleProps {
 
 function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps) {
   return (
-    <div className={`group ${isConsecutive ? 'ml-12' : ''}`}>
+    <div className={`group ${isConsecutive ? "ml-12" : ""}`}>
       <div className="flex items-start gap-3">
         {!isConsecutive && (
           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
             {message.userAvatar ? (
-              <img 
-                src={message.userAvatar} 
+              <img
+                src={message.userAvatar}
                 alt={message.userName}
                 className="w-8 h-8 rounded-full object-cover"
               />
@@ -237,7 +235,7 @@ function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps)
             )}
           </div>
         )}
-        
+
         <div className="flex-1 min-w-0">
           {!isConsecutive && (
             <div className="flex items-baseline gap-2 mb-1">
@@ -247,14 +245,10 @@ function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps)
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 {formatTimestamp(message.timestamp)}
               </span>
-              {message.edited && (
-                <span className="text-xs text-gray-400 italic">
-                  (edited)
-                </span>
-              )}
+              {message.edited && <span className="text-xs text-gray-400 italic">(edited)</span>}
             </div>
           )}
-          
+
           <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
             {message.content}
           </div>
@@ -263,16 +257,17 @@ function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps)
           {message.attachments && message.attachments.length > 0 && (
             <div className="mt-2 space-y-2">
               {message.attachments.map((attachment) => (
-                <div key={attachment.id} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div
+                  key={attachment.id}
+                  className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                >
                   <Paperclip size={14} className="text-gray-400" />
                   <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
                     {attachment.name}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {formatFileSize(attachment.size)}
-                  </span>
-                  <button 
-                    onClick={() => window.open(attachment.url, '_blank')}
+                  <span className="text-xs text-gray-500">{formatFileSize(attachment.size)}</span>
+                  <button
+                    onClick={() => window.open(attachment.url, "_blank")}
                     className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     title="Download file"
                   >
@@ -293,13 +288,11 @@ function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps)
                   className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
                   <span>{reaction.emoji}</span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {reaction.count}
-                  </span>
+                  <span className="text-gray-600 dark:text-gray-400">{reaction.count}</span>
                 </button>
               ))}
-              <button 
-                onClick={() => onAction('add_reaction')}
+              <button
+                onClick={() => onAction("add_reaction")}
                 className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
                 title="Add reaction"
               >
@@ -311,15 +304,15 @@ function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps)
 
         {/* Message Actions */}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-          <button 
-            onClick={() => onAction('reply')}
+          <button
+            onClick={() => onAction("reply")}
             className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             title="Reply in thread"
           >
             <MessageCircle size={14} />
           </button>
-          <button 
-            onClick={() => onAction('more')}
+          <button
+            onClick={() => onAction("more")}
             className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             title="More actions"
           >

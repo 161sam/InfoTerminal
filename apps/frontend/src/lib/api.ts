@@ -14,15 +14,12 @@ export async function fetchAsset(id: Id) {
 export async function fetchAssetPrices(
   id: Id,
   from?: string | number,
-  to?: string | number
+  to?: string | number,
 ): Promise<Array<{ t: number; v: number }>> {
   return [{ t: Date.now(), v: 100 }];
 }
 
-export async function fetchGraph(
-  id: Id,
-  depth?: number
-): Promise<{ nodes: any[]; edges: any[] }> {
+export async function fetchGraph(id: Id, depth?: number): Promise<{ nodes: any[]; edges: any[] }> {
   return {
     nodes: [{ id, name: `Node ${id}`, depth: depth ?? 0 }],
     edges: [],
@@ -56,13 +53,13 @@ export async function getEgo(params: EgoParams): Promise<{
   };
   counts: { nodes: number; relationships: number };
 }> {
-  const center = String(params.value ?? 'center');
+  const center = String(params.value ?? "center");
 
   const nodes = [
-    { data: { id: center, label: 'Center' } },
-    { data: { id: 'n2', label: 'Neighbor' } },
+    { data: { id: center, label: "Center" } },
+    { data: { id: "n2", label: "Neighbor" } },
   ];
-  const relationships = [{ data: { source: center, target: 'n2' } }];
+  const relationships = [{ data: { source: center, target: "n2" } }];
   const elements = [...nodes, ...relationships];
 
   return {
@@ -79,12 +76,17 @@ export async function getEgo(params: EgoParams): Promise<{
 type PersonRow = { id: string; name: string; knows_id?: string | null };
 
 // Overloads (typed)
-export function loadPeople(people: Array<PersonRow>): Promise<{ data: Array<PersonRow>; inserted: number }>;
-export function loadPeople(query?: { q?: string; limit?: number }): Promise<{ data: Array<PersonRow>; inserted?: undefined }>;
+export function loadPeople(
+  people: Array<PersonRow>,
+): Promise<{ data: Array<PersonRow>; inserted: number }>;
+export function loadPeople(query?: {
+  q?: string;
+  limit?: number;
+}): Promise<{ data: Array<PersonRow>; inserted?: undefined }>;
 
 // Implementation (broad signature)
 export async function loadPeople(
-  arg?: Array<PersonRow> | { q?: string; limit?: number }
+  arg?: Array<PersonRow> | { q?: string; limit?: number },
 ): Promise<{ data: Array<PersonRow>; inserted?: number }> {
   // Seed mode: array provided
   if (Array.isArray(arg)) {
@@ -116,18 +118,18 @@ type ShortestPathObjArgs = {
   srcLabel: string;
   srcKey: string;
   srcValue?: string | number; // preferred naming
-  srcVal?: string | number;   // legacy alias
+  srcVal?: string | number; // legacy alias
   dstLabel: string;
   dstKey: string;
   dstValue?: string | number; // preferred naming
-  dstVal?: string | number;   // legacy alias
+  dstVal?: string | number; // legacy alias
   // optional parameters used by callers
   maxLen?: number;
 };
 
 export function getShortestPath(
   a: Id,
-  b?: Id
+  b?: Id,
 ): Promise<{
   data: {
     nodes: Array<{ data: any }>;
@@ -136,9 +138,7 @@ export function getShortestPath(
   };
 }>;
 
-export function getShortestPath(
-  params: ShortestPathObjArgs
-): Promise<{
+export function getShortestPath(params: ShortestPathObjArgs): Promise<{
   data: {
     nodes: Array<{ data: any }>;
     relationships: Array<{ data: any }>;
@@ -146,20 +146,15 @@ export function getShortestPath(
   };
 }>;
 
-export async function getShortestPath(
-  aOrObj: Id | ShortestPathObjArgs,
-  b?: Id
-) {
+export async function getShortestPath(aOrObj: Id | ShortestPathObjArgs, b?: Id) {
   const start =
-    typeof aOrObj === 'string'
-      ? String(aOrObj)
-      : String(aOrObj.srcValue ?? aOrObj.srcVal ?? '');
+    typeof aOrObj === "string" ? String(aOrObj) : String(aOrObj.srcValue ?? aOrObj.srcVal ?? "");
   const end =
-    typeof aOrObj === 'string'
+    typeof aOrObj === "string"
       ? String(b ?? aOrObj)
-      : String(aOrObj.dstValue ?? aOrObj.dstVal ?? '');
+      : String(aOrObj.dstValue ?? aOrObj.dstVal ?? "");
 
-  const ids = [start, 'mid', end];
+  const ids = [start, "mid", end];
 
   const nodes = ids.map((id) => ({ data: { id, label: id } }));
   const relationships = ids.slice(0, -1).map((id, i) => ({
@@ -174,23 +169,31 @@ export async function getShortestPath(
  * Simple Erfolgsantwort inkl. URL
  */
 // Overloads: accept plain Id or a selector object
-export function exportDossier(
-  entityId: Id
-): Promise<{ ok: boolean; id: Id; url: string }>;
+export function exportDossier(entityId: Id): Promise<{ ok: boolean; id: Id; url: string }>;
 
-export function exportDossier(
-  params: { label: string; key: string; value: string | number; depth?: number }
-): Promise<{ ok: boolean; label: string; key: string; value: string | number; depth?: number; url: string }>;
+export function exportDossier(params: {
+  label: string;
+  key: string;
+  value: string | number;
+  depth?: number;
+}): Promise<{
+  ok: boolean;
+  label: string;
+  key: string;
+  value: string | number;
+  depth?: number;
+  url: string;
+}>;
 
 export async function exportDossier(
-  entityOrParams: Id | { label: string; key: string; value: string | number; depth?: number }
+  entityOrParams: Id | { label: string; key: string; value: string | number; depth?: number },
 ) {
-  if (typeof entityOrParams === 'string') {
+  if (typeof entityOrParams === "string") {
     const entityId = entityOrParams;
     return { ok: true, id: entityId, url: `/api/dossier/${entityId}.pdf` };
   }
   const { label, key, value, depth } = entityOrParams;
-  const safeId = `${label.toLowerCase()}_${String(value)}`.replace(/[^a-z0-9_-]+/gi, '_');
+  const safeId = `${label.toLowerCase()}_${String(value)}`.replace(/[^a-z0-9_-]+/gi, "_");
   return {
     ok: true,
     label,

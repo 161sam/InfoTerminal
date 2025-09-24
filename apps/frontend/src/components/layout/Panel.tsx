@@ -28,33 +28,31 @@ function Panel({
   children,
   ...rest
 }: PanelProps) {
-  const base = "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm";
+  const base =
+    "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm";
   const pad = padded ? "p-4 sm:p-6" : "";
   const cls = [base, pad, className].filter(Boolean).join(" ");
 
   // If consumer uses compound subcomponents, avoid double padding:
-  const hasCompound =
-    React.Children.toArray(children).some(
-      (c: any) => c?.type?.displayName?.startsWith("Panel.") || c?.props?.["data-panel-slot"]
-    );
+  const hasCompound = React.Children.toArray(children).some(
+    (c: any) => c?.type?.displayName?.startsWith("Panel.") || c?.props?.["data-panel-slot"],
+  );
 
   return (
     <section className={cls} {...rest}>
       {!hasCompound && (title || actions || subtitle) ? (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            {title && <h2 className="text-base font-semibold text-blue-600 dark:text-slate-100">{title}</h2>}
+            {title && (
+              <h2 className="text-base font-semibold text-blue-600 dark:text-slate-100">{title}</h2>
+            )}
             {subtitle && <p className="text-sm text-gray-500 dark:text-slate-400">{subtitle}</p>}
           </div>
           {actions && <div className="shrink-0">{actions}</div>}
         </div>
       ) : null}
 
-      {!hasCompound ? (
-        <div>{children}</div>
-      ) : (
-        children
-      )}
+      {!hasCompound ? <div>{children}</div> : children}
 
       {!hasCompound && footer ? (
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">{footer}</div>
@@ -69,7 +67,9 @@ function PanelHeader({ className, children, ...rest }: SlotProps) {
   return (
     <div
       data-panel-slot="header"
-      className={["mb-4 flex items-start justify-between gap-3", className].filter(Boolean).join(" ")}
+      className={["mb-4 flex items-start justify-between gap-3", className]
+        .filter(Boolean)
+        .join(" ")}
       {...rest}
     >
       {children}
@@ -80,11 +80,7 @@ PanelHeader.displayName = "Panel.Header";
 
 function PanelBody({ className, children, ...rest }: SlotProps) {
   return (
-    <div
-      data-panel-slot="body"
-      className={["", className].filter(Boolean).join(" ")}
-      {...rest}
-    >
+    <div data-panel-slot="body" className={["", className].filter(Boolean).join(" ")} {...rest}>
       {children}
     </div>
   );
@@ -95,7 +91,9 @@ function PanelFooter({ className, children, ...rest }: SlotProps) {
   return (
     <div
       data-panel-slot="footer"
-      className={["mt-4 pt-4 border-t border-gray-200 dark:border-gray-800", className].filter(Boolean).join(" ")}
+      className={["mt-4 pt-4 border-t border-gray-200 dark:border-gray-800", className]
+        .filter(Boolean)
+        .join(" ")}
       {...rest}
     >
       {children}
@@ -109,4 +107,3 @@ PanelFooter.displayName = "Panel.Footer";
 (Panel as any).Footer = PanelFooter;
 
 export default Panel;
-

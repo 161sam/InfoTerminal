@@ -1,18 +1,18 @@
 import { useRef, useState, useEffect } from "react";
-import { 
-  Search, 
-  Filter, 
-  SortAsc, 
-  Calendar, 
-  FileText, 
-  Users, 
-  MapPin, 
+import {
+  Search,
+  Filter,
+  SortAsc,
+  Calendar,
+  FileText,
+  Users,
+  MapPin,
   Clock,
   Star,
   ExternalLink,
   Download,
-  Eye
-} from 'lucide-react';
+  Eye,
+} from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import { LoadingSpinner, EmptyState, ErrorState } from "@/components/ui/loading";
@@ -47,21 +47,21 @@ const SEARCH_SUGGESTIONS = [
   { text: "entity connections", category: "Graph" },
   { text: "risk indicators", category: "Analysis" },
   { text: "John Smith", category: "People" },
-  { text: "London office", category: "Locations" }
+  { text: "London office", category: "Locations" },
 ];
 
 const SORT_OPTIONS = [
   { value: "relevance", label: "Relevance", icon: Star },
   { value: "date_desc", label: "Newest First", icon: Calendar },
   { value: "date_asc", label: "Oldest First", icon: Calendar },
-  { value: "score", label: "Score", icon: SortAsc }
+  { value: "score", label: "Score", icon: SortAsc },
 ];
 
 const RESULT_TYPES = [
   { value: "all", label: "All Results", count: null },
   { value: "document", label: "Documents", count: null },
   { value: "entity", label: "Entities", count: null },
-  { value: "connection", label: "Connections", count: null }
+  { value: "connection", label: "Connections", count: null },
 ];
 
 export default function SearchPage() {
@@ -73,14 +73,14 @@ export default function SearchPage() {
   const [showMap, setShowMap] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [searchTime, setSearchTime] = useState(0);
-  
+
   const [filters, setFilters] = useState<SearchFilters>({
     type: "all",
     dateRange: "all",
     source: "all",
-    minScore: 0
+    minScore: 0,
   });
-  
+
   const [sort, setSort] = useState("relevance");
   const controller = useRef<AbortController | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -99,19 +99,19 @@ export default function SearchPage() {
       type: filters.type,
       dateRange: filters.dateRange,
       source: filters.source,
-      minScore: String(filters.minScore)
+      minScore: String(filters.minScore),
     };
 
-    const params = new URLSearchParams({ 
-      q: searchTerm, 
-      sort, 
+    const params = new URLSearchParams({
+      q: searchTerm,
+      sort,
       limit: "20",
-      ...filterParams 
+      ...filterParams,
     });
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     // Cancel previous request
     controller.current?.abort();
     const c = new AbortController();
@@ -121,22 +121,21 @@ export default function SearchPage() {
 
     try {
       let response = await fetch(`/api/search?${params.toString()}`, { signal: c.signal });
-      
+
       if (response.status === 404) {
         const base = config?.SEARCH_API;
         if (!base) throw new Error("Search API not configured");
         response = await fetch(`${base}/search?${params.toString()}`, { signal: c.signal });
       }
-      
+
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
+
       const data = await response.json();
       const searchResults = data.items || data.results || [];
-      
+
       setResults(searchResults);
       setTotalResults(data.total || searchResults.length);
       setSearchTime(Math.round(performance.now() - startTime));
-      
     } catch (e: any) {
       if (e.name !== "AbortError") {
         setError(e.message || "Search failed");
@@ -147,7 +146,7 @@ export default function SearchPage() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       runSearch();
     }
   };
@@ -173,12 +172,12 @@ export default function SearchPage() {
       results,
       totalResults,
       searchTime,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `search-results-${Date.now()}.json`;
     a.click();
@@ -188,7 +187,6 @@ export default function SearchPage() {
   return (
     <DashboardLayout title="Intelligent Search" subtitle="Search across all your data sources">
       <div className="max-w-7xl mx-auto space-y-6">
-        
         {/* Search Header */}
         <div className="space-y-4">
           <div className="relative">
@@ -226,7 +224,9 @@ export default function SearchPage() {
                     className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   >
                     <span>{suggestion.text}</span>
-                    <span className="text-xs text-gray-500 dark:text-slate-400">({suggestion.category})</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                      ({suggestion.category})
+                    </span>
                   </button>
                 ))}
               </div>
@@ -235,10 +235,8 @@ export default function SearchPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
-            
             {/* Search Controls */}
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-4">
@@ -247,16 +245,20 @@ export default function SearchPage() {
                   disabled={!query.trim() || isLoading}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? <LoadingSpinner size="sm" variant="primary" layout="inline" /> : <Search size={16} />}
+                  {isLoading ? (
+                    <LoadingSpinner size="sm" variant="primary" layout="inline" />
+                  ) : (
+                    <Search size={16} />
+                  )}
                   Search
                 </button>
 
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    showFilters 
-                      ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700'
+                    showFilters
+                      ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
                   }`}
                 >
                   <Filter size={16} />
@@ -264,7 +266,9 @@ export default function SearchPage() {
                 </button>
 
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-slate-300">Sort:</label>
+                  <label className="text-sm font-medium text-gray-700 dark:text-slate-300">
+                    Sort:
+                  </label>
                   <select
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
@@ -285,7 +289,7 @@ export default function SearchPage() {
                     onClick={() => setShowMap(!showMap)}
                     className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
                   >
-                    {showMap ? 'Hide Map' : 'Show Map'}
+                    {showMap ? "Hide Map" : "Show Map"}
                   </button>
                   <button
                     onClick={exportResults}
@@ -303,10 +307,12 @@ export default function SearchPage() {
               <Panel>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Type</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Type
+                    </label>
                     <select
                       value={filters.type}
-                      onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+                      onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     >
                       {RESULT_TYPES.map((type) => (
@@ -316,12 +322,16 @@ export default function SearchPage() {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Date Range</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Date Range
+                    </label>
                     <select
                       value={filters.dateRange}
-                      onChange={(e) => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({ ...prev, dateRange: e.target.value }))
+                      }
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="all">All Time</option>
@@ -331,12 +341,14 @@ export default function SearchPage() {
                       <option value="year">This Year</option>
                     </select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Source</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Source
+                    </label>
                     <select
                       value={filters.source}
-                      onChange={(e) => setFilters(prev => ({ ...prev, source: e.target.value }))}
+                      onChange={(e) => setFilters((prev) => ({ ...prev, source: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="all">All Sources</option>
@@ -345,19 +357,25 @@ export default function SearchPage() {
                       <option value="graph">Graph</option>
                     </select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Min Score</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Min Score
+                    </label>
                     <input
                       type="range"
                       min="0"
                       max="1"
                       step="0.1"
                       value={filters.minScore}
-                      onChange={(e) => setFilters(prev => ({ ...prev, minScore: parseFloat(e.target.value) }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({ ...prev, minScore: parseFloat(e.target.value) }))
+                      }
                       className="w-full"
                     />
-                    <div className="text-xs text-gray-500 dark:text-slate-400 mt-1">{filters.minScore}</div>
+                    <div className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                      {filters.minScore}
+                    </div>
                   </div>
                 </div>
               </Panel>
@@ -365,29 +383,29 @@ export default function SearchPage() {
 
             {/* Search Results */}
             {error && (
-              <ErrorState 
+              <ErrorState
                 variant="error"
                 title="Search Error"
                 message={error}
                 action={{
                   label: "Try Again",
-                  onClick: () => runSearch()
+                  onClick: () => runSearch(),
                 }}
               />
             )}
 
             {isLoading && (
-              <LoadingSpinner 
-                layout="block" 
-                variant="primary" 
-                size="lg" 
-                text="Searching..." 
-                subText="Finding relevant results" 
+              <LoadingSpinner
+                layout="block"
+                variant="primary"
+                size="lg"
+                text="Searching..."
+                subText="Finding relevant results"
               />
             )}
 
             {!isLoading && query && results.length === 0 && !error && (
-              <EmptyState 
+              <EmptyState
                 icon={Search}
                 title="No results found"
                 message="Try adjusting your search terms or filters"
@@ -401,12 +419,14 @@ export default function SearchPage() {
                   <p className="text-sm text-gray-600 dark:text-slate-400">
                     {totalResults.toLocaleString()} results found in {searchTime}ms
                   </p>
-                  <DossierButton getPayload={() => ({ 
-                    query, 
-                    entities: [], 
-                    graphSelection: { nodes: [], edges: [] },
-                    searchResults: results
-                  })} />
+                  <DossierButton
+                    getPayload={() => ({
+                      query,
+                      entities: [],
+                      graphSelection: { nodes: [], edges: [] },
+                      searchResults: results,
+                    })}
+                  />
                 </div>
 
                 {/* Results List */}
@@ -421,18 +441,17 @@ export default function SearchPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            
             {/* Result Types */}
             <Panel title="Result Types">
               <div className="space-y-2">
                 {RESULT_TYPES.map((type) => (
                   <button
                     key={type.value}
-                    onClick={() => setFilters(prev => ({ ...prev, type: type.value }))}
+                    onClick={() => setFilters((prev) => ({ ...prev, type: type.value }))}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       filters.type === type.value
-                        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                        ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                        : "hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -462,18 +481,20 @@ export default function SearchPage() {
             {/* Recent Searches */}
             <Panel title="Recent Searches">
               <div className="space-y-2">
-                {['financial networks', 'ACME Corporation', 'risk analysis'].map((search, index) => (
-                  <button
-                    key={index}
-                    onClick={() => selectSuggestion(search)}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} />
-                      {search}
-                    </div>
-                  </button>
-                ))}
+                {["financial networks", "ACME Corporation", "risk analysis"].map(
+                  (search, index) => (
+                    <button
+                      key={index}
+                      onClick={() => selectSuggestion(search)}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Clock size={14} />
+                        {search}
+                      </div>
+                    </button>
+                  ),
+                )}
               </div>
             </Panel>
           </div>
@@ -493,10 +514,14 @@ export default function SearchPage() {
 function SearchResultCard({ result }: { result: SearchResult }) {
   const getResultIcon = (type?: string) => {
     switch (type) {
-      case 'document': return FileText;
-      case 'entity': return Users;
-      case 'location': return MapPin;
-      default: return FileText;
+      case "document":
+        return FileText;
+      case "entity":
+        return Users;
+      case "location":
+        return MapPin;
+      default:
+        return FileText;
     }
   };
 
@@ -508,20 +533,20 @@ function SearchResultCard({ result }: { result: SearchResult }) {
         <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <Icon size={20} className="text-gray-600 dark:text-slate-400" />
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-1">
                 {result.title || result.id}
               </h3>
-              
+
               {result.snippet && (
                 <p className="text-gray-600 dark:text-slate-400 text-sm mb-2 leading-relaxed">
                   {result.snippet}
                 </p>
               )}
-              
+
               <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
                 {result.score !== undefined && (
                   <div className="flex items-center gap-1">
@@ -561,7 +586,7 @@ function SearchResultCard({ result }: { result: SearchResult }) {
                 </div>
               )}
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button className="p-1 text-gray-400 hover:text-gray-600 rounded">
                 <Eye size={16} />

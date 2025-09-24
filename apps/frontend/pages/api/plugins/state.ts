@@ -1,17 +1,19 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import path from 'path';
+import type { NextApiRequest, NextApiResponse } from "next";
+import fs from "fs";
+import path from "path";
 
-const STATE_FILE = path.resolve(process.cwd(), '..', '..', 'tmp', 'plugins-state.json');
+const STATE_FILE = path.resolve(process.cwd(), "..", "..", "tmp", "plugins-state.json");
 
 function ensureDir(p: string) {
   const dir = path.dirname(p);
-  try { fs.mkdirSync(dir, { recursive: true }); } catch {}
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+  } catch {}
 }
 
 function readState(): any {
   try {
-    const raw = fs.readFileSync(STATE_FILE, 'utf8');
+    const raw = fs.readFileSync(STATE_FILE, "utf8");
     return JSON.parse(raw);
   } catch {
     return { items: [] };
@@ -35,17 +37,37 @@ function envInt(name: string, def: number): number {
 }
 
 function defaultState() {
-  const alephPort = envInt('IT_PORT_ALEPH', 8641);
-  const supersetPort = envInt('IT_PORT_SUPERSET', 8644);
-  const nifiPort = envInt('IT_PORT_NIFI', 8619);
-  const airflowPort = envInt('IT_PORT_AIRFLOW', 8642);
+  const alephPort = envInt("IT_PORT_ALEPH", 8641);
+  const supersetPort = envInt("IT_PORT_SUPERSET", 8644);
+  const nifiPort = envInt("IT_PORT_NIFI", 8619);
+  const airflowPort = envInt("IT_PORT_AIRFLOW", 8642);
   return {
     items: [
-      { name: 'aleph', enabled: true, endpoints: { baseUrl: `http://localhost:${alephPort}` }, config: {} },
-      { name: 'superset', enabled: true, endpoints: { baseUrl: `http://localhost:${supersetPort}` }, config: {} },
-      { name: 'nifi', enabled: true, endpoints: { baseUrl: `http://localhost:${nifiPort}/nifi` }, config: {} },
-      { name: 'airflow', enabled: true, endpoints: { baseUrl: `http://localhost:${airflowPort}` }, config: {} },
-    ]
+      {
+        name: "aleph",
+        enabled: true,
+        endpoints: { baseUrl: `http://localhost:${alephPort}` },
+        config: {},
+      },
+      {
+        name: "superset",
+        enabled: true,
+        endpoints: { baseUrl: `http://localhost:${supersetPort}` },
+        config: {},
+      },
+      {
+        name: "nifi",
+        enabled: true,
+        endpoints: { baseUrl: `http://localhost:${nifiPort}/nifi` },
+        config: {},
+      },
+      {
+        name: "airflow",
+        enabled: true,
+        endpoints: { baseUrl: `http://localhost:${airflowPort}` },
+        config: {},
+      },
+    ],
   };
 }
 
@@ -58,4 +80,3 @@ export default function handler(_req: NextApiRequest, res: NextApiResponse) {
   }
   return res.status(200).json(st);
 }
-

@@ -1,6 +1,6 @@
-import { Clock } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { SearchFilters, RESULT_TYPES, RECENT_SEARCHES } from '@/lib/search/search-config';
+import { Clock } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { SearchFilters, RESULT_TYPES, RECENT_SEARCHES } from "@/lib/search/search-config";
 
 interface SearchSidebarProps {
   filters: SearchFilters;
@@ -8,10 +8,10 @@ interface SearchSidebarProps {
   onSearchSuggestion: (suggestion: string) => void;
 }
 
-export default function SearchSidebar({ 
-  filters, 
-  setFilters, 
-  onSearchSuggestion 
+export default function SearchSidebar({
+  filters,
+  setFilters,
+  onSearchSuggestion,
 }: SearchSidebarProps) {
   return (
     <div className="space-y-6">
@@ -21,11 +21,11 @@ export default function SearchSidebar({
           {RESULT_TYPES.map((type) => (
             <button
               key={type.value}
-              onClick={() => setFilters(prev => ({ ...prev, type: type.value }))}
+              onClick={() => setFilters((prev) => ({ ...prev, type: type.value }))}
               className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                 filters.type === type.value
-                  ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >
               <div className="flex items-center justify-between">

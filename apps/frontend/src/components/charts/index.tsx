@@ -1,5 +1,5 @@
 // apps/frontend/src/components/charts/index.tsx
-import React from 'react';
+import React from "react";
 import {
   LineChart,
   Line,
@@ -21,19 +21,19 @@ import {
   ComposedChart,
   Brush,
   ReferenceLine,
-} from 'recharts';
-import { TrendingUp, TrendingDown, Activity, BarChart3 } from 'lucide-react';
+} from "recharts";
+import { TrendingUp, TrendingDown, Activity, BarChart3 } from "lucide-react";
 
 // Color palette for charts
 export const CHART_COLORS = {
-  primary: '#0ea5e9',
-  secondary: '#8b5cf6',
-  success: '#22c55e',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  info: '#3b82f6',
-  gray: '#6b7280',
-  palette: ['#0ea5e9', '#8b5cf6', '#22c55e', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#14b8a6']
+  primary: "#0ea5e9",
+  secondary: "#8b5cf6",
+  success: "#22c55e",
+  warning: "#f59e0b",
+  error: "#ef4444",
+  info: "#3b82f6",
+  gray: "#6b7280",
+  palette: ["#0ea5e9", "#8b5cf6", "#22c55e", "#f59e0b", "#ef4444", "#3b82f6", "#ec4899", "#14b8a6"],
 };
 
 // Common chart props
@@ -60,10 +60,7 @@ function CustomTooltip({ active, payload, label, labelFormatter, valueFormatter 
       {payload.map((entry: any, index: number) => (
         <div key={index} className="flex items-center justify-between gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
             <span className="text-gray-700 dark:text-gray-300">{entry.name}:</span>
           </div>
           <span className="font-medium text-gray-900 dark:text-gray-100">
@@ -92,7 +89,7 @@ export function TimeSeriesChart({
   xKey,
   yKey,
   height = 300,
-  className = '',
+  className = "",
   color = CHART_COLORS.primary,
   strokeWidth = 2,
   dotSize = 4,
@@ -117,7 +114,7 @@ export function TimeSeriesChart({
           <XAxis dataKey={xKey} className="text-xs text-gray-600 dark:text-gray-400" />
           <YAxis className="text-xs text-gray-600 dark:text-gray-400" />
           {showTooltip && <Tooltip content={<CustomTooltip />} />}
-          
+
           <DataComponent
             type="monotone"
             dataKey={yKey}
@@ -127,13 +124,15 @@ export function TimeSeriesChart({
             fill={showArea ? `${color}20` : undefined}
             animationDuration={animate ? 1000 : 0}
           />
-          
+
           {showBrush && (
             <Brush
               dataKey={xKey}
               height={30}
               stroke={color}
-              onChange={(e) => onBrushChange && onBrushChange([e.startIndex || 0, e.endIndex || data.length - 1])}
+              onChange={(e) =>
+                onBrushChange && onBrushChange([e.startIndex || 0, e.endIndex || data.length - 1])
+              }
             />
           )}
         </Chart>
@@ -149,7 +148,7 @@ interface MultiSeriesChartProps extends BaseChartProps {
     key: string;
     name: string;
     color?: string;
-    type?: 'line' | 'area' | 'bar';
+    type?: "line" | "area" | "bar";
   }>;
 }
 
@@ -158,7 +157,7 @@ export function MultiSeriesChart({
   xKey,
   series,
   height = 300,
-  className = '',
+  className = "",
   showGrid = true,
   showTooltip = true,
   showLegend = true,
@@ -176,11 +175,11 @@ export function MultiSeriesChart({
           <YAxis className="text-xs text-gray-600 dark:text-gray-400" />
           {showTooltip && <Tooltip content={<CustomTooltip />} />}
           {showLegend && <Legend />}
-          
+
           {series.map((s, index) => {
             const color = s.color || CHART_COLORS.palette[index % CHART_COLORS.palette.length];
-            
-            if (s.type === 'area') {
+
+            if (s.type === "area") {
               return (
                 <Area
                   key={s.key}
@@ -192,7 +191,7 @@ export function MultiSeriesChart({
                   animationDuration={animate ? 1000 : 0}
                 />
               );
-            } else if (s.type === 'bar') {
+            } else if (s.type === "bar") {
               return (
                 <Bar
                   key={s.key}
@@ -236,7 +235,7 @@ export function DonutChart({
   valueKey,
   nameKey,
   height = 300,
-  className = '',
+  className = "",
   centerLabel,
   centerValue,
   showTooltip = true,
@@ -261,9 +260,9 @@ export function DonutChart({
             dataKey={valueKey}
           >
             {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={CHART_COLORS.palette[index % CHART_COLORS.palette.length]} 
+              <Cell
+                key={`cell-${index}`}
+                fill={CHART_COLORS.palette[index % CHART_COLORS.palette.length]}
               />
             ))}
           </Pie>
@@ -288,17 +287,27 @@ export function DonutChart({
             <Legend
               verticalAlign="bottom"
               height={36}
-              formatter={(value) => <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>}
+              formatter={(value) => (
+                <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>
+              )}
             />
           )}
-          
+
           {/* Center Text */}
           {(centerLabel || centerValue) && (
             <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-              <tspan x="50%" dy="-0.5em" className="text-sm font-medium fill-gray-700 dark:fill-gray-300">
+              <tspan
+                x="50%"
+                dy="-0.5em"
+                className="text-sm font-medium fill-gray-700 dark:fill-gray-300"
+              >
                 {centerLabel}
               </tspan>
-              <tspan x="50%" dy="1.2em" className="text-2xl font-bold fill-gray-900 dark:fill-gray-100">
+              <tspan
+                x="50%"
+                dy="1.2em"
+                className="text-2xl font-bold fill-gray-900 dark:fill-gray-100"
+              >
                 {centerValue}
               </tspan>
             </text>
@@ -332,13 +341,15 @@ export function MetricCard({
   change,
   chart,
   icon: Icon = Activity,
-  className = '',
+  className = "",
 }: MetricCardProps) {
   const isPositiveChange = change && change.value >= 0;
   const TrendIcon = isPositiveChange ? TrendingUp : TrendingDown;
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm ${className}`}
+    >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
@@ -347,24 +358,28 @@ export function MetricCard({
           <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</h3>
         </div>
       </div>
-      
+
       <div className="flex items-end justify-between">
         <div>
           <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-            {typeof value === 'number' ? value.toLocaleString() : value}
+            {typeof value === "number" ? value.toLocaleString() : value}
           </p>
-          
+
           {change && (
-            <div className={`flex items-center gap-1 text-sm ${
-              isPositiveChange ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-            }`}>
+            <div
+              className={`flex items-center gap-1 text-sm ${
+                isPositiveChange
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
+            >
               <TrendIcon size={14} />
               <span>{Math.abs(change.value)}%</span>
               <span className="text-gray-500 dark:text-gray-400">vs {change.period}</span>
             </div>
           )}
         </div>
-        
+
         {chart && (
           <div className="w-24 h-12">
             <ResponsiveContainer width="100%" height="100%">
@@ -404,10 +419,10 @@ interface HeatmapProps {
   className?: string;
 }
 
-export function Heatmap({ data, width = 800, height = 400, className = '' }: HeatmapProps) {
-  const xLabels = [...new Set(data.map(d => d.x))];
-  const yLabels = [...new Set(data.map(d => d.y))];
-  const values = data.map(d => d.value);
+export function Heatmap({ data, width = 800, height = 400, className = "" }: HeatmapProps) {
+  const xLabels = [...new Set(data.map((d) => d.x))];
+  const yLabels = [...new Set(data.map((d) => d.y))];
+  const values = data.map((d) => d.value);
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
 
@@ -421,11 +436,15 @@ export function Heatmap({ data, width = 800, height = 400, className = '' }: Hea
 
   return (
     <div className={`w-full ${className}`}>
-      <svg width={width} height={height} className="border border-gray-200 dark:border-gray-700 rounded">
+      <svg
+        width={width}
+        height={height}
+        className="border border-gray-200 dark:border-gray-700 rounded"
+      >
         {data.map((cell, index) => {
           const xIndex = xLabels.indexOf(cell.x);
           const yIndex = yLabels.indexOf(cell.y);
-          
+
           return (
             <g key={index}>
               <rect
@@ -443,14 +462,14 @@ export function Heatmap({ data, width = 800, height = 400, className = '' }: Hea
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize="12"
-                fill={cell.value > (maxValue + minValue) / 2 ? '#fff' : '#000'}
+                fill={cell.value > (maxValue + minValue) / 2 ? "#fff" : "#000"}
               >
                 {cell.value.toFixed(1)}
               </text>
             </g>
           );
         })}
-        
+
         {/* X-axis labels */}
         {xLabels.map((label, index) => (
           <text
@@ -464,7 +483,7 @@ export function Heatmap({ data, width = 800, height = 400, className = '' }: Hea
             {label}
           </text>
         ))}
-        
+
         {/* Y-axis labels */}
         {yLabels.map((label, index) => (
           <text
@@ -506,7 +525,13 @@ interface NetworkGraphProps {
   className?: string;
 }
 
-export function NetworkGraph({ nodes, links, width = 600, height = 400, className = '' }: NetworkGraphProps) {
+export function NetworkGraph({
+  nodes,
+  links,
+  width = 600,
+  height = 400,
+  className = "",
+}: NetworkGraphProps) {
   // Simple force layout simulation (simplified)
   const getNodePosition = (nodeId: string, index: number) => {
     const angle = (index / nodes.length) * 2 * Math.PI;
@@ -519,19 +544,23 @@ export function NetworkGraph({ nodes, links, width = 600, height = 400, classNam
 
   return (
     <div className={`w-full ${className}`}>
-      <svg width={width} height={height} className="border border-gray-200 dark:border-gray-700 rounded">
+      <svg
+        width={width}
+        height={height}
+        className="border border-gray-200 dark:border-gray-700 rounded"
+      >
         {/* Links */}
         {links.map((link, index) => {
-          const sourceNode = nodes.find(n => n.id === link.source);
-          const targetNode = nodes.find(n => n.id === link.target);
-          const sourceIndex = nodes.findIndex(n => n.id === link.source);
-          const targetIndex = nodes.findIndex(n => n.id === link.target);
-          
+          const sourceNode = nodes.find((n) => n.id === link.source);
+          const targetNode = nodes.find((n) => n.id === link.target);
+          const sourceIndex = nodes.findIndex((n) => n.id === link.source);
+          const targetIndex = nodes.findIndex((n) => n.id === link.target);
+
           if (!sourceNode || !targetNode) return null;
-          
+
           const sourcePos = getNodePosition(link.source, sourceIndex);
           const targetPos = getNodePosition(link.target, targetIndex);
-          
+
           return (
             <line
               key={index}
@@ -545,12 +574,12 @@ export function NetworkGraph({ nodes, links, width = 600, height = 400, classNam
             />
           );
         })}
-        
+
         {/* Nodes */}
         {nodes.map((node, index) => {
           const pos = getNodePosition(node.id, index);
           const radius = node.value ? Math.max(8, Math.sqrt(node.value) * 5) : 8;
-          
+
           return (
             <g key={node.id}>
               <circle

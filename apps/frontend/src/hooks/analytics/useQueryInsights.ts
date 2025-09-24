@@ -1,7 +1,7 @@
 // Hook for query insights data
-import { useState, useEffect, useCallback } from 'react';
-import { analyticsApi } from '../../lib/api-client';
-import { QueryInsights, AnalyticsFilters } from '../analytics/types';
+import { useState, useEffect, useCallback } from "react";
+import { analyticsApi } from "../../lib/api-client";
+import { QueryInsights, AnalyticsFilters } from "../analytics/types";
 
 export function useQueryInsights(filters: AnalyticsFilters) {
   const [data, setData] = useState<QueryInsights | null>(null);
@@ -16,7 +16,7 @@ export function useQueryInsights(filters: AnalyticsFilters) {
 
     try {
       const response = await analyticsApi.getQueryInsights(filters);
-      
+
       if (response.success && response.data) {
         setData(response.data);
       } else {
@@ -37,15 +37,15 @@ export function useQueryInsights(filters: AnalyticsFilters) {
             errorRate: 0,
           },
         });
-        
+
         if (response.error) {
-          console.warn('Query insights service unavailable:', response.error);
+          console.warn("Query insights service unavailable:", response.error);
         }
       }
     } catch (err) {
-      console.warn('Error fetching query insights:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      
+      console.warn("Error fetching query insights:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
+
       setData({
         totalQueries: 0,
         uniqueQueries: 0,

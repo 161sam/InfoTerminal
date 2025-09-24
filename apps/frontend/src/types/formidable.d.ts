@@ -1,1 +1,1 @@
-declare module 'formidable';
+declare module "formidable";

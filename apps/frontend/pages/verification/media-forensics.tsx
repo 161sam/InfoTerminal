@@ -1,10 +1,10 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps } from "next";
 
 // Redirect from old verification/media-forensics route to new media-forensics route
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: '/media-forensics',
+      destination: "/media-forensics",
       permanent: true, // 301 redirect for SEO
     },
   };

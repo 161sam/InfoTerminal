@@ -1,18 +1,9 @@
-import React, { useState } from 'react';
-import { 
-  Shield, 
-  Image, 
-  Video, 
-  Music,
-  Activity,
-  Upload,
-  AlertCircle,
-  Zap
-} from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
-import MediaForensics from '@/components/media/MediaForensics';
-import { textStyles, buttonStyles, inputStyles, cardStyles } from '@/styles/design-tokens';
+import React, { useState } from "react";
+import { Shield, Image, Video, Music, Activity, Upload, AlertCircle, Zap } from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
+import MediaForensics from "@/components/media/MediaForensics";
+import { textStyles, buttonStyles, inputStyles, cardStyles } from "@/styles/design-tokens";
 
 interface VideoAnalysisResult {
   filename: string;
@@ -35,7 +26,7 @@ interface AudioAnalysisResult {
 }
 
 export default function MediaForensicsPage() {
-  const [activeTab, setActiveTab] = useState<'image' | 'video' | 'audio'>('image');
+  const [activeTab, setActiveTab] = useState<"image" | "video" | "audio">("image");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [videoAnalysis, setVideoAnalysis] = useState<VideoAnalysisResult | null>(null);
@@ -44,25 +35,41 @@ export default function MediaForensicsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const tabs = [
-    { id: 'image', label: 'Image Analysis', icon: Image, description: 'Analyze images for EXIF data, manipulation signs, and forensic evidence' },
-    { id: 'video', label: 'Video Analysis', icon: Video, description: 'Extract metadata, detect deepfakes, and analyze video authenticity' },
-    { id: 'audio', label: 'Audio Analysis', icon: Music, description: 'Voice analysis, audio fingerprinting, and authenticity verification' }
+    {
+      id: "image",
+      label: "Image Analysis",
+      icon: Image,
+      description: "Analyze images for EXIF data, manipulation signs, and forensic evidence",
+    },
+    {
+      id: "video",
+      label: "Video Analysis",
+      icon: Video,
+      description: "Extract metadata, detect deepfakes, and analyze video authenticity",
+    },
+    {
+      id: "audio",
+      label: "Audio Analysis",
+      icon: Music,
+      description: "Voice analysis, audio fingerprinting, and authenticity verification",
+    },
   ];
 
   const handleVideoUpload = async (file: File) => {
-    if (!file.type.startsWith('video/')) {
-      setError('Please select a valid video file');
+    if (!file.type.startsWith("video/")) {
+      setError("Please select a valid video file");
       return;
     }
-    
-    if (file.size > 500 * 1024 * 1024) { // 500MB limit
-      setError('Video file size must be less than 500MB');
+
+    if (file.size > 500 * 1024 * 1024) {
+      // 500MB limit
+      setError("Video file size must be less than 500MB");
       return;
     }
-    
+
     setVideoFile(file);
     setError(null);
-    
+
     // TODO: Implement video analysis API call
     // This would call the media-forensics service for video analysis
     setLoading(true);
@@ -73,33 +80,34 @@ export default function MediaForensicsPage() {
           filename: file.name,
           duration: 120.5,
           fps: 30,
-          codec: 'H.264',
+          codec: "H.264",
           resolution: { width: 1920, height: 1080 },
           bitrate: 5000000,
-          file_size: file.size
+          file_size: file.size,
         });
         setLoading(false);
       }, 2000);
     } catch (err) {
-      setError('Video analysis failed');
+      setError("Video analysis failed");
       setLoading(false);
     }
   };
 
   const handleAudioUpload = async (file: File) => {
-    if (!file.type.startsWith('audio/')) {
-      setError('Please select a valid audio file');
+    if (!file.type.startsWith("audio/")) {
+      setError("Please select a valid audio file");
       return;
     }
-    
-    if (file.size > 100 * 1024 * 1024) { // 100MB limit
-      setError('Audio file size must be less than 100MB');
+
+    if (file.size > 100 * 1024 * 1024) {
+      // 100MB limit
+      setError("Audio file size must be less than 100MB");
       return;
     }
-    
+
     setAudioFile(file);
     setError(null);
-    
+
     // TODO: Implement audio analysis API call
     // This would call the media-forensics service for audio analysis
     setLoading(true);
@@ -111,14 +119,14 @@ export default function MediaForensicsPage() {
           duration: 180.2,
           sample_rate: 44100,
           channels: 2,
-          codec: 'MP3',
+          codec: "MP3",
           bitrate: 320000,
-          file_size: file.size
+          file_size: file.size,
         });
         setLoading(false);
       }, 2000);
     } catch (err) {
-      setError('Audio analysis failed');
+      setError("Audio analysis failed");
       setLoading(false);
     }
   };
@@ -128,7 +136,7 @@ export default function MediaForensicsPage() {
     onFileSelect: (file: File) => void,
     currentFile: File | null,
     fileType: string,
-    maxSize: string
+    maxSize: string,
   ) => (
     <Panel>
       <div className="text-center p-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-400 transition-colors">
@@ -154,7 +162,7 @@ export default function MediaForensicsPage() {
           className="hidden"
           id={`${fileType}-upload`}
         />
-        <label 
+        <label
           htmlFor={`${fileType}-upload`}
           className={`${buttonStyles.primary} cursor-pointer inline-flex items-center gap-2`}
         >
@@ -183,7 +191,10 @@ export default function MediaForensicsPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Duration:</span>
-                <span>{Math.floor(videoAnalysis.duration / 60)}:{(videoAnalysis.duration % 60).toFixed(1).padStart(4, '0')}</span>
+                <span>
+                  {Math.floor(videoAnalysis.duration / 60)}:
+                  {(videoAnalysis.duration % 60).toFixed(1).padStart(4, "0")}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Frame Rate:</span>
@@ -191,7 +202,9 @@ export default function MediaForensicsPage() {
               </div>
               <div className="flex justify-between">
                 <span>Resolution:</span>
-                <span>{videoAnalysis.resolution.width}×{videoAnalysis.resolution.height}</span>
+                <span>
+                  {videoAnalysis.resolution.width}×{videoAnalysis.resolution.height}
+                </span>
               </div>
             </div>
           </div>
@@ -217,9 +230,13 @@ export default function MediaForensicsPage() {
           <div className={`${cardStyles.base} ${cardStyles.padding}`}>
             <h4 className={`${textStyles.body} font-medium mb-3`}>Forensic Analysis</h4>
             <div className="space-y-2 text-sm">
-              <div className="text-green-600 dark:text-green-400">✓ No compression artifacts detected</div>
+              <div className="text-green-600 dark:text-green-400">
+                ✓ No compression artifacts detected
+              </div>
               <div className="text-green-600 dark:text-green-400">✓ Consistent metadata</div>
-              <div className="text-yellow-600 dark:text-yellow-400">⚠ Further analysis recommended</div>
+              <div className="text-yellow-600 dark:text-yellow-400">
+                ⚠ Further analysis recommended
+              </div>
             </div>
           </div>
         </div>
@@ -245,7 +262,10 @@ export default function MediaForensicsPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Duration:</span>
-                <span>{Math.floor(audioAnalysis.duration / 60)}:{(audioAnalysis.duration % 60).toFixed(1).padStart(4, '0')}</span>
+                <span>
+                  {Math.floor(audioAnalysis.duration / 60)}:
+                  {(audioAnalysis.duration % 60).toFixed(1).padStart(4, "0")}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Sample Rate:</span>
@@ -253,7 +273,13 @@ export default function MediaForensicsPage() {
               </div>
               <div className="flex justify-between">
                 <span>Channels:</span>
-                <span>{audioAnalysis.channels === 1 ? 'Mono' : audioAnalysis.channels === 2 ? 'Stereo' : `${audioAnalysis.channels} channels`}</span>
+                <span>
+                  {audioAnalysis.channels === 1
+                    ? "Mono"
+                    : audioAnalysis.channels === 2
+                      ? "Stereo"
+                      : `${audioAnalysis.channels} channels`}
+                </span>
               </div>
             </div>
           </div>
@@ -279,9 +305,15 @@ export default function MediaForensicsPage() {
           <div className={`${cardStyles.base} ${cardStyles.padding}`}>
             <h4 className={`${textStyles.body} font-medium mb-3`}>Voice Analysis</h4>
             <div className="space-y-2 text-sm">
-              <div className="text-green-600 dark:text-green-400">✓ Natural voice patterns detected</div>
-              <div className="text-green-600 dark:text-green-400">✓ No significant splicing found</div>
-              <div className="text-blue-600 dark:text-blue-400">ℹ Speaker identification available</div>
+              <div className="text-green-600 dark:text-green-400">
+                ✓ Natural voice patterns detected
+              </div>
+              <div className="text-green-600 dark:text-green-400">
+                ✓ No significant splicing found
+              </div>
+              <div className="text-blue-600 dark:text-blue-400">
+                ℹ Speaker identification available
+              </div>
             </div>
           </div>
         </div>
@@ -290,10 +322,12 @@ export default function MediaForensicsPage() {
   };
 
   return (
-    <DashboardLayout title="Media Forensics" subtitle="Advanced multimedia file analysis and verification">
+    <DashboardLayout
+      title="Media Forensics"
+      subtitle="Advanced multimedia file analysis and verification"
+    >
       <div className="p-6">
         <div className="max-w-7xl space-y-6">
-          
           {/* Tab Navigation */}
           <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-800">
             {tabs.map((tab) => {
@@ -304,8 +338,8 @@ export default function MediaForensicsPage() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
                     activeTab === tab.id
-                      ? 'text-primary-600 border-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-300 dark:border-primary-400'
-                      : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-gray-600'
+                      ? "text-primary-600 border-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-300 dark:border-primary-400"
+                      : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-gray-600"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -328,7 +362,7 @@ export default function MediaForensicsPage() {
 
           {/* Tab Content */}
           <div className="mt-6">
-            {activeTab === 'image' && (
+            {activeTab === "image" && (
               <div>
                 <Panel>
                   <div className="flex items-center gap-3 mb-6">
@@ -338,18 +372,16 @@ export default function MediaForensicsPage() {
                     </h3>
                   </div>
                   <div className={`${textStyles.bodySmall} text-gray-600 dark:text-slate-400 mb-6`}>
-                    Analyze images for EXIF metadata, manipulation detection, perceptual hashing, and reverse image search capabilities.
+                    Analyze images for EXIF metadata, manipulation detection, perceptual hashing,
+                    and reverse image search capabilities.
                   </div>
                 </Panel>
-                
-                <MediaForensics 
-                  apiBaseUrl="http://localhost:8618/v1"
-                  className="mt-6"
-                />
+
+                <MediaForensics apiBaseUrl="http://localhost:8618/v1" className="mt-6" />
               </div>
             )}
 
-            {activeTab === 'video' && (
+            {activeTab === "video" && (
               <div className="space-y-6">
                 <Panel>
                   <div className="flex items-center gap-3 mb-6">
@@ -359,17 +391,12 @@ export default function MediaForensicsPage() {
                     </h3>
                   </div>
                   <div className={`${textStyles.bodySmall} text-gray-600 dark:text-slate-400 mb-6`}>
-                    Extract metadata, detect deepfakes, analyze compression artifacts, and verify video authenticity.
+                    Extract metadata, detect deepfakes, analyze compression artifacts, and verify
+                    video authenticity.
                   </div>
                 </Panel>
 
-                {renderFileUpload(
-                  'video/*',
-                  handleVideoUpload,
-                  videoFile,
-                  'Video',
-                  '500MB'
-                )}
+                {renderFileUpload("video/*", handleVideoUpload, videoFile, "Video", "500MB")}
 
                 {loading && (
                   <Panel>
@@ -387,16 +414,26 @@ export default function MediaForensicsPage() {
                     <h4 className={`${textStyles.h4} mb-4`}>Video Analysis Features</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className={`${cardStyles.base} ${cardStyles.padding}`}>
-                        <h5 className={`${textStyles.body} font-medium mb-2`}>Metadata Extraction</h5>
-                        <p className={textStyles.bodySmall}>Extract technical details, timestamps, and embedded metadata</p>
+                        <h5 className={`${textStyles.body} font-medium mb-2`}>
+                          Metadata Extraction
+                        </h5>
+                        <p className={textStyles.bodySmall}>
+                          Extract technical details, timestamps, and embedded metadata
+                        </p>
                       </div>
                       <div className={`${cardStyles.base} ${cardStyles.padding}`}>
-                        <h5 className={`${textStyles.body} font-medium mb-2`}>Deepfake Detection</h5>
-                        <p className={textStyles.bodySmall}>Identify AI-generated or manipulated video content</p>
+                        <h5 className={`${textStyles.body} font-medium mb-2`}>
+                          Deepfake Detection
+                        </h5>
+                        <p className={textStyles.bodySmall}>
+                          Identify AI-generated or manipulated video content
+                        </p>
                       </div>
                       <div className={`${cardStyles.base} ${cardStyles.padding}`}>
                         <h5 className={`${textStyles.body} font-medium mb-2`}>Frame Analysis</h5>
-                        <p className={textStyles.bodySmall}>Analyze individual frames for inconsistencies</p>
+                        <p className={textStyles.bodySmall}>
+                          Analyze individual frames for inconsistencies
+                        </p>
                       </div>
                     </div>
                   </Panel>
@@ -404,7 +441,7 @@ export default function MediaForensicsPage() {
               </div>
             )}
 
-            {activeTab === 'audio' && (
+            {activeTab === "audio" && (
               <div className="space-y-6">
                 <Panel>
                   <div className="flex items-center gap-3 mb-6">
@@ -414,17 +451,12 @@ export default function MediaForensicsPage() {
                     </h3>
                   </div>
                   <div className={`${textStyles.bodySmall} text-gray-600 dark:text-slate-400 mb-6`}>
-                    Voice analysis, speaker identification, authenticity verification, and audio fingerprinting.
+                    Voice analysis, speaker identification, authenticity verification, and audio
+                    fingerprinting.
                   </div>
                 </Panel>
 
-                {renderFileUpload(
-                  'audio/*',
-                  handleAudioUpload,
-                  audioFile,
-                  'Audio',
-                  '100MB'
-                )}
+                {renderFileUpload("audio/*", handleAudioUpload, audioFile, "Audio", "100MB")}
 
                 {loading && (
                   <Panel>
@@ -443,15 +475,23 @@ export default function MediaForensicsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className={`${cardStyles.base} ${cardStyles.padding}`}>
                         <h5 className={`${textStyles.body} font-medium mb-2`}>Voice Analysis</h5>
-                        <p className={textStyles.bodySmall}>Analyze voice patterns, pitch, and speech characteristics</p>
+                        <p className={textStyles.bodySmall}>
+                          Analyze voice patterns, pitch, and speech characteristics
+                        </p>
                       </div>
                       <div className={`${cardStyles.base} ${cardStyles.padding}`}>
                         <h5 className={`${textStyles.body} font-medium mb-2`}>Speaker ID</h5>
-                        <p className={textStyles.bodySmall}>Identify and verify speaker identity through voice prints</p>
+                        <p className={textStyles.bodySmall}>
+                          Identify and verify speaker identity through voice prints
+                        </p>
                       </div>
                       <div className={`${cardStyles.base} ${cardStyles.padding}`}>
-                        <h5 className={`${textStyles.body} font-medium mb-2`}>Audio Fingerprinting</h5>
-                        <p className={textStyles.bodySmall}>Generate unique audio fingerprints for comparison</p>
+                        <h5 className={`${textStyles.body} font-medium mb-2`}>
+                          Audio Fingerprinting
+                        </h5>
+                        <p className={textStyles.bodySmall}>
+                          Generate unique audio fingerprints for comparison
+                        </p>
                       </div>
                     </div>
                   </Panel>
@@ -459,7 +499,6 @@ export default function MediaForensicsPage() {
               </div>
             )}
           </div>
-
         </div>
       </div>
     </DashboardLayout>

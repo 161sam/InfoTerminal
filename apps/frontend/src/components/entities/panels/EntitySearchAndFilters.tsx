@@ -1,7 +1,7 @@
-import React from 'react';
-import { Search, Plus, Download } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { EntityFilter, SortConfig, RISK_LEVELS } from './types';
+import React from "react";
+import { Search, Plus, Download } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { EntityFilter, SortConfig, RISK_LEVELS } from "./types";
 
 interface EntitySearchAndFiltersProps {
   filters: EntityFilter;
@@ -24,18 +24,22 @@ export default function EntitySearchAndFilters({
   onCreateEntity,
   onExportEntities,
   totalEntities,
-  filteredCount
+  filteredCount,
 }: EntitySearchAndFiltersProps) {
-
-  const hasActiveFilters = filters.searchTerm || filters.type !== 'all' || 
-                          filters.verified !== 'all' || filters.riskLevel !== 'all' || 
-                          filters.minMentions > 0;
+  const hasActiveFilters =
+    filters.searchTerm ||
+    filters.type !== "all" ||
+    filters.verified !== "all" ||
+    filters.riskLevel !== "all" ||
+    filters.minMentions > 0;
 
   return (
     <Panel>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Entity Explorer</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
+            Entity Explorer
+          </h3>
           <div className="flex items-center gap-2">
             <button
               onClick={onCreateEntity}
@@ -53,10 +57,13 @@ export default function EntitySearchAndFilters({
             </button>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search entities, descriptions, aliases..."
@@ -65,7 +72,7 @@ export default function EntitySearchAndFilters({
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
-          
+
           <button
             onClick={onClearFilters}
             className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
@@ -89,7 +96,7 @@ export default function EntitySearchAndFilters({
               <option value="Domain">Domain</option>
             </select>
           </div>
-          
+
           <div>
             <select
               value={filters.verified}
@@ -101,30 +108,34 @@ export default function EntitySearchAndFilters({
               <option value="pending">Pending</option>
             </select>
           </div>
-          
+
           <div>
             <select
               value={filters.riskLevel}
               onChange={(e) => onFiltersChange({ ...filters, riskLevel: e.target.value })}
               className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             >
-              {RISK_LEVELS.map(level => (
-                <option key={level.value} value={level.value}>{level.label}</option>
+              {RISK_LEVELS.map((level) => (
+                <option key={level.value} value={level.value}>
+                  {level.label}
+                </option>
               ))}
             </select>
           </div>
-          
+
           <div>
             <input
               type="number"
               min="0"
               placeholder="Min mentions"
-              value={filters.minMentions || ''}
-              onChange={(e) => onFiltersChange({ ...filters, minMentions: parseInt(e.target.value) || 0 })}
+              value={filters.minMentions || ""}
+              onChange={(e) =>
+                onFiltersChange({ ...filters, minMentions: parseInt(e.target.value) || 0 })
+              }
               className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
-          
+
           <div>
             <select
               value={sortConfig.key}
@@ -141,7 +152,9 @@ export default function EntitySearchAndFilters({
         </div>
 
         <div className="flex items-center justify-between text-sm text-gray-600 dark:text-slate-400">
-          <span>Showing {filteredCount} of {totalEntities} entities</span>
+          <span>
+            Showing {filteredCount} of {totalEntities} entities
+          </span>
           {hasActiveFilters && (
             <span className="text-blue-600 dark:text-blue-400">Filters applied</span>
           )}

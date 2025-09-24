@@ -16,4 +16,3 @@ function ScrollArea({ className = "", style, children, ...props }: ScrollAreaPro
 
 export { ScrollArea };
 export default ScrollArea;
-

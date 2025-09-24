@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface Props {
   value?: string;
@@ -7,7 +7,7 @@ interface Props {
   loading?: boolean;
 }
 
-export default function SearchBox({ value = '', onChange, onSubmit, loading }: Props) {
+export default function SearchBox({ value = "", onChange, onSubmit, loading }: Props) {
   const [term, setTerm] = useState(value);
 
   useEffect(() => {
@@ -28,16 +28,14 @@ export default function SearchBox({ value = '', onChange, onSubmit, loading }: P
         onSubmit?.(term);
       }}
     >
-      <input
-        placeholder="Search..."
-        value={term}
-        onChange={(e) => setTerm(e.target.value)}
-      />
+      <input placeholder="Search..." value={term} onChange={(e) => setTerm(e.target.value)} />
       <button type="submit" disabled={loading}>
-        {loading ? '...' : 'Search'}
+        {loading ? "..." : "Search"}
       </button>
       {term && (
-        <button type="button" onClick={() => setTerm('')}>×</button>
+        <button type="button" onClick={() => setTerm("")}>
+          ×
+        </button>
       )}
     </form>
   );

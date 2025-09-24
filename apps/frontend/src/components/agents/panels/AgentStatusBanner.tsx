@@ -1,6 +1,6 @@
-import React from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
-import { AgentStatus } from './types';
+import React from "react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { AgentStatus } from "./types";
 
 interface AgentStatusBannerProps {
   agentStatus: AgentStatus;
@@ -26,7 +26,7 @@ export default function AgentStatusBanner({ agentStatus, onRetryHealth }: AgentS
             </p>
           </div>
         </div>
-        <button 
+        <button
           onClick={onRetryHealth}
           className="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-red-700 bg-red-100 rounded-lg hover:bg-red-200 dark:bg-red-900/50 dark:text-red-300 dark:hover:bg-red-900/70"
         >

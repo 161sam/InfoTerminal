@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Network, 
-  RefreshCw, 
-  Users, 
-  Building, 
+import {
+  Network,
+  RefreshCw,
+  Users,
+  Building,
   MapPin,
   Database,
   Eye,
@@ -12,8 +12,8 @@ import {
   BarChart3,
   Cube,
   Brain,
-  Settings
-} from 'lucide-react';
+  Settings,
+} from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import Button from "@/components/ui/button";
@@ -28,7 +28,7 @@ import {
   GraphVisualization3D,
   GraphMLAnalytics,
   GraphTools,
-  GraphSidebar
+  GraphSidebar,
 } from "@/components/graph/panels";
 import config from "@/lib/config";
 
@@ -40,8 +40,8 @@ interface GraphData {
 async function pingService(url?: string): Promise<Status> {
   if (!url) return "fail";
   try {
-    const response = await fetch(url + "/healthz", { 
-      signal: AbortSignal.timeout(5000) 
+    const response = await fetch(url + "/healthz", {
+      signal: AbortSignal.timeout(5000),
     });
     return response.ok ? "ok" : "fail";
   } catch {
@@ -50,15 +50,15 @@ async function pingService(url?: string): Promise<Status> {
 }
 
 export default function ConsolidatedGraphPage() {
-  const [activeMainTab, setActiveMainTab] = useState<string>('graph');
-  const [activeGraphTab, setActiveGraphTab] = useState<string>('explorer');
+  const [activeMainTab, setActiveMainTab] = useState<string>("graph");
+  const [activeGraphTab, setActiveGraphTab] = useState<string>("explorer");
   const [graphStatus, setGraphStatus] = useState<Status>();
   const [viewsStatus, setViewsStatus] = useState<Status>();
-  
+
   // Query state
   const [customQuery, setCustomQuery] = useState("MATCH (n) RETURN n LIMIT 10");
   const [queryResult, setQueryResult] = useState<any>(null);
-  
+
   // Graph state
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], edges: [] });
   const [metrics, setMetrics] = useState<Record<string, any[]>>({});
@@ -75,18 +75,18 @@ export default function ConsolidatedGraphPage() {
   const checkServices = async () => {
     setGraphStatus("loading");
     setViewsStatus("loading");
-    
+
     const [graphHealth, viewsHealth] = await Promise.all([
       pingService(config?.GRAPH_API),
-      pingService(config?.VIEWS_API)
+      pingService(config?.VIEWS_API),
     ]);
-    
+
     setGraphStatus(graphHealth);
     setViewsStatus(viewsHealth);
   };
 
   const handleAnalysisResult = (alg: string, items: any[]) => {
-    setMetrics(m => ({ ...m, [alg]: items }));
+    setMetrics((m) => ({ ...m, [alg]: items }));
   };
 
   const exportGraph = async (fmt: string) => {
@@ -94,17 +94,19 @@ export default function ConsolidatedGraphPage() {
     const r = await fetch(`${config.GRAPH_API}/export/${fmt}`);
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = fmt === 'json' ? 'graph.json' : 'graph.graphml';
+    a.download = fmt === "json" ? "graph.json" : "graph.graphml";
     a.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <DashboardLayout title="Graph Analysis" subtitle="Visualize, analyze and explore your knowledge graph">
+    <DashboardLayout
+      title="Graph Analysis"
+      subtitle="Visualize, analyze and explore your knowledge graph"
+    >
       <div className="max-w-7xl mx-auto space-y-6">
-        
         {/* Service Status Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -113,38 +115,30 @@ export default function ConsolidatedGraphPage() {
               <span className="text-sm font-medium">Graph Database</span>
               {graphStatus && <StatusPill status={graphStatus} />}
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Eye size={20} className="text-gray-500" />
               <span className="text-sm font-medium">Views API</span>
               {viewsStatus && <StatusPill status={viewsStatus} />}
             </div>
-            
-            <Button 
-              size="sm" 
-              variant="secondary" 
+
+            <Button
+              size="sm"
+              variant="secondary"
               onClick={checkServices}
               disabled={graphStatus === "loading" || viewsStatus === "loading"}
             >
               <RefreshCw size={14} className={graphStatus === "loading" ? "animate-spin" : ""} />
             </Button>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setShowMap(!showMap)}
-            >
+            <Button size="sm" variant="secondary" onClick={() => setShowMap(!showMap)}>
               <MapPin size={14} className="mr-2" />
-              {showMap ? 'Hide Map' : 'Show Map'}
+              {showMap ? "Hide Map" : "Show Map"}
             </Button>
-            
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowAnalysis(!showAnalysis)}
-            >
+
+            <Button size="sm" variant="outline" onClick={() => setShowAnalysis(!showAnalysis)}>
               <BarChart3 size={14} className="mr-2" />
               Analysis
             </Button>
@@ -184,10 +178,8 @@ export default function ConsolidatedGraphPage() {
               </TabsList>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-6">
-                  
                   {/* Explorer Tab */}
                   <TabsContent value="explorer">
                     <GraphExplorer onGraphData={setGraphData} />
@@ -195,7 +187,7 @@ export default function ConsolidatedGraphPage() {
 
                   {/* Query Tab */}
                   <TabsContent value="query">
-                    <GraphQueryInterface 
+                    <GraphQueryInterface
                       initialQuery={customQuery}
                       onQueryResult={setQueryResult}
                     />
@@ -208,10 +200,7 @@ export default function ConsolidatedGraphPage() {
 
                   {/* Tools Tab */}
                   <TabsContent value="tools">
-                    <GraphTools 
-                      graphData={graphData}
-                      customQuery={customQuery}
-                    />
+                    <GraphTools graphData={graphData} customQuery={customQuery} />
                   </TabsContent>
 
                   {/* Graph Visualization */}

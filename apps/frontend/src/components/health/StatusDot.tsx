@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-export type ServiceState = 'ok' | 'degraded' | 'down' | 'unreachable';
+export type ServiceState = "ok" | "degraded" | "down" | "unreachable";
 
 const colorMap: Record<ServiceState, string> = {
-  ok: 'bg-green-500',
-  degraded: 'bg-yellow-500',
-  down: 'bg-red-500',
-  unreachable: 'bg-gray-400'
+  ok: "bg-green-500",
+  degraded: "bg-yellow-500",
+  down: "bg-red-500",
+  unreachable: "bg-gray-400",
 };
 
 export const StatusDot: React.FC<{ state: ServiceState; label?: string }> = ({ state, label }) => (

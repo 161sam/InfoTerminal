@@ -1,10 +1,10 @@
 // Compose Superset dashboard URL with native filters (hash fragment)
 export type NativeFilter = {
-  id: string;                  // stable filter id (or auto)
-  column: string;              // column name in dataset
-  datasetId: number;           // Superset dataset id
-  values?: (string|number)[];  // for select/filter_box
-  timeRange?: string;          // e.g. "Last 30 days", "No filter"
+  id: string; // stable filter id (or auto)
+  column: string; // column name in dataset
+  datasetId: number; // Superset dataset id
+  values?: (string | number)[]; // for select/filter_box
+  timeRange?: string; // e.g. "Last 30 days", "No filter"
 };
 
 export function supersetDashboardUrl(base: string, slug: string, filters: NativeFilter[]) {
@@ -17,13 +17,15 @@ export function supersetDashboardUrl(base: string, slug: string, filters: Native
         value: f.values ?? null,
         validateMessage: null,
       },
-      targets: [{
-        column: f.column,
-        datasetId: f.datasetId,
-      }],
+      targets: [
+        {
+          column: f.column,
+          datasetId: f.datasetId,
+        },
+      ],
       type: "select",
     })),
-    time_range: filters.find(f => f.timeRange)?.timeRange || "No filter",
+    time_range: filters.find((f) => f.timeRange)?.timeRange || "No filter",
   };
   const encoded = encodeURIComponent(JSON.stringify(filterState));
   // Example final URL:

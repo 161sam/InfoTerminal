@@ -1,7 +1,7 @@
 // Dossier preview panel
-import { useState } from 'react';
-import { X, Download, Copy, Eye, Maximize2 } from 'lucide-react';
-import { GeneratedDossier } from '@/lib/dossier/dossier-config';
+import { useState } from "react";
+import { X, Download, Copy, Eye, Maximize2 } from "lucide-react";
+import { GeneratedDossier } from "@/lib/dossier/dossier-config";
 
 interface DossierPreviewPanelProps {
   dossier: GeneratedDossier;
@@ -9,11 +9,7 @@ interface DossierPreviewPanelProps {
   onExport?: (format: string) => void;
 }
 
-export function DossierPreviewPanel({ 
-  dossier, 
-  onClose, 
-  onExport 
-}: DossierPreviewPanelProps) {
+export function DossierPreviewPanel({ dossier, onClose, onExport }: DossierPreviewPanelProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleCopyToClipboard = () => {
@@ -22,7 +18,7 @@ export function DossierPreviewPanel({
   };
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(`
         <!DOCTYPE html>
@@ -107,36 +103,33 @@ export function DossierPreviewPanel({
   };
 
   return (
-    <div className={`fixed inset-0 z-50 ${isFullscreen ? '' : 'p-4'}`}>
+    <div className={`fixed inset-0 z-50 ${isFullscreen ? "" : "p-4"}`}>
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
-      
-      <div className={`relative bg-white dark:bg-gray-900 rounded-lg shadow-xl flex flex-col ${
-        isFullscreen ? 'h-full' : 'h-full max-h-[90vh] mx-auto max-w-4xl'
-      }`}>
-        
+
+      <div
+        className={`relative bg-white dark:bg-gray-900 rounded-lg shadow-xl flex flex-col ${
+          isFullscreen ? "h-full" : "h-full max-h-[90vh] mx-auto max-w-4xl"
+        }`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div className="flex items-center gap-3">
             <Eye size={20} className="text-primary-600 dark:text-primary-400" />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
-                Dossier Preview
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {dossier.metadata.title}
-              </p>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Dossier Preview</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{dossier.metadata.title}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-              title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               <Maximize2 size={16} />
             </button>
-            
+
             <button
               onClick={handleCopyToClipboard}
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -144,7 +137,7 @@ export function DossierPreviewPanel({
             >
               <Copy size={16} />
             </button>
-            
+
             <button
               onClick={handlePrint}
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -152,7 +145,7 @@ export function DossierPreviewPanel({
             >
               <Download size={16} />
             </button>
-            
+
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -186,9 +179,7 @@ export function DossierPreviewPanel({
             </div>
             <div>
               <span className="text-gray-500 dark:text-gray-400">Format:</span>
-              <div className="font-medium text-gray-900 dark:text-white">
-                Markdown
-              </div>
+              <div className="font-medium text-gray-900 dark:text-white">Markdown</div>
             </div>
           </div>
         </div>
@@ -210,18 +201,18 @@ export function DossierPreviewPanel({
             <div className="text-sm text-gray-500 dark:text-gray-400">
               {dossier.markdown.length.toLocaleString()} characters
             </div>
-            
+
             <div className="flex gap-3">
               {onExport && (
                 <>
                   <button
-                    onClick={() => onExport('markdown')}
+                    onClick={() => onExport("markdown")}
                     className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   >
                     Export Markdown
                   </button>
                   <button
-                    onClick={() => onExport('pdf')}
+                    onClick={() => onExport("pdf")}
                     className="px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                   >
                     Export PDF

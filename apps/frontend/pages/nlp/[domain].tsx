@@ -1,14 +1,14 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps } from "next";
 
 // This dynamic route handles /nlp/[domain] URLs
 // It redirects to the main /nlp page with the domain parameter
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { domain } = context.params as { domain: string };
-  
+
   // Valid domains for NLP
-  const validDomains = ['general', 'legal', 'documents', 'ethics', 'forensics'];
-  
+  const validDomains = ["general", "legal", "documents", "ethics", "forensics"];
+
   // If domain is valid, redirect to nlp with query param
   if (validDomains.includes(domain)) {
     return {
@@ -18,11 +18,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  
+
   // If domain is invalid, redirect to default nlp page
   return {
     redirect: {
-      destination: '/nlp',
+      destination: "/nlp",
       permanent: false,
     },
   };
