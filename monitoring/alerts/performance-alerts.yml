@@ -2,6 +2,97 @@
 # Prometheus alerting rules for production monitoring
 
 groups:
+  - name: infoterminal.slo
+    rules:
+      # Availability burn-rate alerts for core services
+      - alert: CoreServiceAvailabilityFastBurn
+        expr: >-
+          (
+            (
+              sum(rate(http_requests_total{service=~"(search-api|graph-api|doc-entities|gateway)",status=~"5.."}[1h])) by (service)
+              /
+              sum(rate(http_requests_total{service=~"(search-api|graph-api|doc-entities|gateway)"}[1h])) by (service)
+            )
+            or on(service) it_slo_fake_error_ratio{service=~"(search-api|graph-api|doc-entities|gateway)"}
+          )
+          /
+          on(service) group_left
+          (
+            label_replace(vector(0.005), "service", "gateway", "__name__", ".*")
+            or label_replace(vector(0.005), "service", "search-api", "__name__", ".*")
+            or label_replace(vector(0.005), "service", "graph-api", "__name__", ".*")
+            or label_replace(vector(0.01), "service", "doc-entities", "__name__", ".*")
+          ) > 4
+        for: 5m
+        labels:
+          severity: critical
+          slo: availability
+          team: platform
+        annotations:
+          summary: "Fast burn detected for {{ $labels.service }}"
+          description: >-
+            {{ $labels.service }} consumed more than 2% of its monthly error budget in the last hour
+            (burn rate {{ $value }}x over target 99.5% availability).
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/slo-availability"
+
+      - alert: CoreServiceAvailabilitySlowBurn
+        expr: >-
+          (
+            (
+              sum(rate(http_requests_total{service=~"(search-api|graph-api|doc-entities|gateway)",status=~"5.."}[6h])) by (service)
+              /
+              sum(rate(http_requests_total{service=~"(search-api|graph-api|doc-entities|gateway)"}[6h])) by (service)
+            )
+            or on(service) it_slo_fake_error_ratio{service=~"(search-api|graph-api|doc-entities|gateway)"}
+          )
+          /
+          on(service) group_left
+          (
+            label_replace(vector(0.005), "service", "gateway", "__name__", ".*")
+            or label_replace(vector(0.005), "service", "search-api", "__name__", ".*")
+            or label_replace(vector(0.005), "service", "graph-api", "__name__", ".*")
+            or label_replace(vector(0.01), "service", "doc-entities", "__name__", ".*")
+          ) > 10
+        for: 15m
+        labels:
+          severity: warning
+          slo: availability
+          team: platform
+        annotations:
+          summary: "Slow burn detected for {{ $labels.service }}"
+          description: >-
+            {{ $labels.service }} would exhaust 5% of the monthly error budget within six hours
+            (burn rate {{ $value }}x over target 99.5% availability).
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/slo-availability"
+
+      - alert: CoreServiceP95LatencyBreached
+        expr: >-
+          (
+            histogram_quantile(
+              0.95,
+              sum(rate(http_server_duration_seconds_bucket{service=~"(search-api|graph-api|doc-entities|gateway)"}[5m])) by (service, le)
+            )
+            or on(service) it_slo_fake_p95_seconds{service=~"(search-api|graph-api|doc-entities|gateway)"}
+          )
+          > on(service) group_left
+          (
+            label_replace(vector(0.4), "service", "search-api", "__name__", ".*")
+            or label_replace(vector(0.35), "service", "gateway", "__name__", ".*")
+            or label_replace(vector(0.5), "service", "graph-api", "__name__", ".*")
+            or label_replace(vector(0.6), "service", "doc-entities", "__name__", ".*")
+          )
+        for: 5m
+        labels:
+          severity: warning
+          slo: latency
+          team: platform
+        annotations:
+          summary: "P95 latency above SLO for {{ $labels.service }}"
+          description: >-
+            {{ $labels.service }} p95 latency stayed above its objective (gateway 350ms, search-api 400ms,
+            graph-api 500ms, doc-entities 600ms) for more than five minutes. Observed value: {{ $value }}s.
+          runbook_url: "https://wiki.company.com/infoterminal/runbooks/slo-latency"
+
   - name: infoterminal.performance
     rules:
       # High Response Time Alerts

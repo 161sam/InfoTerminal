@@ -155,11 +155,12 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
   - Observability compose includes Prometheus/Grafana/Loki/Tempo. 【F:inventory/services.json†L266-L289】
   - **J1 Baseline – done**: `inventory/observability.json` + `scripts/check_observability_baseline.py` sichern `/healthz`/`/readyz`/`/metrics` mit Standard-Labels über alle App-Services; CI-Job „Observability Baseline“ läuft in `ci.yml`. 【F:inventory/observability.json†L1-L240】【F:scripts/check_observability_baseline.py†L1-L85】【F:.github/workflows/ci.yml†L1-L160】
   - **J2 Trace & Log Correlation – done**: Gateway propagiert W3C-Trace-Header outbound, strukturiert Logs mit `trace_id`/`span_id`, stellt `/demo/trace` Smoke-Route bereit und die API-SLO-Dashboard ergänzt Tempo-Panels für Trace-Latenz & Top-Endpunkte. 【F:services/gateway/app/app.py†L1-L220】【F:grafana/dashboards/api-slo.json†L1-L80】【F:docs/dev/observability.md†L1-L220】
+  - **J3 SLOs & Alerts – done**: Grafana visualisiert Availability/Latency/Error-SLIs je Kernservice; Prometheus-Alerts überwachen Burn-Rates (1h/6h) sowie P95-Latenzschwellen mit dokumentierten Pushgateway-Fake-Series. 【F:grafana/dashboards/api-slo.json†L1-L200】【F:monitoring/alerts/performance-alerts.yml†L1-L200】【F:docs/dev/slo.md†L1-L200】
 - **Gaps / Risks**:
-  - Metrics missing for 37 services; alert definitions absent. 【F:inventory/findings.md†L1-L69】
+  - Metrics missing for 37 services; long-tail services lack SLO coverage beyond the four core APIs. 【F:inventory/findings.md†L1-L69】
   - Queue/backpressure not configured; scaling docs outdated.
 - **DoD Checklist**:
-  - [ ] Observability: Unified dashboards + alert SLOs.
+  - [x] Observability: Unified dashboards + alert SLOs.
   - [ ] Tests: Load/latency benchmarks with documented results.
   - [ ] Docs: Scaling runbook + retry/timeout matrix.
   - [ ] Security: Pen-test checklists for infra components.
