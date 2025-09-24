@@ -1,5 +1,6 @@
 import type { NextApiResponse } from "next";
 import type { User } from "@/types/auth";
+import { canonicalizeRoles } from "@/lib/auth/rbac";
 
 const REFRESH_COOKIE_NAME = "refresh_token";
 const ACCESS_COOKIE_NAME = "auth_token";
@@ -189,18 +190,54 @@ export function decodeIdToken(idToken?: string): Record<string, any> | null {
 export function mapClaimsToUser(claims: Record<string, any> | null): User | null {
   if (!claims) return null;
 
-  const roles: string[] = [];
-  if (Array.isArray(claims.roles)) {
-    roles.push(...claims.roles);
-  }
-  if (Array.isArray(claims?.realm_access?.roles)) {
-    roles.push(...claims.realm_access.roles);
-  }
-  if (Array.isArray(claims?.resource_access?.account?.roles)) {
-    roles.push(...claims.resource_access.account.roles);
-  }
+  const collectedRoles: string[] = [];
 
-  const permissions: string[] = Array.isArray(claims.permissions) ? claims.permissions : [];
+  const collectRoles = (value: unknown) => {
+    if (!value) return;
+    if (Array.isArray(value)) {
+      value.forEach((item) => collectRoles(item));
+      return;
+    }
+    if (typeof value === "string") {
+      value
+        .split(/[\s,]+/)
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+        .forEach((entry) => collectedRoles.push(entry));
+    }
+  };
+
+  collectRoles(claims.roles);
+  collectRoles(claims.role);
+  collectRoles(claims?.realm_access?.roles);
+  collectRoles(claims?.resource_access?.account?.roles);
+  collectRoles(claims["x-roles"]);
+  collectRoles(claims["X-Roles"]);
+
+  const collectScopes = (value: unknown) => {
+    if (!value) return;
+    if (Array.isArray(value)) {
+      value.forEach((item) => collectScopes(item));
+      return;
+    }
+    if (typeof value === "string") {
+      collectRoles(value);
+    }
+  };
+
+  collectScopes(claims.scope);
+  collectScopes(claims.scp);
+
+  const canonicalRoles = canonicalizeRoles(collectedRoles);
+
+  const permissions: string[] = Array.isArray(claims.permissions)
+    ? claims.permissions
+    : typeof claims.permissions === "string"
+      ? claims.permissions
+          .split(/[\s,]+/)
+          .map((entry: string) => entry.trim())
+          .filter(Boolean)
+      : [];
 
   return {
     id: String(claims.sub || claims.user_id || ""),
@@ -211,7 +248,7 @@ export function mapClaimsToUser(claims: Record<string, any> | null): User | null
     last_name: claims.family_name || undefined,
     avatar: claims.picture || undefined,
     avatar_url: claims.picture || undefined,
-    roles: Array.from(new Set(roles.filter(Boolean))),
+    roles: canonicalRoles,
     permissions,
     tenant: claims.tenant || claims.org || claims.organization || undefined,
     lastLogin: claims.auth_time ? new Date(claims.auth_time * 1000).toISOString() : undefined,

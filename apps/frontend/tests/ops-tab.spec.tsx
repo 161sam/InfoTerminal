@@ -1,6 +1,38 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import OpsTab from "@/components/settings/OpsTab";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+
+const mockAuthState: any = {
+  user: { id: "user", email: "user@example.com", roles: ["admin"], permissions: [] },
+  accessToken: null,
+  idToken: null,
+  loading: false,
+  isAuthenticated: true,
+  login: vi.fn(),
+  completeLogin: vi.fn(),
+  logout: vi.fn(),
+  refreshToken: vi.fn(),
+  hasRole: (role: string) =>
+    mockAuthState.user.roles.some((assigned: string) => assigned.toLowerCase() === role.toLowerCase()),
+  hasPermission: () => true,
+};
+
+vi.mock("@/components/auth/AuthProvider", () => ({
+  useAuth: () => mockAuthState,
+}));
+
+const originalFetch = global.fetch;
+
+beforeEach(() => {
+  mockAuthState.user.roles = ["admin"];
+});
+
+afterEach(() => {
+  if (originalFetch) {
+    global.fetch = originalFetch;
+  }
+  vi.clearAllMocks();
+});
 
 describe("OpsTab", () => {
   it("handles start, scale and logs", async () => {
@@ -51,5 +83,11 @@ describe("OpsTab", () => {
 
     fireEvent.click(screen.getByText("Logs"));
     await screen.findByText("line1");
+  });
+
+  it("shows permission message when user lacks ops role", () => {
+    mockAuthState.user.roles = ["viewer"];
+    render(<OpsTab />);
+    expect(screen.getByText("Sie haben keine Berechtigung")).toBeInTheDocument();
   });
 });

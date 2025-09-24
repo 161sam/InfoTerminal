@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Shield, Image, Video, Music, Activity, Upload, AlertCircle, Zap } from "lucide-react";
+import { Shield, Image, Video, Music, Activity, Upload, AlertCircle, Zap, Lock } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import MediaForensics from "@/components/media/MediaForensics";
 import { textStyles, buttonStyles, inputStyles, cardStyles } from "@/styles/design-tokens";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { canAccessFeature } from "@/lib/auth/rbac";
 
 interface VideoAnalysisResult {
   filename: string;
@@ -26,6 +28,8 @@ interface AudioAnalysisResult {
 }
 
 export default function MediaForensicsPage() {
+  const { user } = useAuth();
+  const canAnalyzeVideo = canAccessFeature(user?.roles, "videoAnalysis");
   const [activeTab, setActiveTab] = useState<"image" | "video" | "audio">("image");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -56,6 +60,10 @@ export default function MediaForensicsPage() {
   ];
 
   const handleVideoUpload = async (file: File) => {
+    if (!canAnalyzeVideo) {
+      setError("Sie haben keine Berechtigung für Videoanalysen");
+      return;
+    }
     if (!file.type.startsWith("video/")) {
       setError("Please select a valid video file");
       return;
@@ -395,48 +403,67 @@ export default function MediaForensicsPage() {
                     video authenticity.
                   </div>
                 </Panel>
-
-                {renderFileUpload("video/*", handleVideoUpload, videoFile, "Video", "500MB")}
-
-                {loading && (
+                {!canAnalyzeVideo ? (
                   <Panel>
-                    <div className="flex items-center gap-3 text-blue-600">
-                      <Zap className="h-5 w-5 animate-pulse" />
-                      <span>Analyzing video...</span>
-                    </div>
-                  </Panel>
-                )}
-
-                {renderVideoAnalysisResults()}
-
-                {!videoFile && !loading && (
-                  <Panel>
-                    <h4 className={`${textStyles.h4} mb-4`}>Video Analysis Features</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <div className={`${cardStyles.base} ${cardStyles.padding}`}>
-                        <h5 className={`${textStyles.body} font-medium mb-2`}>
-                          Metadata Extraction
-                        </h5>
-                        <p className={textStyles.bodySmall}>
-                          Extract technical details, timestamps, and embedded metadata
+                    <div className="flex items-start gap-3 text-gray-600 dark:text-slate-300">
+                      <Lock className="h-5 w-5 text-gray-500 dark:text-slate-400" />
+                      <div>
+                        <p className="font-semibold text-gray-800 dark:text-slate-100">
+                          Sie haben keine Berechtigung
                         </p>
-                      </div>
-                      <div className={`${cardStyles.base} ${cardStyles.padding}`}>
-                        <h5 className={`${textStyles.body} font-medium mb-2`}>
-                          Deepfake Detection
-                        </h5>
-                        <p className={textStyles.bodySmall}>
-                          Identify AI-generated or manipulated video content
-                        </p>
-                      </div>
-                      <div className={`${cardStyles.base} ${cardStyles.padding}`}>
-                        <h5 className={`${textStyles.body} font-medium mb-2`}>Frame Analysis</h5>
-                        <p className={textStyles.bodySmall}>
-                          Analyze individual frames for inconsistencies
+                        <p className="text-sm">
+                          Video-Analysen erfordern eine Analyst- oder Admin-Rolle.
                         </p>
                       </div>
                     </div>
                   </Panel>
+                ) : (
+                  <>
+                    {renderFileUpload("video/*", handleVideoUpload, videoFile, "Video", "500MB")}
+
+                    {loading && (
+                      <Panel>
+                        <div className="flex items-center gap-3 text-blue-600">
+                          <Zap className="h-5 w-5 animate-pulse" />
+                          <span>Analyzing video...</span>
+                        </div>
+                      </Panel>
+                    )}
+
+                    {renderVideoAnalysisResults()}
+
+                    {!videoFile && !loading && (
+                      <Panel>
+                        <h4 className={`${textStyles.h4} mb-4`}>Video Analysis Features</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          <div className={`${cardStyles.base} ${cardStyles.padding}`}>
+                            <h5 className={`${textStyles.body} font-medium mb-2`}>
+                              Metadata Extraction
+                            </h5>
+                            <p className={textStyles.bodySmall}>
+                              Extract technical details, timestamps, and embedded metadata
+                            </p>
+                          </div>
+                          <div className={`${cardStyles.base} ${cardStyles.padding}`}>
+                            <h5 className={`${textStyles.body} font-medium mb-2`}>
+                              Deepfake Detection
+                            </h5>
+                            <p className={textStyles.bodySmall}>
+                              Identify AI-generated or manipulated video content
+                            </p>
+                          </div>
+                          <div className={`${cardStyles.base} ${cardStyles.padding}`}>
+                            <h5 className={`${textStyles.body} font-medium mb-2`}>
+                              Frame Analysis
+                            </h5>
+                            <p className={textStyles.bodySmall}>
+                              Analyze individual frames for inconsistencies
+                            </p>
+                          </div>
+                        </div>
+                      </Panel>
+                    )}
+                  </>
                 )}
               </div>
             )}

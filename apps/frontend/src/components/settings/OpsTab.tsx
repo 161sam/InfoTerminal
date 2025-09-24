@@ -20,6 +20,7 @@ import {
   Network,
   Eye,
   EyeOff,
+  Lock,
 } from "lucide-react";
 import Panel from "@/components/layout/Panel";
 import Button from "@/components/ui/button";
@@ -33,6 +34,8 @@ import {
   stackScale,
   streamLogs,
 } from "@/lib/ops";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { canAccessFeature } from "@/lib/auth/rbac";
 
 interface StackInfo {
   title: string;
@@ -60,6 +63,8 @@ interface StackDetails {
 type ActionType = "up" | "down" | "restart" | "status";
 
 export default function OpsTab() {
+  const { user } = useAuth();
+  const canOperateStacks = canAccessFeature(user?.roles, "opsActions");
   const [stacks, setStacks] = useState<Record<string, StackInfo>>({});
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<Record<string, ActionType | null>>({});
@@ -74,8 +79,9 @@ export default function OpsTab() {
   const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (!canOperateStacks) return;
     loadStacks();
-  }, []);
+  }, [canOperateStacks]);
 
   useEffect(() => {
     if (autoRefresh) {
@@ -94,6 +100,7 @@ export default function OpsTab() {
   }, [autoRefresh, status]);
 
   const loadStacks = async () => {
+    if (!canOperateStacks) return;
     setLoading(true);
     try {
       const data = await listStacks();
@@ -104,6 +111,24 @@ export default function OpsTab() {
       setLoading(false);
     }
   };
+
+  if (!canOperateStacks) {
+    return (
+      <Panel>
+        <div className="flex items-start gap-3 text-gray-600 dark:text-gray-300">
+          <Lock size={18} className="mt-1 text-gray-500 dark:text-gray-400" />
+          <div>
+            <p className="font-semibold text-gray-800 dark:text-gray-100">
+              Sie haben keine Berechtigung
+            </p>
+            <p className="text-sm">
+              Operations-Aktionen erfordern die Rollen Admin oder Ops.
+            </p>
+          </div>
+        </div>
+      </Panel>
+    );
+  }
 
   const handleAction = async (action: ActionType, stackName: string) => {
     setActionLoading((prev) => ({ ...prev, [stackName]: action }));
