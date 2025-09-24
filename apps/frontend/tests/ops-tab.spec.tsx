@@ -13,7 +13,9 @@ const mockAuthState: any = {
   logout: vi.fn(),
   refreshToken: vi.fn(),
   hasRole: (role: string) =>
-    mockAuthState.user.roles.some((assigned: string) => assigned.toLowerCase() === role.toLowerCase()),
+    mockAuthState.user.roles.some(
+      (assigned: string) => assigned.toLowerCase() === role.toLowerCase(),
+    ),
   hasPermission: () => true,
 };
 

@@ -174,7 +174,9 @@ export function DossierExportPanel({
         <div className="flex items-start gap-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900/30 dark:text-slate-300">
           <Lock size={18} className="mt-0.5 text-gray-500 dark:text-slate-400" />
           <div>
-            <p className="font-medium text-gray-800 dark:text-slate-100">Sie haben keine Berechtigung</p>
+            <p className="font-medium text-gray-800 dark:text-slate-100">
+              Sie haben keine Berechtigung
+            </p>
             <p>Dossier-Export benötigt eine Analyst- oder Admin-Rolle.</p>
           </div>
         </div>

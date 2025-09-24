@@ -110,9 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const delaySeconds = Math.max(expiresIn - REFRESH_MARGIN_SECONDS, 30);
     refreshTimer.current = setTimeout(() => {
-      refreshSessionRef
-        .current()
-        .catch((error) => console.warn("Token refresh failed", error));
+      refreshSessionRef.current().catch((error) => console.warn("Token refresh failed", error));
     }, delaySeconds * 1000);
   }, []);
 
@@ -319,9 +317,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (role: string) => {
       if (!role) return false;
       const requested = role.toLowerCase();
-      return Boolean(
-        user?.roles?.some((assignedRole) => assignedRole.toLowerCase() === requested),
-      );
+      return Boolean(user?.roles?.some((assignedRole) => assignedRole.toLowerCase() === requested));
     },
     [user?.roles],
   );
@@ -389,8 +385,8 @@ export function LoginForm() {
           onChange={(event) => setRemember(event.target.checked)}
         />
         <span className="text-left text-sm text-gray-700 dark:text-gray-300">
-          Stay signed in for 30 days on this device. We store a longer-lived refresh cookie when this option is
-          enabled.
+          Stay signed in for 30 days on this device. We store a longer-lived refresh cookie when
+          this option is enabled.
         </span>
       </label>
 

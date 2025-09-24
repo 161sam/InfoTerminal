@@ -1,7 +1,7 @@
 // Dossier creation types and configuration
 export interface DossierItem {
   id: string;
-  type: "document" | "entity" | "node" | "edge";
+  type: "document" | "entity" | "node" | "edge" | "section";
   value: string;
   metadata?: {
     title?: string;
@@ -15,6 +15,13 @@ export interface DossierTemplate {
   id: string;
   name: string;
   description: string;
+  sections?: string[];
+  recommendedFor?: string;
+  estimatedDuration?: string;
+  updatedAt?: string;
+  tags?: string[];
+  preview?: string;
+  formats?: Array<"markdown" | "pdf" | "html" | "docx">;
   items: DossierItem[];
   settings: DossierSettings;
 }
@@ -69,6 +76,7 @@ export const ITEM_TYPE_COLORS = {
   entity: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
   node: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
   edge: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  section: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300",
 } as const;
 
 export const ITEM_TYPE_LABELS = {
@@ -76,6 +84,7 @@ export const ITEM_TYPE_LABELS = {
   entity: "Entity",
   node: "Node",
   edge: "Relationship",
+  section: "Section",
 } as const;
 
 export const LANGUAGE_OPTIONS = [
@@ -93,10 +102,61 @@ export const CONFIDENCE_LEVELS = [
 // Pre-defined templates
 export const DOSSIER_TEMPLATES: DossierTemplate[] = [
   {
-    id: "investigation",
-    name: "Investigation Report",
-    description: "Comprehensive investigation with entities and connections",
-    items: [],
+    id: "standard",
+    name: "Standard Investigation",
+    description: "Umfassender Ermittlungsbericht mit Zusammenfassung, Entitäten und Referenzen.",
+    sections: [
+      "Executive Summary",
+      "Assigned Analysts",
+      "Key Entities",
+      "Referenced Intelligence",
+      "Analyst Notes",
+    ],
+    recommendedFor: "Detaillierte Fälle, die mit Stakeholdern geteilt werden müssen.",
+    estimatedDuration: "4–6 Minuten",
+    updatedAt: "2025-02-12",
+    tags: ["investigation", "collaboration"],
+    preview:
+      "# Standard Investigation\n\n## Executive Summary\nConcise case overview with threat focus...",
+    formats: ["markdown", "pdf"],
+    items: [
+      {
+        id: "executive_summary",
+        type: "section",
+        value: "Executive Summary",
+        metadata: {
+          title: "Executive Summary",
+          description: "High-level case overview with key findings.",
+        },
+      },
+      {
+        id: "key_entities",
+        type: "section",
+        value: "Key Entities",
+        metadata: {
+          title: "Key Entities",
+          description: "Entities of interest with roles and confidence.",
+        },
+      },
+      {
+        id: "references",
+        type: "section",
+        value: "Referenced Intelligence",
+        metadata: {
+          title: "References",
+          description: "Source links and supporting material.",
+        },
+      },
+      {
+        id: "analyst_notes",
+        type: "section",
+        value: "Analyst Notes",
+        metadata: {
+          title: "Analyst Notes",
+          description: "Contextual comments and follow-up actions.",
+        },
+      },
+    ],
     settings: {
       includeTimeline: true,
       includeSummary: true,
@@ -106,38 +166,47 @@ export const DOSSIER_TEMPLATES: DossierTemplate[] = [
     },
   },
   {
-    id: "entity-profile",
-    name: "Entity Profile",
-    description: "Detailed profile for a specific person or organization",
-    items: [],
-    settings: {
-      includeTimeline: true,
-      includeSummary: false,
-      includeVisualization: false,
-      confidenceThreshold: 0.9,
-      language: "en",
-    },
-  },
-  {
-    id: "network-analysis",
-    name: "Network Analysis",
-    description: "Focus on relationships and network connections",
-    items: [],
+    id: "brief",
+    name: "Executive Brief",
+    description: "Einseitiger Überblick mit Top-Entitäten und Sofortmaßnahmen.",
+    sections: ["Snapshot", "Top Entities", "Immediate Actions"],
+    recommendedFor: "Schnelle Entscheidungsvorbereitung und Lageupdates.",
+    estimatedDuration: "2–3 Minuten",
+    updatedAt: "2025-02-12",
+    tags: ["executive", "summary"],
+    preview: "# Executive Brief\n\n## Snapshot\nRapid situational overview...",
+    formats: ["markdown", "pdf"],
+    items: [
+      {
+        id: "snapshot",
+        type: "section",
+        value: "Snapshot",
+        metadata: {
+          title: "Snapshot",
+          description: "Kurzfassung des Falls für Führungskräfte.",
+        },
+      },
+      {
+        id: "top_entities",
+        type: "section",
+        value: "Top Entities",
+        metadata: {
+          title: "Top Entities",
+          description: "Wichtigste beteiligte Akteure (max. fünf).",
+        },
+      },
+      {
+        id: "immediate_actions",
+        type: "section",
+        value: "Immediate Actions",
+        metadata: {
+          title: "Immediate Actions",
+          description: "Dringende Maßnahmen und nächste Schritte.",
+        },
+      },
+    ],
     settings: {
       includeTimeline: false,
-      includeSummary: true,
-      includeVisualization: true,
-      confidenceThreshold: 0.7,
-      language: "en",
-    },
-  },
-  {
-    id: "financial-audit",
-    name: "Financial Audit",
-    description: "Financial analysis and transaction tracking",
-    items: [],
-    settings: {
-      includeTimeline: true,
       includeSummary: true,
       includeVisualization: false,
       confidenceThreshold: 0.9,

@@ -611,7 +611,9 @@ export default function PluginsPage() {
             <div className="flex items-start gap-3 text-gray-600 dark:text-slate-300">
               <Lock size={18} className="mt-1 text-gray-500 dark:text-slate-400" />
               <div>
-                <p className="font-semibold text-gray-800 dark:text-slate-100">Sie haben keine Berechtigung</p>
+                <p className="font-semibold text-gray-800 dark:text-slate-100">
+                  Sie haben keine Berechtigung
+                </p>
                 <p className="text-sm">Plugin-Verwaltung erfordert Admin- oder Ops-Rollen.</p>
               </div>
             </div>

@@ -10,7 +10,9 @@ describe("auth interceptor", () => {
     originalWindow = globalThis.window;
     (globalThis as any).window = { fetch: vi.fn() };
     vi.resetModules();
-    ({ installAuthInterceptor, resetAuthInterceptorForTests } = await import("@/lib/auth/interceptor"));
+    ({ installAuthInterceptor, resetAuthInterceptorForTests } = await import(
+      "@/lib/auth/interceptor"
+    ));
   });
 
   afterEach(() => {

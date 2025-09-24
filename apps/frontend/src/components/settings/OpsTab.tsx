@@ -121,9 +121,7 @@ export default function OpsTab() {
             <p className="font-semibold text-gray-800 dark:text-gray-100">
               Sie haben keine Berechtigung
             </p>
-            <p className="text-sm">
-              Operations-Aktionen erfordern die Rollen Admin oder Ops.
-            </p>
+            <p className="text-sm">Operations-Aktionen erfordern die Rollen Admin oder Ops.</p>
           </div>
         </div>
       </Panel>

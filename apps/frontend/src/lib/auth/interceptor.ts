@@ -96,7 +96,10 @@ export function installAuthInterceptor(options: AuthInterceptorOptions) {
     }
 
     const { _retry, ...retryRest } = requestInit;
-    const retryResponse = await originalFetch!(input, { ...retryRest, _retry: true } as RequestInit);
+    const retryResponse = await originalFetch!(input, {
+      ...retryRest,
+      _retry: true,
+    } as RequestInit);
 
     if (retryResponse.status === 401) {
       runtime.onUnauthorized();

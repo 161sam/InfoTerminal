@@ -1,11 +1,24 @@
 import React, { useState } from "react";
-import { Shield, Image, Video, Music, Activity, Upload, AlertCircle, Zap, Lock } from "lucide-react";
+import {
+  Shield,
+  Image,
+  Video,
+  Music,
+  Activity,
+  Upload,
+  AlertCircle,
+  Zap,
+  Lock,
+} from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import MediaForensics from "@/components/media/MediaForensics";
 import { textStyles, buttonStyles, inputStyles, cardStyles } from "@/styles/design-tokens";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { canAccessFeature } from "@/lib/auth/rbac";
+import { ProgressModal } from "@/components/feedback/ProgressModal";
+import { useTaskProgress } from "@/hooks/useTaskProgress";
+import { useNotifications } from "@/lib/notifications";
 
 interface VideoAnalysisResult {
   filename: string;
@@ -35,8 +48,19 @@ export default function MediaForensicsPage() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [videoAnalysis, setVideoAnalysis] = useState<VideoAnalysisResult | null>(null);
   const [audioAnalysis, setAudioAnalysis] = useState<AudioAnalysisResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(false);
+  const [audioLoading, setAudioLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [videoTaskId, setVideoTaskId] = useState<string | null>(null);
+  const [showVideoProgress, setShowVideoProgress] = useState(false);
+  const notifications = useNotifications();
+
+  const videoProgress = useTaskProgress({
+    active: showVideoProgress,
+    taskId: videoTaskId,
+    eventType: "video_analysis",
+    fallbackDurationMs: 6000,
+  });
 
   const tabs = [
     {
@@ -59,6 +83,15 @@ export default function MediaForensicsPage() {
     },
   ];
 
+  const handleVideoProgressClose = () => {
+    setShowVideoProgress(false);
+    setVideoTaskId(null);
+    setVideoLoading(false);
+    setTimeout(() => {
+      videoProgress.reset();
+    }, 0);
+  };
+
   const handleVideoUpload = async (file: File) => {
     if (!canAnalyzeVideo) {
       setError("Sie haben keine Berechtigung für Videoanalysen");
@@ -78,11 +111,21 @@ export default function MediaForensicsPage() {
     setVideoFile(file);
     setError(null);
 
-    // TODO: Implement video analysis API call
-    // This would call the media-forensics service for video analysis
-    setLoading(true);
+    setVideoLoading(true);
+    const taskId = `video-${Date.now()}`;
+    setVideoTaskId(taskId);
+    setShowVideoProgress(true);
+    videoProgress.setManualProgress(12, "running", "Upload wird vorbereitet");
     try {
-      // Placeholder for video analysis
+      setTimeout(() => {
+        videoProgress.setManualProgress(45, "running", "Frames extrahiert");
+      }, 600);
+      setTimeout(() => {
+        videoProgress.setManualProgress(70, "running", "Objekte werden erkannt");
+      }, 1300);
+      setTimeout(() => {
+        videoProgress.setManualProgress(90, "running", "Bericht wird erstellt");
+      }, 2000);
       setTimeout(() => {
         setVideoAnalysis({
           filename: file.name,
@@ -93,11 +136,21 @@ export default function MediaForensicsPage() {
           bitrate: 5000000,
           file_size: file.size,
         });
-        setLoading(false);
-      }, 2000);
+        setVideoLoading(false);
+        videoProgress.setManualProgress(100, "completed", "Analyse abgeschlossen");
+        notifications.success("Videoanalyse abgeschlossen", `${file.name} wurde analysiert.`);
+        setTimeout(() => {
+          handleVideoProgressClose();
+        }, 1500);
+      }, 2600);
     } catch (err) {
       setError("Video analysis failed");
-      setLoading(false);
+      setVideoLoading(false);
+      videoProgress.setManualProgress(100, "failed", "Analyse fehlgeschlagen");
+      notifications.error(
+        "Videoanalyse fehlgeschlagen",
+        "Die Analyse konnte nicht abgeschlossen werden.",
+      );
     }
   };
 
@@ -118,7 +171,7 @@ export default function MediaForensicsPage() {
 
     // TODO: Implement audio analysis API call
     // This would call the media-forensics service for audio analysis
-    setLoading(true);
+    setAudioLoading(true);
     try {
       // Placeholder for audio analysis
       setTimeout(() => {
@@ -131,11 +184,11 @@ export default function MediaForensicsPage() {
           bitrate: 320000,
           file_size: file.size,
         });
-        setLoading(false);
+        setAudioLoading(false);
       }, 2000);
     } catch (err) {
       setError("Audio analysis failed");
-      setLoading(false);
+      setAudioLoading(false);
     }
   };
 
@@ -421,7 +474,7 @@ export default function MediaForensicsPage() {
                   <>
                     {renderFileUpload("video/*", handleVideoUpload, videoFile, "Video", "500MB")}
 
-                    {loading && (
+                    {videoLoading && (
                       <Panel>
                         <div className="flex items-center gap-3 text-blue-600">
                           <Zap className="h-5 w-5 animate-pulse" />
@@ -432,7 +485,7 @@ export default function MediaForensicsPage() {
 
                     {renderVideoAnalysisResults()}
 
-                    {!videoFile && !loading && (
+                    {!videoFile && !videoLoading && (
                       <Panel>
                         <h4 className={`${textStyles.h4} mb-4`}>Video Analysis Features</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -485,7 +538,7 @@ export default function MediaForensicsPage() {
 
                 {renderFileUpload("audio/*", handleAudioUpload, audioFile, "Audio", "100MB")}
 
-                {loading && (
+                {audioLoading && (
                   <Panel>
                     <div className="flex items-center gap-3 text-purple-600">
                       <Zap className="h-5 w-5 animate-pulse" />
@@ -496,7 +549,7 @@ export default function MediaForensicsPage() {
 
                 {renderAudioAnalysisResults()}
 
-                {!audioFile && !loading && (
+                {!audioFile && !audioLoading && (
                   <Panel>
                     <h4 className={`${textStyles.h4} mb-4`}>Audio Analysis Features</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -528,6 +581,13 @@ export default function MediaForensicsPage() {
           </div>
         </div>
       </div>
+      <ProgressModal
+        isOpen={showVideoProgress}
+        title="Videoanalyse läuft"
+        description="Wir analysieren Ihr Video und bereiten die Ergebnisse vor."
+        state={videoProgress.state}
+        onClose={handleVideoProgressClose}
+      />
     </DashboardLayout>
   );
 }

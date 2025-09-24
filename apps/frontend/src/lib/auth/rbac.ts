@@ -1,10 +1,6 @@
 export type CanonicalRole = "admin" | "ops" | "analyst" | "viewer";
 
-export type RbacFeature =
-  | "opsActions"
-  | "pluginRunner"
-  | "videoAnalysis"
-  | "dossierExport";
+export type RbacFeature = "opsActions" | "pluginRunner" | "videoAnalysis" | "dossierExport";
 
 const ROLE_ALIASES: Record<string, CanonicalRole> = {
   admin: "admin",
@@ -16,8 +12,8 @@ const ROLE_ALIASES: Record<string, CanonicalRole> = {
   operations: "ops",
   devops: "ops",
   analyst: "analyst",
-  "intelligence_analyst": "analyst",
-  "security_analyst": "analyst",
+  intelligence_analyst: "analyst",
+  security_analyst: "analyst",
   investigator: "analyst",
   viewer: "viewer",
   read: "viewer",

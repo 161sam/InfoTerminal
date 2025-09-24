@@ -1,21 +1,13 @@
 // Enhanced dossier builder modal for analytics export
-import React, { useState, useEffect } from "react";
-import {
-  FileText,
-  Download,
-  Settings,
-  X,
-  CheckCircle2,
-  Calendar,
-  Filter,
-  Eye,
-  Copy,
-} from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { FileText, Download, X, CheckCircle2, Calendar, Filter, Eye, Copy } from "lucide-react";
 import {
   AnalyticsFilters,
   AnalyticsDossierSection,
   AnalyticsDossierExport,
 } from "../analytics/types";
+import { DossierTemplate, DOSSIER_TEMPLATES } from "@/lib/dossier/dossier-config";
+import { DossierTemplateSelector } from "@/components/dossier/panels/DossierTemplateSelector";
 
 interface DossierBuilderModalProps {
   isOpen: boolean;
@@ -24,6 +16,8 @@ interface DossierBuilderModalProps {
   availableSections: AnalyticsDossierSection[];
   onExport: (dossier: AnalyticsDossierExport) => void;
   className?: string;
+  templates?: DossierTemplate[];
+  templatesLoading?: boolean;
 }
 
 export function DossierBuilderModal({
@@ -33,6 +27,8 @@ export function DossierBuilderModal({
   availableSections,
   onExport,
   className = "",
+  templates,
+  templatesLoading = false,
 }: DossierBuilderModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +37,19 @@ export function DossierBuilderModal({
   const [includeMetadata, setIncludeMetadata] = useState(true);
   const [step, setStep] = useState<"configure" | "preview" | "generating">("configure");
   const [generatedDossier, setGeneratedDossier] = useState<AnalyticsDossierExport | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("standard");
+
+  const templateCatalog = useMemo(
+    () => (templates && templates.length > 0 ? templates : DOSSIER_TEMPLATES),
+    [templates],
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      const defaultTemplate = templateCatalog[0]?.id ?? "custom";
+      setSelectedTemplateId(defaultTemplate);
+    }
+  }, [isOpen, templateCatalog]);
 
   useEffect(() => {
     if (isOpen) {
@@ -66,15 +75,23 @@ export function DossierBuilderModal({
       return;
     }
 
+    const template = templateCatalog.find((t) => t.id === selectedTemplateId);
+    const caseId = `analytics-${Date.now()}`;
     const dossier: AnalyticsDossierExport = {
       title: title.trim(),
       description: description.trim(),
+      templateId: template?.id,
+      format: exportFormat,
+      includeMetadata,
       filters: { ...filters },
       sections: availableSections.filter((s) => selectedSections.includes(s.id)),
       metadata: {
         generatedAt: new Date().toISOString(),
         generatedBy: "Analytics Dashboard",
         version: "1.0",
+        caseId,
+        templateId: template?.id,
+        format: exportFormat,
       },
     };
 
@@ -86,12 +103,7 @@ export function DossierBuilderModal({
     if (!generatedDossier) return;
 
     setStep("generating");
-
-    // Simulate export process
-    setTimeout(() => {
-      onExport(generatedDossier);
-      onClose();
-    }, 2000);
+    onExport(generatedDossier);
   };
 
   const handleCopyFilters = () => {
@@ -189,6 +201,18 @@ export function DossierBuilderModal({
                     placeholder="Enter report description..."
                   />
                 </div>
+              </div>
+
+              {/* Template Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Template</h3>
+                <DossierTemplateSelector
+                  selectedTemplate={selectedTemplateId}
+                  onTemplateSelect={setSelectedTemplateId}
+                  onCustomCreate={() => setSelectedTemplateId("custom")}
+                  templates={templateCatalog}
+                  isLoading={templatesLoading}
+                />
               </div>
 
               {/* Filter Summary */}
@@ -369,7 +393,7 @@ export function DossierBuilderModal({
                 </h3>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-6">
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-6 space-y-4">
                 <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                   {generatedDossier.title}
                 </h4>
@@ -390,7 +414,7 @@ export function DossierBuilderModal({
                   <div>
                     <span className="font-medium text-gray-700 dark:text-gray-300">Format:</span>
                     <span className="ml-2 text-gray-600 dark:text-gray-400 uppercase">
-                      {exportFormat}
+                      {generatedDossier.format}
                     </span>
                   </div>
                   <div>
@@ -405,6 +429,13 @@ export function DossierBuilderModal({
                     </span>
                     <span className="ml-2 text-gray-600 dark:text-gray-400">
                       {generatedDossier.filters.timeRange}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Template:</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-400">
+                      {templateCatalog.find((t) => t.id === generatedDossier.templateId)?.name ||
+                        "Custom"}
                     </span>
                   </div>
                 </div>

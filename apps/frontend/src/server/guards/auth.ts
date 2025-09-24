@@ -1,9 +1,10 @@
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-} from "next";
-import { clearAuthCookies, refreshWithToken, setRefreshCookie, REMEMBER_COOKIE_NAME } from "@/server/oidc";
+import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import {
+  clearAuthCookies,
+  refreshWithToken,
+  setRefreshCookie,
+  REMEMBER_COOKIE_NAME,
+} from "@/server/oidc";
 
 const AUTH_REQUIRED =
   process.env.NEXT_PUBLIC_AUTH_REQUIRED === "1" ||
@@ -12,9 +13,7 @@ const AUTH_REQUIRED =
 export function withAuthGuard<P extends Record<string, any> = Record<string, any>>(
   handler?: GetServerSideProps<P>,
 ) {
-  return async (
-    context: GetServerSidePropsContext,
-  ): Promise<GetServerSidePropsResult<P>> => {
+  return async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<P>> => {
     if (!AUTH_REQUIRED) {
       if (handler) {
         return handler(context);
@@ -39,9 +38,14 @@ export function withAuthGuard<P extends Record<string, any> = Record<string, any
     try {
       const tokenResponse = await refreshWithToken(refreshToken);
       if (tokenResponse.refresh_token) {
-        setRefreshCookie(context.res, tokenResponse.refresh_token, tokenResponse.refresh_expires_in, {
-          remember,
-        });
+        setRefreshCookie(
+          context.res,
+          tokenResponse.refresh_token,
+          tokenResponse.refresh_expires_in,
+          {
+            remember,
+          },
+        );
       }
 
       if (handler) {

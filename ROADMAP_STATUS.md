@@ -7,6 +7,8 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 > ✅ **K2 (Route guards & Silent-Renew)**: Frontend guards protect Search/Graph/Dossier/Settings, 401 refresh interceptor retries once, and remember-me extends the refresh-cookie TTL to 30 days. See `STATUS.md` for evidence links.
 >
 > ✅ **K3 (RBAC UI & Admin Gates)**: JWT roles/scopes collapse to `admin|ops|analyst|viewer`, and the UI now gates Ops stacks, plugin runner, video forensics, and dossier export with permission banners plus snapshot tests. See `docs/auth/rbac.md` for the role matrix.
+>
+> ✅ **K4 (UX-Feinschliff & Live Feedback)**: Template picker consumes the collab-hub catalogue, shared `useTaskProgress` hook + `ProgressModal` display WebSocket progress for dossier exports, plugins, and video analysis with polling/simulation fallback. 【F:apps/frontend/src/components/dossier/DossierBuilderModal.tsx†L1-L400】【F:apps/frontend/src/components/feedback/ProgressModal.tsx†L1-L200】【F:apps/frontend/src/hooks/useTaskProgress.ts†L1-L260】【F:apps/frontend/src/components/plugins/PluginRunner.tsx†L1-L400】【F:apps/frontend/pages/media-forensics.tsx†L1-L560】
 
 ## A) Ontologie & Graph
 - **Goal**: Complete ontology coverage, graph analytics APIs (degree, betweenness, communities, shortest paths), dossier export hooks, and geo-enabled subgraph views.
@@ -178,9 +180,10 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
   - Frontend exposes settings pages and feature toggles. 【F:inventory/frontend.json†L150-L210】【F:apps/frontend/src/lib/config.ts†L1-L80】
   - Components for collaboration, maps, analytics present. 【F:apps/frontend/src/components/collaboration/CollaborationBoard.tsx†L1-L120】
   - **K1: done** – PKCE-basierter Login-/Callback-/Logout-Flow mit HttpOnly-Refresh-Cookie und Mock-IdP-Quickstart. 【F:apps/frontend/pages/login.tsx†L1-L34】【F:apps/frontend/pages/auth/callback.tsx†L1-L115】【F:apps/frontend/pages/logout.tsx†L1-L58】【F:docs/auth/quickstart.md†L1-L120】
+  - **K4 evidence** – Dossier builder fetches collab-hub templates and reuses `ProgressModal` for live progress across exports, plugins, and video forensics. 【F:apps/frontend/src/components/dossier/panels/DossierTemplateSelector.tsx†L1-L200】【F:apps/frontend/src/components/dossier/DossierBuilderModal.tsx†L1-L400】【F:apps/frontend/src/components/feedback/ProgressModal.tsx†L1-L200】【F:apps/frontend/src/hooks/useTaskProgress.ts†L1-L260】【F:apps/frontend/src/components/plugins/PluginRunner.tsx†L1-L400】【F:apps/frontend/pages/media-forensics.tsx†L1-L560】
 - **Gaps / Risks**:
-  - Live indicators rely on placeholders; login flow not connected to OIDC; PWA fallback absent.
-  - Performance metrics not tracked (no LCP/TTI instrumentation).
+  - Live indicators now cover dossier exports/plugins/video, but broader performance telemetry (LCP/TTI) and PWA fallback remain missing.
+  - Login flow not connected to a production OIDC issuer; offline/export caching not finalised.
 - **DoD Checklist**:
   - [ ] Observability: Frontend performance metrics + error logging.
   - [ ] Tests: Playwright E2E for critical flows.

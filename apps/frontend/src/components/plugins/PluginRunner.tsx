@@ -30,6 +30,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { canAccessFeature } from "@/lib/auth/rbac";
+import { ProgressModal } from "../feedback/ProgressModal";
+import { useTaskProgress } from "@/hooks/useTaskProgress";
+import { useNotifications } from "@/lib/notifications";
 
 interface Plugin {
   name: string;
@@ -137,6 +140,9 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
   const [executionDialogOpen, setExecutionDialogOpen] = useState(false);
   const [resultsDialogOpen, setResultsDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const notifications = useNotifications();
 
   const fetchPlugins = useCallback(async () => {
     try {
@@ -203,6 +209,54 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
     return () => clearInterval(interval);
   }, [activeTab, canRunPlugins, fetchJobs]);
 
+  const pollPluginJob = useCallback(async () => {
+    if (!activeJobId) return null;
+    try {
+      const response = await fetch(`${apiBaseUrl}/jobs/${activeJobId}`);
+      if (!response.ok) return null;
+      const job = await response.json();
+      const status = job.status as string;
+      let progress = 30;
+      if (status === "queued") {
+        progress = 10;
+      } else if (status === "running") {
+        progress = 60;
+        if (job.progress) {
+          const numeric = parseInt(job.progress, 10);
+          if (!Number.isNaN(numeric)) {
+            progress = Math.min(95, Math.max(60, numeric));
+          }
+        }
+      } else if (status === "completed") {
+        progress = 100;
+      } else if (status === "failed" || status === "cancelled") {
+        progress = 100;
+      }
+      return {
+        type: "plugin_job",
+        job_id: job.job_id,
+        status,
+        message: job.progress || `Job status: ${status}`,
+        progress,
+      };
+    } catch {
+      return null;
+    }
+  }, [activeJobId, apiBaseUrl]);
+
+  const jobProgress = useTaskProgress({
+    active: showProgressModal,
+    taskId: activeJobId,
+    eventType: "plugin_job",
+    poller: pollPluginJob,
+    pollInterval: 3000,
+    fallbackDurationMs: 12000,
+    matchEvent: (event, id) => {
+      const jobId = (event.job_id ?? event.jobId) as string | undefined;
+      return jobId === id;
+    },
+  });
+
   const executePlugin = async () => {
     if (!selectedPlugin) return;
 
@@ -226,6 +280,11 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
       setExecutionDialogOpen(false);
       setParameters({});
       setSelectedPlugin(null);
+      if (result?.job_id) {
+        setActiveJobId(result.job_id);
+        setShowProgressModal(true);
+        jobProgress.setManualProgress(12, "running", "Pluginlauf gestartet");
+      }
       fetchJobs(); // Refresh jobs list
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to execute plugin");
@@ -245,6 +304,31 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
       setError(err instanceof Error ? err.message : "Failed to cancel job");
     }
   };
+
+  const handleCancelActiveJob = useCallback(async () => {
+    if (!activeJobId) return;
+    await cancelJob(activeJobId);
+    jobProgress.setManualProgress(100, "failed", "Pluginlauf abgebrochen");
+    notifications.info("Pluginlauf abgebrochen");
+    setActiveJobId(null);
+    setShowProgressModal(false);
+  }, [activeJobId, cancelJob, jobProgress, notifications]);
+
+  useEffect(() => {
+    if (!activeJobId) return;
+    const status = jobProgress.state.status;
+    if (status === "completed") {
+      notifications.success("Plugin fertig", "Der Pluginlauf wurde abgeschlossen.");
+      fetchJobs();
+      setTimeout(() => {
+        setShowProgressModal(false);
+        setActiveJobId(null);
+      }, 1500);
+    } else if (status === "failed") {
+      notifications.error("Plugin fehlgeschlagen", jobProgress.state.error || "Job fehlgeschlagen");
+      fetchJobs();
+    }
+  }, [activeJobId, jobProgress.state.status, jobProgress.state.error, fetchJobs, notifications]);
 
   if (!canRunPlugins) {
     return (
@@ -654,6 +738,20 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
           )}
         </DialogContent>
       </Dialog>
+
+      <ProgressModal
+        isOpen={showProgressModal}
+        title="Plugin-Ausführung"
+        description={activeJobId ? `Job-ID: ${activeJobId}` : undefined}
+        state={jobProgress.state}
+        onClose={() => {
+          setShowProgressModal(false);
+          setActiveJobId(null);
+        }}
+        onCancel={handleCancelActiveJob}
+        cancelLabel="Job abbrechen"
+        successLabel="Schließen"
+      />
 
       {error && (
         <div className="fixed bottom-4 right-4 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded shadow-lg">

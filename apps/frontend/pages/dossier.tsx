@@ -147,7 +147,10 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
 
   if (guardStatus === "checking" || guardStatus === "redirecting") {
     return (
-      <DashboardLayout title="Dossier Creation" subtitle="Generate comprehensive intelligence reports">
+      <DashboardLayout
+        title="Dossier Creation"
+        subtitle="Generate comprehensive intelligence reports"
+      >
         <div className="py-24 flex justify-center">
           <LoadingSpinner layout="block" text="Checking your session…" />
         </div>

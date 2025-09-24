@@ -138,16 +138,12 @@ export default function MapControls({
           {geoStats && (
             <div className="bg-gray-50 p-3 rounded text-xs">
               <div className="font-medium mb-2">Statistics</div>
-              <div>
-                Total nodes: {(geoStats.total_nodes ?? 0).toLocaleString()}
-              </div>
+              <div>Total nodes: {(geoStats.total_nodes ?? 0).toLocaleString()}</div>
               <div>
                 Geocoded: {(geoStats.geocoded_nodes ?? 0).toLocaleString()} (
                 {(geoStats.geocoding_percentage ?? 0).toFixed(1)}%)
               </div>
-              <div>
-                Node types: {geoStats.node_types_with_coordinates?.length ?? 0}
-              </div>
+              <div>Node types: {geoStats.node_types_with_coordinates?.length ?? 0}</div>
             </div>
           )}
 
