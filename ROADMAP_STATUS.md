@@ -119,9 +119,10 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 ## H) AI-Agenten
 - **Goal**: Flowise connector, multi-agent playbooks (researcher/verifier/dossier), Assistant UI with tool panels, policy enforcement.
 - **Current Evidence**:
--  - Flowise connector MVP enforces an OPA-governed six-tool registry, `/chat` with mocked tool execution, and Prometheus counters plus UI surfacing policy errors. 【F:services/flowise-connector/app/main.py†L1-L520】【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L140】【F:apps/frontend/pages/agent/mvp.tsx†L1-L280】
--  - Grafana dashboard extended with agent counters; quickstart documents setup and offline demo. 【F:grafana/dashboards/infra-overview.json†L7-L40】【F:docs/agents/quickstart.md†L1-L120】
--  - Frontend ships `/agent/mvp` single-turn chat with progress badges + API proxy. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L265】【F:apps/frontend/pages/api/agent/mvp-chat.ts†L1-L80】
+  - Flowise connector MVP enforces an OPA-governed six-tool registry, `/chat` with mocked tool execution, and Prometheus counters plus UI surfacing policy errors. 【F:services/flowise-connector/app/main.py†L1-L520】【F:services/flowise-connector/tests/test_agents_mvp.py†L1-L140】【F:apps/frontend/pages/agent/mvp.tsx†L1-L320】
+  - `/tools` now returns JSON parameter schemas and the frontend help panel enumerates all six tools (search, graph.query, dossier.build, doc-entities.ner, plugin-runner.run, video.analyze). 【F:services/flowise-connector/app/main.py†L60-L200】【F:services/flowise-connector/tests/test_agents_mvp.py†L26-L40】【F:apps/frontend/pages/agent/mvp.tsx†L1-L220】
+  - Grafana dashboard extended with agent counters; quickstart documents setup and offline demo. 【F:grafana/dashboards/infra-overview.json†L7-L40】【F:docs/agents/quickstart.md†L1-L160】
+  - Frontend ships `/agent/mvp` single-turn chat with progress badges + API proxy. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L360】【F:apps/frontend/pages/api/agent/mvp-chat.ts†L1-L80】
 - **Gaps / Risks**:
 -  - Flowise integration still mocked; OPA policies and multi-turn orchestration pending.
 -  - Audit logging and tool telemetry need central sink; cancellation hook currently stub only.

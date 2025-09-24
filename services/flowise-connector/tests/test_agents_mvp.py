@@ -49,6 +49,12 @@ async def test_tools_endpoint_returns_exact_six_tools(client):
     data = response.json()
     assert sorted(tool["name"] for tool in data["tools"]) == sorted(TOOL_REGISTRY.keys())
     assert len(data["tools"]) == 6
+    for tool in data["tools"]:
+        assert "parameters" in tool
+        assert "parameters_schema" in tool
+        schema = tool["parameters_schema"]
+        assert schema["type"] == "object"
+        assert set(schema.get("properties", {})) == set(tool["parameters"].keys())
 
 
 @pytest.mark.anyio

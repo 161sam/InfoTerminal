@@ -77,6 +77,69 @@ const TOOL_OPTIONS: ToolOption[] = [
     ],
     defaultParams: { include_sources: true },
   },
+  {
+    id: "doc-entities.ner",
+    label: "doc-entities.ner",
+    description: "Run named entity recognition on the provided document text.",
+    parameters: [
+      {
+        name: "text",
+        label: "Document text",
+        type: "text",
+        required: true,
+        placeholder: "Paste a paragraph to analyse",
+      },
+      {
+        name: "language",
+        label: "Language",
+        type: "text",
+        placeholder: "de",
+      },
+    ],
+    defaultParams: { language: "de" },
+  },
+  {
+    id: "plugin-runner.run",
+    label: "plugin-runner.run",
+    description: "Mock plugin execution via the sandbox runner (e.g. nmap.scan).",
+    parameters: [
+      {
+        name: "plugin_id",
+        label: "Plugin ID",
+        type: "text",
+        required: true,
+        placeholder: "nmap.scan",
+      },
+      {
+        name: "payload",
+        label: "Payload (JSON)",
+        type: "text",
+        placeholder: '{"target": "10.0.0.5"}',
+      },
+    ],
+    defaultParams: {},
+  },
+  {
+    id: "video.analyze",
+    label: "video.analyze",
+    description: "Submit a video asset for offline forensic analysis.",
+    parameters: [
+      {
+        name: "source_url",
+        label: "Source URL",
+        type: "text",
+        required: true,
+        placeholder: "https://example.com/assets/demo.mp4",
+      },
+      {
+        name: "analysis_profile",
+        label: "Analysis profile",
+        type: "text",
+        placeholder: "objects",
+      },
+    ],
+    defaultParams: { analysis_profile: "objects" },
+  },
 ];
 
 const initialMessage: ChatMessage = {
@@ -330,6 +393,16 @@ export default function AgentMvpChatPage() {
                 ))}
               </select>
               <p className="mt-2 text-xs text-gray-500">{toolConfig.description}</p>
+              <div className="mt-3 rounded-md border border-dashed border-gray-200 bg-gray-50 p-3">
+                <p className="text-xs font-semibold text-gray-600">Available tools</p>
+                <ul className="mt-2 space-y-1 text-xs text-gray-600">
+                  {TOOL_OPTIONS.map((tool) => (
+                    <li key={`help-${tool.id}`}>
+                      <span className="font-medium text-gray-700">{tool.label}</span>: {tool.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             <div>

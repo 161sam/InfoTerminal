@@ -28,9 +28,8 @@ uvicorn app.main:app --reload --port 8610
 
 Available endpoints:
 
-- `GET /tools` → returns the policy-governed tools (`search`, `graph.query`,
-  `dossier.build`, `doc-entities.ner`, `plugin-runner.run`, `video.analyze`)
-  including parameter schema.
+- `GET /tools` → returns the policy-governed tools including their parameter
+  schema (`parameters` + `parameters_schema`).
 - `POST /chat` → executes at most one mocked tool call and returns the summary
   plus tool steps and lifecycle telemetry.
 - `POST /chat/{conversation_id}/cancel` → stub that logs cancel requests.
@@ -73,6 +72,20 @@ Expected response fragment:
   ]
 }
 ```
+
+### Tool catalogue
+
+`GET /tools` exposes six mocked capabilities. Each tool entry contains a
+`parameters` map and a JSON-schema-style `parameters_schema` used by the UI:
+
+| Tool | Description | Required parameters | Optional parameters |
+| --- | --- | --- | --- |
+| `search` | Query the offline document catalogue. | `query` | `limit` (default `5`) |
+| `graph.query` | Execute canned Cypher against the demo graph. | `cypher` | `parameters` (default `{}`) |
+| `dossier.build` | Compose a dossier summary from search + graph mocks. | `subject` | `include_sources` (default `true`) |
+| `doc-entities.ner` | Run named entity recognition on supplied text. | `text` | `language` (default `de`) |
+| `plugin-runner.run` | Mock plugin execution via the sandbox runner. | `plugin_id` | `payload` (default `{}`) |
+| `video.analyze` | Submit a video for offline forensic analysis. | `source_url` | `analysis_profile` (default `objects`) |
 
 ## Frontend MVP chat
 

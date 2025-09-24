@@ -30,16 +30,21 @@ from typing import Any, Deque, Dict, List, Optional, Tuple
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, root_validator
-from prometheus_client import Counter, Histogram
-from starlette.responses import JSONResponse
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
+from starlette.responses import JSONResponse, Response
 
 from app.policy import PolicyDecision, policy_engine
 
 try:
     from _shared.obs.metrics_boot import enable_prometheus_metrics
 except ImportError:  # pragma: no cover - optional shared package
+
     def enable_prometheus_metrics(app, **kwargs):
-        return None
+        @app.get("/metrics")
+        async def metrics_endpoint() -> Response:
+            return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+        return metrics_endpoint
 
 logger = logging.getLogger("flowise-connector")
 logging.basicConfig(level=logging.INFO)
@@ -71,11 +76,35 @@ class ToolDefinition:
     description: str
     parameters: Dict[str, Dict[str, Any]]
 
+    @property
+    def parameters_schema(self) -> Dict[str, Any]:
+        """Return a JSON-schema-style description of the tool parameters."""
+
+        properties: Dict[str, Dict[str, Any]] = {}
+        required: List[str] = []
+        for param_name, spec in self.parameters.items():
+            property_schema: Dict[str, Any] = {
+                key: value
+                for key, value in spec.items()
+                if key in {"type", "description", "enum", "format", "default"}
+            }
+            # Ensure we always expose at least the type to keep schema consumers stable.
+            property_schema.setdefault("type", "string")
+            properties[param_name] = property_schema
+            if spec.get("required"):
+                required.append(param_name)
+
+        schema: Dict[str, Any] = {"type": "object", "properties": properties}
+        if required:
+            schema["required"] = required
+        return schema
+
     def as_dict(self) -> Dict[str, Any]:
         return {
             "name": self.name,
             "description": self.description,
             "parameters": self.parameters,
+            "parameters_schema": self.parameters_schema,
         }
 
 
@@ -94,23 +123,6 @@ TOOL_REGISTRY: Dict[str, ToolDefinition] = {
                 "description": "Maximum number of mock results to return (default 5).",
                 "required": False,
                 "default": 5,
-            },
-        },
-    ),
-    "doc-entities.ner": ToolDefinition(
-        name="doc-entities.ner",
-        description="Run named entity recognition on provided document text.",
-        parameters={
-            "text": {
-                "type": "string",
-                "description": "Document text that should be processed by the NER model.",
-                "required": True,
-            },
-            "language": {
-                "type": "string",
-                "description": "ISO language code guiding the mock NER pipeline (default 'de').",
-                "required": False,
-                "default": "de",
             },
         },
     ),
@@ -148,6 +160,23 @@ TOOL_REGISTRY: Dict[str, ToolDefinition] = {
             },
         },
     ),
+    "doc-entities.ner": ToolDefinition(
+        name="doc-entities.ner",
+        description="Run named entity recognition on provided document text.",
+        parameters={
+            "text": {
+                "type": "string",
+                "description": "Document text that should be processed by the NER model.",
+                "required": True,
+            },
+            "language": {
+                "type": "string",
+                "description": "ISO language code guiding the mock NER pipeline (default 'de').",
+                "required": False,
+                "default": "de",
+            },
+        },
+    ),
     "plugin-runner.run": ToolDefinition(
         name="plugin-runner.run",
         description="Invoke a mocked plugin execution via the sandbox runner.",
@@ -179,6 +208,7 @@ TOOL_REGISTRY: Dict[str, ToolDefinition] = {
                 "description": "Selects the mocked analysis profile (default 'objects').",
                 "required": False,
                 "default": "objects",
+                "enum": ["objects", "faces", "transcript"],
             },
         },
     ),
@@ -337,6 +367,7 @@ class ToolModel(BaseModel):
     name: str
     description: str
     parameters: Dict[str, Dict[str, Any]]
+    parameters_schema: Dict[str, Any]
 
 
 class ToolsResponse(BaseModel):

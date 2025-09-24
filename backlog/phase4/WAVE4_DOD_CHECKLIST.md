@@ -27,6 +27,12 @@ instead of duplicating rows._
 - [x] Frontend MVP chat displays progress badges + error states. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L265】
 - [x] Quickstart + backlog artefacts refreshed. 【F:docs/agents/quickstart.md†L1-L120】【F:backlog/phase4/ITERATION-04a_PLAN.md†L1-L16】
 
+## Package H – AI-Agenten (H2 Tool-Katalog)
+
+- [x] `/tools` response now bundles JSON-style parameter schemas (`parameters_schema`) for the six-tool catalogue. 【F:services/flowise-connector/app/main.py†L60-L200】【F:services/flowise-connector/tests/test_agents_mvp.py†L26-L40】
+- [x] Assistant UI lists all six tools with descriptions in the help panel. 【F:apps/frontend/pages/agent/mvp.tsx†L1-L220】
+- [x] Quickstart + status artefacts updated with the tool catalogue table and schema notes. 【F:docs/agents/quickstart.md†L1-L200】【F:STATUS.md†L20-L32】【F:ROADMAP_STATUS.md†L160-L188】【F:DOCS_DIFF.md†L1-L40】
+
 ## Package I – Externe Feeds (I1 MVP)
 
 - [x] RSS connector normalises id/title/url/published_at. 【F:services/feed-ingestor/app/main.py†L180-L190】
