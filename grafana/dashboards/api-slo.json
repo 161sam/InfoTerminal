@@ -2,27 +2,150 @@
   "uid": "api-slo",
   "title": "API SLO",
   "schemaVersion": 36,
-  "version": 1,
+  "version": 2,
   "panels": [
     {
       "type": "timeseries",
-      "title": "p95 latency",
+      "title": "Availability (SLO) – search-api",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
       "targets": [
-        { "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket[5m])) by (le))", "datasource": "Prometheus" }
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"search-api\",status!~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"search-api\"}[5m]))) * 100",
+          "legendFormat": "availability",
+          "datasource": "Prometheus"
+        }
       ]
     },
     {
       "type": "timeseries",
-      "title": "Throughput",
+      "title": "Latency p95 – search-api",
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 } },
       "targets": [
-        { "expr": "sum(rate(http_requests_total[1m]))", "datasource": "Prometheus" }
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{service=\"search-api\"}[5m])) by (service, le))",
+          "legendFormat": "p95",
+          "datasource": "Prometheus"
+        }
       ]
     },
     {
       "type": "timeseries",
-      "title": "Error Rate",
+      "title": "Error rate – search-api",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
       "targets": [
-        { "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m]))", "datasource": "Prometheus" }
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"search-api\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"search-api\"}[5m]))) * 100",
+          "legendFormat": "error%",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Availability (SLO) – graph-api",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"graph-api\",status!~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"graph-api\"}[5m]))) * 100",
+          "legendFormat": "availability",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency p95 – graph-api",
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 } },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{service=\"graph-api\"}[5m])) by (service, le))",
+          "legendFormat": "p95",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error rate – graph-api",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"graph-api\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"graph-api\"}[5m]))) * 100",
+          "legendFormat": "error%",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Availability (SLO) – doc-entities",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"doc-entities\",status!~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"doc-entities\"}[5m]))) * 100",
+          "legendFormat": "availability",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency p95 – doc-entities",
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 } },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{service=\"doc-entities\"}[5m])) by (service, le))",
+          "legendFormat": "p95",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error rate – doc-entities",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"doc-entities\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"doc-entities\"}[5m]))) * 100",
+          "legendFormat": "error%",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Availability (SLO) – gateway",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"gateway\",status!~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"gateway\"}[5m]))) * 100",
+          "legendFormat": "availability",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency p95 – gateway",
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 } },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{service=\"gateway\"}[5m])) by (service, le))",
+          "legendFormat": "p95",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error rate – gateway",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 100 } },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_requests_total{service=\"gateway\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"gateway\"}[5m]))) * 100",
+          "legendFormat": "error%",
+          "datasource": "Prometheus"
+        }
       ]
     },
     {
