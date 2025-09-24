@@ -20,7 +20,7 @@ const GUEST_USER: User = {
   id: "guest",
   email: "guest@local",
   name: "Guest",
-  roles: ["guest"],
+  roles: ["viewer"],
   permissions: [],
 };
 
@@ -317,7 +317,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const hasRole = useCallback(
     (role: string) => {
-      return Boolean(user?.roles?.includes(role));
+      if (!role) return false;
+      const requested = role.toLowerCase();
+      return Boolean(
+        user?.roles?.some((assignedRole) => assignedRole.toLowerCase() === requested),
+      );
     },
     [user?.roles],
   );

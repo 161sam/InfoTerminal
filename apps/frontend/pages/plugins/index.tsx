@@ -23,10 +23,12 @@ import {
   BarChart3,
   Users,
   Server,
+  Lock,
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { canAccessFeature } from "@/lib/auth/rbac";
 
 interface PluginItem {
   name: string;
@@ -109,6 +111,7 @@ function getHealthBadgeClass(health: string) {
 function PluginCard({
   plugin,
   isAdmin,
+  canControl,
   health,
   onToggle,
   onConfig,
@@ -117,6 +120,7 @@ function PluginCard({
 }: {
   plugin: PluginItem;
   isAdmin: boolean;
+  canControl: boolean;
   health?: string;
   onToggle: (enabled: boolean, scope: "user" | "global") => void;
   onConfig: (scope: "user" | "global") => void;
@@ -126,8 +130,10 @@ function PluginCard({
   const [scope, setScope] = useState<"user" | "global">("user");
   const [isUpdating, setIsUpdating] = useState(false);
   const enabled = plugin.enabled !== false;
+  const controlsDisabled = !canControl;
 
   const handleToggle = async (newEnabled: boolean) => {
+    if (controlsDisabled) return;
     setIsUpdating(true);
     try {
       await onToggle(newEnabled, scope);
@@ -236,10 +242,10 @@ function PluginCard({
                 aria-checked={enabled}
                 aria-label={`Toggle ${plugin.name}`}
                 onClick={() => handleToggle(!enabled)}
-                disabled={isUpdating}
+                disabled={controlsDisabled || isUpdating}
                 className={`w-11 h-6 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
                   enabled ? "bg-primary-600" : "bg-gray-200 dark:bg-gray-700"
-                } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                } ${controlsDisabled || isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
               >
                 <span
                   className={`block w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out transform ${
@@ -265,21 +271,33 @@ function PluginCard({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={onQuickTest}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
-            >
-              <Play size={12} />
-              Test
-            </button>
+            {canControl ? (
+              <>
+                <button
+                  onClick={onQuickTest}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
+                >
+                  <Play size={12} />
+                  Test
+                </button>
 
-            <button
-              onClick={() => onConfig(scope)}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
-            >
-              <Settings size={12} />
-              Config
-            </button>
+                <button
+                  onClick={() => onConfig(scope)}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
+                >
+                  <Settings size={12} />
+                  Config
+                </button>
+              </>
+            ) : (
+              <div className="flex-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30 px-3 py-2 text-left text-xs text-gray-500 dark:text-slate-400">
+                <div className="flex items-center gap-2 font-medium text-gray-700 dark:text-slate-200">
+                  <Lock size={12} />
+                  Sie haben keine Berechtigung
+                </div>
+                <div className="mt-1">Plugin-Steuerung benötigt Admin oder Ops.</div>
+              </div>
+            )}
 
             <Link
               href={`/plugins/${plugin.name}`}
@@ -296,7 +314,8 @@ function PluginCard({
 }
 
 export default function PluginsPage() {
-  const { hasRole } = useAuth();
+  const { user, hasRole } = useAuth();
+  const canControlPlugins = canAccessFeature(user?.roles, "pluginRunner");
   const isAdmin = hasRole("admin");
   const [items, setItems] = useState<PluginItem[]>([]);
   const [health, setHealth] = useState<Record<string, string>>({});
@@ -432,6 +451,7 @@ export default function PluginsPage() {
   };
 
   const togglePlugin = async (name: string, enabled: boolean, scope: "user" | "global") => {
+    if (!canControlPlugins) return;
     try {
       await fetch(`/api/plugins/${name}/enable`, {
         method: "POST",
@@ -446,6 +466,7 @@ export default function PluginsPage() {
   };
 
   const openConfig = async (plugin: PluginItem, scope: "user" | "global") => {
+    if (!canControlPlugins) return;
     const current = plugin.config || {};
     const text = prompt("Plugin Configuration (JSON):", JSON.stringify(current, null, 2));
 
@@ -467,6 +488,7 @@ export default function PluginsPage() {
   };
 
   const quickTest = async (plugin: PluginItem) => {
+    if (!canControlPlugins) return;
     const tool = prompt("Tool name:");
     if (!tool) return;
 
@@ -584,6 +606,18 @@ export default function PluginsPage() {
           </div>
         </div>
 
+        {!canControlPlugins && (
+          <Panel>
+            <div className="flex items-start gap-3 text-gray-600 dark:text-slate-300">
+              <Lock size={18} className="mt-1 text-gray-500 dark:text-slate-400" />
+              <div>
+                <p className="font-semibold text-gray-800 dark:text-slate-100">Sie haben keine Berechtigung</p>
+                <p className="text-sm">Plugin-Verwaltung erfordert Admin- oder Ops-Rollen.</p>
+              </div>
+            </div>
+          </Panel>
+        )}
+
         {/* Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
@@ -644,10 +678,17 @@ export default function PluginsPage() {
               Export
             </button>
 
-            <button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">
-              <Plus size={14} />
-              Add Plugin
-            </button>
+            {canControlPlugins ? (
+              <button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">
+                <Plus size={14} />
+                Add Plugin
+              </button>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-500 bg-gray-100 rounded-lg border border-dashed border-gray-300 dark:bg-gray-900/40 dark:text-slate-400 dark:border-gray-700">
+                <Lock size={14} />
+                Keine Admin/Ops-Rolle
+              </div>
+            )}
           </div>
         </div>
 
@@ -667,6 +708,7 @@ export default function PluginsPage() {
                     key={plugin.name}
                     plugin={plugin}
                     isAdmin={isAdmin}
+                    canControl={canControlPlugins}
                     health={health[plugin.name]}
                     onToggle={(enabled, scope) => togglePlugin(plugin.name, enabled, scope)}
                     onConfig={(scope) => openConfig(plugin, scope)}

@@ -10,6 +10,7 @@ import {
   CheckCircle,
   AlertTriangle,
   Clock,
+  Lock,
 } from "lucide-react";
 import {
   DossierItem,
@@ -20,6 +21,8 @@ import {
   validateDossierItems,
   formatFileSize,
 } from "@/lib/dossier/dossier-config";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { canAccessFeature } from "@/lib/auth/rbac";
 
 interface DossierExportPanelProps {
   title: string;
@@ -36,6 +39,8 @@ export function DossierExportPanel({
   onGenerate,
   onPreview,
 }: DossierExportPanelProps) {
+  const { user } = useAuth();
+  const canExport = canAccessFeature(user?.roles, "dossierExport");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedDossier, setGeneratedDossier] = useState<GeneratedDossier | null>(null);
   const [exportOptions, setExportOptions] = useState<DossierExportOptions>({
@@ -46,10 +51,15 @@ export function DossierExportPanel({
   const [error, setError] = useState<string | null>(null);
 
   const validation = validateDossierItems(items);
-  const canGenerate = validation.isValid && title.trim().length > 0;
+  const isFormReady = validation.isValid && title.trim().length > 0;
+  const canGenerate = canExport && isFormReady;
 
   const handleGenerate = async () => {
-    if (!canGenerate) return;
+    if (!canExport) {
+      setError("Sie haben keine Berechtigung für Dossier-Exporte");
+      return;
+    }
+    if (!isFormReady) return;
 
     setIsGenerating(true);
     setError(null);
@@ -66,6 +76,10 @@ export function DossierExportPanel({
   };
 
   const handleExport = (format: string) => {
+    if (!canExport) {
+      setError("Sie haben keine Berechtigung für Dossier-Exporte");
+      return;
+    }
     if (!generatedDossier) return;
 
     // Create a blob based on format
@@ -156,6 +170,16 @@ export function DossierExportPanel({
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Generate & Export</h3>
       </div>
 
+      {!canExport && (
+        <div className="flex items-start gap-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900/30 dark:text-slate-300">
+          <Lock size={18} className="mt-0.5 text-gray-500 dark:text-slate-400" />
+          <div>
+            <p className="font-medium text-gray-800 dark:text-slate-100">Sie haben keine Berechtigung</p>
+            <p>Dossier-Export benötigt eine Analyst- oder Admin-Rolle.</p>
+          </div>
+        </div>
+      )}
+
       {/* Generation Button */}
       <div className="space-y-4">
         <div>
@@ -177,7 +201,7 @@ export function DossierExportPanel({
             )}
           </button>
 
-          {!canGenerate && !isGenerating && (
+          {!canGenerate && !isGenerating && canExport && (
             <div className="mt-2 text-sm text-red-600 dark:text-red-400">
               {!title.trim() && "Please enter a title"}
               {!validation.isValid &&
@@ -196,7 +220,7 @@ export function DossierExportPanel({
       </div>
 
       {/* Export Options */}
-      {generatedDossier && (
+      {generatedDossier && canExport && (
         <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
           <h4 className="font-medium text-gray-900 dark:text-white mb-3">Export Options</h4>
 

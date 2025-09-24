@@ -26,7 +26,10 @@ import {
   Network,
   Globe,
   Search,
+  Lock,
 } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { canAccessFeature } from "@/lib/auth/rbac";
 
 interface Plugin {
   name: string;
@@ -120,6 +123,8 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
   apiBaseUrl = "http://localhost:8621",
   className = "",
 }) => {
+  const { user } = useAuth();
+  const canRunPlugins = canAccessFeature(user?.roles, "pluginRunner");
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [categories, setCategories] = useState<PluginCategory[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -181,20 +186,22 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
   );
 
   useEffect(() => {
+    if (!canRunPlugins) return;
     fetchPlugins();
     fetchCategories();
     fetchJobs();
-  }, [fetchPlugins, fetchCategories, fetchJobs]);
+  }, [canRunPlugins, fetchPlugins, fetchCategories, fetchJobs]);
 
   // Auto-refresh jobs
   useEffect(() => {
+    if (!canRunPlugins) return;
     const interval = setInterval(() => {
       if (activeTab === "jobs") {
         fetchJobs();
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [activeTab, fetchJobs]);
+  }, [activeTab, canRunPlugins, fetchJobs]);
 
   const executePlugin = async () => {
     if (!selectedPlugin) return;
@@ -238,6 +245,22 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
       setError(err instanceof Error ? err.message : "Failed to cancel job");
     }
   };
+
+  if (!canRunPlugins) {
+    return (
+      <Card className={className}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+            <Lock size={18} />
+            Sie haben keine Berechtigung
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-gray-600 dark:text-gray-300">
+          Plugin-Ausführungen sind nur für Admin- oder Ops-Rollen verfügbar.
+        </CardContent>
+      </Card>
+    );
+  }
 
   const downloadResults = (job: Job) => {
     const blob = new Blob([JSON.stringify(job.results, null, 2)], { type: "application/json" });
