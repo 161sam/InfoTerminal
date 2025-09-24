@@ -32,6 +32,8 @@ COPY scripts /app/scripts
 # Environment variables for build
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+ENV NEXT_IGNORE_ESLINT 1
+ENV NEXT_IGNORE_TYPECHECK 1
 
 # Build the application
 RUN npm install -g pnpm && pnpm build

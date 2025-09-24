@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.4",
-  "serialNumber": "urn:uuid:5c6e30d9-a4ec-4bef-a261-a18b6e57aa65",
+  "serialNumber": "urn:uuid:3865ebc1-12c2-4db4-a4c0-b495a6c60096",
   "version": 1,
   "metadata": {
-    "timestamp": "2025-09-24T14:32:37+02:00",
+    "timestamp": "2025-09-24T15:18:13+02:00",
     "tools": [
       {
         "vendor": "anchore",
@@ -10215,7 +10215,7 @@
         },
         {
           "name": "syft:metadata:virtualPath",
-          "value": "/opt/nifi/nifi-toolkit-current/lib/jline-3.27.1.jar"
+          "value": "/opt/nifi/nifi-toolkit-current/lib/jline-3.27.1.jar:jline-reader"
         }
       ]
     },
@@ -10297,7 +10297,7 @@
         },
         {
           "name": "syft:metadata:virtualPath",
-          "value": "/opt/nifi/nifi-toolkit-current/lib/jline-3.27.1.jar:jline-remote-ssh"
+          "value": "/opt/nifi/nifi-toolkit-current/lib/jline-3.27.1.jar"
         }
       ]
     },

@@ -1,32 +1,3770 @@
 {
   "bomFormat": "CycloneDX",
-  "specVersion": "1.6",
+  "specVersion": "1.4",
+  "serialNumber": "urn:uuid:6194f610-7346-4a4b-b3d8-d582a679533f",
   "version": 1,
   "metadata": {
-    "timestamp": "2025-09-24T10:32:42.534162+00:00",
+    "timestamp": "2025-09-24T15:23:06+02:00",
+    "tools": [
+      {
+        "vendor": "anchore",
+        "name": "syft",
+        "version": "[not provided]"
+      }
+    ],
     "component": {
+      "bom-ref": "110049b5d1b437fa",
       "type": "container",
       "name": "postgres:16-alpine",
-      "version": "16-alpine",
-      "licenses": [
-        {
-          "license": {
-            "name": "UNKNOWN"
-          }
-        }
-      ]
+      "version": "sha256:5bf4ab7869161dc1ad03b9b8b4cbc3959cc71122558715c2b2d882d91b6ab09b"
     }
   },
   "components": [
     {
-      "type": "container",
-      "name": "postgres",
-      "version": "16-alpine",
+      "type": "library",
+      "name": ".postgresql-rundeps",
+      "version": "20250908.215729",
+      "description": "virtual meta package",
+      "cpe": "cpe:2.3:a:.postgresql-rundeps:.postgresql-rundeps:20250908.215729:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/.postgresql-rundeps@20250908.215729?arch=noarch\u0026distro=alpine-3.22.1",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:.postgresql-rundeps:.postgresql_rundeps:20250908.215729:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:.postgresql_rundeps:.postgresql-rundeps:20250908.215729:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:.postgresql_rundeps:.postgresql_rundeps:20250908.215729:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:.postgresql:.postgresql-rundeps:20250908.215729:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:.postgresql:.postgresql_rundeps:20250908.215729:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "Q1kJ1e+iOaeEKjkcg2Qui3NA2hGHk="
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "0"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1kJ1e+iOaeEKjkcg2Qui3NA2hGHk="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libLLVM.so.19.1 so:libc.musl-x86_64.so.1 so:libcrypto.so.3 so:libedit.so.0 so:libgcc_s.so.1 so:libgssapi_krb5.so.2 so:libicui18n.so.76 so:libicuuc.so.76 so:libldap.so.2 so:liblz4.so.1 so:libssl.so.3 so:libstdc++.so.6 so:libuuid.so.1 so:libxml2.so.2 so:libxslt.so.1 so:libz.so.1 so:libzstd.so.1 bash tzdata zstd icu-data-full nss_wrapper"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "alpine-baselayout",
+      "version": "3.7.0-r0",
+      "description": "Alpine base dir structure and init scripts",
       "licenses": [
         {
           "license": {
-            "name": "UNKNOWN"
+            "id": "GPL-2.0-only"
           }
+        }
+      ],
+      "cpe": "cpe:2.3:a:alpine-baselayout:alpine-baselayout:3.7.0-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/alpine-baselayout@3.7.0-r0?arch=x86_64\u0026upstream=alpine-baselayout\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://git.alpinelinux.org/cgit/aports/tree/main/alpine-baselayout",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine-baselayout:alpine_baselayout:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_baselayout:alpine-baselayout:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_baselayout:alpine_baselayout:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine-baselayout:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine_baselayout:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "540d8477019887cc6534152e92c3b12676e35d7b"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "6441"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "alpine-baselayout"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1KfmXSO6h/+AfcLNAJNxFxG0hH40="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "alpine-baselayout-data=3.7.0-r0 /bin/sh"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "8237"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "alpine-baselayout-data",
+      "version": "3.7.0-r0",
+      "description": "Alpine base dir structure and init scripts",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:alpine-baselayout-data:alpine-baselayout-data:3.7.0-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/alpine-baselayout-data@3.7.0-r0?arch=x86_64\u0026upstream=alpine-baselayout\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://git.alpinelinux.org/cgit/aports/tree/main/alpine-baselayout",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine-baselayout-data:alpine_baselayout_data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_baselayout_data:alpine-baselayout-data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_baselayout_data:alpine_baselayout_data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine-baselayout:alpine-baselayout-data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine-baselayout:alpine_baselayout_data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_baselayout:alpine-baselayout-data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_baselayout:alpine_baselayout_data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine-baselayout-data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine_baselayout_data:3.7.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "540d8477019887cc6534152e92c3b12676e35d7b"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "19034"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "alpine-baselayout"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1c/XvZfgzOheEEC35c8B21afVtf4="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "10788"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "alpine-keys",
+      "version": "2.5-r0",
+      "description": "Public keys for Alpine Linux packages",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:alpine-keys:alpine-keys:2.5-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/alpine-keys@2.5-r0?arch=x86_64\u0026upstream=alpine-keys\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://alpinelinux.org",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine-keys:alpine_keys:2.5-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_keys:alpine-keys:2.5-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_keys:alpine_keys:2.5-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine-keys:2.5-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine_keys:2.5-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "6d473fb38effb2389f567b29fb7eb27039b3a279"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "14212"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "alpine-keys"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1sXXkgUTrrQPWuhHUWyWq/C3jEME="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "13390"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "alpine-release",
+      "version": "3.22.1-r0",
+      "description": "Alpine release data",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:alpine-release:alpine-release:3.22.1-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/alpine-release@3.22.1-r0?arch=x86_64\u0026upstream=alpine-base\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://alpinelinux.org",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine-release:alpine_release:3.22.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_release:alpine-release:3.22.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine_release:alpine_release:3.22.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine-release:3.22.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:alpine:alpine_release:3.22.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "96586cb7ed12d722ab560ee2ec0fc5294a9dc84b"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "343"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "alpine-base"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1IK87vS9ZQDwZsiV25FhCi/jAnBI="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "alpine-keys"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "2097"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "apk-tools",
+      "version": "2.14.9-r2",
+      "description": "Alpine Package Keeper - package manager for alpine",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:apk-tools:apk-tools:2.14.9-r2:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/apk-tools@2.14.9-r2?arch=x86_64\u0026upstream=apk-tools\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://gitlab.alpinelinux.org/alpine/apk-tools",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:apk-tools:apk_tools:2.14.9-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:apk_tools:apk-tools:2.14.9-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:apk_tools:apk_tools:2.14.9-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:apk:apk-tools:2.14.9-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:apk:apk_tools:2.14.9-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "a73d5616eaf4e16a219366d848d8e46b85d458ea"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "69648"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "apk-tools"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1KokQ0ArDHfLhzNlBJ0iOo6BuLUg="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "musl\u003e=1.2.3_git20230424 libcrypto3\u003e=3.5 ca-certificates-bundle so:libapk.so.2.14.9 so:libc.musl-x86_64.so.1 so:libcrypto.so.3 so:libz.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "34569"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "bash",
+      "version": "5.2.37-r0",
+      "description": "The GNU Bourne Again shell",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:bash:bash:5.2.37-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/bash@5.2.37-r0?arch=x86_64\u0026upstream=bash\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.gnu.org/software/bash/bash.html",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "dfdce3cefb431614e410ac9bc3665d33ea45020c"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "1273235"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "bash"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q14udpFii0NwGg/nIouNmGp661iqk="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "/bin/sh so:libc.musl-x86_64.so.1 so:libreadline.so.8"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "447041"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Sören Tempel \u003csoeren+alpine@soeren-tempel.net\u003e",
+      "name": "busybox",
+      "version": "1.37.0-r18",
+      "description": "Size optimized toolbox of many common UNIX utilities",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:busybox:busybox:1.37.0-r18:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/busybox@1.37.0-r18?arch=x86_64\u0026upstream=busybox\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://busybox.net/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "28ab379633dca30ff5d3ebd36b274d15a2f15719"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "817380"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "busybox"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1IVWNSWjzHcw3fA8n2um7DzK7JdI="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "505978"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Sören Tempel \u003csoeren+alpine@soeren-tempel.net\u003e",
+      "name": "busybox-binsh",
+      "version": "1.37.0-r18",
+      "description": "busybox ash /bin/sh",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:busybox-binsh:busybox-binsh:1.37.0-r18:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/busybox-binsh@1.37.0-r18?arch=x86_64\u0026upstream=busybox\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://busybox.net/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:busybox-binsh:busybox_binsh:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:busybox_binsh:busybox-binsh:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:busybox_binsh:busybox_binsh:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:busybox:busybox-binsh:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:busybox:busybox_binsh:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "28ab379633dca30ff5d3ebd36b274d15a2f15719"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "1"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "busybox"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1S82rX5Eir7Tecb/osRJcDAJ5Z5M="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "busybox=1.37.0-r18"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "1568"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "ca-certificates-bundle",
+      "version": "20250619-r0",
+      "description": "Pre generated bundle of Mozilla certificates",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        },
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:ca-certificates-bundle:ca-certificates-bundle:20250619-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/ca-certificates-bundle@20250619-r0?arch=x86_64\u0026upstream=ca-certificates\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.mozilla.org/en-US/about/governance/policies/security-group/certs/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca-certificates-bundle:ca_certificates_bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca_certificates_bundle:ca-certificates-bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca_certificates_bundle:ca_certificates_bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca-certificates:ca-certificates-bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca-certificates:ca_certificates_bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca_certificates:ca-certificates-bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca_certificates:ca_certificates_bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca:ca-certificates-bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ca:ca_certificates_bundle:20250619-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "78856465c851ab2ce0cb1e12fe9f57d04204919a"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "212585"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "ca-certificates"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1Mr6RF/GHn0i0SCP7vS2eJqappQA="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "125410"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "gdbm",
+      "version": "1.24-r0",
+      "description": "GNU dbm is a set of database routines that use extensible hashing",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:gdbm:gdbm:1.24-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/gdbm@1.24-r0?arch=x86_64\u0026upstream=gdbm\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.gnu.org/software/gdbm/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "cf76e1b436494c60e0c188400007dbf78bbff5f0"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "69024"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "gdbm"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1JI4PzOIzV0CK+luCE36Xt4Hst5A="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "31061"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "github.com/moby/sys/user",
+      "version": "v0.1.0",
+      "cpe": "cpe:2.3:a:moby:sys:v0.1.0:*:*:*:*:*:*:*",
+      "purl": "pkg:golang/github.com/moby/sys/user@v0.1.0",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "go-module-binary-cataloger"
+        },
+        {
+          "name": "syft:package:language",
+          "value": "go"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "GolangBinMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "go-module"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/usr/local/bin/gosu"
+        },
+        {
+          "name": "syft:metadata:architecture",
+          "value": "amd64"
+        },
+        {
+          "name": "syft:metadata:goCompiledVersion",
+          "value": "go1.24.0"
+        },
+        {
+          "name": "syft:metadata:h1Digest",
+          "value": "h1:WmZ93f5Ux6het5iituh9x2zAG7NFY9Aqi49jjE1PaQg="
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "github.com/tianon/gosu",
+      "version": "1.18",
+      "cpe": "cpe:2.3:a:tianon:gosu:1.18:*:*:*:*:*:*:*",
+      "purl": "pkg:golang/github.com/tianon/gosu@1.18",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "go-module-binary-cataloger"
+        },
+        {
+          "name": "syft:package:language",
+          "value": "go"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "GolangBinMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "go-module"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/usr/local/bin/gosu"
+        },
+        {
+          "name": "syft:metadata:architecture",
+          "value": "amd64"
+        },
+        {
+          "name": "syft:metadata:goCompiledVersion",
+          "value": "go1.24.0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "golang.org/x/sys",
+      "version": "v0.1.0",
+      "cpe": "cpe:2.3:a:golang:x\\/sys:v0.1.0:*:*:*:*:*:*:*",
+      "purl": "pkg:golang/golang.org/x/sys@v0.1.0",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "go-module-binary-cataloger"
+        },
+        {
+          "name": "syft:package:language",
+          "value": "go"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "GolangBinMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "go-module"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/usr/local/bin/gosu"
+        },
+        {
+          "name": "syft:metadata:architecture",
+          "value": "amd64"
+        },
+        {
+          "name": "syft:metadata:goCompiledVersion",
+          "value": "go1.24.0"
+        },
+        {
+          "name": "syft:metadata:h1Digest",
+          "value": "h1:kunALQeHf1/185U1i0GOB/fy1IPRDDpuoOOqRReG57U="
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "icu-data-full",
+      "version": "76.1-r1",
+      "description": "Full ICU data",
+      "licenses": [
+        {
+          "license": {
+            "id": "ICU"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:icu-data-full:icu-data-full:76.1-r1:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/icu-data-full@76.1-r1?arch=x86_64\u0026upstream=icu\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://icu.unicode.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu-data-full:icu_data_full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu_data_full:icu-data-full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu_data_full:icu_data_full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu-data:icu-data-full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu-data:icu_data_full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu_data:icu-data-full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu_data:icu_data_full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu:icu-data-full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu:icu_data_full:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "e62b56b09ba0bed460d61072fffd977992d936bc"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "31851856"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "icu"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1SLq9KZUiyAqjYrd3+rpvzuA3iok="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "12333403"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "icu-libs",
+      "version": "76.1-r1",
+      "description": "International Components for Unicode library (libraries)",
+      "licenses": [
+        {
+          "license": {
+            "id": "ICU"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:icu-libs:icu-libs:76.1-r1:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/icu-libs@76.1-r1?arch=x86_64\u0026upstream=icu\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://icu.unicode.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu-libs:icu_libs:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu_libs:icu-libs:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu_libs:icu_libs:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu:icu-libs:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:icu:icu_libs:76.1-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "e62b56b09ba0bed460d61072fffd977992d936bc"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "4770824"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "icu"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1ZqvKCUl2G2eHYg0U1RgeKu7Tdoc="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "icu-data=76.1-r1 so:libc.musl-x86_64.so.1 so:libgcc_s.so.1 so:libstdc++.so.6"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "1929513"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "keyutils-libs",
+      "version": "1.6.3-r4",
+      "description": "Key utilities library",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        },
+        {
+          "license": {
+            "id": "LGPL-2.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:keyutils-libs:keyutils-libs:1.6.3-r4:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/keyutils-libs@1.6.3-r4?arch=x86_64\u0026upstream=keyutils\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://people.redhat.com/~dhowells/keyutils/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:keyutils-libs:keyutils_libs:1.6.3-r4:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:keyutils_libs:keyutils-libs:1.6.3-r4:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:keyutils_libs:keyutils_libs:1.6.3-r4:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:keyutils:keyutils-libs:1.6.3-r4:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:keyutils:keyutils_libs:1.6.3-r4:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "8bac74716d06c84627ab02d101fd9d2bafd0a34c"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "18192"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "keyutils"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1DF9dvVffA65szBSF8AFphwrtAsQ="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "7682"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "krb5-conf",
+      "version": "1.0-r2",
+      "description": "Shared krb5.conf for both MIT krb5 and heimdal",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:krb5-conf:krb5-conf:1.0-r2:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/krb5-conf@1.0-r2?arch=x86_64\u0026upstream=krb5-conf\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://web.mit.edu/kerberos/www/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5-conf:krb5_conf:1.0-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5_conf:krb5-conf:1.0-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5_conf:krb5_conf:1.0-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5:krb5-conf:1.0-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5:krb5_conf:1.0-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "4a46b2cb955e25fd6d6f913794d35bc6d876aea9"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "450"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "krb5-conf"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1kw33Oae3VrrvqyXCDCOkbO/agmA="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "1747"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "krb5-libs",
+      "version": "1.21.3-r0",
+      "description": "The shared libraries used by Kerberos 5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:krb5-libs:krb5-libs:1.21.3-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/krb5-libs@1.21.3-r0?arch=x86_64\u0026upstream=krb5\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://web.mit.edu/kerberos/www/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5-libs:krb5_libs:1.21.3-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5_libs:krb5-libs:1.21.3-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5_libs:krb5_libs:1.21.3-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5:krb5-libs:1.21.3-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:krb5:krb5_libs:1.21.3-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "4c87a3702ac5bc277f8b438835645c78090c2f3a"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "1793864"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "krb5"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1CNK0vbrB93lZGAxqH2Ze0ORWpGM="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "krb5-conf so:libc.musl-x86_64.so.1 so:libcom_err.so.2 so:libcrypto.so.3 so:libkeyutils.so.1 so:libssl.so.3 so:libverto.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "766691"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libapk2",
+      "version": "2.14.9-r2",
+      "description": "Alpine Package Keeper - package manager for alpine",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libapk2:libapk2:2.14.9-r2:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libapk2@2.14.9-r2?arch=x86_64\u0026upstream=apk-tools\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://gitlab.alpinelinux.org/alpine/apk-tools",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "a73d5616eaf4e16a219366d848d8e46b85d458ea"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "183992"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "apk-tools"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q106IHl/zaG1dCwRn/wUbB4RDtQY4="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "musl\u003e=1.2.3_git20230424 libcrypto3\u003e=3.5 ca-certificates-bundle so:libc.musl-x86_64.so.1 so:libcrypto.so.3 so:libssl.so.3 so:libz.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "89008"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libcom_err",
+      "version": "1.47.2-r2",
+      "description": "Common error description library",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        },
+        {
+          "license": {
+            "id": "LGPL-2.0-or-later"
+          }
+        },
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        },
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libcom-err:libcom-err:1.47.2-r2:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libcom_err@1.47.2-r2?arch=x86_64\u0026upstream=e2fsprogs\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://e2fsprogs.sourceforge.net/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:libcom-err:libcom_err:1.47.2-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:libcom_err:libcom-err:1.47.2-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:libcom_err:libcom_err:1.47.2-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:libcom:libcom-err:1.47.2-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:libcom:libcom_err:1.47.2-r2:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "13f83cd1a99fa6ea58c6f8c3538971f2fb9ac634"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "18112"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "e2fsprogs"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q13Ma7GHiJzuhy4GOsYkXwT9Urzg8="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "6064"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libcrypto3",
+      "version": "3.5.2-r0",
+      "description": "Crypto library from openssl",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libcrypto3:libcrypto3:3.5.2-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libcrypto3@3.5.2-r0?arch=x86_64\u0026upstream=openssl\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.openssl.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "c17b83970df65737e3fa6bce5837cc1ca6583f78"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "5213782"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "openssl"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1QT1V4LGZGnwr8HUokZQ1q2BckmY="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "1979469"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Celeste \u003ccielesti@protonmail.com\u003e",
+      "name": "libedit",
+      "version": "20250104.3.1-r1",
+      "description": "BSD line editing library",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libedit:libedit:20250104.3.1-r1:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libedit@20250104.3.1-r1?arch=x86_64\u0026upstream=libedit\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.thrysoee.dk/editline",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "be0833caee3020f089f02c5d7223e971a9a11ffb"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "178016"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "libedit"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1t9DEweADS2blO3cMVTPIxl66NGQ="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libncursesw.so.6"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "76926"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libffi",
+      "version": "3.4.8-r0",
+      "description": "portable, high level programming interface to various calling conventions.",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libffi:libffi:3.4.8-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libffi@3.4.8-r0?arch=x86_64\u0026upstream=libffi\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://sourceware.org/libffi/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "be5e49159a2ccca93a3290af3d8ab25443523363"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "38960"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "libffi"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q15dARGPWtAIuy3wdjWvNkkztP8g8="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "18222"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Ariadne Conill \u003cariadne@dereferenced.org\u003e",
+      "name": "libgcc",
+      "version": "14.2.0-r6",
+      "description": "GNU C compiler runtime libraries",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        },
+        {
+          "license": {
+            "id": "LGPL-2.1-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libgcc:libgcc:14.2.0-r6:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libgcc@14.2.0-r6?arch=x86_64\u0026upstream=gcc\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://gcc.gnu.org",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "fbf60319be3bbaf6dd32ef55cc6fb7189e05c266"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "173920"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "gcc"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1aUWRHcKxNIXpdGDZ3ycWrRoKoy0="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "81560"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libldap",
+      "version": "2.6.8-r0",
+      "description": "OpenLDAP libraries",
+      "licenses": [
+        {
+          "license": {
+            "id": "OLDAP-2.8"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libldap:libldap:2.6.8-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libldap@2.6.8-r0?arch=x86_64\u0026upstream=openldap\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.openldap.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "589dff3eb85bad239ee31625443e785cb88d03d9"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "374479"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "openldap"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1fYc2ODkmqiFdpQj4jK+0KP1Pog8="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libcrypto.so.3 so:libsasl2.so.3 so:libssl.so.3"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "164253"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libncursesw",
+      "version": "6.5_p20250503-r0",
+      "description": "Console display library (libncursesw)",
+      "licenses": [
+        {
+          "license": {
+            "id": "X11"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libncursesw:libncursesw:6.5_p20250503-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libncursesw@6.5_p20250503-r0?arch=x86_64\u0026upstream=ncurses\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://invisible-island.net/ncurses/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "3fefbe8dda8b3e85458edb190e2f3a69ad16035c"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "342888"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "ncurses"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1QpAfFSg5nWfgfhQIXuU/GjabJAo="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "ncurses-terminfo-base=6.5_p20250503-r0 so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "159016"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libsasl",
+      "version": "2.1.28-r8",
+      "description": "Cyrus Simple Authentication and Security Layer (SASL) library",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause-Attribution"
+          }
+        },
+        {
+          "license": {
+            "id": "BSD-4-Clause"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libsasl:libsasl:2.1.28-r8:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libsasl@2.1.28-r8?arch=x86_64\u0026upstream=cyrus-sasl\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.cyrusimap.org/sasl/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "0ba5902c3e39ed5dab7e5afc9a41ad3e2ff88f15"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "167824"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "cyrus-sasl"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1Yxj4qNdoAUAPVriq76n8ZlRWXNo="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libgdbm.so.6"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "65874"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libssl3",
+      "version": "3.5.2-r0",
+      "description": "SSL shared libraries",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libssl3:libssl3:3.5.2-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libssl3@3.5.2-r0?arch=x86_64\u0026upstream=openssl\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.openssl.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "c17b83970df65737e3fa6bce5837cc1ca6583f78"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "843640"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "openssl"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1VQmz6V1EJgYq+HKTj5n2+HFhbd4="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "libcrypto3=3.5.2-r0 so:libc.musl-x86_64.so.1 so:libcrypto.so.3"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "379983"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Ariadne Conill \u003cariadne@dereferenced.org\u003e",
+      "name": "libstdc++",
+      "version": "14.2.0-r6",
+      "description": "GNU C++ standard runtime library",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        },
+        {
+          "license": {
+            "id": "LGPL-2.1-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libstdc\\+\\+:libstdc\\+\\+:14.2.0-r6:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libstdc++@14.2.0-r6?arch=x86_64\u0026upstream=gcc\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://gcc.gnu.org",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "fbf60319be3bbaf6dd32ef55cc6fb7189e05c266"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "2771336"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "gcc"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q17fXKwemP/k+zYJ9I3tg7Nb7BTJ0="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libgcc_s.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "942558"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libuuid",
+      "version": "2.41-r9",
+      "description": "DCE compatible Universally Unique Identifier library",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libuuid:libuuid:2.41-r9:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libuuid@2.41-r9?arch=x86_64\u0026upstream=util-linux\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://git.kernel.org/cgit/utils/util-linux/util-linux.git",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "e7067b58505a39e90d61d2222cfbe1c67eeab5f4"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "30624"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "util-linux"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1f9fPPEC7iWJs466cRQSbNjamDes="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "14366"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Francesco Colista \u003cfcolista@alpinelinux.org\u003e",
+      "name": "libverto",
+      "version": "0.3.2-r2",
+      "description": "Main loop abstraction library",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libverto:libverto:0.3.2-r2:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libverto@0.3.2-r2?arch=x86_64\u0026upstream=libverto\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://github.com/latchset/libverto",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "84a227baf001b6e0208e3352b294e4d7a40e93de"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "22128"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "libverto"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1G6zbQqQnwud5N+GpoAV23a6Z348="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "9297"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Carlo Landmeter \u003cclandmeter@alpinelinux.org\u003e",
+      "name": "libxml2",
+      "version": "2.13.8-r0",
+      "description": "XML parsing library, version 2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libxml2:libxml2:2.13.8-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libxml2@2.13.8-r0?arch=x86_64\u0026upstream=libxml2\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://gitlab.gnome.org/GNOME/libxml2",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "d1e7f603733e66ba1fbe7daa6fdf9443a8b687d3"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "1076192"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "libxml2"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1C5J+VuIHQwZWYGhIv8K4fVbkcUQ="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:liblzma.so.5 so:libz.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "496526"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "libxslt",
+      "version": "1.1.43-r3",
+      "description": "XML stylesheet transformation library",
+      "licenses": [
+        {
+          "license": {
+            "id": "X11"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:libxslt:libxslt:1.1.43-r3:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/libxslt@1.1.43-r3?arch=x86_64\u0026upstream=libxslt\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "http://xmlsoft.org/XSLT/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "ea6f3799a11813259bf1c5fc2eeae1e1e78fc7df"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "313144"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "libxslt"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q11zT+HIY2zXw2SKGcnxnQkrzENcg="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libxml2.so.2"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "129587"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "llvm19-libs",
+      "version": "19.1.7-r6",
+      "description": "LLVM 19 runtime library",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:llvm19-libs:llvm19-libs:19.1.7-r6:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/llvm19-libs@19.1.7-r6?arch=x86_64\u0026upstream=llvm19\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://llvm.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:llvm19-libs:llvm19_libs:19.1.7-r6:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:llvm19_libs:llvm19-libs:19.1.7-r6:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:llvm19_libs:llvm19_libs:19.1.7-r6:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:llvm19:llvm19-libs:19.1.7-r6:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:llvm19:llvm19_libs:19.1.7-r6:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "845d9c6d5dfd0299bceef477d45492016aa62a45"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "161007904"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "llvm19"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q10O3vkveF5qrHgF3TQf8rcZ8KdLs="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libffi.so.8 so:libgcc_s.so.1 so:libstdc++.so.6 so:libxml2.so.2 so:libz.so.1 so:libzstd.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "58615568"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Stuart Cardall \u003cdeveloper@it-offshore.co.uk\u003e",
+      "name": "lz4-libs",
+      "version": "1.10.0-r0",
+      "description": "LZ4 is lossless compression algorithm with fast decoder @ multiple GB/s per core. (libraries)",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        },
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:lz4-libs:lz4-libs:1.10.0-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/lz4-libs@1.10.0-r0?arch=x86_64\u0026upstream=lz4\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://github.com/lz4/lz4",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:lz4-libs:lz4_libs:1.10.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:lz4_libs:lz4-libs:1.10.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:lz4_libs:lz4_libs:1.10.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:lz4:lz4-libs:1.10.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:lz4:lz4_libs:1.10.0-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "a886e2e46171e6d5991dc91c492ae748a83b40e4"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "149184"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "lz4"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1L3cbmZfZLH182GMgXonEPFVMNhU="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "70678"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "musl",
+      "version": "1.2.5-r10",
+      "description": "the musl c library (libc) implementation",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:musl:musl:1.2.5-r10:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/musl@1.2.5-r10?arch=x86_64\u0026upstream=musl\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://musl.libc.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "1a5f5e699b2eae883e73c93a789f87bd89a2a190"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "662120"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "musl"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1WSg7YduDCgoDCcmPTbkGotj6NCs="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "411378"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "musl-utils",
+      "version": "1.2.5-r10",
+      "description": "the musl c library (libc) implementation",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        },
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        },
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:musl-utils:musl-utils:1.2.5-r10:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/musl-utils@1.2.5-r10?arch=x86_64\u0026upstream=musl\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://musl.libc.org/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:musl-utils:musl_utils:1.2.5-r10:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:musl_utils:musl-utils:1.2.5-r10:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:musl_utils:musl_utils:1.2.5-r10:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:musl:musl-utils:1.2.5-r10:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:musl:musl_utils:1.2.5-r10:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "1a5f5e699b2eae883e73c93a789f87bd89a2a190"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "55421"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "musl"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1fmDQgggTuqisJmvuFYOUwKafEEo="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "scanelf so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "13647"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "ncurses-terminfo-base",
+      "version": "6.5_p20250503-r0",
+      "description": "Descriptions of common terminals",
+      "licenses": [
+        {
+          "license": {
+            "id": "X11"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:ncurses-terminfo-base:ncurses-terminfo-base:6.5_p20250503-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/ncurses-terminfo-base@6.5_p20250503-r0?arch=x86_64\u0026upstream=ncurses\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://invisible-island.net/ncurses/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses-terminfo-base:ncurses_terminfo_base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses_terminfo_base:ncurses-terminfo-base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses_terminfo_base:ncurses_terminfo_base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses-terminfo:ncurses-terminfo-base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses-terminfo:ncurses_terminfo_base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses_terminfo:ncurses-terminfo-base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses_terminfo:ncurses_terminfo_base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses:ncurses-terminfo-base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ncurses:ncurses_terminfo_base:6.5_p20250503-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "3fefbe8dda8b3e85458edb190e2f3a69ad16035c"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "101107"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "ncurses"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1/qLMCI8C3y/rXacY5wEjZH8O+Pc="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "21767"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Wolfgang Walther \u003copensource@technowledgy.de\u003e",
+      "name": "nss_wrapper",
+      "version": "1.1.12-r1",
+      "description": "A wrapper for the user, group and hosts NSS API",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:nss-wrapper:nss-wrapper:1.1.12-r1:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/nss_wrapper@1.1.12-r1?arch=x86_64\u0026upstream=nss_wrapper\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://cwrap.org/nss_wrapper.html",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:nss-wrapper:nss_wrapper:1.1.12-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:nss_wrapper:nss-wrapper:1.1.12-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:nss_wrapper:nss_wrapper:1.1.12-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:nss:nss-wrapper:1.1.12-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:nss:nss_wrapper:1.1.12-r1:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "44ce39a091100c59a3bd90df6c0312d302be3171"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "55312"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "nss_wrapper"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1HmFC7eIevLM+0pJ5zMvCE4vYrKQ="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "23165"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Celeste \u003ccielesti@protonmail.com\u003e",
+      "name": "readline",
+      "version": "8.2.13-r1",
+      "description": "GNU readline library",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:readline:readline:8.2.13-r1:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/readline@8.2.13-r1?arch=x86_64\u0026upstream=readline\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://tiswww.cwru.edu/php/chet/readline/rltop.html",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "be0833caee3020f089f02c5d7223e971a9a11ffb"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "287180"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "readline"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q10wVkASF5P9eadjbtEPzGyxAVXjg="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libncursesw.so.6"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "120574"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "scanelf",
+      "version": "1.3.8-r1",
+      "description": "Scan ELF binaries for stuff",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:scanelf:scanelf:1.3.8-r1:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/scanelf@1.3.8-r1?arch=x86_64\u0026upstream=pax-utils\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://wiki.gentoo.org/wiki/Hardened/PaX_Utilities",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "9818c555f344e3085d0dd1f3d917d8e23e244cb1"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "67504"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "pax-utils"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1vW3RyCDUdrzfjuOPADvPKnMyOxM="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "32500"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Sören Tempel \u003csoeren+alpine@soeren-tempel.net\u003e",
+      "name": "ssl_client",
+      "version": "1.37.0-r18",
+      "description": "External ssl_client for busybox wget",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:ssl-client:ssl-client:1.37.0-r18:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/ssl_client@1.37.0-r18?arch=x86_64\u0026upstream=busybox\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://busybox.net/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ssl-client:ssl_client:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ssl_client:ssl-client:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ssl_client:ssl_client:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ssl:ssl-client:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:ssl:ssl_client:1.37.0-r18:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "28ab379633dca30ff5d3ebd36b274d15a2f15719"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "14384"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "busybox"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1f6Lg9aeNcGHRhlO8XjjLg8QtLzo="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libcrypto.so.3 so:libssl.so.3"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "4695"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "tzdata",
+      "version": "2025b-r0",
+      "description": "Timezone data",
+      "cpe": "cpe:2.3:a:tzdata:tzdata:2025b-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/tzdata@2025b-r0?arch=x86_64\u0026upstream=tzdata\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://www.iana.org/time-zones",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "14fe734246305b9d5916cd1610a1c8e6d5a1213e"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "446420"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "tzdata"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1GCUyqU4nKnrh0mIklynIvLsQiR0="
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "187081"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "xz-libs",
+      "version": "5.8.1-r0",
+      "description": "Library and CLI tools for XZ and LZMA compressed files (libraries)",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        },
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        },
+        {
+          "license": {
+            "id": "LGPL-2.1-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:xz-libs:xz-libs:5.8.1-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/xz-libs@5.8.1-r0?arch=x86_64\u0026upstream=xz\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://tukaani.org/xz/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:xz-libs:xz_libs:5.8.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:xz_libs:xz-libs:5.8.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:xz_libs:xz_libs:5.8.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:xz:xz-libs:5.8.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:xz:xz_libs:5.8.1-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "119b2c991c18f1f3651fa00fec9d0cfd8c8c3444"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "231288"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "xz"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1/c230NxE3VRhZa4xMSKwHWog+TE="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "117633"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "zlib",
+      "version": "1.3.1-r2",
+      "description": "A compression/decompression Library",
+      "licenses": [
+        {
+          "license": {
+            "id": "Zlib"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:zlib:zlib:1.3.1-r2:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/zlib@1.3.1-r2?arch=x86_64\u0026upstream=zlib\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://zlib.net/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "4c2722e7ecc1c5e3ba882429044a101497121223"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "104280"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "zlib"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1v32Q2J5UKcGBZ7kauNfmJWz8f98="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "54039"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "zstd",
+      "version": "1.5.7-r0",
+      "description": "Zstandard - Fast real-time compression algorithm",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        },
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:zstd:zstd:1.5.7-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/zstd@1.5.7-r0?arch=x86_64\u0026upstream=zstd\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://facebook.github.io/zstd/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "fc7fd35c7bf99156ae31962877c074f679f45b73"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "285818"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "zstd"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q12G8OWlwNCcJ+1f/HVqngQpzcV7E="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1 so:libgcc_s.so.1 so:libstdc++.so.6 so:libzstd.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "128574"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "publisher": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+      "name": "zstd-libs",
+      "version": "1.5.7-r0",
+      "description": "Zstandard - Fast real-time compression algorithm (libraries)",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        },
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "cpe": "cpe:2.3:a:zstd-libs:zstd-libs:1.5.7-r0:*:*:*:*:*:*:*",
+      "purl": "pkg:alpine/zstd-libs@1.5.7-r0?arch=x86_64\u0026upstream=zstd\u0026distro=alpine-3.22.1",
+      "externalReferences": [
+        {
+          "url": "https://facebook.github.io/zstd/",
+          "type": "distribution"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "apkdb-cataloger"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "ApkMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "apk"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:zstd-libs:zstd_libs:1.5.7-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:zstd_libs:zstd-libs:1.5.7-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:zstd_libs:zstd_libs:1.5.7-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:zstd:zstd-libs:1.5.7-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:zstd:zstd_libs:1.5.7-r0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/lib/apk/db/installed"
+        },
+        {
+          "name": "syft:metadata:gitCommitOfApkPort",
+          "value": "fc7fd35c7bf99156ae31962877c074f679f45b73"
+        },
+        {
+          "name": "syft:metadata:installedSize",
+          "value": "718528"
+        },
+        {
+          "name": "syft:metadata:originPackage",
+          "value": "zstd"
+        },
+        {
+          "name": "syft:metadata:pullChecksum",
+          "value": "Q1UMgxErVhn0jTbWkZCky3xx8Vx9I="
+        },
+        {
+          "name": "syft:metadata:pullDependencies",
+          "value": "so:libc.musl-x86_64.so.1"
+        },
+        {
+          "name": "syft:metadata:size",
+          "value": "377569"
+        }
+      ]
+    },
+    {
+      "type": "operating-system",
+      "name": "alpine",
+      "version": "3.22.1",
+      "description": "Alpine Linux v3.22",
+      "swid": {
+        "tagId": "alpine",
+        "name": "alpine",
+        "version": "3.22.1"
+      },
+      "externalReferences": [
+        {
+          "url": "https://gitlab.alpinelinux.org/alpine/aports/-/issues",
+          "type": "issue-tracker"
+        },
+        {
+          "url": "https://alpinelinux.org/",
+          "type": "website"
+        }
+      ],
+      "properties": [
+        {
+          "name": "syft:distro:id",
+          "value": "alpine"
+        },
+        {
+          "name": "syft:distro:prettyName",
+          "value": "Alpine Linux v3.22"
+        },
+        {
+          "name": "syft:distro:versionID",
+          "value": "3.22.1"
         }
       ]
     }
