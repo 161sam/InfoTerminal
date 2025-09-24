@@ -14,7 +14,6 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from fastapi import FastAPI, HTTPException, UploadFile, File, BackgroundTasks
 from fastapi.responses import JSONResponse
-from starlette_exporter import PrometheusMiddleware, handle_metrics
 from pydantic import BaseModel
 import numpy as np
 
@@ -30,6 +29,7 @@ try:
     from _shared.cors import apply_cors, get_cors_settings_from_env
     from _shared.health import make_healthz, make_readyz
     from common.request_id import RequestIdMiddleware
+    from _shared.obs.metrics_boot import enable_prometheus_metrics
     from _shared.obs.otel_boot import setup_otel
 except ImportError:
     # Fallback for development
@@ -38,6 +38,7 @@ except ImportError:
     def make_healthz(name, version, ts): return {"status": "ok"}
     def make_readyz(name, version, ts, checks): return {"status": "ready"}, 200
     def setup_otel(app, service_name, version): pass
+    def enable_prometheus_metrics(app, **kwargs): pass
     class RequestIdMiddleware: pass
 
 
@@ -53,9 +54,11 @@ try:
     app.add_middleware(RequestIdMiddleware)
     setup_otel(app, service_name="media-forensics", version="0.1.0")
     
-    if os.getenv("IT_ENABLE_METRICS") == "1":
-        app.add_middleware(PrometheusMiddleware)
-        app.add_route("/metrics", handle_metrics)
+    enable_prometheus_metrics(
+        app,
+        service_name="media-forensics",
+        service_version="0.1.0",
+    )
 except:
     pass  # Skip middleware setup if shared modules not available
 

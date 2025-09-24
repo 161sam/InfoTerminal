@@ -9,17 +9,14 @@ import os
 import time
 import uuid
 from typing import List, Optional
+
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-try:
-    from starlette_exporter import PrometheusMiddleware, handle_metrics
-    PROMETHEUS_AVAILABLE = True
-except ImportError:
-    PROMETHEUS_AVAILABLE = False
+from _shared.obs.metrics_boot import enable_prometheus_metrics
 
 from .error_schemas import StandardError, APIError, ErrorCodes, create_error_response
 
@@ -64,9 +61,8 @@ def setup_standard_middleware(
     )
     
     # Prometheus Metrics Middleware
-    if enable_metrics and PROMETHEUS_AVAILABLE and os.getenv("IT_ENABLE_METRICS") == "1":
-        app.add_middleware(PrometheusMiddleware)
-        app.add_route("/metrics", handle_metrics)
+    if enable_metrics:
+        enable_prometheus_metrics(app, service_name=service_name)
     
     # Request ID Middleware
     @app.middleware("http")

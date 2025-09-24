@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-23T10:00:07Z",
+  "generated_at": "2025-09-24T05:02:57Z",
   "services": [
     {
       "compose_files": [],
@@ -26,7 +26,7 @@
       ],
       "healthz": true,
       "language": "python",
-      "metrics": false,
+      "metrics": true,
       "name": "agent-connector",
       "path": "services/agent-connector",
       "ports": [],
@@ -230,7 +230,7 @@
       "frameworks": [],
       "healthz": true,
       "language": "unknown",
-      "metrics": false,
+      "metrics": true,
       "name": "cache-manager",
       "path": "services/cache-manager",
       "ports": [],
@@ -266,7 +266,7 @@
       ],
       "healthz": true,
       "language": "python",
-      "metrics": false,
+      "metrics": true,
       "name": "collab-hub",
       "path": "services/collab-hub",
       "ports": [
@@ -329,7 +329,7 @@
       ],
       "healthz": true,
       "language": "python",
-      "metrics": false,
+      "metrics": true,
       "name": "egress-gateway",
       "path": "services/egress-gateway",
       "ports": [
@@ -384,7 +384,24 @@
       ],
       "healthz": true,
       "language": "python",
-      "metrics": false,
+      "metrics": true,
+      "name": "feed-ingestor",
+      "path": "services/feed-ingestor",
+      "ports": [],
+      "profiles": [],
+      "readyz": true
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
+      "metrics": true,
       "name": "feedback-aggregator",
       "path": "services/feedback-aggregator",
       "ports": [],
@@ -936,7 +953,7 @@
       ],
       "healthz": true,
       "language": "python",
-      "metrics": false,
+      "metrics": true,
       "name": "openbb-connector",
       "path": "services/openbb-connector",
       "ports": [],
@@ -1055,7 +1072,7 @@
       ],
       "healthz": true,
       "language": "python",
-      "metrics": false,
+      "metrics": true,
       "name": "plugin-runner",
       "path": "services/plugin-runner",
       "ports": [
@@ -1417,7 +1434,7 @@
       "frameworks": [],
       "healthz": true,
       "language": "unknown",
-      "metrics": false,
+      "metrics": true,
       "name": "websocket-manager",
       "path": "services/websocket-manager",
       "ports": [],

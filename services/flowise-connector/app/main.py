@@ -32,9 +32,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, root_validator
 from prometheus_client import Counter, Histogram
 from starlette.responses import JSONResponse
-from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 from app.policy import PolicyDecision, policy_engine
+
+try:
+    from _shared.obs.metrics_boot import enable_prometheus_metrics
+except ImportError:  # pragma: no cover - optional shared package
+    def enable_prometheus_metrics(app, **kwargs):
+        return None
 
 logger = logging.getLogger("flowise-connector")
 logging.basicConfig(level=logging.INFO)
@@ -510,11 +515,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(
-    PrometheusMiddleware,
-    app_name="flowise-connector-mvp",
+enable_prometheus_metrics(
+    app,
+    service_name="flowise-connector",
+    service_version="0.4.0",
 )
-app.add_route("/metrics", handle_metrics)
 
 
 @app.exception_handler(PolicyDeniedError)

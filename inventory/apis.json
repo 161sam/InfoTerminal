@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-23T10:00:08Z",
+  "generated_at": "2025-09-24T05:02:58Z",
   "services": {
     "_shared": [
       {
@@ -955,17 +955,6 @@
     ],
     "cache-manager": [
       {
-        "lineno": 92,
-        "method": "POST",
-        "path": "/cache",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/cache instead"
-      },
-      {
         "lineno": 670,
         "method": "POST",
         "path": "/cache",
@@ -975,6 +964,17 @@
           "200"
         ],
         "summary": "Manually set cache item"
+      },
+      {
+        "lineno": 92,
+        "method": "POST",
+        "path": "/cache",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/cache instead"
       },
       {
         "lineno": 61,
@@ -1043,17 +1043,6 @@
         "summary": "Get comprehensive cache manager health status."
       },
       {
-        "lineno": 128,
-        "method": "POST",
-        "path": "/cache/invalidate",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/cache/invalidate instead"
-      },
-      {
         "lineno": 714,
         "method": "POST",
         "path": "/cache/invalidate",
@@ -1063,6 +1052,17 @@
           "200"
         ],
         "summary": "Invalidate cache items by tags or pattern"
+      },
+      {
+        "lineno": 128,
+        "method": "POST",
+        "path": "/cache/invalidate",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/cache/invalidate instead"
       },
       {
         "lineno": 208,
@@ -1098,17 +1098,6 @@
         "summary": "Restore cache data from a backup."
       },
       {
-        "lineno": 152,
-        "method": "GET",
-        "path": "/cache/stats",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/cache/stats instead"
-      },
-      {
         "lineno": 733,
         "method": "GET",
         "path": "/cache/stats",
@@ -1118,6 +1107,17 @@
           "200"
         ],
         "summary": "Get cache performance statistics"
+      },
+      {
+        "lineno": 152,
+        "method": "GET",
+        "path": "/cache/stats",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/cache/stats instead"
       },
       {
         "lineno": 263,
@@ -1131,17 +1131,6 @@
         "summary": "Get comprehensive cache performance statistics and analytics."
       },
       {
-        "lineno": 140,
-        "method": "POST",
-        "path": "/cache/warm",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/cache/warm instead"
-      },
-      {
         "lineno": 727,
         "method": "POST",
         "path": "/cache/warm",
@@ -1151,6 +1140,17 @@
           "200"
         ],
         "summary": "Warm cache with specified patterns"
+      },
+      {
+        "lineno": 140,
+        "method": "POST",
+        "path": "/cache/warm",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/cache/warm instead"
       },
       {
         "lineno": 243,
@@ -1164,17 +1164,6 @@
         "summary": "Proactively warm cache with frequently accessed data."
       },
       {
-        "lineno": 116,
-        "method": "DELETE",
-        "path": "/cache/{key}",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/cache/{key} instead"
-      },
-      {
         "lineno": 708,
         "method": "DELETE",
         "path": "/cache/{key}",
@@ -1184,6 +1173,17 @@
           "200"
         ],
         "summary": "Delete cache item"
+      },
+      {
+        "lineno": 116,
+        "method": "DELETE",
+        "path": "/cache/{key}",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/cache/{key} instead"
       },
       {
         "lineno": 138,
@@ -1197,17 +1197,6 @@
         "summary": "Delete an item from all cache levels."
       },
       {
-        "lineno": 104,
-        "method": "GET",
-        "path": "/cache/{key}",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/cache/{key} instead"
-      },
-      {
         "lineno": 683,
         "method": "GET",
         "path": "/cache/{key}",
@@ -1217,6 +1206,17 @@
           "200"
         ],
         "summary": "Get cache item by key"
+      },
+      {
+        "lineno": 104,
+        "method": "GET",
+        "path": "/cache/{key}",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/cache/{key} instead"
       },
       {
         "lineno": 96,
@@ -1230,17 +1230,6 @@
         "summary": "Retrieve an item from cache with multi-level lookup."
       },
       {
-        "lineno": 164,
-        "method": "GET",
-        "path": "/health",
-        "response_model": null,
-        "source": "services/cache-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /healthz instead"
-      },
-      {
         "lineno": 739,
         "method": "GET",
         "path": "/health",
@@ -1250,6 +1239,17 @@
           "200"
         ],
         "summary": "Health check endpoint"
+      },
+      {
+        "lineno": 164,
+        "method": "GET",
+        "path": "/health",
+        "response_model": null,
+        "source": "services/cache-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /healthz instead"
       },
       {
         "lineno": 13,
@@ -1298,9 +1298,31 @@
         "summary": "Legacy endpoint - activities are now automatically logged"
       },
       {
-        "lineno": 150,
+        "lineno": 388,
         "method": "POST",
         "path": "/audit",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 362,
+        "method": "POST",
+        "path": "/collab/notes",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 381,
+        "method": "GET",
+        "path": "/collab/notes/{case_id}",
         "response_model": null,
         "source": "services/collab-hub/app/main.py",
         "status_codes": [
@@ -1353,6 +1375,17 @@
         "summary": "Update comment content with edit tracking."
       },
       {
+        "lineno": 284,
+        "method": "POST",
+        "path": "/dossier/export",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 892,
         "method": "GET",
         "path": "/health",
@@ -1375,17 +1408,6 @@
         "summary": "Legacy endpoint - use /healthz (no prefix) instead"
       },
       {
-        "lineno": 62,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/collab-hub/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 13,
         "method": "GET",
         "path": "/healthz",
@@ -1395,6 +1417,17 @@
           "200"
         ],
         "summary": "Liveness probe - returns OK if service is running."
+      },
+      {
+        "lineno": 112,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 84,
@@ -1419,7 +1452,18 @@
         "summary": "Legacy endpoint - use /v1/labels instead"
       },
       {
-        "lineno": 140,
+        "lineno": 925,
+        "method": "GET",
+        "path": "/labels",
+        "response_model": "Dict[str, Any]",
+        "source": "services/collab-hub/routers/collab_hub_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Get label usage statistics across all tasks."
+      },
+      {
+        "lineno": 348,
         "method": "GET",
         "path": "/labels",
         "response_model": null,
@@ -1430,15 +1474,15 @@
         "summary": null
       },
       {
-        "lineno": 925,
+        "lineno": 117,
         "method": "GET",
-        "path": "/labels",
-        "response_model": "Dict[str, Any]",
-        "source": "services/collab-hub/routers/collab_hub_v1.py",
+        "path": "/metrics",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
         "status_codes": [
           "200"
         ],
-        "summary": "Get label usage statistics across all tasks."
+        "summary": null
       },
       {
         "lineno": 19,
@@ -1474,17 +1518,6 @@
         "summary": "Legacy endpoint - use /v1/tasks instead"
       },
       {
-        "lineno": 73,
-        "method": "GET",
-        "path": "/tasks",
-        "response_model": null,
-        "source": "services/collab-hub/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 252,
         "method": "GET",
         "path": "/tasks",
@@ -1494,6 +1527,17 @@
           "200"
         ],
         "summary": "List tasks with filtering, searching, and pagination."
+      },
+      {
+        "lineno": 128,
+        "method": "GET",
+        "path": "/tasks",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 127,
@@ -1507,17 +1551,6 @@
         "summary": "Legacy endpoint - use /v1/tasks instead"
       },
       {
-        "lineno": 78,
-        "method": "POST",
-        "path": "/tasks",
-        "response_model": null,
-        "source": "services/collab-hub/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 309,
         "method": "POST",
         "path": "/tasks",
@@ -1527,6 +1560,17 @@
           "200"
         ],
         "summary": "Create a new task with comprehensive properties."
+      },
+      {
+        "lineno": 133,
+        "method": "POST",
+        "path": "/tasks",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 508,
@@ -1551,17 +1595,6 @@
         "summary": "Legacy endpoint - use /v1/tasks/{task_id} instead"
       },
       {
-        "lineno": 106,
-        "method": "DELETE",
-        "path": "/tasks/{task_id}",
-        "response_model": null,
-        "source": "services/collab-hub/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 468,
         "method": "DELETE",
         "path": "/tasks/{task_id}",
@@ -1571,6 +1604,17 @@
           "200"
         ],
         "summary": "Delete task and associated comments/files."
+      },
+      {
+        "lineno": 161,
+        "method": "DELETE",
+        "path": "/tasks/{task_id}",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 350,
@@ -1606,17 +1650,6 @@
         "summary": "Legacy endpoint - use /v1/tasks/{task_id}/move instead"
       },
       {
-        "lineno": 89,
-        "method": "POST",
-        "path": "/tasks/{task_id}/move",
-        "response_model": null,
-        "source": "services/collab-hub/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 420,
         "method": "POST",
         "path": "/tasks/{task_id}/move",
@@ -1626,6 +1659,17 @@
           "200"
         ],
         "summary": "Move task to different status (todo, in_progress, done, etc.)."
+      },
+      {
+        "lineno": 144,
+        "method": "POST",
+        "path": "/tasks/{task_id}/move",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 163,
@@ -1639,7 +1683,7 @@
         "summary": "Legacy endpoint - use /v1/tasks/{task_id} (PUT) instead"
       },
       {
-        "lineno": 124,
+        "lineno": 268,
         "method": "POST",
         "path": "/tasks/{task_id}/update",
         "response_model": null,
@@ -2274,17 +2318,6 @@
         "summary": "Legacy health endpoint. Use /v1/healthz instead."
       },
       {
-        "lineno": 109,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/federation-proxy/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Deprecated health endpoint."
-      },
-      {
         "lineno": 12,
         "method": "GET",
         "path": "/healthz",
@@ -2294,6 +2327,17 @@
           "200"
         ],
         "summary": "Liveness probe - returns OK if service is running."
+      },
+      {
+        "lineno": 109,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/federation-proxy/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Deprecated health endpoint."
       },
       {
         "lineno": 66,
@@ -2362,18 +2406,86 @@
         "summary": "Deprecated delete remote endpoint."
       }
     ],
-    "feedback-aggregator": [
+    "feed-ingestor": [
       {
-        "lineno": 213,
-        "method": "GET",
-        "path": "/",
+        "lineno": 611,
+        "method": "DELETE",
+        "path": "/feeds/otx/cache",
         "response_model": null,
-        "source": "services/feedback-aggregator/app_v1.py",
+        "source": "services/feed-ingestor/app/main.py",
         "status_codes": [
           "200"
         ],
-        "summary": "Service information and available endpoints."
+        "summary": null
       },
+      {
+        "lineno": 593,
+        "method": "POST",
+        "path": "/feeds/otx/run",
+        "response_model": "OTXRunResponse",
+        "source": "services/feed-ingestor/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 587,
+        "method": "DELETE",
+        "path": "/feeds/rss/items",
+        "response_model": null,
+        "source": "services/feed-ingestor/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 582,
+        "method": "GET",
+        "path": "/feeds/rss/items",
+        "response_model": "List[FeedItem]",
+        "source": "services/feed-ingestor/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 568,
+        "method": "POST",
+        "path": "/feeds/rss/run",
+        "response_model": "RunResponse",
+        "source": "services/feed-ingestor/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 544,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/feed-ingestor/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 554,
+        "method": "GET",
+        "path": "/readyz",
+        "response_model": null,
+        "source": "services/feed-ingestor/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      }
+    ],
+    "feedback-aggregator": [
       {
         "lineno": 75,
         "method": "GET",
@@ -2386,15 +2498,15 @@
         "summary": "Deprecated root endpoint with migration information."
       },
       {
-        "lineno": 182,
+        "lineno": 213,
         "method": "GET",
-        "path": "/feedback",
+        "path": "/",
         "response_model": null,
         "source": "services/feedback-aggregator/app_v1.py",
         "status_codes": [
           "200"
         ],
-        "summary": "Legacy feedback list endpoint. Use /v1/feedback instead."
+        "summary": "Service information and available endpoints."
       },
       {
         "lineno": 105,
@@ -2408,6 +2520,17 @@
         "summary": "Deprecated feedback list endpoint."
       },
       {
+        "lineno": 182,
+        "method": "GET",
+        "path": "/feedback",
+        "response_model": null,
+        "source": "services/feedback-aggregator/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy feedback list endpoint. Use /v1/feedback instead."
+      },
+      {
         "lineno": 103,
         "method": "GET",
         "path": "/feedback",
@@ -2419,17 +2542,6 @@
         "summary": "List feedback entries with comprehensive filtering and search."
       },
       {
-        "lineno": 197,
-        "method": "POST",
-        "path": "/feedback",
-        "response_model": null,
-        "source": "services/feedback-aggregator/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy feedback creation endpoint. Use /v1/feedback instead."
-      },
-      {
         "lineno": 119,
         "method": "POST",
         "path": "/feedback",
@@ -2439,6 +2551,17 @@
           "200"
         ],
         "summary": "Deprecated feedback creation endpoint."
+      },
+      {
+        "lineno": 197,
+        "method": "POST",
+        "path": "/feedback",
+        "response_model": null,
+        "source": "services/feedback-aggregator/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy feedback creation endpoint. Use /v1/feedback instead."
       },
       {
         "lineno": 68,
@@ -2562,17 +2685,6 @@
         "summary": "Vote on feedback item to indicate user support."
       },
       {
-        "lineno": 175,
-        "method": "GET",
-        "path": "/health",
-        "response_model": null,
-        "source": "services/feedback-aggregator/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy health endpoint. Use /v1/healthz instead."
-      },
-      {
         "lineno": 93,
         "method": "GET",
         "path": "/health",
@@ -2582,6 +2694,17 @@
           "200"
         ],
         "summary": "Deprecated health endpoint."
+      },
+      {
+        "lineno": 175,
+        "method": "GET",
+        "path": "/health",
+        "response_model": null,
+        "source": "services/feedback-aggregator/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy health endpoint. Use /v1/healthz instead."
       },
       {
         "lineno": 364,
@@ -2652,17 +2775,6 @@
         "summary": "DEPRECATED: Use /v1/agents/chat instead."
       },
       {
-        "lineno": 548,
-        "method": "POST",
-        "path": "/chat",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Main chat endpoint for agent interactions."
-      },
-      {
         "lineno": 52,
         "method": "POST",
         "path": "/chat",
@@ -2672,6 +2784,28 @@
           "200"
         ],
         "summary": "Chat with AI Agent"
+      },
+      {
+        "lineno": 616,
+        "method": "POST",
+        "path": "/chat",
+        "response_model": "ChatResponse",
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 755,
+        "method": "POST",
+        "path": "/chat/{conversation_id}/cancel",
+        "response_model": "CancelResponse",
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 283,
@@ -2694,17 +2828,6 @@
           "200"
         ],
         "summary": "DEPRECATED: Use /v1/agents/conversations/{conversation_id} instead."
-      },
-      {
-        "lineno": 574,
-        "method": "DELETE",
-        "path": "/conversations/{conversation_id}",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Clear conversation history and context."
       },
       {
         "lineno": 388,
@@ -2740,17 +2863,6 @@
         "summary": "DEPRECATED: Use /v1/agents/conversations/{conversation_id} instead."
       },
       {
-        "lineno": 561,
-        "method": "GET",
-        "path": "/conversations/{conversation_id}/history",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Get conversation execution history."
-      },
-      {
         "lineno": 124,
         "method": "POST",
         "path": "/execute",
@@ -2773,17 +2885,6 @@
         "summary": "DEPRECATED: Use core health endpoint instead."
       },
       {
-        "lineno": 515,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 114,
         "method": "GET",
         "path": "/healthz",
@@ -2793,6 +2894,17 @@
           "200"
         ],
         "summary": "Health Check"
+      },
+      {
+        "lineno": 588,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 146,
@@ -2806,6 +2918,17 @@
         "summary": "Service Information"
       },
       {
+        "lineno": 765,
+        "method": "GET",
+        "path": "/info",
+        "response_model": null,
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 134,
         "method": "GET",
         "path": "/readyz",
@@ -2817,17 +2940,6 @@
         "summary": "DEPRECATED: Use core readiness endpoint instead."
       },
       {
-        "lineno": 519,
-        "method": "GET",
-        "path": "/readyz",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 130,
         "method": "GET",
         "path": "/readyz",
@@ -2837,6 +2949,17 @@
           "200"
         ],
         "summary": "Readiness Check"
+      },
+      {
+        "lineno": 593,
+        "method": "GET",
+        "path": "/readyz",
+        "response_model": null,
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 418,
@@ -2861,17 +2984,6 @@
         "summary": "DEPRECATED: Use /v1/agents/tools instead."
       },
       {
-        "lineno": 523,
-        "method": "GET",
-        "path": "/tools",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "List all available tools for agent workflows."
-      },
-      {
         "lineno": 172,
         "method": "GET",
         "path": "/tools",
@@ -2881,6 +2993,17 @@
           "200"
         ],
         "summary": "List Available Tools"
+      },
+      {
+        "lineno": 610,
+        "method": "GET",
+        "path": "/tools",
+        "response_model": "ToolsResponse",
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 158,
@@ -2894,17 +3017,6 @@
         "summary": "DEPRECATED: Use /v1/agents/execute instead."
       },
       {
-        "lineno": 541,
-        "method": "POST",
-        "path": "/tools/execute",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Execute a single tool directly."
-      },
-      {
         "lineno": 182,
         "method": "GET",
         "path": "/workflows",
@@ -2914,17 +3026,6 @@
           "200"
         ],
         "summary": "DEPRECATED: Use /v1/agents/workflows instead."
-      },
-      {
-        "lineno": 582,
-        "method": "GET",
-        "path": "/workflows",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "List available agent workflow types."
       },
       {
         "lineno": 224,
@@ -2940,7 +3041,7 @@
     ],
     "forensics": [
       {
-        "lineno": 123,
+        "lineno": 127,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -2951,7 +3052,7 @@
         "summary": "Service root information."
       },
       {
-        "lineno": 116,
+        "lineno": 120,
         "method": "GET",
         "path": "/chain/report",
         "response_model": null,
@@ -2973,7 +3074,7 @@
         "summary": "Return the full append-only ledger."
       },
       {
-        "lineno": 92,
+        "lineno": 96,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -2982,17 +3083,6 @@
           "200"
         ],
         "summary": "Legacy health endpoint. Use /healthz instead."
-      },
-      {
-        "lineno": 43,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/forensics/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
       },
       {
         "lineno": 13,
@@ -3006,6 +3096,17 @@
         "summary": "Liveness probe - returns OK if service is running."
       },
       {
+        "lineno": 43,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/forensics/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 39,
         "method": "GET",
         "path": "/info",
@@ -3017,7 +3118,7 @@
         "summary": "Service information and version."
       },
       {
-        "lineno": 98,
+        "lineno": 102,
         "method": "POST",
         "path": "/ingest",
         "response_model": null,
@@ -3050,7 +3151,7 @@
         "summary": "Readiness probe - checks if service can handle requests."
       },
       {
-        "lineno": 110,
+        "lineno": 114,
         "method": "GET",
         "path": "/receipt/{sha256}",
         "response_model": null,
@@ -3127,7 +3228,7 @@
         "summary": "Get cryptographically signed receipt for evidence."
       },
       {
-        "lineno": 104,
+        "lineno": 108,
         "method": "POST",
         "path": "/verify",
         "response_model": null,
@@ -3186,7 +3287,7 @@
     ],
     "graph-api": [
       {
-        "lineno": 935,
+        "lineno": 943,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -3296,94 +3397,6 @@
         "summary": "Find shortest path between two nodes"
       },
       {
-        "lineno": 41,
-        "method": "GET",
-        "path": "/analytics/centrality/betweenness",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Get betweenness centrality for nodes."
-      },
-      {
-        "lineno": 18,
-        "method": "GET",
-        "path": "/analytics/centrality/degree",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Get degree centrality for nodes."
-      },
-      {
-        "lineno": 64,
-        "method": "POST",
-        "path": "/analytics/communities",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Detect communities in the graph."
-      },
-      {
-        "lineno": 98,
-        "method": "GET",
-        "path": "/analytics/embeddings/node2vec",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Compute Node2Vec embeddings via Neo4j GDS (limited set)."
-      },
-      {
-        "lineno": 174,
-        "method": "GET",
-        "path": "/analytics/node/{node_id}/influence",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Analyze a node's influence in its neighborhood."
-      },
-      {
-        "lineno": 118,
-        "method": "GET",
-        "path": "/analytics/pagerank",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
-        "lineno": 136,
-        "method": "POST",
-        "path": "/analytics/paths/shortest",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Find shortest path between two nodes."
-      },
-      {
-        "lineno": 84,
-        "method": "GET",
-        "path": "/analytics/summary",
-        "response_model": null,
-        "source": "services/graph-api/app/routes/analytics.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Get overall graph statistics."
-      },
-      {
         "lineno": 43,
         "method": "GET",
         "path": "/export/graphml",
@@ -3406,7 +3419,7 @@
         "summary": null
       },
       {
-        "lineno": 146,
+        "lineno": 165,
         "method": "POST",
         "path": "/geo/batch-geocode",
         "response_model": null,
@@ -3417,7 +3430,7 @@
         "summary": "Start batch geocoding of nodes in the background."
       },
       {
-        "lineno": 35,
+        "lineno": 38,
         "method": "GET",
         "path": "/geo/entities",
         "response_model": null,
@@ -3428,7 +3441,7 @@
         "summary": "Get entities within a bounding box."
       },
       {
-        "lineno": 68,
+        "lineno": 74,
         "method": "POST",
         "path": "/geo/entities/nearby",
         "response_model": null,
@@ -3439,7 +3452,7 @@
         "summary": "Get entities near a specific point."
       },
       {
-        "lineno": 97,
+        "lineno": 106,
         "method": "POST",
         "path": "/geo/geocode",
         "response_model": null,
@@ -3450,7 +3463,7 @@
         "summary": "Geocode a location string."
       },
       {
-        "lineno": 235,
+        "lineno": 261,
         "method": "GET",
         "path": "/geo/heatmap",
         "response_model": null,
@@ -3461,7 +3474,7 @@
         "summary": "Generate heatmap data for entities in a bounding box."
       },
       {
-        "lineno": 202,
+        "lineno": 228,
         "method": "POST",
         "path": "/geo/node/coordinates",
         "response_model": null,
@@ -3472,7 +3485,7 @@
         "summary": "Manually set coordinates for a node."
       },
       {
-        "lineno": 127,
+        "lineno": 140,
         "method": "POST",
         "path": "/geo/node/geocode",
         "response_model": null,
@@ -3483,7 +3496,7 @@
         "summary": "Geocode a specific node and update it with coordinates."
       },
       {
-        "lineno": 181,
+        "lineno": 204,
         "method": "GET",
         "path": "/geo/statistics",
         "response_model": null,
@@ -3494,7 +3507,51 @@
         "summary": "Get geospatial statistics."
       },
       {
-        "lineno": 137,
+        "lineno": 88,
+        "method": "GET",
+        "path": "/graphs/analysis/communities",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/analytics.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 49,
+        "method": "GET",
+        "path": "/graphs/analysis/degree",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/analytics.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 123,
+        "method": "POST",
+        "path": "/graphs/analysis/shortest-path",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/analytics.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 184,
+        "method": "GET",
+        "path": "/graphs/analysis/subgraph-export",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/analytics.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 143,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -3505,7 +3562,7 @@
         "summary": "Health check endpoint (legacy response schema)."
       },
       {
-        "lineno": 895,
+        "lineno": 903,
         "method": "GET",
         "path": "/neighbors",
         "response_model": null,
@@ -3516,7 +3573,7 @@
         "summary": "DEPRECATED: Use /v1/nodes/{id}/neighbors instead."
       },
       {
-        "lineno": 921,
+        "lineno": 929,
         "method": "GET",
         "path": "/neo4j/ping",
         "response_model": null,
@@ -3527,7 +3584,7 @@
         "summary": "Legacy ping endpoint for Neo4j connectivity."
       },
       {
-        "lineno": 870,
+        "lineno": 878,
         "method": "POST",
         "path": "/query",
         "response_model": null,
@@ -3538,7 +3595,7 @@
         "summary": "DEPRECATED: Use /v1/cypher instead."
       },
       {
-        "lineno": 143,
+        "lineno": 149,
         "method": "GET",
         "path": "/readyz",
         "response_model": null,
@@ -3549,7 +3606,7 @@
         "summary": "Readiness check endpoint with legacy response schema."
       },
       {
-        "lineno": 589,
+        "lineno": 595,
         "method": "POST",
         "path": "/v1/algorithms/centrality",
         "response_model": "JobStatus",
@@ -3560,7 +3617,7 @@
         "summary": "Run centrality algorithm"
       },
       {
-        "lineno": 640,
+        "lineno": 646,
         "method": "POST",
         "path": "/v1/algorithms/communities",
         "response_model": "JobStatus",
@@ -3571,7 +3628,7 @@
         "summary": "Run community detection"
       },
       {
-        "lineno": 377,
+        "lineno": 383,
         "method": "POST",
         "path": "/v1/cypher",
         "response_model": "CypherResponse",
@@ -3582,7 +3639,40 @@
         "summary": "Execute Cypher query"
       },
       {
-        "lineno": 715,
+        "lineno": 83,
+        "method": "POST",
+        "path": "/v1/ingest/plugin-run",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/ingest.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Persist plugin execution artefacts for graph exploration."
+      },
+      {
+        "lineno": 119,
+        "method": "POST",
+        "path": "/v1/ingest/threat-indicators",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/ingest.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Upsert AlienVault OTX style indicators into the graph."
+      },
+      {
+        "lineno": 100,
+        "method": "POST",
+        "path": "/v1/ingest/video",
+        "response_model": null,
+        "source": "services/graph-api/app/routes/ingest.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Store simplified video pipeline metadata for downstream analysis."
+      },
+      {
+        "lineno": 721,
         "method": "DELETE",
         "path": "/v1/jobs/{job_id}",
         "response_model": null,
@@ -3593,7 +3683,7 @@
         "summary": "Cancel job"
       },
       {
-        "lineno": 691,
+        "lineno": 697,
         "method": "GET",
         "path": "/v1/jobs/{job_id}",
         "response_model": "JobStatus",
@@ -3604,7 +3694,7 @@
         "summary": "Get job status"
       },
       {
-        "lineno": 406,
+        "lineno": 412,
         "method": "GET",
         "path": "/v1/nodes/{node_id}/neighbors",
         "response_model": "NeighborResponse",
@@ -3615,7 +3705,7 @@
         "summary": "Get node neighbors"
       },
       {
-        "lineno": 492,
+        "lineno": 498,
         "method": "POST",
         "path": "/v1/shortest-path",
         "response_model": "ShortestPathResponse",
@@ -3795,7 +3885,7 @@
     ],
     "media-forensics": [
       {
-        "lineno": 123,
+        "lineno": 139,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -3806,7 +3896,7 @@
         "summary": "Service root information."
       },
       {
-        "lineno": 116,
+        "lineno": 132,
         "method": "GET",
         "path": "/formats",
         "response_model": null,
@@ -3817,7 +3907,7 @@
         "summary": "Legacy formats endpoint. Use /v1/formats instead."
       },
       {
-        "lineno": 355,
+        "lineno": 358,
         "method": "GET",
         "path": "/formats",
         "response_model": null,
@@ -3828,7 +3918,7 @@
         "summary": "Get supported image formats and limits."
       },
       {
-        "lineno": 92,
+        "lineno": 108,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -3839,7 +3929,7 @@
         "summary": "Legacy health endpoint. Use /healthz instead."
       },
       {
-        "lineno": 88,
+        "lineno": 91,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -3861,7 +3951,7 @@
         "summary": "Liveness probe - returns OK if service is running."
       },
       {
-        "lineno": 98,
+        "lineno": 114,
         "method": "POST",
         "path": "/image/analyze",
         "response_model": null,
@@ -3872,7 +3962,7 @@
         "summary": "Legacy image analysis endpoint. Use /v1/images/analyze instead."
       },
       {
-        "lineno": 233,
+        "lineno": 236,
         "method": "POST",
         "path": "/image/analyze",
         "response_model": "ImageAnalysisResult",
@@ -3883,7 +3973,7 @@
         "summary": "Analyze an uploaded image for forensic information."
       },
       {
-        "lineno": 104,
+        "lineno": 120,
         "method": "POST",
         "path": "/image/compare",
         "response_model": null,
@@ -3894,7 +3984,7 @@
         "summary": "Legacy image comparison endpoint. Use /v1/images/compare instead."
       },
       {
-        "lineno": 288,
+        "lineno": 291,
         "method": "POST",
         "path": "/image/compare",
         "response_model": "ComparisonResult",
@@ -3905,7 +3995,7 @@
         "summary": "Compare two images for similarity."
       },
       {
-        "lineno": 110,
+        "lineno": 126,
         "method": "GET",
         "path": "/image/hash/{hash_value}",
         "response_model": null,
@@ -3916,7 +4006,7 @@
         "summary": "Legacy similar images endpoint. Use /v1/images/similar/{hash_value} instead."
       },
       {
-        "lineno": 343,
+        "lineno": 346,
         "method": "GET",
         "path": "/image/hash/{hash_value}",
         "response_model": null,
@@ -3938,7 +4028,7 @@
         "summary": "Service information and capabilities."
       },
       {
-        "lineno": 93,
+        "lineno": 96,
         "method": "GET",
         "path": "/readyz",
         "response_model": null,
@@ -3960,7 +4050,7 @@
         "summary": "Readiness probe - checks if service can handle requests."
       },
       {
-        "lineno": 367,
+        "lineno": 393,
         "method": "GET",
         "path": "/v1/formats",
         "response_model": "SupportedFormatsInfo",
@@ -3971,7 +4061,7 @@
         "summary": "Get supported image formats and service capabilities."
       },
       {
-        "lineno": 217,
+        "lineno": 243,
         "method": "POST",
         "path": "/v1/images/analyze",
         "response_model": "ImageAnalysisResult",
@@ -3982,7 +4072,7 @@
         "summary": "Analyze an uploaded image for forensic information."
       },
       {
-        "lineno": 388,
+        "lineno": 414,
         "method": "POST",
         "path": "/v1/images/batch/analyze",
         "response_model": "PaginatedResponse",
@@ -3993,7 +4083,7 @@
         "summary": "Analyze multiple images in batch."
       },
       {
-        "lineno": 285,
+        "lineno": 311,
         "method": "POST",
         "path": "/v1/images/compare",
         "response_model": "ComparisonResult",
@@ -4004,7 +4094,7 @@
         "summary": "Compare two images for similarity using perceptual hashing."
       },
       {
-        "lineno": 348,
+        "lineno": 374,
         "method": "GET",
         "path": "/v1/images/similar/{hash_value}",
         "response_model": "SimilarImagesResult",
@@ -4015,7 +4105,7 @@
         "summary": "Find similar images by perceptual hash."
       },
       {
-        "lineno": 435,
+        "lineno": 461,
         "method": "GET",
         "path": "/v1/images/{sha256}/metadata",
         "response_model": null,
@@ -4024,6 +4114,17 @@
           "200"
         ],
         "summary": "Get cached metadata for an image by SHA256 hash."
+      },
+      {
+        "lineno": 475,
+        "method": "POST",
+        "path": "/v1/videos/analyze",
+        "response_model": "VideoAnalysisResponse",
+        "source": "services/media-forensics/routers/media_forensics_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Analyze video file"
       }
     ],
     "opa-audit-sink": [
@@ -4127,17 +4228,6 @@
         "summary": "DEPRECATED: Use /healthz in app_v1.py instead."
       },
       {
-        "lineno": 7,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/opa-audit-sink/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 34,
         "method": "GET",
         "path": "/healthz",
@@ -4147,6 +4237,17 @@
           "200"
         ],
         "summary": "Health Check"
+      },
+      {
+        "lineno": 7,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/opa-audit-sink/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 135,
@@ -4417,7 +4518,7 @@
     ],
     "ops-controller": [
       {
-        "lineno": 143,
+        "lineno": 147,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -4527,7 +4628,7 @@
         "summary": "Webhook endpoint for receiving updates from orchestration tools."
       },
       {
-        "lineno": 136,
+        "lineno": 140,
         "method": "GET",
         "path": "/health/comprehensive",
         "response_model": null,
@@ -4549,7 +4650,7 @@
         "summary": "Comprehensive health check with performance metrics."
       },
       {
-        "lineno": 94,
+        "lineno": 98,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -4582,7 +4683,7 @@
         "summary": "Service information and capabilities."
       },
       {
-        "lineno": 100,
+        "lineno": 104,
         "method": "GET",
         "path": "/ops/stacks",
         "response_model": null,
@@ -4604,7 +4705,7 @@
         "summary": null
       },
       {
-        "lineno": 118,
+        "lineno": 122,
         "method": "POST",
         "path": "/ops/stacks/{name}/down",
         "response_model": null,
@@ -4637,7 +4738,7 @@
         "summary": null
       },
       {
-        "lineno": 124,
+        "lineno": 128,
         "method": "POST",
         "path": "/ops/stacks/{name}/restart",
         "response_model": null,
@@ -4670,7 +4771,7 @@
         "summary": null
       },
       {
-        "lineno": 106,
+        "lineno": 110,
         "method": "GET",
         "path": "/ops/stacks/{name}/status",
         "response_model": null,
@@ -4692,7 +4793,7 @@
         "summary": null
       },
       {
-        "lineno": 112,
+        "lineno": 116,
         "method": "POST",
         "path": "/ops/stacks/{name}/up",
         "response_model": null,
@@ -4791,7 +4892,7 @@
         "summary": "Start a new incognito session."
       },
       {
-        "lineno": 130,
+        "lineno": 134,
         "method": "GET",
         "path": "/security/incognito/status",
         "response_model": null,
@@ -4991,7 +5092,7 @@
     ],
     "performance-monitor": [
       {
-        "lineno": 131,
+        "lineno": 135,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -5000,17 +5101,6 @@
           "200"
         ],
         "summary": "Service root information."
-      },
-      {
-        "lineno": 112,
-        "method": "GET",
-        "path": "/alerts",
-        "response_model": null,
-        "source": "services/performance-monitor/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy alerts endpoint. Use /v1/alerts instead."
       },
       {
         "lineno": 555,
@@ -5024,15 +5114,15 @@
         "summary": "Get recent performance alerts"
       },
       {
-        "lineno": 124,
+        "lineno": 116,
         "method": "GET",
-        "path": "/health",
+        "path": "/alerts",
         "response_model": null,
         "source": "services/performance-monitor/app_v1.py",
         "status_codes": [
           "200"
         ],
-        "summary": "Legacy health endpoint. Use /v1/health/status instead."
+        "summary": "Legacy alerts endpoint. Use /v1/alerts instead."
       },
       {
         "lineno": 567,
@@ -5046,7 +5136,18 @@
         "summary": "Health check endpoint"
       },
       {
-        "lineno": 94,
+        "lineno": 128,
+        "method": "GET",
+        "path": "/health",
+        "response_model": null,
+        "source": "services/performance-monitor/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy health endpoint. Use /v1/health/status instead."
+      },
+      {
+        "lineno": 98,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -5079,17 +5180,6 @@
         "summary": "Service information and capabilities."
       },
       {
-        "lineno": 100,
-        "method": "POST",
-        "path": "/metrics",
-        "response_model": null,
-        "source": "services/performance-monitor/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy metrics endpoint. Use /v1/metrics instead."
-      },
-      {
         "lineno": 532,
         "method": "POST",
         "path": "/metrics",
@@ -5101,15 +5191,15 @@
         "summary": "Record a custom performance metric"
       },
       {
-        "lineno": 106,
-        "method": "GET",
-        "path": "/metrics/{service_name}/summary",
+        "lineno": 104,
+        "method": "POST",
+        "path": "/metrics",
         "response_model": null,
         "source": "services/performance-monitor/app_v1.py",
         "status_codes": [
           "200"
         ],
-        "summary": "Legacy service summary endpoint. Use /v1/services/{service_name}/summary instead."
+        "summary": "Legacy metrics endpoint. Use /v1/metrics instead."
       },
       {
         "lineno": 549,
@@ -5123,15 +5213,15 @@
         "summary": "Get performance summary for a service"
       },
       {
-        "lineno": 118,
+        "lineno": 110,
         "method": "GET",
-        "path": "/metrics/{service_name}/{metric_type}",
+        "path": "/metrics/{service_name}/summary",
         "response_model": null,
         "source": "services/performance-monitor/app_v1.py",
         "status_codes": [
           "200"
         ],
-        "summary": "Legacy service metrics endpoint. Use /v1/services/{service_name}/metrics/{metric_type} instead."
+        "summary": "Legacy service summary endpoint. Use /v1/services/{service_name}/summary instead."
       },
       {
         "lineno": 561,
@@ -5143,6 +5233,17 @@
           "200"
         ],
         "summary": "Get recent metrics for a service and metric type"
+      },
+      {
+        "lineno": 122,
+        "method": "GET",
+        "path": "/metrics/{service_name}/{metric_type}",
+        "response_model": null,
+        "source": "services/performance-monitor/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy service metrics endpoint. Use /v1/services/{service_name}/metrics/{metric_type} instead."
       },
       {
         "lineno": 20,
@@ -5235,7 +5336,7 @@
     ],
     "plugin-runner": [
       {
-        "lineno": 360,
+        "lineno": 421,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -5290,7 +5391,7 @@
         "summary": "Get Plugin Categories"
       },
       {
-        "lineno": 340,
+        "lineno": 401,
         "method": "POST",
         "path": "/execute",
         "response_model": null,
@@ -5312,7 +5413,7 @@
         "summary": "DEPRECATED: Use /v1/plugins/{plugin_name}/execute instead."
       },
       {
-        "lineno": 323,
+        "lineno": 384,
         "method": "GET",
         "path": "/health",
         "response_model": null,
@@ -5422,7 +5523,7 @@
         "summary": "Cancel Job"
       },
       {
-        "lineno": 349,
+        "lineno": 410,
         "method": "GET",
         "path": "/jobs/{job_id}",
         "response_model": null,
@@ -5455,7 +5556,7 @@
         "summary": "Get Job Status"
       },
       {
-        "lineno": 331,
+        "lineno": 392,
         "method": "GET",
         "path": "/plugins",
         "response_model": null,
@@ -5589,7 +5690,7 @@
     ],
     "rag-api": [
       {
-        "lineno": 154,
+        "lineno": 158,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -5600,7 +5701,7 @@
         "summary": "Service root information."
       },
       {
-        "lineno": 141,
+        "lineno": 145,
         "method": "POST",
         "path": "/events/extract",
         "response_model": null,
@@ -5622,7 +5723,7 @@
         "summary": null
       },
       {
-        "lineno": 147,
+        "lineno": 151,
         "method": "POST",
         "path": "/feedback/label",
         "response_model": null,
@@ -5644,7 +5745,7 @@
         "summary": null
       },
       {
-        "lineno": 135,
+        "lineno": 139,
         "method": "POST",
         "path": "/graph/law/upsert",
         "response_model": null,
@@ -5666,7 +5767,7 @@
         "summary": "Upsert a Law node and optional relations in Neo4j (LEGAL-2)."
       },
       {
-        "lineno": 93,
+        "lineno": 97,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -5675,17 +5776,6 @@
           "200"
         ],
         "summary": "Legacy health endpoint. Use /healthz instead."
-      },
-      {
-        "lineno": 54,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/rag-api/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
       },
       {
         "lineno": 13,
@@ -5697,6 +5787,17 @@
           "200"
         ],
         "summary": "Liveness probe - returns OK if service is running."
+      },
+      {
+        "lineno": 54,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/rag-api/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 167,
@@ -5721,7 +5822,7 @@
         "summary": "Service information and capabilities."
       },
       {
-        "lineno": 123,
+        "lineno": 127,
         "method": "GET",
         "path": "/law/context",
         "response_model": null,
@@ -5743,7 +5844,7 @@
         "summary": "Return relevant laws for an entity. Tries graph links; falls back to text retrieval by entity name."
       },
       {
-        "lineno": 117,
+        "lineno": 121,
         "method": "POST",
         "path": "/law/hybrid",
         "response_model": null,
@@ -5765,7 +5866,7 @@
         "summary": null
       },
       {
-        "lineno": 129,
+        "lineno": 133,
         "method": "POST",
         "path": "/law/index",
         "response_model": null,
@@ -5787,7 +5888,7 @@
         "summary": "Index a law paragraph into OpenSearch (idempotent upsert)."
       },
       {
-        "lineno": 105,
+        "lineno": 109,
         "method": "GET",
         "path": "/law/knn",
         "response_model": null,
@@ -5809,7 +5910,7 @@
         "summary": null
       },
       {
-        "lineno": 111,
+        "lineno": 115,
         "method": "POST",
         "path": "/law/knn_vector",
         "response_model": null,
@@ -5831,7 +5932,7 @@
         "summary": null
       },
       {
-        "lineno": 99,
+        "lineno": 103,
         "method": "GET",
         "path": "/law/retrieve",
         "response_model": null,
@@ -5853,17 +5954,6 @@
         "summary": "Retrieve relevant law paragraphs from OpenSearch index."
       },
       {
-        "lineno": 59,
-        "method": "GET",
-        "path": "/readyz",
-        "response_model": null,
-        "source": "services/rag-api/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 19,
         "method": "GET",
         "path": "/readyz",
@@ -5873,6 +5963,17 @@
           "200"
         ],
         "summary": "Readiness probe - checks if service can handle requests."
+      },
+      {
+        "lineno": 59,
+        "method": "GET",
+        "path": "/readyz",
+        "response_model": null,
+        "source": "services/rag-api/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 374,
@@ -6121,7 +6222,7 @@
     ],
     "verification": [
       {
-        "lineno": 123,
+        "lineno": 127,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -6132,7 +6233,7 @@
         "summary": "Service root information."
       },
       {
-        "lineno": 92,
+        "lineno": 96,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -6297,7 +6398,7 @@
         "summary": "Get verification service statistics."
       },
       {
-        "lineno": 98,
+        "lineno": 102,
         "method": "POST",
         "path": "/verify/extract-claims",
         "response_model": null,
@@ -6319,7 +6420,7 @@
         "summary": "Extract verifiable claims from text."
       },
       {
-        "lineno": 104,
+        "lineno": 108,
         "method": "POST",
         "path": "/verify/image",
         "response_model": null,
@@ -6341,7 +6442,7 @@
         "summary": "Analyze uploaded image for forensic indicators and metadata."
       },
       {
-        "lineno": 110,
+        "lineno": 114,
         "method": "POST",
         "path": "/verify/image-similarity",
         "response_model": null,
@@ -6363,7 +6464,7 @@
         "summary": "Compare two images for similarity using perceptual hashing."
       },
       {
-        "lineno": 116,
+        "lineno": 120,
         "method": "GET",
         "path": "/verify/stats",
         "response_model": null,
@@ -6387,17 +6488,6 @@
     ],
     "websocket-manager": [
       {
-        "lineno": 118,
-        "method": "POST",
-        "path": "/broadcast",
-        "response_model": null,
-        "source": "services/websocket-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/broadcast instead"
-      },
-      {
         "lineno": 587,
         "method": "POST",
         "path": "/broadcast",
@@ -6407,6 +6497,17 @@
           "200"
         ],
         "summary": "Broadcast message via REST API"
+      },
+      {
+        "lineno": 118,
+        "method": "POST",
+        "path": "/broadcast",
+        "response_model": null,
+        "source": "services/websocket-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/broadcast instead"
       },
       {
         "lineno": 154,
@@ -6431,17 +6532,6 @@
         "summary": "Broadcast multiple messages in a single operation."
       },
       {
-        "lineno": 142,
-        "method": "POST",
-        "path": "/broadcast/entity-discovered",
-        "response_model": null,
-        "source": "services/websocket-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/broadcast/entity-discovered instead"
-      },
-      {
         "lineno": 641,
         "method": "POST",
         "path": "/broadcast/entity-discovered",
@@ -6451,6 +6541,17 @@
           "200"
         ],
         "summary": "Broadcast new entity discovery"
+      },
+      {
+        "lineno": 142,
+        "method": "POST",
+        "path": "/broadcast/entity-discovered",
+        "response_model": null,
+        "source": "services/websocket-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/broadcast/entity-discovered instead"
       },
       {
         "lineno": 286,
@@ -6464,17 +6565,6 @@
         "summary": "Broadcast new entity discovery notifications."
       },
       {
-        "lineno": 130,
-        "method": "POST",
-        "path": "/broadcast/plugin-status",
-        "response_model": null,
-        "source": "services/websocket-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/broadcast/plugin-status instead"
-      },
-      {
         "lineno": 604,
         "method": "POST",
         "path": "/broadcast/plugin-status",
@@ -6484,6 +6574,17 @@
           "200"
         ],
         "summary": "Broadcast plugin execution status"
+      },
+      {
+        "lineno": 130,
+        "method": "POST",
+        "path": "/broadcast/plugin-status",
+        "response_model": null,
+        "source": "services/websocket-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/broadcast/plugin-status instead"
       },
       {
         "lineno": 241,
@@ -6497,17 +6598,6 @@
         "summary": "Broadcast plugin execution status updates."
       },
       {
-        "lineno": 154,
-        "method": "POST",
-        "path": "/broadcast/system-alert",
-        "response_model": null,
-        "source": "services/websocket-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/broadcast/system-alert instead"
-      },
-      {
         "lineno": 667,
         "method": "POST",
         "path": "/broadcast/system-alert",
@@ -6517,6 +6607,17 @@
           "200"
         ],
         "summary": "Broadcast system alert"
+      },
+      {
+        "lineno": 154,
+        "method": "POST",
+        "path": "/broadcast/system-alert",
+        "response_model": null,
+        "source": "services/websocket-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/broadcast/system-alert instead"
       },
       {
         "lineno": 319,
@@ -6574,17 +6675,6 @@
         "summary": "Broadcast collaboration events for real-time features."
       },
       {
-        "lineno": 178,
-        "method": "GET",
-        "path": "/health",
-        "response_model": null,
-        "source": "services/websocket-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /healthz instead"
-      },
-      {
         "lineno": 696,
         "method": "GET",
         "path": "/health",
@@ -6594,6 +6684,17 @@
           "200"
         ],
         "summary": "Health check endpoint"
+      },
+      {
+        "lineno": 178,
+        "method": "GET",
+        "path": "/health",
+        "response_model": null,
+        "source": "services/websocket-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /healthz instead"
       },
       {
         "lineno": 589,
@@ -6673,17 +6774,6 @@
         "summary": "Readiness probe - checks if service can handle requests."
       },
       {
-        "lineno": 166,
-        "method": "GET",
-        "path": "/stats",
-        "response_model": null,
-        "source": "services/websocket-manager/app_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Legacy endpoint - use /v1/stats instead"
-      },
-      {
         "lineno": 691,
         "method": "GET",
         "path": "/stats",
@@ -6693,6 +6783,17 @@
           "200"
         ],
         "summary": "Get WebSocket manager statistics"
+      },
+      {
+        "lineno": 166,
+        "method": "GET",
+        "path": "/stats",
+        "response_model": null,
+        "source": "services/websocket-manager/app_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Legacy endpoint - use /v1/stats instead"
       },
       {
         "lineno": 508,
@@ -6719,7 +6820,7 @@
     ],
     "xai": [
       {
-        "lineno": 112,
+        "lineno": 116,
         "method": "GET",
         "path": "/",
         "response_model": null,
@@ -6730,7 +6831,7 @@
         "summary": "Service root information."
       },
       {
-        "lineno": 99,
+        "lineno": 103,
         "method": "POST",
         "path": "/explain/text",
         "response_model": null,
@@ -6752,7 +6853,7 @@
         "summary": null
       },
       {
-        "lineno": 93,
+        "lineno": 97,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -6761,17 +6862,6 @@
           "200"
         ],
         "summary": "Legacy health endpoint. Use /healthz instead."
-      },
-      {
-        "lineno": 16,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/xai/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
       },
       {
         "lineno": 13,
@@ -6785,6 +6875,17 @@
         "summary": "Liveness probe - returns OK if service is running."
       },
       {
+        "lineno": 16,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/xai/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 79,
         "method": "GET",
         "path": "/info",
@@ -6796,7 +6897,7 @@
         "summary": "Service information and capabilities."
       },
       {
-        "lineno": 105,
+        "lineno": 109,
         "method": "GET",
         "path": "/model-card",
         "response_model": null,

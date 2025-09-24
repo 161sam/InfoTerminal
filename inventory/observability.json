@@ -1,0 +1,1028 @@
+{
+  "generated_at": "2025-09-24T05:03:01Z",
+  "optional_labels": [
+    "tenant"
+  ],
+  "required_labels": [
+    "service",
+    "version",
+    "env"
+  ],
+  "services": [
+    {
+      "frameworks": [],
+      "healthz": "/healthz",
+      "language": "unknown",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "_shared",
+      "path": "services/_shared",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "agent-connector",
+      "path": "services/agent-connector",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "airflow",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "airflow-db-init",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "airflow-init",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "airflow-scheduler",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "aleph",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "alertmanager",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "auth-service",
+      "path": "services/auth-service",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": "/healthz",
+      "language": "unknown",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "cache-manager",
+      "path": "services/cache-manager",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "typer"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "cli",
+      "path": "cli",
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "collab-hub",
+      "path": "services/collab-hub",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "common",
+      "path": "services/common",
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "doc-entities",
+      "path": "services/doc-entities",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "egress-gateway",
+      "path": "services/egress-gateway",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": "/healthz",
+      "language": "unknown",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "entity-resolution",
+      "path": "services/entity-resolution",
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "federation-proxy",
+      "path": "services/federation-proxy",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "feed-ingestor",
+      "path": "services/feed-ingestor",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "feedback-aggregator",
+      "path": "services/feedback-aggregator",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "flowise-connector",
+      "path": "services/flowise-connector",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "forensics",
+      "path": "services/forensics",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "next"
+      ],
+      "healthz": null,
+      "language": "javascript",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "frontend",
+      "path": "apps/frontend",
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "express"
+      ],
+      "healthz": "/healthz",
+      "language": "javascript",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "gateway",
+      "path": "services/gateway",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "grafana",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "graph-api",
+      "path": "services/graph-api",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "graph-views",
+      "path": "services/graph-views",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "it-neo4j",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "loki",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "media-forensics",
+      "path": "services/media-forensics",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "n8n",
+      "path": "apps/n8n",
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "neo4j",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "nifi",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "oauth2-proxy-airflow",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "oauth2-proxy-superset",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "opa",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "opa-audit-sink",
+      "path": "services/opa-audit-sink",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "openbb-connector",
+      "path": "services/openbb-connector",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "opensearch",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "ops-controller",
+      "path": "services/ops-controller",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": "/healthz",
+      "language": "unknown",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "performance-monitor",
+      "path": "services/performance-monitor",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "plugin-runner",
+      "path": "services/plugin-runner",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "policy",
+      "path": "services/policy",
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "postgres",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "prometheus",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "promtail",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "rag-api",
+      "path": "services/rag-api",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "redis",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "search-api",
+      "path": "services/search-api",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "superset",
+      "path": "apps/superset",
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "superset-db-init",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "superset-init",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "tempo",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "verification",
+      "path": "services/verification",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "verification-service",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": null,
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "web",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [],
+      "healthz": "/healthz",
+      "language": "unknown",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "websocket-manager",
+      "path": "services/websocket-manager",
+      "readyz": "/readyz"
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
+      "metrics": {
+        "labels": [
+          "service",
+          "version",
+          "env"
+        ],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": "/metrics"
+      },
+      "name": "xai",
+      "path": "services/xai",
+      "readyz": "/readyz"
+    }
+  ]
+}
