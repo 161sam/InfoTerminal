@@ -16,7 +16,6 @@ import sys
 from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 # Add service and repo to path
 SERVICE_DIR = Path(__file__).resolve().parent
@@ -33,10 +32,13 @@ from routers.ops_controller_v1 import router as ops_router, initialize_security_
 try:
     from _shared.api_standards.middleware import setup_standard_middleware
     from _shared.api_standards.error_schemas import StandardError
+    from _shared.obs.metrics_boot import enable_prometheus_metrics
     HAS_SHARED_STANDARDS = True
 except ImportError:
     HAS_SHARED_STANDARDS = False
     logging.warning("Shared API standards not available, using fallback")
+    def enable_prometheus_metrics(app, **kwargs):
+        return None
 
 # Import legacy CORS if available
 try:
@@ -75,9 +77,11 @@ else:
         allow_headers=["*"],
     )
 
-# Add Prometheus metrics
-app.add_middleware(PrometheusMiddleware, app_name="ops_controller")
-app.add_route("/metrics", handle_metrics)
+enable_prometheus_metrics(
+    app,
+    service_name="ops-controller",
+    service_version="1.0.0",
+)
 
 # Apply legacy CORS if available
 if HAS_LEGACY_CORS:

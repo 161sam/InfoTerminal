@@ -153,6 +153,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
   - Cache-manager + performance-monitor services exist. 【F:services/cache-manager/main.py†L670-L740】【F:services/performance-monitor/app_v1.py†L1-L120】
   - Gateway enforces rate limits and metrics. 【F:services/gateway/index.ts†L1-L120】
   - Observability compose includes Prometheus/Grafana/Loki/Tempo. 【F:inventory/services.json†L266-L289】
+  - **J1 Baseline – done**: `inventory/observability.json` + `scripts/check_observability_baseline.py` sichern `/healthz`/`/readyz`/`/metrics` mit Standard-Labels über alle App-Services; CI-Job „Observability Baseline“ läuft in `ci.yml`. 【F:inventory/observability.json†L1-L240】【F:scripts/check_observability_baseline.py†L1-L85】【F:.github/workflows/ci.yml†L1-L160】
 - **Gaps / Risks**:
   - Metrics missing for 37 services; alert definitions absent. 【F:inventory/findings.md†L1-L69】
   - Queue/backpressure not configured; scaling docs outdated.

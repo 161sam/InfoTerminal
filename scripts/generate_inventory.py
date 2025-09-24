@@ -155,7 +155,14 @@ def detect_health_endpoints(service_dir: Path) -> Dict[str, bool]:
         except UnicodeDecodeError:
             continue
         for name in targets:
-            if f"/{name}" in content:
+            if name == "metrics":
+                if (
+                    f"/{name}" in content
+                    or "enable_prometheus_metrics" in content
+                    or "setup_standard_middleware" in content
+                ):
+                    targets[name] = True
+            elif f"/{name}" in content:
                 targets[name] = True
     return targets
 
@@ -227,6 +234,36 @@ def collect_services() -> Dict[str, Any]:
     return {
         "generated_at": iso_now(),
         "services": [asdict(record) for record in records],
+    }
+
+
+def build_observability_inventory(services_payload: Dict[str, Any]) -> Dict[str, Any]:
+    required_labels = ["service", "version", "env"]
+    optional_labels = ["tenant"]
+    entries: List[Dict[str, Any]] = []
+
+    for svc in services_payload.get("services", []):
+        entries.append(
+            {
+                "name": svc.get("name"),
+                "path": svc.get("path"),
+                "language": svc.get("language"),
+                "frameworks": svc.get("frameworks", []),
+                "healthz": "/healthz" if svc.get("healthz") else None,
+                "readyz": "/readyz" if svc.get("readyz") else None,
+                "metrics": {
+                    "path": "/metrics" if svc.get("metrics") else None,
+                    "labels": required_labels if svc.get("metrics") else [],
+                    "optional_labels": optional_labels,
+                },
+            }
+        )
+
+    return {
+        "generated_at": iso_now(),
+        "required_labels": required_labels,
+        "optional_labels": optional_labels,
+        "services": entries,
     }
 
 
@@ -445,6 +482,7 @@ def main() -> None:
     db_payload = collect_db_inventory()
     frontend_payload = collect_frontend_inventory()
     findings_report = build_findings(services_payload)
+    observability_payload = build_observability_inventory(services_payload)
 
     outputs = {
         INVENTORY_DIR / "services.json": json.dumps(services_payload, indent=2, sort_keys=True) + "\n",
@@ -452,6 +490,7 @@ def main() -> None:
         INVENTORY_DIR / "db.json": json.dumps(db_payload, indent=2, sort_keys=True) + "\n",
         INVENTORY_DIR / "frontend.json": json.dumps(frontend_payload, indent=2, sort_keys=True) + "\n",
         INVENTORY_DIR / "findings.md": findings_report,
+        INVENTORY_DIR / "observability.json": json.dumps(observability_payload, indent=2, sort_keys=True) + "\n",
     }
 
     write_outputs(outputs, dry_run=args.dry_run)

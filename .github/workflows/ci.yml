@@ -82,3 +82,21 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif
+
+  observability:
+    name: Observability Baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Generate inventory
+        run: python scripts/generate_inventory.py
+      - name: Ensure inventory committed
+        run: git diff --exit-code
+      - name: Observability baseline gate
+        run: python scripts/check_observability_baseline.py

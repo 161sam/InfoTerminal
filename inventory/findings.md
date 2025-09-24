@@ -1,6 +1,6 @@
 # Inventory Findings
 
-Generated: 2025-09-23T10:00:10Z
+Generated: 2025-09-24T05:03:01Z
 
 ## Services missing /healthz
 
@@ -70,18 +70,13 @@ Generated: 2025-09-23T10:00:10Z
 
 ## Services missing /metrics
 
-- agent-connector
 - airflow
 - airflow-db-init
 - airflow-init
 - airflow-scheduler
 - aleph
 - alertmanager
-- cache-manager
-- collab-hub
 - common
-- egress-gateway
-- feedback-aggregator
 - frontend
 - grafana
 - it-neo4j
@@ -92,9 +87,7 @@ Generated: 2025-09-23T10:00:10Z
 - oauth2-proxy-airflow
 - oauth2-proxy-superset
 - opa
-- openbb-connector
 - opensearch
-- plugin-runner
 - policy
 - postgres
 - prometheus
@@ -106,4 +99,3 @@ Generated: 2025-09-23T10:00:10Z
 - tempo
 - verification-service
 - web
-- websocket-manager

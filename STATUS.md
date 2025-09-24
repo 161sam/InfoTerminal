@@ -7,7 +7,7 @@ _Last update: 2025-09-24 – generated after running `scripts/generate_inventory
 ## Executive Summary (Ampel)
 - **Implementierungsgrad – 🟡**: 52 runtime-relevant services detected; core APIs (search, graph, doc-entities, verification) expose v1 contracts, but frontend workflows, ingest orchestration, and collaboration stacks remain partially stubbed. 【F:inventory/services.json†L1-L266】
 - **Docs-Konsistenz – 🔴**: Historic inventories and roadmap notes lag behind current service surface; key docs (API inventory, roadmap intelligence) omit newer connectors and overlays. See [DOCS_DIFF.md](DOCS_DIFF.md) for prioritized deltas.
-- **Observability-Abdeckung – 🔴**: 29 services lack `/healthz`, 31 miss `/readyz`, 37 haben weiterhin keine `/metrics` – Wave 2 ergänzte Resolver-/Geo-Counter, Wave 3 liefert Plugin- sowie Video-Pipeline-Kennzahlen (`plugin_run_total`, `video_frames_processed_total`). 【F:inventory/findings.md†L1-L69】【F:services/plugin-runner/metrics.py†L1-L27】【F:services/media-forensics/metrics.py†L1-L11】
+- **Observability-Abdeckung – 🟡**: Neues Baseline-Gate (J1 abgeschlossen) erzwingt `/healthz`, `/readyz`, `/metrics` mit Labels (`service`, `version`, `env`) über alle Applikationsservices; Infrastruktur-Overlays aus den Compose-Profilen bleiben ohne Probes. 【F:inventory/observability.json†L1-L240】【F:scripts/check_observability_baseline.py†L1-L85】【F:inventory/findings.md†L1-L69】
 - **Security-Reife – 🟡**: Auth-service, gateway, and OPA scaffolding exist, yet proxy hardening, plugin isolation, and geospatial data egress reviews are pending consolidation (rows below).
 - **Release-Risiko – 🔴**: Without synchronized docs, backlog issues, or verified ingest-to-dossier flows, v1.0 cannot be certified; alignment tracked in [ROADMAP_STATUS.md](ROADMAP_STATUS.md) and [backlog/README.md](backlog/README.md).
 - **Phase 2 Aktivierung – 🟡**: Wave 1 (Packages A & F) running per [`PACKAGE_SEQUENCE.yaml`](backlog/phase2/PACKAGE_SEQUENCE.yaml); README enthält jetzt 5-Minuten-Demo (Search → Graph → Dossier) und verweist auf Superset/Grafana Assets. Weitere Waves bleiben blockiert, bis Gates zweimal hintereinander grün sind.
@@ -37,7 +37,8 @@ _Last update: 2025-09-24 – generated after running `scripts/generate_inventory
 | **Docs & Knowledge Base** | Nein | Legacy API inventory, empty roadmap intelligence, outdated port policy. 【F:docs/API_INVENTORY.md†L1-L80】【F:docs/ROADMAP-INTELLIGENCE.md†L1-L2】【F:docs/PORTS_POLICY.md†L1-L20】 | Docs diverge from code; no single baseline for backlog or release gating. | Execute DOCS_DIFF remediation, align docs with new inventory artefacts (Packages L, Release). |
 
 ## Observability Snapshot
-- Missing health probes: 29 services; missing ready probes: 31; missing metrics: 37. 【F:inventory/findings.md†L1-L69】
+- Observability Baseline (`python scripts/check_observability_baseline.py`) läuft nun im CI (`ci.yml`) und prüft das generierte Inventar auf Pflichtlabels + Endpunkte. 【F:scripts/check_observability_baseline.py†L1-L85】【F:.github/workflows/ci.yml†L1-L120】
+- Infrastruktur-Services aus den Compose-Overlays fehlen weiterhin bei `/healthz`, `/readyz`, `/metrics`; Nachverfolgung via `inventory/findings.md`. 【F:inventory/findings.md†L1-L69】
 - Compose overlays expose Prometheus/Grafana/Loki/Tempo on host ports 3412–3416. 【F:inventory/services.json†L266-L289】
 
 ## Inventory Highlights

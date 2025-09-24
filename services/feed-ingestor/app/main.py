@@ -24,7 +24,6 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 from prometheus_client import Counter
 from starlette.middleware.cors import CORSMiddleware
-from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 SERVICE_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SERVICE_DIR.parent.parent.parent
@@ -33,6 +32,7 @@ if str(shared_path) not in sys.path:
     sys.path.insert(0, str(shared_path))
 
 from _shared.clients.graph_ingest import GraphIngestClient
+from _shared.obs.metrics_boot import enable_prometheus_metrics
 
 logger = logging.getLogger("feed-ingestor")
 logging.basicConfig(level=logging.INFO)
@@ -462,8 +462,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(PrometheusMiddleware, app_name="feed-ingestor")
-app.add_route("/metrics", handle_metrics)
+enable_prometheus_metrics(
+    app,
+    service_name="feed-ingestor",
+    service_version="0.1.0",
+)
 
 rss_scheduler_task: Optional[asyncio.Task] = None
 otx_scheduler_task: Optional[asyncio.Task] = None

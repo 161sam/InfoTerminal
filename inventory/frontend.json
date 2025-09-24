@@ -17,6 +17,10 @@
       "route": "/api/agent/health"
     },
     {
+      "file": "apps/frontend/pages/api/agent/mvp-chat.ts",
+      "route": "/api/agent/mvp-chat"
+    },
+    {
       "file": "apps/frontend/pages/api/agent/playbooks.ts",
       "route": "/api/agent/playbooks"
     },
@@ -265,11 +269,15 @@
     "NEXT_PUBLIC_SEARCH_API",
     "NEXT_PUBLIC_VIEWS_API"
   ],
-  "generated_at": "2025-09-23T10:00:10Z",
+  "generated_at": "2025-09-24T05:03:01Z",
   "pages": [
     {
       "file": "apps/frontend/pages/agent/[tab].tsx",
       "route": "/agent/[tab]"
+    },
+    {
+      "file": "apps/frontend/pages/agent/mvp.tsx",
+      "route": "/agent/mvp"
     },
     {
       "file": "apps/frontend/pages/agent.tsx",

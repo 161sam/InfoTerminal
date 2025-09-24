@@ -20,6 +20,12 @@ endpoints and Grafana renders dashboards from the collected time series.
 | `doc-entities` | `doc_entities_resolver_runs_total`, `doc_entities_resolver_outcomes_total`, `doc_entities_linking_status_total`, `doc_entities_resolver_latency_seconds` |
 | `graph-views` | `graph_views_requests_total`, `graph_views_errors_total` |
 
+## Label Baseline & CI Gate
+
+- Every FastAPI service enables metrics via `_shared.obs.metrics_boot.enable_prometheus_metrics`, which injects constant labels `service`, `version`, and `env` (optionally `tenant`).
+- `/healthz`, `/readyz`, and `/metrics` endpoints are mandatory. The generated `inventory/observability.json` captures coverage per service.
+- CI runs the **Observability Baseline** job (`python scripts/generate_inventory.py` → `python scripts/check_observability_baseline.py`) to fail fast if endpoints or labels are missing.
+
 ## Prometheus
 
 - Scrape interval: **10s**
