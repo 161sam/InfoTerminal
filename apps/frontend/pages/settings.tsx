@@ -16,7 +16,20 @@ import SettingsOverview from "@/components/settings/overview/SettingsOverview";
 import SettingsTabNavigation from "@/components/settings/navigation/SettingsTabNavigation";
 import type { SettingsTab } from "@/components/settings/navigation/SettingsTabNavigation";
 import { loadEndpoints, defaultEndpoints } from "@/lib/endpoints";
-import { SERVICE_ENDPOINTS, calculateEndpointSummary } from "@/lib/settings/serviceEndpoints";
+import { SERVICE_ENDPOINTS as RAW_SERVICE_ENDPOINTS, calculateEndpointSummary } from "@/lib/settings/serviceEndpoints";
+import { ComponentType } from "react";
+import { LucideIcon } from "lucide-react";
+
+// Helper to wrap LucideIcon to expected props
+function wrapLucideIcon(Icon: LucideIcon): ComponentType<{ size?: number; className?: string }> {
+  return ({ size = 20, className }) => <Icon size={size} className={className} />;
+}
+
+// Map SERVICE_ENDPOINTS to expected icon type
+const SERVICE_ENDPOINTS = RAW_SERVICE_ENDPOINTS.map(endpoint => ({
+  ...endpoint,
+  icon: wrapLucideIcon(endpoint.icon),
+}));
 import { useActiveTab } from "@/hooks/useActiveTab";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { useProtectedRoute } from "@/lib/auth/guards";
@@ -69,7 +82,7 @@ export default function SettingsPage() {
       healthy: endpointSummary.healthy,
       operationsStatus: "Active" as const,
       theme: "System",
-      runtime: isClient ? "Client" : "Server",
+      runtime: isClient ? "Client" as const : "Server" as const,
     };
   }, [isClient]);
 

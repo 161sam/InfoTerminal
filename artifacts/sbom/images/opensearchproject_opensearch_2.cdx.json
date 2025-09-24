@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.4",
-  "serialNumber": "urn:uuid:3f4776e6-6874-4e08-9db1-f3b3cfa37853",
+  "serialNumber": "urn:uuid:3dd56cc3-038d-426b-87ca-800d91e1138d",
   "version": 1,
   "metadata": {
-    "timestamp": "2025-09-24T15:22:03+02:00",
+    "timestamp": "2025-09-24T15:40:40+02:00",
     "tools": [
       {
         "vendor": "anchore",
@@ -7329,6 +7329,80 @@
     {
       "type": "library",
       "group": "net.bytebuddy",
+      "name": "byte-buddy",
+      "version": "1.9.7",
+      "cpe": "cpe:2.3:a:byte-buddy:byte-buddy:1.9.7:*:*:*:*:*:*:*",
+      "purl": "pkg:maven/net.bytebuddy/byte-buddy@1.9.7",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "java-cataloger"
+        },
+        {
+          "name": "syft:package:language",
+          "value": "java"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "JavaMetadata"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "java-archive"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:byte-buddy:byte_buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:byte_buddy:byte-buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:byte_buddy:byte_buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:bytebuddy:byte-buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:bytebuddy:byte_buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:byte:byte-buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:byte:byte_buddy:1.9.7:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:layerID",
+          "value": "sha256:adb42394bfc39d009a381306ea656d78242a62ac11a9936e8361d58c4e860b25"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/usr/share/opensearch/plugins/opensearch-performance-analyzer/byte-buddy-1.9.7.jar"
+        },
+        {
+          "name": "syft:metadata:-:artifactID",
+          "value": "byte-buddy"
+        },
+        {
+          "name": "syft:metadata:-:groupID",
+          "value": "net.bytebuddy"
+        },
+        {
+          "name": "syft:metadata:virtualPath",
+          "value": "/usr/share/opensearch/plugins/opensearch-performance-analyzer/byte-buddy-1.9.7.jar:byte-buddy"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "group": "net.bytebuddy",
       "name": "byte-buddy-agent",
       "version": "1.9.7",
       "cpe": "cpe:2.3:a:byte-buddy-agent:byte-buddy-agent:1.9.7:*:*:*:*:*:*:*",
@@ -7542,7 +7616,7 @@
         },
         {
           "name": "syft:metadata:-:artifactID",
-          "value": "byte-buddy"
+          "value": "byte-buddy-dep"
         },
         {
           "name": "syft:metadata:-:groupID",

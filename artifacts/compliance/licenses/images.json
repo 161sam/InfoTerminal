@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-24T13:23:25.351562+00:00",
+  "generated_at": "2025-09-24T13:41:25.308881+00:00",
   "images": [
     {
       "image": "alephdata/aleph:latest",
@@ -2522,7 +2522,7 @@
         "process::0.10.1",
         "qrcode-terminal::0.12.0"
       ],
-      "component_count": 496,
+      "component_count": 513,
       "sources": [
         "deploy/kubernetes/production.yaml::Deployment/gateway::gateway"
       ],
@@ -4547,6 +4547,7 @@
         "blake2b::2.0.0",
         "byte-buddy-agent::1.9.7",
         "byte-buddy-dep::1.9.7",
+        "byte-buddy::1.9.7",
         "cache-common::2.19.3",
         "checker-qual::3.29.0",
         "checker-qual::3.37.0",
@@ -5026,7 +5027,7 @@
         "zstd-jni::1.5.5-5",
         "zxcvbn::1.9.0"
       ],
-      "component_count": 800,
+      "component_count": 801,
       "sources": [
         "docker-compose.yml::opensearch"
       ],

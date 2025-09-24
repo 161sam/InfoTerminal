@@ -1,8 +1,8 @@
 FROM node:20-alpine
 WORKDIR /app
 COPY package.json ./
-RUN npm install --omit=dev
+RUN npm install --omit=dev && npm install ts-node typescript
 COPY . .
 ENV PORT=8080
 EXPOSE 8080
-CMD ["node", "-e", "console.log('gateway container build for SBOM');"]
+CMD ["node", "server.js"]
