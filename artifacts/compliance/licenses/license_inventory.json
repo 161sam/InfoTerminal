@@ -1,0 +1,442 @@
+[
+  {
+    "ecosystem": "node",
+    "name": "autoprefixer",
+    "version": "10.4.21",
+    "license": "MIT",
+    "url": "postcss/autoprefixer",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "class-variance-authority",
+    "version": "0.7.1",
+    "license": "Apache-2.0",
+    "url": "https://github.com/joe-bell/cva.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "clsx",
+    "version": "2.1.1",
+    "license": "MIT",
+    "url": "lukeed/clsx",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "coverage-v8",
+    "version": "1.6.1",
+    "license": "MIT",
+    "url": "https://github.com/vitest-dev/vitest.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "cytoscape",
+    "version": "3.33.1",
+    "license": "MIT",
+    "url": "https://github.com/cytoscape/cytoscape.js.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "deck.gl",
+    "version": "8.9.36",
+    "license": "MIT",
+    "url": "https://github.com/visgl/deck.gl.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "eslint",
+    "version": "9.35.0",
+    "license": "MIT",
+    "url": "eslint/eslint",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "eslint-plugin-local-rules",
+    "version": "3.0.2",
+    "license": "MIT",
+    "url": "https://github.com/cletusw/eslint-plugin-local-rules.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "formidable",
+    "version": "3.5.4",
+    "license": "MIT",
+    "url": "node-formidable/formidable",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "forms",
+    "version": "0.5.10",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/tailwindcss-forms",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "framer-motion",
+    "version": "11.18.2",
+    "license": "MIT",
+    "url": "https://github.com/motiondivision/motion/",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "husky",
+    "version": "9.1.7",
+    "license": "MIT",
+    "url": "https://github.com/typicode/husky.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "install",
+    "version": "0.13.0",
+    "license": "MIT",
+    "url": "git://github.com/benjamn/install.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "isomorphic-unfetch",
+    "version": "4.0.2",
+    "license": "MIT",
+    "url": "developit/unfetch",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "jest-dom",
+    "version": "6.8.0",
+    "license": "MIT",
+    "url": "https://github.com/testing-library/jest-dom",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "jsdom",
+    "version": "27.0.0",
+    "license": "MIT",
+    "url": "https://github.com/jsdom/jsdom.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "layers",
+    "version": "9.1.14",
+    "license": "MIT",
+    "url": "https://github.com/visgl/deck.gl.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "leaflet",
+    "version": "1.9.4",
+    "license": "BSD-2-Clause",
+    "url": "git://github.com/Leaflet/Leaflet.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "line-clamp",
+    "version": "0.4.4",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/tailwindcss-line-clamp",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "lucide-react",
+    "version": "0.542.0",
+    "license": "ISC",
+    "url": "https://github.com/lucide-icons/lucide.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "next",
+    "version": "14.2.5",
+    "license": "MIT",
+    "url": "vercel/next.js",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "next-auth",
+    "version": "4.24.11",
+    "license": "ISC",
+    "url": "https://github.com/nextauthjs/next-auth.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "npx",
+    "version": "10.2.2",
+    "license": "ISC",
+    "url": "https://github.com/npm/npx",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "pdf-parse",
+    "version": "1.1.1",
+    "license": "MIT",
+    "url": "https://gitlab.com/autokent/pdf-parse.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "playwright",
+    "version": "1.55.0",
+    "license": "Apache-2.0",
+    "url": "https://github.com/microsoft/playwright.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "postcss",
+    "version": "4.1.13",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/tailwindcss.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "postcss",
+    "version": "8.5.6",
+    "license": "MIT",
+    "url": "postcss/postcss",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "prettier",
+    "version": "3.6.2",
+    "license": "MIT",
+    "url": "prettier/prettier",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react",
+    "version": "16.3.0",
+    "license": "MIT",
+    "url": "https://github.com/testing-library/react-testing-library",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react",
+    "version": "18.3.1",
+    "license": "MIT",
+    "url": "https://github.com/facebook/react.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react",
+    "version": "2.2.0",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/heroicons.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react",
+    "version": "2.2.7",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/headlessui.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react",
+    "version": "8.9.36",
+    "license": "MIT",
+    "url": "https://github.com/visgl/deck.gl.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react-cytoscapejs",
+    "version": "2.0.0",
+    "license": "MIT",
+    "url": "https://github.com/plotly/react-cytoscapejs.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react-dom",
+    "version": "18.3.1",
+    "license": "MIT",
+    "url": "https://github.com/facebook/react.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react-leaflet",
+    "version": "4.2.1",
+    "license": "Hippocratic-2.1",
+    "url": "https://github.com/PaulLeCam/react-leaflet.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "react-router-dom",
+    "version": "7.9.1",
+    "license": "MIT",
+    "url": "https://github.com/remix-run/react-router",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "recharts",
+    "version": "3.2.0",
+    "license": "MIT",
+    "url": "https://github.com/recharts/recharts.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "tailwind-merge",
+    "version": "2.6.0",
+    "license": "MIT",
+    "url": "https://github.com/dcastil/tailwind-merge.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "tailwindcss",
+    "version": "4.1.13",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/tailwindcss.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "test",
+    "version": "1.55.0",
+    "license": "Apache-2.0",
+    "url": "https://github.com/microsoft/playwright.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "typescript",
+    "version": "5.9.2",
+    "license": "Apache-2.0",
+    "url": "https://github.com/microsoft/TypeScript.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "typography",
+    "version": "0.5.16",
+    "license": "MIT",
+    "url": "https://github.com/tailwindlabs/tailwindcss-typography",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "vite-tsconfig-paths",
+    "version": "4.3.2",
+    "license": "MIT",
+    "url": "aleclarson/vite-tsconfig-paths",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "node",
+    "name": "vitest",
+    "version": "1.6.1",
+    "license": "MIT",
+    "url": "https://github.com/vitest-dev/vitest.git",
+    "source_bom": "frontend-node.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "anyio",
+    "version": "4.10.0",
+    "license": "UNKNOWN",
+    "url": "https://github.com/agronholm/anyio",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "fastapi",
+    "version": "0.116.1",
+    "license": "MIT License",
+    "url": "https://github.com/fastapi/fastapi",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "httpx",
+    "version": "0.28.1",
+    "license": "BSD-3-Clause",
+    "url": "https://github.com/encode/httpx",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "neo4j",
+    "version": "5.28.2",
+    "license": "Apache License, Version 2.0",
+    "url": "https://neo4j.com/",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "pydantic",
+    "version": "2.11.9",
+    "license": "MIT License",
+    "url": "https://github.com/pydantic/pydantic",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "pytest",
+    "version": "8.4.2",
+    "license": "MIT",
+    "url": "https://docs.pytest.org/en/latest/",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "pytest-asyncio",
+    "version": "1.2.0",
+    "license": "UNKNOWN",
+    "url": "https://github.com/pytest-dev/pytest-asyncio",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "pytest-cov",
+    "version": "7.0.0",
+    "license": "MIT License",
+    "url": "https://pypi.org/project/pytest-cov/",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "ruff",
+    "version": "0.13.1",
+    "license": "MIT License",
+    "url": "https://docs.astral.sh/ruff",
+    "source_bom": "backend-python.cdx.json"
+  },
+  {
+    "ecosystem": "python",
+    "name": "uvicorn",
+    "version": "0.36.0",
+    "license": "BSD License",
+    "url": "https://uvicorn.dev/",
+    "source_bom": "backend-python.cdx.json"
+  }
+]

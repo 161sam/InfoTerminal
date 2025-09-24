@@ -1,0 +1,16 @@
+InfoTerminal — NOTICE
+=====================
+
+Copyright (c) 2025, InfoTerminal contributors.
+
+InfoTerminal beinhaltet Open-Source-Softwarekomponenten. Die vollständige Liste der
+Quellabhängigkeiten, inkl. Lizenz- und Repository-Angaben, befindet sich in den
+folgend genannten Artefakten:
+
+- `artifacts/sbom/source/backend-python.cdx.json`
+- `artifacts/sbom/source/frontend-node.cdx.json`
+- `artifacts/compliance/licenses/license_inventory.csv`
+
+Diese Dateien werden automatisiert über `python scripts/generate_source_sbom.py`
+aktualisiert. Die Integrität wird durch `python scripts/check_sbom_source_integrity.py`
+(Teil des GitHub CI-Jobs `sbom_source_integrity`) überprüft.

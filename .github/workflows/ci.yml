@@ -56,6 +56,29 @@ jobs:
       - name: Test
         run: npm -w apps/frontend run test --silent -- --reporter=dot
 
+  sbom-source-integrity:
+    name: Supply-Chain (SBOM Source)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Generate source SBOMs
+        run: python scripts/generate_source_sbom.py
+      - name: Verify SBOM artefacts committed
+        run: |
+          git status --short artifacts/sbom artifacts/compliance || true
+          git diff --stat
+          git diff --exit-code
+      - name: sbom_source_integrity gate
+        run: python scripts/check_sbom_source_integrity.py
+
   gitleaks:
     name: Secrets Scan (gitleaks → SARIF)
     runs-on: ubuntu-latest
