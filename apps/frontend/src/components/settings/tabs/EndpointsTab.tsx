@@ -42,7 +42,10 @@ async function testEndpoint(
       return { status: "fail", latency };
     }
 
-    const info = await response.json().catch(() => ({}));
+    const info =
+      typeof response.json === "function"
+        ? await response.json().catch(() => ({}))
+        : {};
     let status: Status = "ok";
 
     if (info.status === "degraded") status = "degraded";
@@ -240,7 +243,7 @@ export const EndpointsTab: React.FC<EndpointsTabProps> = ({ serviceEndpoints }) 
 
                 <div className="flex items-center gap-2">
                   <Field
-                    label=""
+                    label={endpoint.label}
                     name={`endpoint-${String(endpoint.key).toLowerCase()}`}
                     id={`endpoint-${String(endpoint.key).toLowerCase()}`}
                     value={endpointValues[endpoint.key] || ""}

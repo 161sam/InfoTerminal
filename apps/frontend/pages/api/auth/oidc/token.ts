@@ -3,7 +3,7 @@ import {
   buildSessionPayload,
   clearAuthCookies,
   ensureNoCache,
-  refreshWithToken,
+  exchangeAuthorizationCode,
 } from "@/server/oidc";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -12,24 +12,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const refreshToken = req.cookies?.refresh_token;
+  const { code, codeVerifier, redirectUri } = req.body ?? {};
 
-  if (!refreshToken) {
-    ensureNoCache(res);
-    return res.status(401).json({ error: "No refresh token" });
+  if (!code || !codeVerifier) {
+    return res.status(400).json({ error: "Missing authorization code or verifier" });
   }
 
   try {
-    const tokenResponse = await refreshWithToken(refreshToken);
+    const tokenResponse = await exchangeAuthorizationCode(code, codeVerifier, redirectUri);
     const payload = buildSessionPayload(res, tokenResponse);
     ensureNoCache(res);
     return res.status(200).json(payload);
   } catch (error: any) {
     const status = typeof error?.status === "number" ? error.status : 500;
-    if (status === 401) {
+    if (status === 401 || status === 400) {
       clearAuthCookies(res);
     }
-    const responseBody = error?.payload || { error: error?.message || "Token refresh failed" };
+    const responseBody = error?.payload || {
+      error: error?.message || "OIDC token exchange failed",
+    };
     return res.status(status).json(responseBody);
   }
 }

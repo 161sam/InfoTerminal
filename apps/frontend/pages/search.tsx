@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import config from "@/lib/config";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
 // Import modularized components
 import SearchHeader from "@/components/search/panels/SearchHeader";
@@ -40,59 +41,70 @@ export default function SearchPage() {
   const [sort, setSort] = useState("relevance");
   const controller = useRef<AbortController | null>(null);
 
-  const runSearch = async (searchQuery?: string) => {
-    const searchTerm = searchQuery || query;
-    if (!searchTerm.trim()) return;
+  const performSearch = useCallback(
+    async (searchTerm: string) => {
+      if (!searchTerm.trim()) return;
 
-    const filterParams: Record<string, string> = {
-      type: filters.type,
-      dateRange: filters.dateRange,
-      source: filters.source,
-      minScore: String(filters.minScore),
-    };
+      const filterParams: Record<string, string> = {
+        type: filters.type,
+        dateRange: filters.dateRange,
+        source: filters.source,
+        minScore: String(filters.minScore),
+      };
 
-    const params = new URLSearchParams({
-      q: searchTerm,
-      sort,
-      limit: "20",
-      ...filterParams,
-    });
+      const params = new URLSearchParams({
+        q: searchTerm,
+        sort,
+        limit: "20",
+        ...filterParams,
+      });
 
-    setIsLoading(true);
-    setError(null);
+      setIsLoading(true);
+      setError(null);
 
-    // Cancel previous request
-    controller.current?.abort();
-    const c = new AbortController();
-    controller.current = c;
+      // Cancel previous request
+      controller.current?.abort();
+      const c = new AbortController();
+      controller.current = c;
 
-    const startTime = performance.now();
+      const startTime = performance.now();
 
-    try {
-      let response = await fetch(`/api/search?${params.toString()}`, { signal: c.signal });
+      try {
+        let response = await fetch(`/api/search?${params.toString()}`, { signal: c.signal });
 
-      if (response.status === 404) {
-        const base = config?.SEARCH_API;
-        if (!base) throw new Error("Search API not configured");
-        response = await fetch(`${base}/search?${params.toString()}`, { signal: c.signal });
+        if (response.status === 404) {
+          const base = config?.SEARCH_API;
+          if (!base) throw new Error("Search API not configured");
+          response = await fetch(`${base}/search?${params.toString()}`, { signal: c.signal });
+        }
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        const searchResults = data.items || data.results || [];
+
+        setResults(searchResults);
+        setTotalResults(data.total || searchResults.length);
+        setSearchTime(Math.round(performance.now() - startTime));
+      } catch (e: any) {
+        if (e.name !== "AbortError") {
+          setError(e.message || "Search failed");
+        }
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [filters.dateRange, filters.minScore, filters.source, filters.type, sort],
+  );
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const data = await response.json();
-      const searchResults = data.items || data.results || [];
-
-      setResults(searchResults);
-      setTotalResults(data.total || searchResults.length);
-      setSearchTime(Math.round(performance.now() - startTime));
-    } catch (e: any) {
-      if (e.name !== "AbortError") {
-        setError(e.message || "Search failed");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const runSearch = useCallback(
+    async (searchQuery?: string) => {
+      const searchTerm = searchQuery || query;
+      if (!searchTerm.trim()) return;
+      await performSearch(searchTerm);
+    },
+    [performSearch, query],
+  );
 
   const clearSearch = () => {
     setQuery("");
@@ -123,6 +135,16 @@ export default function SearchPage() {
     setQuery(suggestion);
     runSearch(suggestion);
   };
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const initialQuery = router.query?.q;
+    if (typeof initialQuery === "string" && initialQuery.trim()) {
+      setQuery(initialQuery);
+      performSearch(initialQuery);
+    }
+  }, [router.query?.q, performSearch]);
 
   return (
     <DashboardLayout title="Intelligent Search" subtitle="Search across all your data sources">

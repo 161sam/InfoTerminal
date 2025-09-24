@@ -173,6 +173,7 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
 - **Current Evidence**:
   - Frontend exposes settings pages and feature toggles. 【F:inventory/frontend.json†L150-L210】【F:apps/frontend/src/lib/config.ts†L1-L80】
   - Components for collaboration, maps, analytics present. 【F:apps/frontend/src/components/collaboration/CollaborationBoard.tsx†L1-L120】
+  - **K1: done** – PKCE-basierter Login-/Callback-/Logout-Flow mit HttpOnly-Refresh-Cookie und Mock-IdP-Quickstart. 【F:apps/frontend/pages/login.tsx†L1-L34】【F:apps/frontend/pages/auth/callback.tsx†L1-L115】【F:apps/frontend/pages/logout.tsx†L1-L58】【F:docs/auth/quickstart.md†L1-L120】
 - **Gaps / Risks**:
   - Live indicators rely on placeholders; login flow not connected to OIDC; PWA fallback absent.
   - Performance metrics not tracked (no LCP/TTI instrumentation).

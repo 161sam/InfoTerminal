@@ -33,9 +33,6 @@ const applyTheme = (mode: Theme) => {
   root.setAttribute("data-theme", isDark ? "dark" : "light");
   root.setAttribute("data-theme-owner", "tp");
 
-  // KORREKTUR: Auch body synchron halten (für CSS-Variablen)
-  document.body?.classList.toggle("dark", isDark);
-
   // Update meta theme-color
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute("content", isDark ? "#1f2937" : "#ffffff");
@@ -58,7 +55,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const initialTheme: Theme =
-      saved && ["light", "dark", "system"].includes(saved) ? (saved as Theme) : "system";
+      saved && ["light", "dark", "system"].includes(saved) ? (saved as Theme) : "light";
     setTheme(initialTheme);
 
     // Apply theme immediately
