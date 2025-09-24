@@ -107,7 +107,10 @@ export default function ConsolidatedGraphPage() {
 
   if (guardStatus === "checking" || guardStatus === "redirecting") {
     return (
-      <DashboardLayout title="Graph Analysis" subtitle="Visualize, analyze and explore your knowledge graph">
+      <DashboardLayout
+        title="Graph Analysis"
+        subtitle="Visualize, analyze and explore your knowledge graph"
+      >
         <div className="py-24 flex justify-center">
           <LoadingSpinner layout="block" text="Checking your session…" />
         </div>

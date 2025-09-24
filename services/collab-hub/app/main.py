@@ -189,11 +189,166 @@ class DossierExportRequest(BaseModel):
     notes: List[str] = Field(default_factory=list)
 
 
+class DossierTemplateItem(BaseModel):
+    id: str
+    type: str
+    value: str
+    metadata: Dict[str, str] = Field(default_factory=dict)
+
+
+class DossierTemplateSettings(BaseModel):
+    includeTimeline: bool
+    includeSummary: bool
+    includeVisualization: bool
+    confidenceThreshold: float
+    language: str
+    dateRange: Optional[Dict[str, str]] = None
+
+
+class DossierTemplateInfo(BaseModel):
+    id: str
+    name: str
+    description: str
+    sections: List[str]
+    formats: List[str]
+    recommendedFor: str
+    estimatedDuration: str
+    updatedAt: str
+    preview: str
+    tags: List[str] = Field(default_factory=list)
+    items: List[DossierTemplateItem] = Field(default_factory=list)
+    settings: DossierTemplateSettings
+
+
+DOSSIER_TEMPLATE_CATALOG: List[DossierTemplateInfo] = [
+    DossierTemplateInfo(
+        id="standard",
+        name="Standard Investigation",
+        description="Full investigation dossier with summary, key entities, references, and analyst notes.",
+        sections=[
+            "Executive Summary",
+            "Assigned Analysts",
+            "Key Entities",
+            "Referenced Intelligence",
+            "Analyst Notes",
+        ],
+        formats=["markdown", "pdf"],
+        recommendedFor="Deep dives that need to be shared with decision makers.",
+        estimatedDuration="4-6 minutes",
+        updatedAt="2025-02-12",
+        preview="# Standard Investigation\n\n## Executive Summary\nConcise case overview with threat focus...",
+        tags=["investigation", "collaboration", "threat-intel"],
+        items=[
+            DossierTemplateItem(
+                id="executive_summary",
+                type="section",
+                value="Executive Summary",
+                metadata={"description": "High-level overview of the case."},
+            ),
+            DossierTemplateItem(
+                id="key_entities",
+                type="section",
+                value="Key Entities",
+                metadata={"description": "Entities of interest with roles."},
+            ),
+            DossierTemplateItem(
+                id="references",
+                type="section",
+                value="Referenced Intelligence",
+                metadata={"description": "Source links and supporting evidence."},
+            ),
+            DossierTemplateItem(
+                id="analyst_notes",
+                type="section",
+                value="Analyst Notes",
+                metadata={"description": "Contextual notes and next steps."},
+            ),
+        ],
+        settings=DossierTemplateSettings(
+            includeTimeline=True,
+            includeSummary=True,
+            includeVisualization=True,
+            confidenceThreshold=0.8,
+            language="en",
+            dateRange=None,
+        ),
+    ),
+    DossierTemplateInfo(
+        id="brief",
+        name="Executive Brief",
+        description="One-page snapshot with top entities and immediate actions.",
+        sections=["Snapshot", "Top Entities", "Immediate Actions"],
+        formats=["markdown", "pdf"],
+        recommendedFor="Quick briefings when time to decision is limited.",
+        estimatedDuration="2-3 minutes",
+        updatedAt="2025-02-12",
+        preview="# Executive Brief\n\n## Snapshot\nRapid situational overview...",
+        tags=["executive", "summary"],
+        items=[
+            DossierTemplateItem(
+                id="snapshot",
+                type="section",
+                value="Snapshot",
+                metadata={"description": "Short summary for leadership."},
+            ),
+            DossierTemplateItem(
+                id="top_entities",
+                type="section",
+                value="Top Entities",
+                metadata={"description": "Key entities in focus (max five)."},
+            ),
+            DossierTemplateItem(
+                id="actions",
+                type="section",
+                value="Immediate Actions",
+                metadata={"description": "Critical follow-up tasks."},
+            ),
+        ],
+        settings=DossierTemplateSettings(
+            includeTimeline=False,
+            includeSummary=True,
+            includeVisualization=False,
+            confidenceThreshold=0.9,
+            language="en",
+            dateRange=None,
+        ),
+    ),
+]
+
+
 class NoteCreate(BaseModel):
     case_id: str
     author: str = Field(default="analyst", min_length=1, max_length=80)
     body: str = Field(..., min_length=1, max_length=2000)
     node_id: Optional[str] = None
+
+
+async def _broadcast_dossier_event(
+    case_id: str,
+    *,
+    template: str,
+    status: str,
+    progress: int,
+    message: str,
+    export_format: str,
+    source: str,
+) -> None:
+    payload = {
+        "type": "dossier_progress",
+        "case_id": case_id,
+        "template": template,
+        "status": status,
+        "progress": progress,
+        "message": message,
+        "format": export_format,
+        "source": source,
+        "timestamp": time.time(),
+    }
+    try:
+        await manager.broadcast(payload)
+    except Exception:
+        # WebSocket updates are best-effort
+        pass
 
 
 def _get_template(template: str):
@@ -281,13 +436,28 @@ async def update_task(task_id: str, body: TaskUpdate):
     raise HTTPException(404, "not found")
 
 
+@app.get("/dossier/templates")
+def list_dossier_templates():
+    return {"items": [tpl.dict() for tpl in DOSSIER_TEMPLATE_CATALOG]}
+
+
 @app.post("/dossier/export")
-def dossier_export(req: DossierExportRequest):
+async def dossier_export(req: DossierExportRequest):
     started = time.perf_counter()
     status = "success"
     duration = 0.0
 
     try:
+        await _broadcast_dossier_event(
+            req.case_id,
+            template=req.template,
+            status="queued",
+            progress=5,
+            message="Preparing dossier export",
+            export_format=req.format,
+            source=req.source,
+        )
+
         rendered = _render_markdown(req)
         markdown = rendered["markdown"]
         metadata = {
@@ -300,12 +470,40 @@ def dossier_export(req: DossierExportRequest):
             "references": req.references,
         }
 
+        await _broadcast_dossier_event(
+            req.case_id,
+            template=req.template,
+            status="rendered",
+            progress=55,
+            message="Template rendered",
+            export_format=req.format,
+            source=req.source,
+        )
+
         if req.format == "pdf":
+            await _broadcast_dossier_event(
+                req.case_id,
+                template=req.template,
+                status="rendering_pdf",
+                progress=80,
+                message="Generating PDF",
+                export_format=req.format,
+                source=req.source,
+            )
             pdf_bytes = _markdown_to_pdf(markdown)
             duration = time.perf_counter() - started
             record_audit(
                 "dossier.export",
                 {"case_id": req.case_id, "format": req.format, "source": req.source},
+            )
+            await _broadcast_dossier_event(
+                req.case_id,
+                template=req.template,
+                status="completed",
+                progress=100,
+                message="PDF export ready",
+                export_format=req.format,
+                source=req.source,
             )
             return Response(
                 content=pdf_bytes,
@@ -318,6 +516,15 @@ def dossier_export(req: DossierExportRequest):
             "dossier.export",
             {"case_id": req.case_id, "format": req.format, "source": req.source},
         )
+        await _broadcast_dossier_event(
+            req.case_id,
+            template=req.template,
+            status="completed",
+            progress=100,
+            message="Markdown export ready",
+            export_format=req.format,
+            source=req.source,
+        )
         return {
             "case_id": req.case_id,
             "format": "markdown",
@@ -327,10 +534,28 @@ def dossier_export(req: DossierExportRequest):
     except HTTPException:
         status = "error"
         duration = time.perf_counter() - started
+        await _broadcast_dossier_event(
+            req.case_id,
+            template=req.template,
+            status="failed",
+            progress=100,
+            message="Export failed",
+            export_format=req.format,
+            source=req.source,
+        )
         raise
     except Exception as exc:  # pragma: no cover
         status = "error"
         duration = time.perf_counter() - started
+        await _broadcast_dossier_event(
+            req.case_id,
+            template=req.template,
+            status="failed",
+            progress=100,
+            message=f"Export failed: {exc}",
+            export_format=req.format,
+            source=req.source,
+        )
         raise HTTPException(status_code=500, detail=f"Export failed: {exc}") from exc
     finally:
         DOSSIER_EXPORTS.labels(

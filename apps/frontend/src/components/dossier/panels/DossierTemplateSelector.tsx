@@ -1,20 +1,29 @@
 // Dossier template selector panel
-import { useState } from "react";
-import { FileText, Settings, CheckCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { FileText, CheckCircle, Sparkles } from "lucide-react";
 import { DossierTemplate, DOSSIER_TEMPLATES } from "@/lib/dossier/dossier-config";
 
 interface DossierTemplateSelectorProps {
   selectedTemplate: string;
   onTemplateSelect: (templateId: string) => void;
   onCustomCreate: () => void;
+  templates?: DossierTemplate[];
+  isLoading?: boolean;
 }
 
 export function DossierTemplateSelector({
   selectedTemplate,
   onTemplateSelect,
   onCustomCreate,
+  templates,
+  isLoading = false,
 }: DossierTemplateSelectorProps) {
   const [hoveredTemplate, setHoveredTemplate] = useState<string | null>(null);
+  const templateList = useMemo(
+    () => (templates && templates.length > 0 ? templates : DOSSIER_TEMPLATES),
+    [templates],
+  );
+  const selected = templateList.find((t) => t.id === selectedTemplate);
 
   return (
     <div className="space-y-4">
@@ -28,29 +37,51 @@ export function DossierTemplateSelector({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {DOSSIER_TEMPLATES.map((template) => (
-          <TemplateCard
-            key={template.id}
-            template={template}
-            isSelected={selectedTemplate === template.id}
-            isHovered={hoveredTemplate === template.id}
-            onSelect={() => onTemplateSelect(template.id)}
-            onHover={() => setHoveredTemplate(template.id)}
-            onLeave={() => setHoveredTemplate(null)}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[0, 1].map((key) => (
+            <div
+              key={key}
+              className="h-40 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100/70 dark:bg-gray-800/40 animate-pulse"
+            ></div>
+          ))}
+        </div>
+      ) : templateList.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-700 p-6 text-sm text-gray-500 dark:text-gray-400">
+          No dossier templates available.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {templateList.map((template) => (
+            <TemplateCard
+              key={template.id}
+              template={template}
+              isSelected={selectedTemplate === template.id}
+              isHovered={hoveredTemplate === template.id}
+              onSelect={() => onTemplateSelect(template.id)}
+              onHover={() => setHoveredTemplate(template.id)}
+              onLeave={() => setHoveredTemplate(null)}
+            />
+          ))}
+        </div>
+      )}
 
-      {selectedTemplate && (
+      {selected && (
         <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/30 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle size={16} className="text-blue-600 dark:text-blue-400" />
             <span className="font-medium text-blue-900 dark:text-blue-100">Template Selected</span>
           </div>
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            {DOSSIER_TEMPLATES.find((t) => t.id === selectedTemplate)?.description}
-          </p>
+          <p className="text-sm text-blue-700 dark:text-blue-300">{selected.description}</p>
+          <div className="mt-3 text-xs text-blue-700 dark:text-blue-200 space-y-1">
+            {selected.recommendedFor && <div>Empfohlen für: {selected.recommendedFor}</div>}
+            {selected.estimatedDuration && (
+              <div>Bearbeitungszeit: {selected.estimatedDuration}</div>
+            )}
+            {selected.formats && selected.formats.length > 0 && (
+              <div>Formate: {selected.formats.join(", ")}</div>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -76,14 +107,10 @@ function TemplateCard({
 }: TemplateCardProps) {
   const getTemplateIcon = (templateId: string) => {
     switch (templateId) {
-      case "investigation":
+      case "standard":
         return <FileText size={24} className="text-blue-600 dark:text-blue-400" />;
-      case "entity-profile":
-        return <Settings size={24} className="text-green-600 dark:text-green-400" />;
-      case "network-analysis":
-        return <Settings size={24} className="text-purple-600 dark:text-purple-400" />;
-      case "financial-audit":
-        return <Settings size={24} className="text-orange-600 dark:text-orange-400" />;
+      case "brief":
+        return <Sparkles size={24} className="text-indigo-500 dark:text-indigo-300" />;
       default:
         return <FileText size={24} className="text-gray-600 dark:text-gray-400" />;
     }
@@ -117,6 +144,19 @@ function TemplateCard({
           <h4 className="font-medium text-gray-900 dark:text-white mb-1">{template.name}</h4>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{template.description}</p>
 
+          {template.tags && template.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {template.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 px-2 py-0.5 text-xs"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <span>Features:</span>
             <span className="font-medium">{getSettingsSummary(template)}</span>
@@ -131,6 +171,13 @@ function TemplateCard({
             <span>Language:</span>
             <span className="font-medium uppercase">{template.settings.language}</span>
           </div>
+
+          {template.sections && template.sections.length > 0 && (
+            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              Sections: {template.sections.slice(0, 3).join(", ")}
+              {template.sections.length > 3 && " …"}
+            </div>
+          )}
         </div>
 
         {isSelected && (

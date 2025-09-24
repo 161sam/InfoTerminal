@@ -314,7 +314,8 @@ export function setRefreshCookie(
   refreshExpiresIn?: number,
   options: { remember?: boolean } = {},
 ) {
-  const baseAge = refreshExpiresIn && refreshExpiresIn > 0 ? refreshExpiresIn : DEFAULT_REFRESH_MAX_AGE;
+  const baseAge =
+    refreshExpiresIn && refreshExpiresIn > 0 ? refreshExpiresIn : DEFAULT_REFRESH_MAX_AGE;
   const effectiveMaxAge = options.remember ? Math.max(baseAge, REMEMBER_REFRESH_MAX_AGE) : baseAge;
   const cookies = [
     buildCookieString(REFRESH_COOKIE_NAME, refreshToken, {

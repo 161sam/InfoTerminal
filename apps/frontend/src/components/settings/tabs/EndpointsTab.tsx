@@ -42,10 +42,7 @@ async function testEndpoint(
       return { status: "fail", latency };
     }
 
-    const info =
-      typeof response.json === "function"
-        ? await response.json().catch(() => ({}))
-        : {};
+    const info = typeof response.json === "function" ? await response.json().catch(() => ({})) : {};
     let status: Status = "ok";
 
     if (info.status === "degraded") status = "degraded";

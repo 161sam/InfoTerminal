@@ -309,12 +309,18 @@ export interface AnalyticsDossierSection {
 export interface AnalyticsDossierExport {
   title: string;
   description: string;
+  templateId?: string;
+  format?: "markdown" | "pdf" | "html";
+  includeMetadata?: boolean;
   filters: AnalyticsFilters;
   sections: AnalyticsDossierSection[];
   metadata: {
     generatedAt: string;
     generatedBy: string;
     version: string;
+    caseId?: string;
+    templateId?: string;
+    format?: "markdown" | "pdf" | "html";
   };
 }
 

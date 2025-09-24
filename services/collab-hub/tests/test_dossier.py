@@ -45,6 +45,17 @@ def test_dossier_export_pdf(tmp_path):
     assert response.content.startswith(b"%PDF")
 
 
+def test_dossier_templates_catalog():
+    response = client.get("/dossier/templates")
+    assert response.status_code == 200
+    data = response.json()
+    assert "items" in data
+    templates = {tpl["id"] for tpl in data["items"]}
+    assert {"standard", "brief"}.issubset(templates)
+    sample = next(tpl for tpl in data["items"] if tpl["id"] == "standard")
+    assert sample["settings"]["includeSummary"] is True
+
+
 def test_notes_feature_flag(monkeypatch):
     note_payload = {
         "case_id": "case-1",

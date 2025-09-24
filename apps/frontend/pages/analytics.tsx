@@ -1,5 +1,5 @@
 // OSINT Analytics Dashboard - Enhanced with modular components and dossier export
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Download, Filter } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
@@ -19,6 +19,10 @@ import {
   AnalyticsDossierExport,
 } from "@/components/analytics";
 import { DossierBuilderModal } from "@/components/dossier/DossierBuilderModal";
+import { ProgressModal } from "@/components/feedback/ProgressModal";
+import { useTaskProgress } from "@/hooks/useTaskProgress";
+import { useNotifications } from "@/lib/notifications";
+import { DossierTemplate, DOSSIER_TEMPLATES } from "@/lib/dossier/dossier-config";
 import {
   useEntityAnalytics,
   useSourceCoverage,
@@ -43,6 +47,12 @@ export default function AnalyticsPage() {
 
   const [showDossierModal, setShowDossierModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [templates, setTemplates] = useState<DossierTemplate[]>(DOSSIER_TEMPLATES);
+  const [templatesLoading, setTemplatesLoading] = useState(false);
+  const [templateError, setTemplateError] = useState<string | null>(null);
+  const [dossierTaskId, setDossierTaskId] = useState<string | null>(null);
+  const [showDossierProgress, setShowDossierProgress] = useState(false);
+  const notifications = useNotifications();
 
   // Initialize hooks to track loading states
   const entityAnalytics = useEntityAnalytics(filters);
@@ -85,37 +95,96 @@ export default function AnalyticsPage() {
     setShowDossierModal(true);
   };
 
+  const dossierProgress = useTaskProgress({
+    active: showDossierProgress,
+    taskId: dossierTaskId,
+    eventType: "dossier_progress",
+    fallbackDurationMs: 8000,
+    matchEvent: (event, id) => {
+      const caseId = (event.case_id ?? event.caseId) as string | undefined;
+      return caseId === id;
+    },
+  });
+
   const handleDossierExport = async (dossier: AnalyticsDossierExport) => {
+    const caseId = dossier.metadata.caseId ?? `analytics-${Date.now()}`;
+    const payload = {
+      case_id: caseId,
+      title: dossier.title,
+      summary: dossier.description,
+      source: "graph",
+      format: dossier.format === "pdf" ? "pdf" : "markdown",
+      template: dossier.templateId ?? "standard",
+      analysts: ["Analytics Dashboard"],
+      notes: dossier.sections.map((section) => `${section.name}: ${section.description}`),
+      entities: [],
+      references: [],
+    };
+
+    setShowDossierModal(false);
+    setDossierTaskId(caseId);
+    setShowDossierProgress(true);
+    dossierProgress.setManualProgress(8, "running", "Export wird vorbereitet");
+
     try {
-      console.log("Exporting dossier:", dossier);
+      const response = await fetch("/api/collab/dossier/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-      // In real implementation: send to backend API
-      // const response = await fetch('/api/dossier/analytics/export', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(dossier),
-      // });
-      // const result = await response.json();
-      //
-      // // Download file
-      // const link = document.createElement('a');
-      // link.href = result.downloadUrl;
-      // link.download = `${dossier.title.replace(/[^a-z0-9]/gi, '_')}.pdf`;
-      // link.click();
+      if (!response.ok) {
+        let errorDetail = "Export fehlgeschlagen";
+        try {
+          const body = await response.json();
+          if (typeof body?.error === "string") {
+            errorDetail = body.error;
+          } else if (typeof body?.details === "string") {
+            errorDetail = body.details;
+          }
+        } catch {
+          // ignore parse errors
+        }
+        dossierProgress.setManualProgress(100, "failed", errorDetail);
+        notifications.error("Dossier-Export fehlgeschlagen", errorDetail);
+        return;
+      }
 
-      // For now, create a simple download
-      const content = createDossierContent(dossier);
-      const blob = new Blob([content], { type: "text/markdown" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${dossier.title.replace(/[^a-z0-9]/gi, "_")}.md`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const contentType = response.headers.get("content-type") || "";
+
+      if (contentType.includes("application/pdf")) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const disposition = response.headers.get("content-disposition") || "";
+        const filenameMatch = disposition.match(/filename="?(.+?)"?$/);
+        const filename = filenameMatch?.[1] || `${caseId}.pdf`;
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } else {
+        const data = await response.json();
+        const markdown = data.markdown ?? createDossierContent(dossier);
+        const blob = new Blob([markdown], { type: "text/markdown" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${caseId}.md`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      dossierProgress.setManualProgress(100, "completed", "Dossier erfolgreich exportiert");
+      notifications.success("Dossier erstellt", "Der Export wurde abgeschlossen.");
     } catch (error) {
-      console.error("Error exporting dossier:", error);
+      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      dossierProgress.setManualProgress(100, "failed", message);
+      notifications.error("Dossier-Export fehlgeschlagen", message);
     }
   };
 
@@ -131,6 +200,18 @@ export default function AnalyticsPage() {
     content += `- **Generated By:** ${dossier.metadata.generatedBy}\n`;
     content += `- **Version:** ${dossier.metadata.version}\n`;
     content += `- **Time Range:** ${dossier.filters.timeRange}\n\n`;
+    if (dossier.metadata.caseId) {
+      content += `- **Case ID:** ${dossier.metadata.caseId}\n`;
+    }
+    if (dossier.templateId) {
+      const templateName = templates.find((tpl) => tpl.id === dossier.templateId)?.name;
+      if (templateName) {
+        content += `- **Template:** ${templateName}\n`;
+      }
+    }
+    if (dossier.format) {
+      content += `- **Format:** ${dossier.format.toUpperCase()}\n`;
+    }
 
     if (dossier.filters.entityTypes.length > 0) {
       content += `- **Entity Types:** ${dossier.filters.entityTypes.join(", ")}\n`;
@@ -150,6 +231,42 @@ export default function AnalyticsPage() {
 
     return content;
   };
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchTemplates = async () => {
+      setTemplatesLoading(true);
+      try {
+        const response = await fetch("/api/collab/dossier/templates");
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        if (!ignore && Array.isArray(data?.items)) {
+          setTemplates(data.items as DossierTemplate[]);
+          setTemplateError(null);
+        }
+      } catch (error) {
+        if (!ignore) {
+          const message =
+            error instanceof Error ? error.message : "Vorlagen konnten nicht geladen werden";
+          setTemplateError(message);
+          notifications.warning("Vorlagen fallback aktiv", message);
+        }
+      } finally {
+        if (!ignore) {
+          setTemplatesLoading(false);
+        }
+      }
+    };
+
+    fetchTemplates();
+
+    return () => {
+      ignore = true;
+    };
+  }, [notifications]);
 
   const availableSections: AnalyticsDossierSection[] = [
     {
@@ -226,6 +343,9 @@ export default function AnalyticsPage() {
             Als Dossier exportieren
           </button>
         </div>
+        {templateError && (
+          <div className="text-xs text-red-600 dark:text-red-400">{templateError}</div>
+        )}
 
         {/* Global Filters */}
         <FiltersBar
@@ -293,6 +413,19 @@ export default function AnalyticsPage() {
         filters={filters}
         availableSections={availableSections}
         onExport={handleDossierExport}
+        templates={templates}
+        templatesLoading={templatesLoading}
+      />
+      <ProgressModal
+        isOpen={showDossierProgress}
+        title="Dossier Export"
+        description="Wir bereiten den Bericht zum Download vor."
+        state={dossierProgress.state}
+        onClose={() => {
+          setShowDossierProgress(false);
+          setDossierTaskId(null);
+        }}
+        successLabel="Fenster schließen"
       />
     </DashboardLayout>
   );

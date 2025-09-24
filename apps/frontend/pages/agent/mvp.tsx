@@ -398,7 +398,8 @@ export default function AgentMvpChatPage() {
                 <ul className="mt-2 space-y-1 text-xs text-gray-600">
                   {TOOL_OPTIONS.map((tool) => (
                     <li key={`help-${tool.id}`}>
-                      <span className="font-medium text-gray-700">{tool.label}</span>: {tool.description}
+                      <span className="font-medium text-gray-700">{tool.label}</span>:{" "}
+                      {tool.description}
                     </li>
                   ))}
                 </ul>
