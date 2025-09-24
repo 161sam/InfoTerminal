@@ -4,6 +4,8 @@ import type { User } from "@/types/auth";
 const REFRESH_COOKIE_NAME = "refresh_token";
 const ACCESS_COOKIE_NAME = "auth_token";
 const DEFAULT_REFRESH_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+const REMEMBER_COOKIE_NAME = "it_remember_me";
+const REMEMBER_REFRESH_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 const METADATA_TTL = 5 * 60 * 1000; // 5 minutes
 
 interface OidcMetadata {
@@ -247,9 +249,13 @@ function buildCookieString(
   return `${name}=${value}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=${sameSite}${isProduction ? "; Secure" : ""}${domain ? `; Domain=${domain}` : ""}`;
 }
 
-export function buildSessionPayload(res: NextApiResponse, token: TokenResponse) {
+export function buildSessionPayload(
+  res: NextApiResponse,
+  token: TokenResponse,
+  options: { remember?: boolean } = {},
+) {
   if (token.refresh_token) {
-    setRefreshCookie(res, token.refresh_token, token.refresh_expires_in);
+    setRefreshCookie(res, token.refresh_token, token.refresh_expires_in, options);
   }
   ensureNoCache(res);
   const claims = decodeIdToken(token.id_token);
@@ -269,13 +275,23 @@ export function setRefreshCookie(
   res: NextApiResponse,
   refreshToken: string,
   refreshExpiresIn?: number,
+  options: { remember?: boolean } = {},
 ) {
+  const baseAge = refreshExpiresIn && refreshExpiresIn > 0 ? refreshExpiresIn : DEFAULT_REFRESH_MAX_AGE;
+  const effectiveMaxAge = options.remember ? Math.max(baseAge, REMEMBER_REFRESH_MAX_AGE) : baseAge;
   const cookies = [
     buildCookieString(REFRESH_COOKIE_NAME, refreshToken, {
-      maxAge: refreshExpiresIn && refreshExpiresIn > 0 ? refreshExpiresIn : DEFAULT_REFRESH_MAX_AGE,
+      maxAge: effectiveMaxAge,
     }),
     buildCookieString(ACCESS_COOKIE_NAME, "", { clear: true }),
   ];
+  if (typeof options.remember === "boolean") {
+    cookies.push(
+      options.remember
+        ? buildCookieString(REMEMBER_COOKIE_NAME, "1", { maxAge: REMEMBER_REFRESH_MAX_AGE })
+        : buildCookieString(REMEMBER_COOKIE_NAME, "", { clear: true }),
+    );
+  }
   appendCookies(res, cookies);
 }
 
@@ -283,6 +299,7 @@ export function clearAuthCookies(res: NextApiResponse) {
   appendCookies(res, [
     buildCookieString(REFRESH_COOKIE_NAME, "", { clear: true }),
     buildCookieString(ACCESS_COOKIE_NAME, "", { clear: true }),
+    buildCookieString(REMEMBER_COOKIE_NAME, "", { clear: true }),
   ]);
 }
 
@@ -291,4 +308,5 @@ export function ensureNoCache(res: NextApiResponse) {
   res.setHeader("Pragma", "no-cache");
 }
 
+export { REMEMBER_COOKIE_NAME };
 export type { TokenResponse };

@@ -18,10 +18,14 @@ import {
   SearchFilters as SearchFiltersType,
   createSearchExportData,
 } from "@/lib/search/search-config";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { useProtectedRoute } from "@/lib/auth/guards";
+import { withAuthGuard } from "@/server/guards/auth";
 
 const MapPanel = dynamic(() => import("@/components/MapPanel"), { ssr: false });
 
 export default function SearchPage() {
+  const guardStatus = useProtectedRoute();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -146,6 +150,16 @@ export default function SearchPage() {
     }
   }, [router.query?.q, performSearch]);
 
+  if (guardStatus === "checking" || guardStatus === "redirecting") {
+    return (
+      <DashboardLayout title="Intelligent Search" subtitle="Search across all your data sources">
+        <div className="py-24 flex justify-center">
+          <LoadingSpinner layout="block" text="Checking your session…" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout title="Intelligent Search" subtitle="Search across all your data sources">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -208,3 +222,5 @@ export default function SearchPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps = withAuthGuard();

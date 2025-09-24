@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { code, codeVerifier, redirectUri } = req.body ?? {};
+  const { code, codeVerifier, redirectUri, remember } = req.body ?? {};
 
   if (!code || !codeVerifier) {
     return res.status(400).json({ error: "Missing authorization code or verifier" });
@@ -20,7 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const tokenResponse = await exchangeAuthorizationCode(code, codeVerifier, redirectUri);
-    const payload = buildSessionPayload(res, tokenResponse);
+    const payload = buildSessionPayload(res, tokenResponse, {
+      remember: remember === true,
+    });
     ensureNoCache(res);
     return res.status(200).json(payload);
   } catch (error: any) {

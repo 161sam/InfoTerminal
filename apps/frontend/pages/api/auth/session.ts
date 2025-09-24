@@ -4,6 +4,7 @@ import {
   clearAuthCookies,
   ensureNoCache,
   refreshWithToken,
+  REMEMBER_COOKIE_NAME,
 } from "@/server/oidc";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -20,7 +21,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const tokenResponse = await refreshWithToken(refreshToken);
-    const payload = buildSessionPayload(res, tokenResponse);
+    const payload = buildSessionPayload(res, tokenResponse, {
+      remember: req.cookies?.[REMEMBER_COOKIE_NAME] === "1",
+    });
     ensureNoCache(res);
     return res.status(200).json(payload);
   } catch (error: any) {

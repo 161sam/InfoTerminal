@@ -4,6 +4,7 @@ export const OIDC_STORAGE_KEYS = {
   state: `${STORAGE_PREFIX}state`,
   returnTo: `${STORAGE_PREFIX}return_to`,
   issuedAt: `${STORAGE_PREFIX}issued_at`,
+  remember: `${STORAGE_PREFIX}remember`,
 };
 
 export interface StoredOidcRequest {
@@ -11,6 +12,7 @@ export interface StoredOidcRequest {
   state: string;
   returnTo?: string | null;
   issuedAt?: number;
+  remember?: boolean;
 }
 
 function ensureBrowser() {
@@ -53,6 +55,7 @@ export function storeOidcRequest(request: {
   codeVerifier: string;
   state: string;
   returnTo?: string | null;
+  remember?: boolean;
 }) {
   if (typeof sessionStorage === "undefined") return;
   sessionStorage.setItem(OIDC_STORAGE_KEYS.codeVerifier, request.codeVerifier);
@@ -63,6 +66,11 @@ export function storeOidcRequest(request: {
     sessionStorage.removeItem(OIDC_STORAGE_KEYS.returnTo);
   }
   sessionStorage.setItem(OIDC_STORAGE_KEYS.issuedAt, String(Date.now()));
+  if (typeof request.remember === "boolean") {
+    sessionStorage.setItem(OIDC_STORAGE_KEYS.remember, request.remember ? "1" : "0");
+  } else {
+    sessionStorage.removeItem(OIDC_STORAGE_KEYS.remember);
+  }
 }
 
 export function loadOidcRequest(): StoredOidcRequest | null {
@@ -75,7 +83,9 @@ export function loadOidcRequest(): StoredOidcRequest | null {
   const returnTo = sessionStorage.getItem(OIDC_STORAGE_KEYS.returnTo);
   const issuedAtRaw = sessionStorage.getItem(OIDC_STORAGE_KEYS.issuedAt);
   const issuedAt = issuedAtRaw ? Number(issuedAtRaw) : undefined;
-  return { codeVerifier, state, returnTo, issuedAt };
+  const rememberValue = sessionStorage.getItem(OIDC_STORAGE_KEYS.remember);
+  const remember = rememberValue === "1" ? true : rememberValue === "0" ? false : undefined;
+  return { codeVerifier, state, returnTo, issuedAt, remember };
 }
 
 export function clearOidcRequest() {
@@ -84,4 +94,5 @@ export function clearOidcRequest() {
   sessionStorage.removeItem(OIDC_STORAGE_KEYS.state);
   sessionStorage.removeItem(OIDC_STORAGE_KEYS.returnTo);
   sessionStorage.removeItem(OIDC_STORAGE_KEYS.issuedAt);
+  sessionStorage.removeItem(OIDC_STORAGE_KEYS.remember);
 }

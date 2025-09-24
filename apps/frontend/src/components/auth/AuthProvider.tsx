@@ -10,6 +10,7 @@ import {
   storeOidcRequest,
 } from "@/lib/oidc/client";
 import { Loader2, ShieldCheck } from "lucide-react";
+import { installAuthInterceptor } from "@/lib/auth/interceptor";
 
 const AUTH_REQUIRED =
   process.env.NEXT_PUBLIC_AUTH_REQUIRED === "1" ||
@@ -38,10 +39,10 @@ export interface AuthContextType {
   idToken: string | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (returnTo?: string) => Promise<void>;
+  login: (returnTo?: string, options?: { remember?: boolean }) => Promise<void>;
   completeLogin: (session: SessionPayload) => void;
   logout: () => Promise<void>;
-  refreshToken: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
   hasRole: (role: string) => boolean;
   hasPermission: (permission: string) => boolean;
 }
@@ -73,6 +74,7 @@ const defaultAuthContext: AuthContextType = {
   },
   refreshToken: async () => {
     logMissingProvider();
+    return false;
   },
   hasRole: () => false,
   hasPermission: () => false,
@@ -87,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const notifications = useNotifications();
 
   const refreshTimer = useRef<NodeJS.Timeout | null>(null);
-  const refreshSessionRef = useRef<() => Promise<void>>(async () => Promise.resolve());
+  const refreshSessionRef = useRef<() => Promise<boolean>>(async () => false);
 
   const clearSession = useCallback(() => {
     if (refreshTimer.current) {
@@ -108,7 +110,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const delaySeconds = Math.max(expiresIn - REFRESH_MARGIN_SECONDS, 30);
     refreshTimer.current = setTimeout(() => {
-      refreshSessionRef.current().catch((error) => console.warn("Token refresh failed", error));
+      refreshSessionRef
+        .current()
+        .catch((error) => console.warn("Token refresh failed", error));
     }, delaySeconds * 1000);
   }, []);
 
@@ -124,8 +128,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [scheduleRefresh],
   );
 
-  const refreshToken = useCallback(async () => {
-    if (!AUTH_REQUIRED) return;
+  const refreshToken = useCallback(async (): Promise<boolean> => {
+    if (!AUTH_REQUIRED) return true;
     try {
       const response = await fetch("/api/auth/refresh", {
         method: "POST",
@@ -143,13 +147,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json();
       applySession(data);
+      return true;
     } catch (error) {
       console.error("Token refresh failed:", error);
       clearSession();
+      return false;
     }
   }, [applySession, clearSession]);
 
   refreshSessionRef.current = refreshToken;
+
+  const redirectToLogin = useCallback(() => {
+    if (!AUTH_REQUIRED) return;
+    const pathname = router.pathname;
+    if (pathname === "/login" || pathname.startsWith("/auth/")) {
+      return;
+    }
+    const currentPath = router.asPath && router.asPath !== "/login" ? router.asPath : "/";
+    const query = currentPath && currentPath !== "/" ? { returnTo: currentPath } : undefined;
+    router.replace({ pathname: "/login", query }).catch(() => undefined);
+  }, [router]);
 
   const checkAuth = useCallback(async () => {
     if (!AUTH_REQUIRED) {
@@ -185,8 +202,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [checkAuth]);
 
+  useEffect(() => {
+    if (!AUTH_REQUIRED) return;
+    if (typeof window === "undefined") return;
+
+    const cleanup = installAuthInterceptor({
+      isAuthEnabled: AUTH_REQUIRED,
+      refresh: () => refreshSessionRef.current(),
+      onUnauthorized: () => {
+        clearSession();
+        redirectToLogin();
+      },
+      shouldSkip: (input) => {
+        try {
+          const url =
+            typeof input === "string"
+              ? input
+              : typeof Request !== "undefined" && input instanceof Request
+                ? input.url
+                : input instanceof URL
+                  ? input.toString()
+                  : "";
+          return url.includes("/api/auth/");
+        } catch {
+          return false;
+        }
+      },
+    });
+
+    return cleanup;
+  }, [clearSession, redirectToLogin]);
+
   const login = useCallback(
-    async (returnTo?: string) => {
+    async (returnTo?: string, options?: { remember?: boolean }) => {
       if (!AUTH_REQUIRED) {
         const target = returnTo || router.asPath || "/";
         router.push(target);
@@ -208,6 +256,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           codeVerifier,
           state,
           returnTo: returnTo || router.asPath,
+          remember: typeof options?.remember === "boolean" ? options.remember : undefined,
         });
 
         const params = new URLSearchParams({
@@ -308,11 +357,12 @@ export function useAuth() {
 export function LoginForm() {
   const { login } = useAuth();
   const [starting, setStarting] = useState(false);
+  const [remember, setRemember] = useState(false);
 
   const handleLogin = async () => {
     try {
       setStarting(true);
-      await login();
+      await login(undefined, { remember });
     } finally {
       setStarting(false);
     }
@@ -326,6 +376,19 @@ export function LoginForm() {
           Use your organisation single sign-on to access InfoTerminal.
         </p>
       </div>
+
+      <label className="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4 mb-6 cursor-pointer">
+        <input
+          type="checkbox"
+          className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+          checked={remember}
+          onChange={(event) => setRemember(event.target.checked)}
+        />
+        <span className="text-left text-sm text-gray-700 dark:text-gray-300">
+          Stay signed in for 30 days on this device. We store a longer-lived refresh cookie when this option is
+          enabled.
+        </span>
+      </label>
 
       <button
         type="button"
