@@ -79,6 +79,18 @@ jobs:
       - name: sbom_source_integrity gate
         run: python scripts/check_sbom_source_integrity.py
 
+  sbom-image-integrity:
+    name: Supply-Chain (SBOM Images)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: sbom_image_integrity gate
+        run: python scripts/check_sbom_image_integrity.py
+
   gitleaks:
     name: Secrets Scan (gitleaks → SARIF)
     runs-on: ubuntu-latest

@@ -1,0 +1,34 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-09-24T10:32:42.530725+00:00",
+    "component": {
+      "type": "container",
+      "name": "neo4j:5",
+      "version": "5",
+      "licenses": [
+        {
+          "license": {
+            "name": "UNKNOWN"
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "container",
+      "name": "neo4j",
+      "version": "5",
+      "licenses": [
+        {
+          "license": {
+            "name": "UNKNOWN"
+          }
+        }
+      ]
+    }
+  ]
+}
