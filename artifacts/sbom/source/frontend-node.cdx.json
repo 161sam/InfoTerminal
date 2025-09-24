@@ -1,0 +1,853 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "serialNumber": "urn:uuid:08e1a460-3e8e-4ab5-9165-7e5f385576c3",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-09-24T09:40:49.470Z",
+    "tools": [
+      {
+        "vendor": "AppThreat",
+        "name": "cdxgen",
+        "version": "7.0.5"
+      }
+    ],
+    "authors": [
+      {
+        "name": "Team AppThreat",
+        "email": "cloud@appthreat.com"
+      }
+    ],
+    "component": {
+      "group": "",
+      "name": "frontend",
+      "version": "",
+      "type": "application"
+    }
+  },
+  "components": [
+    {
+      "publisher": "",
+      "group": "deck.gl",
+      "name": "layers",
+      "version": "9.1.14",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/deck.gl/layers@9.1.14",
+      "type": "library",
+      "bom-ref": "pkg:npm/deck.gl/layers@9.1.14",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@deck.gl/layers/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "deck.gl",
+      "name": "react",
+      "version": "8.9.36",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/deck.gl/react@8.9.36",
+      "type": "library",
+      "bom-ref": "pkg:npm/deck.gl/react@8.9.36",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@deck.gl/react/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "headlessui",
+      "name": "react",
+      "version": "2.2.7",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/headlessui/react@2.2.7",
+      "type": "library",
+      "bom-ref": "pkg:npm/headlessui/react@2.2.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@headlessui/react/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "heroicons",
+      "name": "react",
+      "version": "2.2.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/heroicons/react@2.2.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/heroicons/react@2.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@heroicons/react/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "playwright",
+      "name": "test",
+      "version": "1.55.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/playwright/test@1.55.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/playwright/test@1.55.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@playwright/test/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "tailwindcss",
+      "name": "forms",
+      "version": "0.5.10",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/tailwindcss/forms@0.5.10",
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwindcss/forms@0.5.10",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/forms/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "tailwindcss",
+      "name": "line-clamp",
+      "version": "0.4.4",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/tailwindcss/line-clamp@0.4.4",
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwindcss/line-clamp@0.4.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/line-clamp/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "tailwindcss",
+      "name": "postcss",
+      "version": "4.1.13",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/tailwindcss/postcss@4.1.13",
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwindcss/postcss@4.1.13",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/postcss/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "tailwindcss",
+      "name": "typography",
+      "version": "0.5.16",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/tailwindcss/typography@0.5.16",
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwindcss/typography@0.5.16",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/typography/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "testing-library",
+      "name": "jest-dom",
+      "version": "6.8.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/testing-library/jest-dom@6.8.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/testing-library/jest-dom@6.8.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@testing-library/jest-dom/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "testing-library",
+      "name": "react",
+      "version": "16.3.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/testing-library/react@16.3.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/testing-library/react@16.3.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@testing-library/react/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "vitest",
+      "name": "coverage-v8",
+      "version": "1.6.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/vitest/coverage-v8@1.6.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/vitest/coverage-v8@1.6.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/@vitest/coverage-v8/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "autoprefixer",
+      "version": "10.4.21",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/autoprefixer@10.4.21",
+      "type": "library",
+      "bom-ref": "pkg:npm/autoprefixer@10.4.21",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/autoprefixer/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "class-variance-authority",
+      "version": "0.7.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/class-variance-authority@0.7.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/class-variance-authority@0.7.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/class-variance-authority/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "clsx",
+      "version": "2.1.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/clsx@2.1.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/clsx@2.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/clsx/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "cytoscape",
+      "version": "3.33.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/cytoscape@3.33.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/cytoscape@3.33.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/cytoscape/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "deck.gl",
+      "version": "8.9.36",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/deck.gl@8.9.36",
+      "type": "library",
+      "bom-ref": "pkg:npm/deck.gl@8.9.36",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/deck.gl/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "eslint-plugin-local-rules",
+      "version": "3.0.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/eslint-plugin-local-rules@3.0.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/eslint-plugin-local-rules@3.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/eslint-plugin-local-rules/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "eslint",
+      "version": "9.35.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/eslint@9.35.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/eslint@9.35.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/eslint/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "formidable",
+      "version": "3.5.4",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/formidable@3.5.4",
+      "type": "library",
+      "bom-ref": "pkg:npm/formidable@3.5.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/formidable/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "framer-motion",
+      "version": "11.18.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/framer-motion@11.18.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/framer-motion@11.18.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/framer-motion/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "husky",
+      "version": "9.1.7",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/husky@9.1.7",
+      "type": "library",
+      "bom-ref": "pkg:npm/husky@9.1.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/husky/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "install",
+      "version": "0.13.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/install@0.13.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/install@0.13.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/install/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "isomorphic-unfetch",
+      "version": "4.0.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/isomorphic-unfetch@4.0.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/isomorphic-unfetch@4.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/isomorphic-unfetch/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "jsdom",
+      "version": "27.0.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/jsdom@27.0.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/jsdom@27.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/jsdom/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "leaflet",
+      "version": "1.9.4",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/leaflet@1.9.4",
+      "type": "library",
+      "bom-ref": "pkg:npm/leaflet@1.9.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/leaflet/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "lucide-react",
+      "version": "0.542.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/lucide-react@0.542.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/lucide-react@0.542.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/lucide-react/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "next-auth",
+      "version": "4.24.11",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/next-auth@4.24.11",
+      "type": "library",
+      "bom-ref": "pkg:npm/next-auth@4.24.11",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/next-auth/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "next",
+      "version": "14.2.5",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/next@14.2.5",
+      "type": "library",
+      "bom-ref": "pkg:npm/next@14.2.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/next/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "npx",
+      "version": "10.2.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/npx@10.2.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/npx@10.2.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/npx/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "pdf-parse",
+      "version": "1.1.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/pdf-parse@1.1.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/pdf-parse@1.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/pdf-parse/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "playwright",
+      "version": "1.55.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/playwright@1.55.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/playwright@1.55.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/playwright/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "postcss",
+      "version": "8.5.6",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/postcss@8.5.6",
+      "type": "library",
+      "bom-ref": "pkg:npm/postcss@8.5.6",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/postcss/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "prettier",
+      "version": "3.6.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/prettier@3.6.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/prettier@3.6.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/prettier/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "react-cytoscapejs",
+      "version": "2.0.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/react-cytoscapejs@2.0.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/react-cytoscapejs@2.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/react-cytoscapejs/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "react-dom",
+      "version": "18.3.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/react-dom@18.3.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/react-dom@18.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/react-dom/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "react-leaflet",
+      "version": "4.2.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/react-leaflet@4.2.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/react-leaflet@4.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/react-leaflet/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "react-router-dom",
+      "version": "7.9.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/react-router-dom@7.9.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/react-router-dom@7.9.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/react-router-dom/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "react",
+      "version": "18.3.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/react@18.3.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/react@18.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/react/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "recharts",
+      "version": "3.2.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/recharts@3.2.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/recharts@3.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/recharts/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "tailwind-merge",
+      "version": "2.6.0",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/tailwind-merge@2.6.0",
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwind-merge@2.6.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/tailwind-merge/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "tailwindcss",
+      "version": "4.1.13",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/tailwindcss@4.1.13",
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwindcss@4.1.13",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/tailwindcss/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "typescript",
+      "version": "5.9.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/typescript@5.9.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/typescript@5.9.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/typescript/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "vite-tsconfig-paths",
+      "version": "4.3.2",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/vite-tsconfig-paths@4.3.2",
+      "type": "library",
+      "bom-ref": "pkg:npm/vite-tsconfig-paths@4.3.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/vite-tsconfig-paths/package.json"
+        }
+      ]
+    },
+    {
+      "publisher": "",
+      "group": "",
+      "name": "vitest",
+      "version": "1.6.1",
+      "description": "",
+      "scope": "required",
+      "licenses": [],
+      "purl": "pkg:npm/vitest@1.6.1",
+      "type": "library",
+      "bom-ref": "pkg:npm/vitest@1.6.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "/workspace/InfoTerminal/apps/frontend/node_modules/vitest/package.json"
+        }
+      ]
+    }
+  ],
+  "dependencies": [],
+  "externalReferences": [
+    {
+      "type": "other",
+      "url": "/workspace/InfoTerminal/apps/frontend",
+      "comment": "Base path"
+    },
+    {
+      "type": "other",
+      "url": "/workspace/InfoTerminal/apps/frontend/node_modules/@deck.gl/layers/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@deck.gl/react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@headlessui/react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@heroicons/react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@playwright/test/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/forms/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/line-clamp/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/postcss/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@tailwindcss/typography/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@testing-library/jest-dom/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@testing-library/react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@types/eslint/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@types/leaflet/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@types/node/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@types/react-dom/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@types/react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/@vitest/coverage-v8/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/autoprefixer/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/class-variance-authority/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/clsx/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/cytoscape/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/deck.gl/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/eslint-plugin-local-rules/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/eslint/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/formidable/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/framer-motion/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/husky/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/install/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/isomorphic-unfetch/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/jsdom/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/leaflet/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/lucide-react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/next-auth/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/next/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/npx/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/pdf-parse/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/playwright/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/postcss/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/prettier/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/react-cytoscapejs/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/react-dom/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/react-leaflet/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/react-router-dom/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/react/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/recharts/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/tailwind-merge/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/tailwindcss/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/typescript/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/vite-tsconfig-paths/package.json, /workspace/InfoTerminal/apps/frontend/node_modules/vitest/package.json",
+      "comment": "Package file"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+ecosystem,name,version,license,url,source_bom
+node,autoprefixer,10.4.21,MIT,postcss/autoprefixer,frontend-node.cdx.json
+node,class-variance-authority,0.7.1,Apache-2.0,https://github.com/joe-bell/cva.git,frontend-node.cdx.json
+node,clsx,2.1.1,MIT,lukeed/clsx,frontend-node.cdx.json
+node,coverage-v8,1.6.1,MIT,https://github.com/vitest-dev/vitest.git,frontend-node.cdx.json
+node,cytoscape,3.33.1,MIT,https://github.com/cytoscape/cytoscape.js.git,frontend-node.cdx.json
+node,deck.gl,8.9.36,MIT,https://github.com/visgl/deck.gl.git,frontend-node.cdx.json
+node,eslint,9.35.0,MIT,eslint/eslint,frontend-node.cdx.json
+node,eslint-plugin-local-rules,3.0.2,MIT,https://github.com/cletusw/eslint-plugin-local-rules.git,frontend-node.cdx.json
+node,formidable,3.5.4,MIT,node-formidable/formidable,frontend-node.cdx.json
+node,forms,0.5.10,MIT,https://github.com/tailwindlabs/tailwindcss-forms,frontend-node.cdx.json
+node,framer-motion,11.18.2,MIT,https://github.com/motiondivision/motion/,frontend-node.cdx.json
+node,husky,9.1.7,MIT,https://github.com/typicode/husky.git,frontend-node.cdx.json
+node,install,0.13.0,MIT,git://github.com/benjamn/install.git,frontend-node.cdx.json
+node,isomorphic-unfetch,4.0.2,MIT,developit/unfetch,frontend-node.cdx.json
+node,jest-dom,6.8.0,MIT,https://github.com/testing-library/jest-dom,frontend-node.cdx.json
+node,jsdom,27.0.0,MIT,https://github.com/jsdom/jsdom.git,frontend-node.cdx.json
+node,layers,9.1.14,MIT,https://github.com/visgl/deck.gl.git,frontend-node.cdx.json
+node,leaflet,1.9.4,BSD-2-Clause,git://github.com/Leaflet/Leaflet.git,frontend-node.cdx.json
+node,line-clamp,0.4.4,MIT,https://github.com/tailwindlabs/tailwindcss-line-clamp,frontend-node.cdx.json
+node,lucide-react,0.542.0,ISC,https://github.com/lucide-icons/lucide.git,frontend-node.cdx.json
+node,next,14.2.5,MIT,vercel/next.js,frontend-node.cdx.json
+node,next-auth,4.24.11,ISC,https://github.com/nextauthjs/next-auth.git,frontend-node.cdx.json
+node,npx,10.2.2,ISC,https://github.com/npm/npx,frontend-node.cdx.json
+node,pdf-parse,1.1.1,MIT,https://gitlab.com/autokent/pdf-parse.git,frontend-node.cdx.json
+node,playwright,1.55.0,Apache-2.0,https://github.com/microsoft/playwright.git,frontend-node.cdx.json
+node,postcss,4.1.13,MIT,https://github.com/tailwindlabs/tailwindcss.git,frontend-node.cdx.json
+node,postcss,8.5.6,MIT,postcss/postcss,frontend-node.cdx.json
+node,prettier,3.6.2,MIT,prettier/prettier,frontend-node.cdx.json
+node,react,16.3.0,MIT,https://github.com/testing-library/react-testing-library,frontend-node.cdx.json
+node,react,18.3.1,MIT,https://github.com/facebook/react.git,frontend-node.cdx.json
+node,react,2.2.0,MIT,https://github.com/tailwindlabs/heroicons.git,frontend-node.cdx.json
+node,react,2.2.7,MIT,https://github.com/tailwindlabs/headlessui.git,frontend-node.cdx.json
+node,react,8.9.36,MIT,https://github.com/visgl/deck.gl.git,frontend-node.cdx.json
+node,react-cytoscapejs,2.0.0,MIT,https://github.com/plotly/react-cytoscapejs.git,frontend-node.cdx.json
+node,react-dom,18.3.1,MIT,https://github.com/facebook/react.git,frontend-node.cdx.json
+node,react-leaflet,4.2.1,Hippocratic-2.1,https://github.com/PaulLeCam/react-leaflet.git,frontend-node.cdx.json
+node,react-router-dom,7.9.1,MIT,https://github.com/remix-run/react-router,frontend-node.cdx.json
+node,recharts,3.2.0,MIT,https://github.com/recharts/recharts.git,frontend-node.cdx.json
+node,tailwind-merge,2.6.0,MIT,https://github.com/dcastil/tailwind-merge.git,frontend-node.cdx.json
+node,tailwindcss,4.1.13,MIT,https://github.com/tailwindlabs/tailwindcss.git,frontend-node.cdx.json
+node,test,1.55.0,Apache-2.0,https://github.com/microsoft/playwright.git,frontend-node.cdx.json
+node,typescript,5.9.2,Apache-2.0,https://github.com/microsoft/TypeScript.git,frontend-node.cdx.json
+node,typography,0.5.16,MIT,https://github.com/tailwindlabs/tailwindcss-typography,frontend-node.cdx.json
+node,vite-tsconfig-paths,4.3.2,MIT,aleclarson/vite-tsconfig-paths,frontend-node.cdx.json
+node,vitest,1.6.1,MIT,https://github.com/vitest-dev/vitest.git,frontend-node.cdx.json
+python,anyio,4.10.0,UNKNOWN,https://github.com/agronholm/anyio,backend-python.cdx.json
+python,fastapi,0.116.1,MIT License,https://github.com/fastapi/fastapi,backend-python.cdx.json
+python,httpx,0.28.1,BSD-3-Clause,https://github.com/encode/httpx,backend-python.cdx.json
+python,neo4j,5.28.2,"Apache License, Version 2.0",https://neo4j.com/,backend-python.cdx.json
+python,pydantic,2.11.9,MIT License,https://github.com/pydantic/pydantic,backend-python.cdx.json
+python,pytest,8.4.2,MIT,https://docs.pytest.org/en/latest/,backend-python.cdx.json
+python,pytest-asyncio,1.2.0,UNKNOWN,https://github.com/pytest-dev/pytest-asyncio,backend-python.cdx.json
+python,pytest-cov,7.0.0,MIT License,https://pypi.org/project/pytest-cov/,backend-python.cdx.json
+python,ruff,0.13.1,MIT License,https://docs.astral.sh/ruff,backend-python.cdx.json
+python,uvicorn,0.36.0,BSD License,https://uvicorn.dev/,backend-python.cdx.json
