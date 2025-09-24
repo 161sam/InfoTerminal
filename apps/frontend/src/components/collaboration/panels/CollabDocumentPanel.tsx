@@ -1,19 +1,19 @@
 // Collaboration document management panel
-import { useState } from 'react';
-import { 
-  FolderOpen, 
-  Plus, 
-  Search, 
-  Filter, 
-  Download, 
-  Share2, 
-  FileText, 
-  File, 
+import { useState } from "react";
+import {
+  FolderOpen,
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Share2,
+  FileText,
+  File,
   Image,
   Video,
-  Upload
-} from 'lucide-react';
-import { Workspace, Document, formatFileSize } from '@/lib/collaboration/collab-config';
+  Upload,
+} from "lucide-react";
+import { Workspace, Document, formatFileSize } from "@/lib/collaboration/collab-config";
 
 interface CollabDocumentPanelProps {
   workspace: Workspace;
@@ -22,19 +22,20 @@ interface CollabDocumentPanelProps {
   onDocumentAction?: (document: Document, action: string) => void;
 }
 
-export function CollabDocumentPanel({ 
-  workspace, 
-  documents = [], 
+export function CollabDocumentPanel({
+  workspace,
+  documents = [],
   onUpload,
-  onDocumentAction 
+  onDocumentAction,
 }: CollabDocumentPanelProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  const filteredDocuments = documents.filter(doc =>
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredDocuments = documents.filter(
+    (doc) =>
+      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +49,7 @@ export function CollabDocumentPanel({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (e.dataTransfer.files) {
       const files = Array.from(e.dataTransfer.files);
       setSelectedFiles(files);
@@ -67,9 +68,9 @@ export function CollabDocumentPanel({
   };
 
   const getFileIcon = (type: string) => {
-    if (type.startsWith('image/')) return <Image size={16} />;
-    if (type.startsWith('video/')) return <Video size={16} />;
-    if (type.includes('pdf') || type.includes('document')) return <FileText size={16} />;
+    if (type.startsWith("image/")) return <Image size={16} />;
+    if (type.startsWith("video/")) return <Video size={16} />;
+    if (type.includes("pdf") || type.includes("document")) return <FileText size={16} />;
     return <File size={16} />;
   };
 
@@ -78,9 +79,9 @@ export function CollabDocumentPanel({
       <div className="h-full flex items-center justify-center">
         <div
           className={`text-center p-8 border-2 border-dashed rounded-lg transition-colors ${
-            isDragging 
-              ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20' 
-              : 'border-gray-300 dark:border-gray-600'
+            isDragging
+              ? "border-primary-400 bg-primary-50 dark:bg-primary-900/20"
+              : "border-gray-300 dark:border-gray-600"
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -114,9 +115,7 @@ export function CollabDocumentPanel({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Documents
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Documents</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {filteredDocuments.length} files shared
           </p>
@@ -124,12 +123,7 @@ export function CollabDocumentPanel({
         <label className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer">
           <Upload size={16} />
           Upload
-          <input
-            type="file"
-            multiple
-            onChange={handleFileSelect}
-            className="hidden"
-          />
+          <input type="file" multiple onChange={handleFileSelect} className="hidden" />
         </label>
       </div>
 
@@ -137,7 +131,10 @@ export function CollabDocumentPanel({
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex gap-3">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search documents..."
@@ -160,10 +157,8 @@ export function CollabDocumentPanel({
               key={document.id}
               className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <div className="text-gray-400">
-                {getFileIcon(document.type)}
-              </div>
-              
+              <div className="text-gray-400">{getFileIcon(document.type)}</div>
+
               <div className="flex-1 min-w-0">
                 <h4 className="font-medium text-gray-900 dark:text-white truncate">
                   {document.name}
@@ -186,9 +181,7 @@ export function CollabDocumentPanel({
                       </span>
                     ))}
                     {document.tags.length > 3 && (
-                      <span className="text-xs text-gray-400">
-                        +{document.tags.length - 3}
-                      </span>
+                      <span className="text-xs text-gray-400">+{document.tags.length - 3}</span>
                     )}
                   </div>
                 )}
@@ -196,14 +189,14 @@ export function CollabDocumentPanel({
 
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => onDocumentAction?.(document, 'download')}
+                  onClick={() => onDocumentAction?.(document, "download")}
                   className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
                   title="Download"
                 >
                   <Download size={16} />
                 </button>
                 <button
-                  onClick={() => onDocumentAction?.(document, 'share')}
+                  onClick={() => onDocumentAction?.(document, "share")}
                   className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
                   title="Share"
                 >
@@ -212,13 +205,11 @@ export function CollabDocumentPanel({
               </div>
             </div>
           ))}
-          
+
           {filteredDocuments.length === 0 && searchTerm && (
             <div className="text-center py-8">
               <FileText size={32} className="mx-auto text-gray-400 mb-2" />
-              <p className="text-gray-500 dark:text-gray-400">
-                No documents match your search.
-              </p>
+              <p className="text-gray-500 dark:text-gray-400">No documents match your search.</p>
             </div>
           )}
         </div>

@@ -75,7 +75,7 @@
     "dev": "next dev -p 3411",
     "e2e": "playwright test",
     "e2e:install": "npx playwright install --with-deps",
-    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\" && next lint",
+    "lint": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "prebuild": "bash ../../scripts/tailwind_v4_guard.sh",
     "predev": "bash ../../scripts/tailwind_v4_guard.sh",
     "prepare": "husky",

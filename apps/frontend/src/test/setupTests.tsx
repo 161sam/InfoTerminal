@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // -------------------- Polyfills --------------------
 
@@ -16,7 +16,7 @@ if (!(HTMLCanvasElement.prototype as any).getContext) {
   (HTMLCanvasElement.prototype as any).getContext = vi.fn(() => {
     // Minimal-Stub – genug für libs, die nur Präsenz prüfen
     return {
-      canvas: document.createElement('canvas'),
+      canvas: document.createElement("canvas"),
       // no-op Methods:
       save() {},
       restore() {},
@@ -64,11 +64,11 @@ if (!HTMLElement.prototype.getBoundingClientRect) {
 
 // -------------------- Library-Mocks --------------------
 // Next.js router mock for components using useRouter in tests
-vi.mock('next/router', () => {
+vi.mock("next/router", () => {
   return {
     __esModule: true,
     useRouter: () => ({
-      pathname: '/',
+      pathname: "/",
       push: vi.fn(),
       prefetch: vi.fn(),
       replace: vi.fn(),
@@ -79,8 +79,8 @@ vi.mock('next/router', () => {
 
 // react-cytoscapejs: Fake-Implementierung ohne Canvas. Ruft die "cy"-Callback-Prop auf
 // und erlaubt das Auslösen eines "tap"-Events auf einen Node mit id 'a' über einen Button.
-vi.mock('react-cytoscapejs', () => {
-  const React = require('react');
+vi.mock("react-cytoscapejs", () => {
+  const React = require("react");
 
   const CytoscapeStub = ({ cy }: any) => {
     const handlers: Record<string, (evt: any) => void> = {};
@@ -92,14 +92,14 @@ vi.mock('react-cytoscapejs', () => {
       destroy: () => {},
     } as const;
 
-    if (typeof cy === 'function') {
+    if (typeof cy === "function") {
       cy(fakeCy);
     }
 
     return (
       <button
         data-testid="fire-tap-a"
-        onClick={() => handlers['tap:node']?.({ target: { id: () => 'a' } })}
+        onClick={() => handlers["tap:node"]?.({ target: { id: () => "a" } })}
       >
         fire tap a
       </button>
@@ -115,13 +115,13 @@ vi.mock('react-cytoscapejs', () => {
 
 // useFileUpload mocken: nach "Upload" sofort Erfolg + doc_id liefern,
 // damit Tests den Link "Zum Dokument" finden
-vi.mock('@/hooks/useFileUpload', () => {
-  const React = require('react');
+vi.mock("@/hooks/useFileUpload", () => {
+  const React = require("react");
 
   type Upload = {
     id: string;
     fileName: string;
-    status: 'pending' | 'uploading' | 'success' | 'error';
+    status: "pending" | "uploading" | "success" | "error";
     progress: number;
     message?: string;
     doc_id?: string;
@@ -130,15 +130,18 @@ vi.mock('@/hooks/useFileUpload', () => {
   return {
     __esModule: true,
     default: () => {
-      const [uploads, setUploads] = React.useState([]) as [Upload[], React.Dispatch<React.SetStateAction<Upload[]>>];
+      const [uploads, setUploads] = React.useState([]) as [
+        Upload[],
+        React.Dispatch<React.SetStateAction<Upload[]>>,
+      ];
 
       const startUpload = async (files: File[]) => {
         const newUploads = files.map((f, i) => ({
           id: String(Date.now() + i),
           fileName: f.name,
-          status: 'success' as const,
+          status: "success" as const,
           progress: 100,
-          doc_id: 'demo-doc-1',
+          doc_id: "demo-doc-1",
         }));
         setUploads(newUploads);
         return newUploads.map((u) => ({ ok: true, id: u.doc_id }));

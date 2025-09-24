@@ -1,63 +1,66 @@
 // apps/frontend/src/lib/theme-provider.tsx - KORRIGIERT - Dark Mode Bug behoben
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = "light" | "dark" | "system";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: 'light' | 'dark';
+  resolvedTheme: "light" | "dark";
   isDark: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_KEY = 'ui.theme';
+const THEME_KEY = "ui.theme";
 
 // Helpers to apply theme instantly to the DOM
-const sysPrefersDark = () => (typeof window !== 'undefined') && !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+const sysPrefersDark = () =>
+  typeof window !== "undefined" &&
+  !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
 const applyTheme = (mode: Theme) => {
-  if (typeof document === 'undefined') return;
-  
+  if (typeof document === "undefined") return;
+
   const root = document.documentElement;
-  const isDark = mode === 'dark' || (mode === 'system' && sysPrefersDark());
-  
+  const isDark = mode === "dark" || (mode === "system" && sysPrefersDark());
+
   // Apply dark class to html element (for Tailwind dark mode)
-  root.classList.toggle('dark', isDark);
-  
+  root.classList.toggle("dark", isDark);
+
   // Set data attributes
-  root.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  root.setAttribute('data-theme-owner', 'tp');
-  
+  root.setAttribute("data-theme", isDark ? "dark" : "light");
+  root.setAttribute("data-theme-owner", "tp");
+
   // KORREKTUR: Auch body synchron halten (für CSS-Variablen)
-  document.body?.classList.toggle('dark', isDark);
-  
+  document.body?.classList.toggle("dark", isDark);
+
   // Update meta theme-color
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', isDark ? '#1f2937' : '#ffffff');
-  
-  console.log(`🎨 Theme applied: ${mode} (resolved: ${isDark ? 'dark' : 'light'})`);
+  if (meta) meta.setAttribute("content", isDark ? "#1f2937" : "#ffffff");
+
+  console.log(`🎨 Theme applied: ${mode} (resolved: ${isDark ? "dark" : "light"})`);
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('system');
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<Theme>("system");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Load theme from localStorage
     let saved: Theme | null = null;
     try {
       saved = localStorage.getItem(THEME_KEY) as Theme;
     } catch {}
-    
-    const initialTheme: Theme = saved && ['light', 'dark', 'system'].includes(saved) ? (saved as Theme) : 'system';
+
+    const initialTheme: Theme =
+      saved && ["light", "dark", "system"].includes(saved) ? (saved as Theme) : "system";
     setTheme(initialTheme);
-    
+
     // Apply theme immediately
     applyTheme(initialTheme);
   }, []);
@@ -66,16 +69,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return;
 
     const updateResolvedTheme = () => {
-      let newResolvedTheme: 'light' | 'dark';
-      
-      if (theme === 'system') {
-        newResolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      let newResolvedTheme: "light" | "dark";
+
+      if (theme === "system") {
+        newResolvedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
       } else {
         newResolvedTheme = theme;
       }
-      
+
       setResolvedTheme(newResolvedTheme);
-      
+
       // WICHTIG: Theme auch hier anwenden
       applyTheme(theme);
     };
@@ -83,26 +88,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     updateResolvedTheme();
 
     // Listen for system theme changes when in system mode
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    if (theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = () => updateResolvedTheme();
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
     }
   }, [theme, mounted]);
 
   const handleSetTheme = (newTheme: Theme) => {
     console.log(`🔄 Theme changing from ${theme} to ${newTheme}`);
-    
+
     setTheme(newTheme);
-    
+
     // Save to localStorage
-    try { 
-      localStorage.setItem(THEME_KEY, newTheme); 
+    try {
+      localStorage.setItem(THEME_KEY, newTheme);
     } catch (e) {
-      console.warn('Failed to save theme to localStorage:', e);
+      console.warn("Failed to save theme to localStorage:", e);
     }
-    
+
     // Apply immediately to avoid flicker
     applyTheme(newTheme);
   };
@@ -111,25 +116,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     theme,
     setTheme: handleSetTheme,
     resolvedTheme,
-    isDark: resolvedTheme === 'dark'
+    isDark: resolvedTheme === "dark",
   };
 
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     // Fallback for tests or environments without the provider
-    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    const isDark =
+      typeof document !== "undefined" && document.documentElement.classList.contains("dark");
     return {
-      theme: 'system' as Theme,
+      theme: "system" as Theme,
       setTheme: () => {},
-      resolvedTheme: isDark ? 'dark' : 'light',
+      resolvedTheme: isDark ? "dark" : "light",
       isDark,
     };
   }
@@ -137,20 +139,20 @@ export function useTheme() {
 }
 
 // Enhanced Theme Toggle Component
-import { Sun, Moon, Monitor } from 'lucide-react';
+import { Sun, Moon, Monitor } from "lucide-react";
 
 interface ThemeToggleProps {
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'button' | 'dropdown';
+  size?: "sm" | "md" | "lg";
+  variant?: "button" | "dropdown";
   showLabel?: boolean;
   className?: string;
 }
 
-export function ThemeToggle({ 
-  size = 'md', 
-  variant = 'button', 
+export function ThemeToggle({
+  size = "md",
+  variant = "button",
   showLabel = false,
-  className = '' 
+  className = "",
 }: ThemeToggleProps) {
   const { theme, setTheme, resolvedTheme, isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -161,52 +163,56 @@ export function ThemeToggle({
 
   if (!mounted) {
     const sizeClasses = {
-      sm: 'w-8 h-8',
-      md: 'w-9 h-9', 
-      lg: 'w-10 h-10'
+      sm: "w-8 h-8",
+      md: "w-9 h-9",
+      lg: "w-10 h-10",
     };
     return (
-      <div className={`${sizeClasses[size]} rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse ${className}`} />
+      <div
+        className={`${sizeClasses[size]} rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse ${className}`}
+      />
     );
   }
 
   const sizeClasses = {
-    sm: 'p-1.5',
-    md: 'p-2',
-    lg: 'p-2.5'
+    sm: "p-1.5",
+    md: "p-2",
+    lg: "p-2.5",
   };
 
   const iconSizes = {
     sm: 14,
     md: 16,
-    lg: 18
+    lg: 18,
   };
 
   const toggleTheme = () => {
-    console.log(`🔄 Toggle clicked: ${theme} -> ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'}`);
-    
-    if (theme === 'light') {
-      setTheme('dark');
-    } else if (theme === 'dark') {
-      setTheme('system');
+    console.log(
+      `🔄 Toggle clicked: ${theme} -> ${theme === "light" ? "dark" : theme === "dark" ? "system" : "light"}`,
+    );
+
+    if (theme === "light") {
+      setTheme("dark");
+    } else if (theme === "dark") {
+      setTheme("system");
     } else {
-      setTheme('light');
+      setTheme("light");
     }
   };
 
   const getIcon = () => {
-    if (theme === 'system') return <Monitor size={iconSizes[size]} />;
-    if (theme === 'dark') return <Moon size={iconSizes[size]} />;
+    if (theme === "system") return <Monitor size={iconSizes[size]} />;
+    if (theme === "dark") return <Moon size={iconSizes[size]} />;
     return <Sun size={iconSizes[size]} />;
   };
 
   const getLabel = () => {
-    if (theme === 'system') return 'System';
-    if (theme === 'dark') return 'Dark';
-    return 'Light';
+    if (theme === "system") return "System";
+    if (theme === "dark") return "Dark";
+    return "Light";
   };
 
-  if (variant === 'dropdown') {
+  if (variant === "dropdown") {
     return (
       <div className={`relative ${className}`}>
         <select
@@ -230,14 +236,15 @@ export function ThemeToggle({
       onClick={toggleTheme}
       className={`
         ${sizeClasses[size]} rounded-lg border transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-        ${isDark 
-          ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700' 
-          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+        ${
+          isDark
+            ? "bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700"
+            : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
         }
-        ${showLabel ? 'flex items-center gap-2 px-3' : 'flex items-center justify-center'}
+        ${showLabel ? "flex items-center gap-2 px-3" : "flex items-center justify-center"}
         ${className}
       `}
-      title={`Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'} theme`}
+      title={`Switch to ${theme === "light" ? "dark" : theme === "dark" ? "system" : "light"} theme`}
       aria-label={`Current theme: ${getLabel()}. Click to switch theme.`}
     >
       {getIcon()}
@@ -253,25 +260,25 @@ export function useDarkModeStyles() {
   return {
     // Background classes
     bg: {
-      primary: isDark ? 'bg-gray-900' : 'bg-white',
-      secondary: isDark ? 'bg-gray-800' : 'bg-gray-50',
-      tertiary: isDark ? 'bg-gray-700' : 'bg-gray-100',
+      primary: isDark ? "bg-gray-900" : "bg-white",
+      secondary: isDark ? "bg-gray-800" : "bg-gray-50",
+      tertiary: isDark ? "bg-gray-700" : "bg-gray-100",
     },
     // Text classes
     text: {
-      primary: isDark ? 'text-gray-100' : 'text-gray-900',
-      secondary: isDark ? 'text-gray-300' : 'text-gray-600',
-      tertiary: isDark ? 'text-gray-400' : 'text-gray-500',
+      primary: isDark ? "text-gray-100" : "text-gray-900",
+      secondary: isDark ? "text-gray-300" : "text-gray-600",
+      tertiary: isDark ? "text-gray-400" : "text-gray-500",
     },
     // Border classes
     border: {
-      default: isDark ? 'border-gray-600' : 'border-gray-300',
-      light: isDark ? 'border-gray-700' : 'border-gray-200',
+      default: isDark ? "border-gray-600" : "border-gray-300",
+      light: isDark ? "border-gray-700" : "border-gray-200",
     },
     // Interactive classes
     hover: {
-      bg: isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50',
-      text: isDark ? 'hover:text-gray-200' : 'hover:text-gray-700',
-    }
+      bg: isDark ? "hover:bg-gray-700" : "hover:bg-gray-50",
+      text: isDark ? "hover:text-gray-200" : "hover:text-gray-700",
+    },
   };
 }

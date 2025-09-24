@@ -1,8 +1,8 @@
 // Entity detail panel for viewing and editing entity information
-import { useState } from 'react';
-import { ExternalLink, X } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { Entity } from '@/lib/entities/entity-config';
+import { useState } from "react";
+import { ExternalLink, X } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { Entity } from "@/lib/entities/entity-config";
 
 interface EntityDetailPanelProps {
   entity: Entity;
@@ -25,7 +25,7 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
   };
 
   const updateField = (field: keyof Entity, value: any) => {
-    setEditedEntity(prev => ({ ...prev, [field]: value }));
+    setEditedEntity((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -44,7 +44,7 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
             <X size={20} />
           </button>
         </div>
-        
+
         <div className="space-y-4">
           {/* Name */}
           <div>
@@ -55,16 +55,14 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
               <input
                 type="text"
                 value={editedEntity.name}
-                onChange={(e) => updateField('name', e.target.value)}
+                onChange={(e) => updateField("name", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             ) : (
-              <p className="text-gray-900 dark:text-slate-100 font-mono">
-                {entity.name}
-              </p>
+              <p className="text-gray-900 dark:text-slate-100 font-mono">{entity.name}</p>
             )}
           </div>
-          
+
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
@@ -72,31 +70,35 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
             </label>
             {isEditing ? (
               <textarea
-                value={editedEntity.description || ''}
-                onChange={(e) => updateField('description', e.target.value)}
+                value={editedEntity.description || ""}
+                onChange={(e) => updateField("description", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 rows={3}
                 placeholder="Enter entity description..."
               />
             ) : (
               <p className="text-gray-900 dark:text-slate-100">
-                {entity.description || 'No description provided'}
+                {entity.description || "No description provided"}
               </p>
             )}
           </div>
-          
+
           {/* Basic info grid */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-500 dark:text-slate-400">Type</span>
-              <div className="font-semibold text-gray-900 dark:text-slate-100">
-                {entity.type}
-              </div>
+              <div className="font-semibold text-gray-900 dark:text-slate-100">{entity.type}</div>
             </div>
             <div>
               <span className="text-gray-500 dark:text-slate-400">Verified</span>
-              <div className={entity.verified ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}>
-                {entity.verified ? 'Verified' : 'Pending Verification'}
+              <div
+                className={
+                  entity.verified
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-yellow-600 dark:text-yellow-400"
+                }
+              >
+                {entity.verified ? "Verified" : "Pending Verification"}
               </div>
             </div>
             <div>
@@ -152,9 +154,11 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
                 <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${
-                      entity.riskScore >= 7 ? 'bg-red-500' :
-                      entity.riskScore >= 4 ? 'bg-yellow-500' :
-                      'bg-green-500'
+                      entity.riskScore >= 7
+                        ? "bg-red-500"
+                        : entity.riskScore >= 4
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
                     }`}
                     style={{ width: `${(entity.riskScore / 10) * 100}%` }}
                   />
@@ -162,7 +166,7 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
               </div>
             </div>
           )}
-          
+
           {/* Aliases */}
           {entity.aliases && entity.aliases.length > 0 && (
             <div>
@@ -217,7 +221,7 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
               ))}
             </div>
           </div>
-          
+
           {/* Action buttons */}
           <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
             {isEditing ? (
@@ -244,7 +248,9 @@ export function EntityDetailPanel({ entity, onClose, onUpdate }: EntityDetailPan
                   Edit Entity
                 </button>
                 <button
-                  onClick={() => window.open(`/graphx?focus=${encodeURIComponent(entity.name)}`, '_blank')}
+                  onClick={() =>
+                    window.open(`/graphx?focus=${encodeURIComponent(entity.name)}`, "_blank")
+                  }
                   className="flex-1 px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors inline-flex items-center justify-center gap-2"
                 >
                   <ExternalLink size={14} />

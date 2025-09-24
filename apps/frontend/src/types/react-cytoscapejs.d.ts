@@ -1,1 +1,1 @@
-declare module 'react-cytoscapejs';
+declare module "react-cytoscapejs";

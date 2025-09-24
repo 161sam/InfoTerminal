@@ -1,21 +1,21 @@
 /**
  * Investigation Dashboard
- * 
+ *
  * Central hub for OSINT investigations with quick actions, recent activities,
  * bookmarked entities, and running analyses.
  */
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Activity, 
-  Bookmark, 
-  Play, 
-  Clock, 
-  TrendingUp, 
-  Users, 
-  Globe, 
-  FileText, 
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  Activity,
+  Bookmark,
+  Play,
+  Clock,
+  TrendingUp,
+  Users,
+  Globe,
+  FileText,
   MapPin,
   BarChart3,
   AlertCircle,
@@ -25,16 +25,16 @@ import {
   ArrowRight,
   Eye,
   Download,
-  Share2
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import UserJourneyTracker from '@/lib/user-journey-tracker';
+  Share2,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import UserJourneyTracker from "@/lib/user-journey-tracker";
 
 interface Investigation {
   id: string;
   name: string;
-  type: 'person' | 'domain' | 'social_media' | 'document' | 'geospatial';
-  status: 'active' | 'completed' | 'paused' | 'scheduled';
+  type: "person" | "domain" | "social_media" | "document" | "geospatial";
+  status: "active" | "completed" | "paused" | "scheduled";
   progress: number;
   createdAt: Date;
   lastUpdated: Date;
@@ -45,7 +45,7 @@ interface Investigation {
 interface BookmarkedEntity {
   id: string;
   name: string;
-  type: 'person' | 'organization' | 'domain' | 'email' | 'phone' | 'location';
+  type: "person" | "organization" | "domain" | "email" | "phone" | "location";
   lastAccessed: Date;
   investigationId?: string;
   riskScore?: number;
@@ -58,7 +58,7 @@ interface QuickAction {
   description: string;
   icon: React.ElementType;
   path: string;
-  category: 'search' | 'analysis' | 'tools' | 'workflow';
+  category: "search" | "analysis" | "tools" | "workflow";
   estimatedTime: string;
 }
 
@@ -84,7 +84,7 @@ const InvestigationDashboard: React.FC = () => {
 
   useEffect(() => {
     loadDashboardData();
-    
+
     // Set up periodic refresh for running analyses
     const interval = setInterval(loadRunningAnalyses, 5000);
     return () => clearInterval(interval);
@@ -98,10 +98,10 @@ const InvestigationDashboard: React.FC = () => {
         loadBookmarkedEntities(),
         loadDashboardStats(),
         loadRecentActivities(),
-        loadRunningAnalyses()
+        loadRunningAnalyses(),
       ]);
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+      console.error("Failed to load dashboard data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -109,180 +109,180 @@ const InvestigationDashboard: React.FC = () => {
 
   const loadInvestigations = async () => {
     try {
-      const response = await fetch('/api/investigations');
+      const response = await fetch("/api/investigations");
       if (response.ok) {
         const data = await response.json();
         setInvestigations(data.investigations || []);
       }
     } catch (error) {
-      console.error('Failed to load investigations:', error);
+      console.error("Failed to load investigations:", error);
     }
   };
 
   const loadBookmarkedEntities = async () => {
     try {
-      const response = await fetch('/api/bookmarks/entities');
+      const response = await fetch("/api/bookmarks/entities");
       if (response.ok) {
         const data = await response.json();
         setBookmarkedEntities(data.entities || []);
       }
     } catch (error) {
-      console.error('Failed to load bookmarked entities:', error);
+      console.error("Failed to load bookmarked entities:", error);
     }
   };
 
   const loadDashboardStats = async () => {
     try {
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch("/api/dashboard/stats");
       if (response.ok) {
         const data = await response.json();
         setDashboardStats(data.stats);
       }
     } catch (error) {
-      console.error('Failed to load dashboard stats:', error);
+      console.error("Failed to load dashboard stats:", error);
     }
   };
 
   const loadRecentActivities = async () => {
     try {
-      const response = await fetch('/api/activities/recent?limit=10');
+      const response = await fetch("/api/activities/recent?limit=10");
       if (response.ok) {
         const data = await response.json();
         setRecentActivities(data.activities || []);
       }
     } catch (error) {
-      console.error('Failed to load recent activities:', error);
+      console.error("Failed to load recent activities:", error);
     }
   };
 
   const loadRunningAnalyses = async () => {
     try {
-      const response = await fetch('/api/analyses/running');
+      const response = await fetch("/api/analyses/running");
       if (response.ok) {
         const data = await response.json();
         setRunningAnalyses(data.analyses || []);
       }
     } catch (error) {
-      console.error('Failed to load running analyses:', error);
+      console.error("Failed to load running analyses:", error);
     }
   };
 
   const quickActions: QuickAction[] = [
     {
-      id: 'entity_search',
-      label: 'Entity Search',
-      description: 'Search for persons, domains, or organizations',
+      id: "entity_search",
+      label: "Entity Search",
+      description: "Search for persons, domains, or organizations",
       icon: Search,
-      path: '/search',
-      category: 'search',
-      estimatedTime: '2-5 min'
+      path: "/search",
+      category: "search",
+      estimatedTime: "2-5 min",
     },
     {
-      id: 'domain_analysis',
-      label: 'Domain Analysis',
-      description: 'Analyze domain infrastructure and security',
+      id: "domain_analysis",
+      label: "Domain Analysis",
+      description: "Analyze domain infrastructure and security",
       icon: Globe,
-      path: '/tools/domain-analysis',
-      category: 'analysis',
-      estimatedTime: '5-10 min'
+      path: "/tools/domain-analysis",
+      category: "analysis",
+      estimatedTime: "5-10 min",
     },
     {
-      id: 'social_investigation',
-      label: 'Social Media Investigation',
-      description: 'Investigate social media profiles and networks',
+      id: "social_investigation",
+      label: "Social Media Investigation",
+      description: "Investigate social media profiles and networks",
       icon: Users,
-      path: '/tools/social-media',
-      category: 'analysis',
-      estimatedTime: '10-20 min'
+      path: "/tools/social-media",
+      category: "analysis",
+      estimatedTime: "10-20 min",
     },
     {
-      id: 'document_analysis',
-      label: 'Document Analysis',
-      description: 'Analyze documents for entities and metadata',
+      id: "document_analysis",
+      label: "Document Analysis",
+      description: "Analyze documents for entities and metadata",
       icon: FileText,
-      path: '/tools/document-analysis',
-      category: 'analysis',
-      estimatedTime: '5-15 min'
+      path: "/tools/document-analysis",
+      category: "analysis",
+      estimatedTime: "5-15 min",
     },
     {
-      id: 'geospatial_analysis',
-      label: 'Geospatial Analysis',
-      description: 'Verify locations and analyze geographic data',
+      id: "geospatial_analysis",
+      label: "Geospatial Analysis",
+      description: "Verify locations and analyze geographic data",
       icon: MapPin,
-      path: '/tools/geospatial',
-      category: 'analysis',
-      estimatedTime: '3-8 min'
+      path: "/tools/geospatial",
+      category: "analysis",
+      estimatedTime: "3-8 min",
     },
     {
-      id: 'graph_visualization',
-      label: 'Graph Visualization',
-      description: 'Visualize entity relationships and networks',
+      id: "graph_visualization",
+      label: "Graph Visualization",
+      description: "Visualize entity relationships and networks",
       icon: BarChart3,
-      path: '/graph',
-      category: 'tools',
-      estimatedTime: '1-3 min'
+      path: "/graph",
+      category: "tools",
+      estimatedTime: "1-3 min",
     },
     {
-      id: 'new_investigation',
-      label: 'New Investigation',
-      description: 'Start a new structured investigation',
+      id: "new_investigation",
+      label: "New Investigation",
+      description: "Start a new structured investigation",
       icon: Plus,
-      path: '/investigations/new',
-      category: 'workflow',
-      estimatedTime: '30-120 min'
+      path: "/investigations/new",
+      category: "workflow",
+      estimatedTime: "30-120 min",
     },
     {
-      id: 'bulk_analysis',
-      label: 'Bulk Analysis',
-      description: 'Analyze multiple entities simultaneously',
+      id: "bulk_analysis",
+      label: "Bulk Analysis",
+      description: "Analyze multiple entities simultaneously",
       icon: TrendingUp,
-      path: '/tools/bulk-analysis',
-      category: 'tools',
-      estimatedTime: '10-30 min'
-    }
+      path: "/tools/bulk-analysis",
+      category: "tools",
+      estimatedTime: "10-30 min",
+    },
   ];
 
   const handleQuickAction = (action: QuickAction) => {
-    trackClick('dashboard-quick-action', {
+    trackClick("dashboard-quick-action", {
       actionId: action.id,
-      category: action.category
+      category: action.category,
     });
-    
+
     // Navigate to action
     window.location.href = action.path;
   };
 
   const handleInvestigationSelect = (investigationId: string) => {
     setSelectedInvestigation(investigationId);
-    trackClick('dashboard-investigation-selected', { investigationId });
+    trackClick("dashboard-investigation-selected", { investigationId });
   };
 
-  const getStatusIcon = (status: Investigation['status']) => {
+  const getStatusIcon = (status: Investigation["status"]) => {
     switch (status) {
-      case 'active':
+      case "active":
         return <Play className="w-4 h-4 text-green-500" />;
-      case 'completed':
+      case "completed":
         return <CheckCircle className="w-4 h-4 text-blue-500" />;
-      case 'paused':
+      case "paused":
         return <AlertCircle className="w-4 h-4 text-yellow-500" />;
-      case 'scheduled':
+      case "scheduled":
         return <Clock className="w-4 h-4 text-gray-500" />;
       default:
         return <div className="w-4 h-4 bg-gray-300 rounded-full" />;
     }
   };
 
-  const getTypeIcon = (type: Investigation['type']) => {
+  const getTypeIcon = (type: Investigation["type"]) => {
     switch (type) {
-      case 'person':
+      case "person":
         return <Users className="w-4 h-4" />;
-      case 'domain':
+      case "domain":
         return <Globe className="w-4 h-4" />;
-      case 'social_media':
+      case "social_media":
         return <Users className="w-4 h-4" />;
-      case 'document':
+      case "document":
         return <FileText className="w-4 h-4" />;
-      case 'geospatial':
+      case "geospatial":
         return <MapPin className="w-4 h-4" />;
       default:
         return <Search className="w-4 h-4" />;
@@ -290,11 +290,11 @@ const InvestigationDashboard: React.FC = () => {
   };
 
   const getRiskScoreColor = (score?: number) => {
-    if (!score) return 'text-gray-500';
-    if (score >= 8) return 'text-red-500';
-    if (score >= 6) return 'text-yellow-500';
-    if (score >= 4) return 'text-blue-500';
-    return 'text-green-500';
+    if (!score) return "text-gray-500";
+    if (score >= 8) return "text-red-500";
+    if (score >= 6) return "text-yellow-500";
+    if (score >= 4) return "text-blue-500";
+    return "text-green-500";
   };
 
   if (isLoading) {
@@ -316,18 +316,17 @@ const InvestigationDashboard: React.FC = () => {
             Central hub for all your OSINT investigations and analyses
           </p>
         </div>
-        
+
         <div className="header-actions">
-          <button 
-            className="btn-secondary"
-            onClick={() => trackClick('dashboard-refresh')}
-          >
+          <button className="btn-secondary" onClick={() => trackClick("dashboard-refresh")}>
             <Activity className="w-4 h-4" />
             Refresh
           </button>
-          <button 
+          <button
             className="btn-primary"
-            onClick={() => handleQuickAction(quickActions.find(a => a.id === 'new_investigation')!)}
+            onClick={() =>
+              handleQuickAction(quickActions.find((a) => a.id === "new_investigation")!)
+            }
           >
             <Plus className="w-4 h-4" />
             New Investigation
@@ -338,7 +337,7 @@ const InvestigationDashboard: React.FC = () => {
       {/* Stats Cards */}
       {dashboardStats && (
         <div className="stats-grid">
-          <motion.div 
+          <motion.div
             className="stat-card"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -352,7 +351,7 @@ const InvestigationDashboard: React.FC = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="stat-card"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -366,7 +365,7 @@ const InvestigationDashboard: React.FC = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="stat-card"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -380,7 +379,7 @@ const InvestigationDashboard: React.FC = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="stat-card"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -439,20 +438,18 @@ const InvestigationDashboard: React.FC = () => {
                 View All
               </button>
             </div>
-            
+
             <div className="investigations-list">
               {investigations.slice(0, 5).map((investigation) => (
                 <motion.div
                   key={investigation.id}
-                  className={`investigation-item ${selectedInvestigation === investigation.id ? 'selected' : ''}`}
+                  className={`investigation-item ${selectedInvestigation === investigation.id ? "selected" : ""}`}
                   onClick={() => handleInvestigationSelect(investigation.id)}
-                  whileHover={{ backgroundColor: '#f8fafc' }}
+                  whileHover={{ backgroundColor: "#f8fafc" }}
                 >
                   <div className="investigation-header">
                     <div className="investigation-info">
-                      <div className="investigation-type">
-                        {getTypeIcon(investigation.type)}
-                      </div>
+                      <div className="investigation-type">{getTypeIcon(investigation.type)}</div>
                       <div>
                         <h4 className="investigation-name">{investigation.name}</h4>
                         <p className="investigation-meta">
@@ -464,17 +461,17 @@ const InvestigationDashboard: React.FC = () => {
                       {getStatusIcon(investigation.status)}
                     </div>
                   </div>
-                  
+
                   <div className="investigation-progress">
                     <div className="progress-bar">
-                      <div 
+                      <div
                         className="progress-fill"
                         style={{ width: `${investigation.progress}%` }}
                       />
                     </div>
                     <span className="progress-text">{investigation.progress}%</span>
                   </div>
-                  
+
                   <div className="investigation-actions">
                     <button className="action-btn">
                       <Play className="w-3 h-3" />
@@ -500,22 +497,18 @@ const InvestigationDashboard: React.FC = () => {
                 Manage
               </button>
             </div>
-            
+
             <div className="entities-list">
               {bookmarkedEntities.slice(0, 6).map((entity) => (
                 <div key={entity.id} className="entity-item">
                   <div className="entity-info">
-                    <div className="entity-type">
-                      {getTypeIcon(entity.type as any)}
-                    </div>
+                    <div className="entity-type">{getTypeIcon(entity.type as any)}</div>
                     <div>
                       <h4 className="entity-name">{entity.name}</h4>
-                      <p className="entity-meta">
-                        {entity.tags.slice(0, 2).join(', ')}
-                      </p>
+                      <p className="entity-meta">{entity.tags.slice(0, 2).join(", ")}</p>
                     </div>
                   </div>
-                  
+
                   {entity.riskScore && (
                     <div className={`risk-score ${getRiskScoreColor(entity.riskScore)}`}>
                       {entity.riskScore}/10
@@ -540,10 +533,7 @@ const InvestigationDashboard: React.FC = () => {
                   </div>
                   <div className="analysis-progress">
                     <div className="progress-bar-small">
-                      <div 
-                        className="progress-fill"
-                        style={{ width: `${analysis.progress}%` }}
-                      />
+                      <div className="progress-fill" style={{ width: `${analysis.progress}%` }} />
                     </div>
                     <span className="progress-text-small">{analysis.progress}%</span>
                   </div>
@@ -1017,7 +1007,7 @@ const InvestigationDashboard: React.FC = () => {
           .dashboard-columns {
             grid-template-columns: 1fr;
           }
-          
+
           .quick-actions-grid {
             grid-template-columns: 1fr;
           }
@@ -1027,18 +1017,18 @@ const InvestigationDashboard: React.FC = () => {
           .investigation-dashboard {
             padding: 16px;
           }
-          
+
           .dashboard-header {
             flex-direction: column;
             align-items: flex-start;
             gap: 16px;
           }
-          
+
           .stats-grid {
             grid-template-columns: 1fr;
             gap: 12px;
           }
-          
+
           .quick-action-card {
             padding: 12px;
           }

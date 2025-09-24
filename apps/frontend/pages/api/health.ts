@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import config from '@/lib/config';
+import type { NextApiRequest, NextApiResponse } from "next";
+import config from "@/lib/config";
 
-type ServiceState = 'ok' | 'degraded' | 'down' | 'unreachable';
+type ServiceState = "ok" | "degraded" | "down" | "unreachable";
 export type HealthResponse = {
   timestamp: string;
   services: {
@@ -12,25 +12,27 @@ export type HealthResponse = {
   };
 };
 
-async function ping(url: string): Promise<{ state: ServiceState; latencyMs: number | null; info?: any }> {
+async function ping(
+  url: string,
+): Promise<{ state: ServiceState; latencyMs: number | null; info?: any }> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
   const start = Date.now();
   try {
-    const res = await fetch(url + '/readyz', { signal: controller.signal });
+    const res = await fetch(url + "/readyz", { signal: controller.signal });
     const latencyMs = Date.now() - start;
     clearTimeout(timeout);
     if (!res.ok) {
-      return { state: 'unreachable', latencyMs };
+      return { state: "unreachable", latencyMs };
     }
     const info = await res.json().catch(() => ({}));
-    let state: ServiceState = 'ok';
-    if (info.status === 'degraded') state = 'degraded';
-    else if (info.status === 'fail') state = 'down';
-    else if (info.status !== 'ok') state = 'unreachable';
+    let state: ServiceState = "ok";
+    if (info.status === "degraded") state = "degraded";
+    else if (info.status === "fail") state = "down";
+    else if (info.status !== "ok") state = "unreachable";
     return { state, latencyMs, info };
   } catch {
-    return { state: 'unreachable', latencyMs: null };
+    return { state: "unreachable", latencyMs: null };
   }
 }
 
@@ -54,6 +56,6 @@ export async function getHealth(): Promise<HealthResponse> {
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const data = await getHealth();
-  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader("Cache-Control", "no-store");
   res.status(200).json(data);
 }

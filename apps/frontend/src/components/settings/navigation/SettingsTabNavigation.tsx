@@ -1,25 +1,16 @@
 import React from "react";
-import {
-  Settings, 
-  Server, 
-  Info, 
-  Monitor, 
-  Shield,
-  Palette,
-  Bell,
-  User,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { Settings, Server, Info, Monitor, Shield, Palette, Bell, User } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export type SettingsTab =
-  | 'endpoints'
-  | 'ops'
-  | 'gateway'
-  | 'appearance'
-  | 'notifications'
-  | 'security'
-  | 'user-management'
-  | 'about';
+  | "endpoints"
+  | "ops"
+  | "gateway"
+  | "appearance"
+  | "notifications"
+  | "security"
+  | "user-management"
+  | "about";
 
 interface TabConfig {
   id: SettingsTab;
@@ -28,14 +19,14 @@ interface TabConfig {
 }
 
 const SETTINGS_TAB_CONFIG: TabConfig[] = [
-  { id: 'endpoints', label: 'API Endpoints', icon: Server },
-  { id: 'ops', label: 'Operations', icon: Monitor },
-  { id: 'gateway', label: 'Gateway', icon: Settings },
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'security', label: 'Security', icon: Shield },
-  { id: 'user-management', label: 'User Management', icon: User },
-  { id: 'about', label: 'About', icon: Info },
+  { id: "endpoints", label: "API Endpoints", icon: Server },
+  { id: "ops", label: "Operations", icon: Monitor },
+  { id: "gateway", label: "Gateway", icon: Settings },
+  { id: "appearance", label: "Appearance", icon: Palette },
+  { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "security", label: "Security", icon: Shield },
+  { id: "user-management", label: "User Management", icon: User },
+  { id: "about", label: "About", icon: Info },
 ];
 
 interface SettingsTabNavigationProps {
@@ -54,8 +45,8 @@ const TabButton = ({ config, isActive, onClick }: TabButtonProps) => (
     onClick={onClick}
     className={`inline-flex items-center gap-2 px-4 py-3 text-sm rounded-lg transition-colors ${
       isActive
-        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
-        : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-gray-800'
+        ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+        : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`}
   >
     <config.icon size={16} />
@@ -63,7 +54,10 @@ const TabButton = ({ config, isActive, onClick }: TabButtonProps) => (
   </button>
 );
 
-export default function SettingsTabNavigation({ activeTab, onTabSelect }: SettingsTabNavigationProps) {
+export default function SettingsTabNavigation({
+  activeTab,
+  onTabSelect,
+}: SettingsTabNavigationProps) {
   return (
     <div className="flex flex-wrap gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg">
       {SETTINGS_TAB_CONFIG.map((config) => (

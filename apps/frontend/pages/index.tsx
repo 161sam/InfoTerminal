@@ -1,5 +1,5 @@
 // apps/frontend/pages/index.tsx - Moderne Dashboard Homepage
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Search,
   FileText,
@@ -14,12 +14,12 @@ import {
   Clock,
   AlertTriangle,
   Bot,
-  Sparkles
-} from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
-import { useHealth } from '@/hooks/useHealth';
-import { ff } from '@/components/navItems';
+  Sparkles,
+} from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
+import { useHealth } from "@/hooks/useHealth";
+import { ff } from "@/components/navItems";
 
 interface DashboardStats {
   totalDocuments: number;
@@ -47,8 +47,8 @@ export default function Dashboard() {
       trends: {
         documents: 12,
         entities: -3,
-        queries: 28
-      }
+        queries: 28,
+      },
     };
     setStats(mockStats);
   }, []);
@@ -60,28 +60,28 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard
             title="Documents"
-            value={stats?.totalDocuments.toLocaleString() || '0'}
+            value={stats?.totalDocuments.toLocaleString() || "0"}
             icon={FileText}
             trend={stats?.trends.documents}
             color="blue"
           />
           <StatsCard
             title="Entities"
-            value={stats?.totalEntities.toLocaleString() || '0'}
+            value={stats?.totalEntities.toLocaleString() || "0"}
             icon={Users}
             trend={stats?.trends.entities}
             color="purple"
           />
           <StatsCard
             title="Graph Nodes"
-            value={stats?.graphNodes.toLocaleString() || '0'}
+            value={stats?.graphNodes.toLocaleString() || "0"}
             icon={Network}
             trend={15}
             color="green"
           />
           <StatsCard
             title="Search Queries"
-            value={stats?.searchQueries.toLocaleString() || '0'}
+            value={stats?.searchQueries.toLocaleString() || "0"}
             icon={Search}
             trend={stats?.trends.queries}
             color="orange"
@@ -90,7 +90,6 @@ export default function Dashboard() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
           {/* Quick Search */}
           <div className="lg:col-span-2">
             <QuickSearchWidget />
@@ -99,23 +98,31 @@ export default function Dashboard() {
           {/* System Health */}
           <Panel>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">System Health</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
+                System Health
+              </h3>
               <Activity size={20} className="text-gray-400" />
             </div>
             {healthData && (
               <div className="space-y-3">
                 {Object.entries(healthData.services).map(([name, service]: [string, any]) => (
                   <div key={name} className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300 capitalize">{name}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300 capitalize">
+                      {name}
+                    </span>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 dark:text-slate-400">
-                        {service.latencyMs ? `${service.latencyMs}ms` : '–'}
+                        {service.latencyMs ? `${service.latencyMs}ms` : "–"}
                       </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        service.state === 'ok' ? 'bg-green-100 text-green-800' :
-                        service.state === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          service.state === "ok"
+                            ? "bg-green-100 text-green-800"
+                            : service.state === "degraded"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
                         {service.state}
                       </span>
                     </div>
@@ -128,7 +135,6 @@ export default function Dashboard() {
 
         {/* Recent Activity & Quick Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
           {/* Recent Activity */}
           <Panel title="Recent Activity">
             <div className="flex items-center justify-between mb-6">
@@ -198,7 +204,7 @@ export default function Dashboard() {
                 icon={BarChart3}
                 color="orange"
               />
-              {ff('NEXT_PUBLIC_FEATURE_AGENT') && (
+              {ff("NEXT_PUBLIC_FEATURE_AGENT") && (
                 <QuickActionCard
                   title="Investigation Agent"
                   description="Chat with your data"
@@ -207,7 +213,7 @@ export default function Dashboard() {
                   color="green"
                 />
               )}
-              {ff('NEXT_PUBLIC_FEATURE_NLP') && (
+              {ff("NEXT_PUBLIC_FEATURE_NLP") && (
                 <QuickActionCard
                   title="NLP Playground"
                   description="Experiment with language models"
@@ -224,18 +230,24 @@ export default function Dashboard() {
   );
 }
 
-function StatsCard({ title, value, icon: Icon, trend, color }: {
+function StatsCard({
+  title,
+  value,
+  icon: Icon,
+  trend,
+  color,
+}: {
   title: string;
   value: string;
   icon: React.ComponentType<{ size?: number | string; className?: string }>;
   trend?: number;
-  color: 'blue' | 'purple' | 'green' | 'orange';
+  color: "blue" | "purple" | "green" | "orange";
 }) {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
-    purple: 'bg-purple-50 text-purple-600',
-    green: 'bg-green-50 text-green-600',
-    orange: 'bg-orange-50 text-orange-600'
+    blue: "bg-blue-50 text-blue-600",
+    purple: "bg-purple-50 text-purple-600",
+    green: "bg-green-50 text-green-600",
+    orange: "bg-orange-50 text-orange-600",
   };
 
   return (
@@ -249,10 +261,10 @@ function StatsCard({ title, value, icon: Icon, trend, color }: {
           <Icon size={24} />
         </div>
       </div>
-      
+
       {trend !== undefined && (
         <div className="mt-4 flex items-center">
-          <div className={`flex items-center ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`flex items-center ${trend >= 0 ? "text-green-600" : "text-red-600"}`}>
             {trend >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
             <span className="text-sm font-medium">{Math.abs(trend)}%</span>
           </div>
@@ -264,11 +276,10 @@ function StatsCard({ title, value, icon: Icon, trend, color }: {
 }
 
 function QuickSearchWidget() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   return (
     <Panel title="Quick Search">
-      
       <div className="relative mb-4">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search className="h-5 w-5 text-gray-400" />
@@ -281,23 +292,31 @@ function QuickSearchWidget() {
           className="block w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-slate-400"
         />
       </div>
-      
+
       <div className="flex flex-wrap gap-2">
-        {['Financial networks', 'Recent documents', 'Entity connections', 'Risk indicators'].map((suggestion) => (
-          <button
-            key={suggestion}
-            onClick={() => setQuery(suggestion)}
-            className="px-3 py-2 text-sm text-gray-600 dark:text-slate-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          >
-            {suggestion}
-          </button>
-        ))}
+        {["Financial networks", "Recent documents", "Entity connections", "Risk indicators"].map(
+          (suggestion) => (
+            <button
+              key={suggestion}
+              onClick={() => setQuery(suggestion)}
+              className="px-3 py-2 text-sm text-gray-600 dark:text-slate-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              {suggestion}
+            </button>
+          ),
+        )}
       </div>
     </Panel>
   );
 }
 
-function ActivityItem({ type, title, description, time, icon: Icon }: {
+function ActivityItem({
+  type,
+  title,
+  description,
+  time,
+  icon: Icon,
+}: {
   type: string;
   title: string;
   description: string;
@@ -318,18 +337,24 @@ function ActivityItem({ type, title, description, time, icon: Icon }: {
   );
 }
 
-function QuickActionCard({ title, description, href, icon: Icon, color }: {
+function QuickActionCard({
+  title,
+  description,
+  href,
+  icon: Icon,
+  color,
+}: {
   title: string;
   description: string;
   href: string;
   icon: React.ComponentType<{ size?: number | string; className?: string }>;
-  color: 'blue' | 'purple' | 'green' | 'orange';
+  color: "blue" | "purple" | "green" | "orange";
 }) {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600 hover:bg-blue-100',
-    purple: 'bg-purple-50 text-purple-600 hover:bg-purple-100',
-    green: 'bg-green-50 text-green-600 hover:bg-green-100',
-    orange: 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+    blue: "bg-blue-50 text-blue-600 hover:bg-blue-100",
+    purple: "bg-purple-50 text-purple-600 hover:bg-purple-100",
+    green: "bg-green-50 text-green-600 hover:bg-green-100",
+    orange: "bg-orange-50 text-orange-600 hover:bg-orange-100",
   };
 
   return (

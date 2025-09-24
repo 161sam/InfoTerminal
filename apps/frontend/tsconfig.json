@@ -9,15 +9,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "noEmit": true,
     "incremental": true,
@@ -28,17 +22,8 @@
         "name": "next"
       }
     ],
-    "types": [
-      "vitest/globals",
-      "@testing-library/jest-dom"
-    ]
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": [
-    "src",
-    "pages",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src", "pages", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

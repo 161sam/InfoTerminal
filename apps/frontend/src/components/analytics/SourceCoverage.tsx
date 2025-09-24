@@ -1,21 +1,23 @@
 // Source coverage analytics component
-import React from 'react';
-import { Globe, Database, CheckCircle, AlertTriangle, TrendingUp } from 'lucide-react';
-import { useSourceCoverage } from '../../hooks/analytics';
-import { AnalyticsFilters } from './types';
-import { DonutChart, MultiSeriesChart } from '../charts';
+import React from "react";
+import { Globe, Database, CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
+import { useSourceCoverage } from "../../hooks/analytics";
+import { AnalyticsFilters } from "./types";
+import { DonutChart, MultiSeriesChart } from "../charts";
 
 interface SourceCoverageProps {
   filters: AnalyticsFilters;
   className?: string;
 }
 
-export function SourceCoverage({ filters, className = '' }: SourceCoverageProps) {
+export function SourceCoverage({ filters, className = "" }: SourceCoverageProps) {
   const { data, loading, error } = useSourceCoverage(filters);
 
   if (loading) {
     return (
-      <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}
+      >
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
           <div className="grid grid-cols-3 gap-4 mb-6">
@@ -31,7 +33,9 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
 
   if (error) {
     return (
-      <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}
+      >
         <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
           <Database size={20} />
           <span className="text-sm">Service unavailable. Showing empty state.</span>
@@ -48,44 +52,56 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
 
   const getSourceTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      'Web': '#3b82f6',
-      'Document': '#10b981',
-      'Social': '#f59e0b',
-      'News': '#ef4444',
-      'Academic': '#8b5cf6',
-      'Government': '#06b6d4',
-      'Database': '#84cc16',
-      'API': '#f97316',
+      Web: "#3b82f6",
+      Document: "#10b981",
+      Social: "#f59e0b",
+      News: "#ef4444",
+      Academic: "#8b5cf6",
+      Government: "#06b6d4",
+      Database: "#84cc16",
+      API: "#f97316",
     };
-    return colors[type] || '#6b7280';
+    return colors[type] || "#6b7280";
   };
 
   const getCoverageStatusColor = (status: string) => {
     switch (status) {
-      case 'good': return 'text-green-600 dark:text-green-400';
-      case 'warning': return 'text-yellow-600 dark:text-yellow-400';
-      case 'critical': return 'text-red-600 dark:text-red-400';
-      default: return 'text-gray-600 dark:text-gray-400';
+      case "good":
+        return "text-green-600 dark:text-green-400";
+      case "warning":
+        return "text-yellow-600 dark:text-yellow-400";
+      case "critical":
+        return "text-red-600 dark:text-red-400";
+      default:
+        return "text-gray-600 dark:text-gray-400";
     }
   };
 
   const getCoverageIcon = (status: string) => {
     switch (status) {
-      case 'good': return <CheckCircle size={16} className="text-green-500" />;
-      case 'warning': return <AlertTriangle size={16} className="text-yellow-500" />;
-      case 'critical': return <AlertTriangle size={16} className="text-red-500" />;
-      default: return <Database size={16} className="text-gray-500" />;
+      case "good":
+        return <CheckCircle size={16} className="text-green-500" />;
+      case "warning":
+        return <AlertTriangle size={16} className="text-yellow-500" />;
+      case "critical":
+        return <AlertTriangle size={16} className="text-red-500" />;
+      default:
+        return <Database size={16} className="text-gray-500" />;
     }
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}
+    >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Globe size={20} className="text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Source Coverage</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Source Coverage
+          </h3>
         </div>
-        
+
         {data && (
           <div className="text-xs text-gray-500 dark:text-gray-400">
             {formatNumber(data.totalSources)} sources ({data.activeSources} active)
@@ -150,10 +166,10 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
                   Source Types Distribution
                 </h4>
                 <DonutChart
-                  data={data.sourceTypes.map(type => ({
+                  data={data.sourceTypes.map((type) => ({
                     name: type.type,
                     value: type.count,
-                    color: getSourceTypeColor(type.type)
+                    color: getSourceTypeColor(type.type),
                   }))}
                   valueKey="value"
                   nameKey="name"
@@ -174,8 +190,8 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
                   data={data.timeline}
                   xKey="date"
                   series={[
-                    { key: 'sources', name: 'Active Sources', color: '#3b82f6', type: 'line' },
-                    { key: 'newSources', name: 'New Sources', color: '#10b981', type: 'bar' },
+                    { key: "sources", name: "Active Sources", color: "#3b82f6", type: "line" },
+                    { key: "newSources", name: "New Sources", color: "#10b981", type: "bar" },
                   ]}
                   height={200}
                   showLegend
@@ -192,14 +208,17 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.coverage.map((metric, index) => (
-                  <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div
+                    key={index}
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {metric.category}
                       </span>
                       {getCoverageIcon(metric.status)}
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-600 dark:text-gray-400">Coverage</span>
@@ -207,15 +226,19 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
                           {metric.coverage}% / {metric.target}%
                         </span>
                       </div>
-                      
+
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${
-                            metric.status === 'good' ? 'bg-green-500' :
-                            metric.status === 'warning' ? 'bg-yellow-500' :
-                            'bg-red-500'
+                            metric.status === "good"
+                              ? "bg-green-500"
+                              : metric.status === "warning"
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
                           }`}
-                          style={{ width: `${Math.min(metric.coverage / metric.target * 100, 100)}%` }}
+                          style={{
+                            width: `${Math.min((metric.coverage / metric.target) * 100, 100)}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -235,16 +258,29 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">Source</th>
-                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">Type</th>
-                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">Documents</th>
-                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">Reliability</th>
-                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">Last Updated</th>
+                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Source
+                      </th>
+                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Type
+                      </th>
+                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Documents
+                      </th>
+                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Reliability
+                      </th>
+                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Last Updated
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.topSources.slice(0, 10).map((source, index) => (
-                      <tr key={source.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                      <tr
+                        key={source.id}
+                        className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50"
+                      >
                         <td className="p-2">
                           <div className="font-medium text-gray-900 dark:text-gray-100">
                             {source.name}
@@ -254,11 +290,11 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
                           </div>
                         </td>
                         <td className="p-2">
-                          <span 
+                          <span
                             className="inline-block px-2 py-1 text-xs rounded"
                             style={{
                               backgroundColor: `${getSourceTypeColor(source.type)}20`,
-                              color: getSourceTypeColor(source.type)
+                              color: getSourceTypeColor(source.type),
                             }}
                           >
                             {source.type}
@@ -268,11 +304,15 @@ export function SourceCoverage({ filters, className = '' }: SourceCoverageProps)
                           {formatNumber(source.documents)}
                         </td>
                         <td className="p-2 text-right">
-                          <span className={`font-medium ${
-                            source.reliability >= 0.8 ? 'text-green-600 dark:text-green-400' :
-                            source.reliability >= 0.6 ? 'text-yellow-600 dark:text-yellow-400' :
-                            'text-red-600 dark:text-red-400'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              source.reliability >= 0.8
+                                ? "text-green-600 dark:text-green-400"
+                                : source.reliability >= 0.6
+                                  ? "text-yellow-600 dark:text-yellow-400"
+                                  : "text-red-600 dark:text-red-400"
+                            }`}
+                          >
                             {Math.round(source.reliability * 100)}%
                           </span>
                         </td>

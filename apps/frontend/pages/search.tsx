@@ -12,10 +12,10 @@ import SearchResults from "@/components/search/panels/SearchResults";
 import SearchSidebar from "@/components/search/panels/SearchSidebar";
 
 // Import types and utilities
-import { 
-  SearchResult, 
-  SearchFilters as SearchFiltersType, 
-  createSearchExportData 
+import {
+  SearchResult,
+  SearchFilters as SearchFiltersType,
+  createSearchExportData,
 } from "@/lib/search/search-config";
 
 const MapPanel = dynamic(() => import("@/components/MapPanel"), { ssr: false });
@@ -29,14 +29,14 @@ export default function SearchPage() {
   const [showMap, setShowMap] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [searchTime, setSearchTime] = useState(0);
-  
+
   const [filters, setFilters] = useState<SearchFiltersType>({
     type: "all",
     dateRange: "all",
     source: "all",
-    minScore: 0
+    minScore: 0,
   });
-  
+
   const [sort, setSort] = useState("relevance");
   const controller = useRef<AbortController | null>(null);
 
@@ -48,19 +48,19 @@ export default function SearchPage() {
       type: filters.type,
       dateRange: filters.dateRange,
       source: filters.source,
-      minScore: String(filters.minScore)
+      minScore: String(filters.minScore),
     };
 
-    const params = new URLSearchParams({ 
-      q: searchTerm, 
-      sort, 
+    const params = new URLSearchParams({
+      q: searchTerm,
+      sort,
       limit: "20",
-      ...filterParams 
+      ...filterParams,
     });
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     // Cancel previous request
     controller.current?.abort();
     const c = new AbortController();
@@ -70,22 +70,21 @@ export default function SearchPage() {
 
     try {
       let response = await fetch(`/api/search?${params.toString()}`, { signal: c.signal });
-      
+
       if (response.status === 404) {
         const base = config?.SEARCH_API;
         if (!base) throw new Error("Search API not configured");
         response = await fetch(`${base}/search?${params.toString()}`, { signal: c.signal });
       }
-      
+
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
+
       const data = await response.json();
       const searchResults = data.items || data.results || [];
-      
+
       setResults(searchResults);
       setTotalResults(data.total || searchResults.length);
       setSearchTime(Math.round(performance.now() - startTime));
-      
     } catch (e: any) {
       if (e.name !== "AbortError") {
         setError(e.message || "Search failed");
@@ -103,10 +102,17 @@ export default function SearchPage() {
   };
 
   const exportResults = () => {
-    const exportData = createSearchExportData(query, filters, sort, results, totalResults, searchTime);
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const exportData = createSearchExportData(
+      query,
+      filters,
+      sort,
+      results,
+      totalResults,
+      searchTime,
+    );
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `search-results-${Date.now()}.json`;
     a.click();
@@ -121,9 +127,8 @@ export default function SearchPage() {
   return (
     <DashboardLayout title="Intelligent Search" subtitle="Search across all your data sources">
       <div className="max-w-7xl mx-auto space-y-6">
-        
         {/* Search Header */}
-        <SearchHeader 
+        <SearchHeader
           query={query}
           setQuery={setQuery}
           onSearch={runSearch}
@@ -131,10 +136,8 @@ export default function SearchPage() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
-            
             {/* Search Controls */}
             <SearchControls
               query={query}
@@ -151,11 +154,7 @@ export default function SearchPage() {
             />
 
             {/* Filters Panel */}
-            <SearchFilters 
-              filters={filters}
-              setFilters={setFilters}
-              show={showFilters}
-            />
+            <SearchFilters filters={filters} setFilters={setFilters} show={showFilters} />
 
             {/* Search Results */}
             <SearchResults
@@ -170,7 +169,7 @@ export default function SearchPage() {
           </div>
 
           {/* Sidebar */}
-          <SearchSidebar 
+          <SearchSidebar
             filters={filters}
             setFilters={setFilters}
             onSearchSuggestion={selectSuggestion}

@@ -1,4 +1,4 @@
-import type { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from "next";
 
 export default function SecurityRedirectPage() {
   return null;
@@ -6,7 +6,7 @@ export default function SecurityRedirectPage() {
 
 export const getServerSideProps: GetServerSideProps = async () => ({
   redirect: {
-    destination: '/settings?tab=security',
+    destination: "/settings?tab=security",
     permanent: false,
     statusCode: 307,
   },

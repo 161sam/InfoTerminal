@@ -2,12 +2,19 @@
 
 import React from "react";
 
-export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "checked"> {
+export interface CheckboxProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "checked"> {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
 }
 
-export function Checkbox({ checked = false, onCheckedChange, className = "", disabled, ...props }: CheckboxProps) {
+export function Checkbox({
+  checked = false,
+  onCheckedChange,
+  className = "",
+  disabled,
+  ...props
+}: CheckboxProps) {
   return (
     <input
       type="checkbox"
@@ -23,4 +30,3 @@ export function Checkbox({ checked = false, onCheckedChange, className = "", dis
 }
 
 export default Checkbox;
-

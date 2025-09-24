@@ -1,15 +1,9 @@
-import React from 'react';
-import { Users, FileText, Sparkles, Copy, Download } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import NLPEntityHighlighter from './NLPEntityHighlighter';
-import { 
-  NLPTab, 
-  DomainConfig, 
-  NERResponse, 
-  SummaryResponse, 
-  ENTITY_COLORS 
-} from './types';
+import React from "react";
+import { Users, FileText, Sparkles, Copy, Download } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import NLPEntityHighlighter from "./NLPEntityHighlighter";
+import { NLPTab, DomainConfig, NERResponse, SummaryResponse, ENTITY_COLORS } from "./types";
 
 interface NLPResultsPanelProps {
   activeTab: NLPTab;
@@ -34,9 +28,8 @@ export default function NLPResultsPanel({
   sentimentResult,
   error,
   onCopyResults,
-  onExportResults
+  onExportResults,
 }: NLPResultsPanelProps) {
-
   return (
     <Panel>
       <Tabs value={activeTab} onValueChange={onTabChange}>
@@ -69,12 +62,18 @@ export default function NLPResultsPanel({
                 </div>
               )}
             </div>
-            
+
             {/* Tab Navigation */}
             <TabsList>
-              <TabsTrigger value="entities" icon={Users}>Entities</TabsTrigger>
-              <TabsTrigger value="summary" icon={FileText}>Summary</TabsTrigger>
-              <TabsTrigger value="sentiment" icon={Sparkles}>Sentiment</TabsTrigger>
+              <TabsTrigger value="entities" icon={Users}>
+                Entities
+              </TabsTrigger>
+              <TabsTrigger value="summary" icon={FileText}>
+                Summary
+              </TabsTrigger>
+              <TabsTrigger value="sentiment" icon={Sparkles}>
+                Sentiment
+              </TabsTrigger>
             </TabsList>
           </div>
         </div>
@@ -92,11 +91,10 @@ export default function NLPResultsPanel({
               <>
                 {/* Highlighted text */}
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-slate-100 mb-2">Highlighted Text</h4>
-                  <NLPEntityHighlighter 
-                    text={inputText} 
-                    entities={nerResult.entities} 
-                  />
+                  <h4 className="font-medium text-gray-900 dark:text-slate-100 mb-2">
+                    Highlighted Text
+                  </h4>
+                  <NLPEntityHighlighter text={inputText} entities={nerResult.entities} />
                 </div>
 
                 {/* Entity list */}
@@ -107,16 +105,25 @@ export default function NLPResultsPanel({
                     </h4>
                     <div className="space-y-2">
                       {nerResult.entities.map((entity, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                        >
                           <div className="flex items-center gap-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium border ${ENTITY_COLORS[entity.label] || ENTITY_COLORS.DEFAULT}`}>
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-medium border ${ENTITY_COLORS[entity.label] || ENTITY_COLORS.DEFAULT}`}
+                            >
                               {entity.label}
                             </span>
-                            <span className="font-medium text-gray-900 dark:text-slate-100">{entity.text}</span>
+                            <span className="font-medium text-gray-900 dark:text-slate-100">
+                              {entity.text}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-500">
                             <span>{Math.round(entity.confidence * 100)}%</span>
-                            <span className="text-xs">({entity.start}-{entity.end})</span>
+                            <span className="text-xs">
+                              ({entity.start}-{entity.end})
+                            </span>
                           </div>
                         </div>
                       ))}
@@ -133,7 +140,9 @@ export default function NLPResultsPanel({
             ) : (
               <div className="text-center py-8 text-gray-500 dark:text-slate-400">
                 <Users size={48} className="mx-auto mb-2 opacity-50" />
-                <p>Click "Extract Entities" to analyze your {currentDomain?.name.toLowerCase()} text</p>
+                <p>
+                  Click "Extract Entities" to analyze your {currentDomain?.name.toLowerCase()} text
+                </p>
               </div>
             )}
           </div>
@@ -145,9 +154,13 @@ export default function NLPResultsPanel({
             {summaryResult ? (
               <>
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-slate-100 mb-2">Generated Summary</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-slate-100 mb-2">
+                    Generated Summary
+                  </h4>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-900/30">
-                    <p className="text-gray-900 dark:text-slate-100 leading-relaxed">{summaryResult.summary}</p>
+                    <p className="text-gray-900 dark:text-slate-100 leading-relaxed">
+                      {summaryResult.summary}
+                    </p>
                   </div>
                 </div>
 

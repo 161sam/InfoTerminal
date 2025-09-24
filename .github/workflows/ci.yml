@@ -51,6 +51,8 @@ jobs:
           cache: "npm"
       - name: Install
         run: npm ci
+      - name: Lint
+        run: npm -w apps/frontend run lint --silent
       - name: Test
         run: npm -w apps/frontend run test --silent -- --reporter=dot
 

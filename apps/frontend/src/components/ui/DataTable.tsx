@@ -1,19 +1,19 @@
 // apps/frontend/src/components/ui/DataTable.tsx
-import React, { useState, useMemo } from 'react';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Search, 
-  Filter, 
-  Download, 
+import React, { useState, useMemo } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Filter,
+  Download,
   Eye,
   Edit,
   Trash2,
   MoreHorizontal,
   ArrowUpDown,
   CheckSquare,
-  Square
-} from 'lucide-react';
+  Square,
+} from "lucide-react";
 
 export interface Column<T> {
   key: keyof T;
@@ -22,14 +22,14 @@ export interface Column<T> {
   filterable?: boolean;
   width?: string;
   render?: (value: any, row: T) => React.ReactNode;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
 }
 
 export interface TableAction<T> {
   label: string;
   icon: React.ComponentType<{ size?: number | string; className?: string }>;
   onClick: (row: T) => void;
-  color?: 'primary' | 'secondary' | 'danger';
+  color?: "primary" | "secondary" | "danger";
   hidden?: (row: T) => boolean;
 }
 
@@ -66,10 +66,12 @@ export function DataTable<T extends Record<string, any>>({
   pagination,
   onRowClick,
   emptyState,
-  className = ''
+  className = "",
 }: DataTableProps<T>) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: 'asc' | 'desc' } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: "asc" | "desc" } | null>(
+    null,
+  );
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [showFilters, setShowFilters] = useState(false);
@@ -80,18 +82,18 @@ export function DataTable<T extends Record<string, any>>({
 
     // Apply search
     if (searchQuery) {
-      result = result.filter(row =>
-        Object.values(row).some(value =>
-          String(value).toLowerCase().includes(searchQuery.toLowerCase())
-        )
+      result = result.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
       );
     }
 
     // Apply column filters
     Object.entries(filters).forEach(([key, value]) => {
       if (value) {
-        result = result.filter(row =>
-          String(row[key]).toLowerCase().includes(value.toLowerCase())
+        result = result.filter((row) =>
+          String(row[key]).toLowerCase().includes(value.toLowerCase()),
         );
       }
     });
@@ -101,9 +103,9 @@ export function DataTable<T extends Record<string, any>>({
       result.sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
-        
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+
+        if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
         return 0;
       });
     }
@@ -112,9 +114,9 @@ export function DataTable<T extends Record<string, any>>({
   }, [data, searchQuery, sortConfig, filters]);
 
   const handleSort = (key: keyof T) => {
-    setSortConfig(prev => ({
+    setSortConfig((prev) => ({
       key,
-      direction: prev?.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+      direction: prev?.key === key && prev.direction === "asc" ? "desc" : "asc",
     }));
   };
 
@@ -137,19 +139,17 @@ export function DataTable<T extends Record<string, any>>({
   };
 
   const exportToCSV = () => {
-    const headers = columns.map(col => col.header);
+    const headers = columns.map((col) => col.header);
     const csvContent = [
-      headers.join(','),
-      ...filteredData.map(row =>
-        columns.map(col => String(row[col.key])).join(',')
-      )
-    ].join('\n');
+      headers.join(","),
+      ...filteredData.map((row) => columns.map((col) => String(row[col.key])).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'data.csv';
+    a.download = "data.csv";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -159,8 +159,9 @@ export function DataTable<T extends Record<string, any>>({
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 ${className}`}>
-      
+    <div
+      className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 ${className}`}
+    >
       {/* Table Header */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between mb-4">
@@ -174,13 +175,15 @@ export function DataTable<T extends Record<string, any>>({
               )}
             </h3>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {filterable && (
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`p-2 rounded-lg border transition-colors ${
-                  showFilters ? 'bg-primary-50 border-primary-200 text-primary-700' : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  showFilters
+                    ? "bg-primary-50 border-primary-200 text-primary-700"
+                    : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                 }`}
               >
                 <Filter size={16} />
@@ -200,7 +203,10 @@ export function DataTable<T extends Record<string, any>>({
         {/* Search Bar */}
         {searchable && (
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-400" size={16} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search in table..."
@@ -214,23 +220,27 @@ export function DataTable<T extends Record<string, any>>({
         {/* Column Filters */}
         {showFilters && filterable && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            {columns.filter(col => col.filterable !== false).map(column => (
-              <div key={String(column.key)}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-                  {column.header}
-                </label>
-                <input
-                  type="text"
-                  placeholder={`Filter ${column.header}...`}
-                  value={filters[String(column.key)] || ''}
-                  onChange={(e) => setFilters(prev => ({ 
-                    ...prev, 
-                    [String(column.key)]: e.target.value 
-                  }))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-slate-400"
-                />
-              </div>
-            ))}
+            {columns
+              .filter((col) => col.filterable !== false)
+              .map((column) => (
+                <div key={String(column.key)}>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                    {column.header}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={`Filter ${column.header}...`}
+                    value={filters[String(column.key)] || ""}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        [String(column.key)]: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-slate-400"
+                  />
+                </div>
+              ))}
           </div>
         )}
       </div>
@@ -254,11 +264,11 @@ export function DataTable<T extends Record<string, any>>({
                   </button>
                 </th>
               )}
-              
-              {columns.map(column => (
+
+              {columns.map((column) => (
                 <th
                   key={String(column.key)}
-                  className={`px-6 py-3 text-${column.align || 'left'} text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider`}
+                  className={`px-6 py-3 text-${column.align || "left"} text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider`}
                   style={{ width: column.width }}
                 >
                   {column.sortable !== false ? (
@@ -268,7 +278,7 @@ export function DataTable<T extends Record<string, any>>({
                     >
                       {column.header}
                       {sortConfig?.key === column.key ? (
-                        sortConfig.direction === 'asc' ? (
+                        sortConfig.direction === "asc" ? (
                           <ChevronUp size={14} />
                         ) : (
                           <ChevronDown size={14} />
@@ -282,7 +292,7 @@ export function DataTable<T extends Record<string, any>>({
                   )}
                 </th>
               ))}
-              
+
               {actions && actions.length > 0 && (
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -290,15 +300,15 @@ export function DataTable<T extends Record<string, any>>({
               )}
             </tr>
           </thead>
-          
+
           <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
             {filteredData.length > 0 ? (
               filteredData.map((row, index) => (
                 <tr
                   key={index}
                   className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                    onRowClick ? 'cursor-pointer' : ''
-                  } ${selectedRows.has(index) ? 'bg-blue-50' : ''}`}
+                    onRowClick ? "cursor-pointer" : ""
+                  } ${selectedRows.has(index) ? "bg-blue-50" : ""}`}
                   onClick={() => onRowClick?.(row)}
                 >
                   {selectable && (
@@ -318,36 +328,42 @@ export function DataTable<T extends Record<string, any>>({
                       </button>
                     </td>
                   )}
-                  
-                  {columns.map(column => (
+
+                  {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100 text-${column.align || 'left'}`}
+                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100 text-${column.align || "left"}`}
                     >
-                      {column.render ? column.render(row[column.key], row) : String(row[column.key])}
+                      {column.render
+                        ? column.render(row[column.key], row)
+                        : String(row[column.key])}
                     </td>
                   ))}
-                  
+
                   {actions && actions.length > 0 && (
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
-                        {actions.filter(action => !action.hidden?.(row)).map((action, actionIndex) => (
-                          <button
-                            key={actionIndex}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              action.onClick(row);
-                            }}
-                            className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
-                              action.color === 'danger' ? 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20' :
-                              action.color === 'primary' ? 'text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20' :
-                              'text-gray-600 dark:text-gray-300'
-                            }`}
-                            title={action.label}
-                          >
-                            <action.icon size={16} />
-                          </button>
-                        ))}
+                        {actions
+                          .filter((action) => !action.hidden?.(row))
+                          .map((action, actionIndex) => (
+                            <button
+                              key={actionIndex}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                action.onClick(row);
+                              }}
+                              className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                                action.color === "danger"
+                                  ? "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                  : action.color === "primary"
+                                    ? "text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                                    : "text-gray-600 dark:text-gray-300"
+                              }`}
+                              title={action.label}
+                            >
+                              <action.icon size={16} />
+                            </button>
+                          ))}
                       </div>
                     </td>
                   )}
@@ -355,7 +371,10 @@ export function DataTable<T extends Record<string, any>>({
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length + (selectable ? 1 : 0) + (actions ? 1 : 0)} className="px-6 py-12">
+                <td
+                  colSpan={columns.length + (selectable ? 1 : 0) + (actions ? 1 : 0)}
+                  className="px-6 py-12"
+                >
                   {emptyState || (
                     <div className="text-center">
                       <div className="text-gray-400 dark:text-slate-500 mb-2">
@@ -407,7 +426,13 @@ function TableSkeleton() {
   );
 }
 
-function TablePagination({ page, pageSize, total, onPageChange, onPageSizeChange }: {
+function TablePagination({
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  onPageSizeChange,
+}: {
   page: number;
   pageSize: number;
   total: number;
@@ -424,7 +449,7 @@ function TablePagination({ page, pageSize, total, onPageChange, onPageSizeChange
         <span className="text-sm text-gray-700 dark:text-gray-300">
           Showing {startItem} to {endItem} of {total} results
         </span>
-        
+
         <select
           value={pageSize}
           onChange={(e) => onPageSizeChange(Number(e.target.value))}
@@ -436,7 +461,7 @@ function TablePagination({ page, pageSize, total, onPageChange, onPageSizeChange
           <option value={100}>100</option>
         </select>
       </div>
-      
+
       <div className="flex items-center gap-2">
         <button
           onClick={() => onPageChange(page - 1)}
@@ -445,20 +470,20 @@ function TablePagination({ page, pageSize, total, onPageChange, onPageSizeChange
         >
           Previous
         </button>
-        
+
         <div className="flex items-center gap-1">
           {[...Array(Math.min(5, totalPages))].map((_, i) => {
             const pageNum = Math.max(1, page - 2) + i;
             if (pageNum > totalPages) return null;
-            
+
             return (
               <button
                 key={pageNum}
                 onClick={() => onPageChange(pageNum)}
                 className={`px-3 py-2 text-sm rounded transition-colors ${
                   pageNum === page
-                    ? 'bg-primary-600 text-white'
-                    : 'border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    ? "bg-primary-600 text-white"
+                    : "border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                 }`}
               >
                 {pageNum}
@@ -466,7 +491,7 @@ function TablePagination({ page, pageSize, total, onPageChange, onPageSizeChange
             );
           })}
         </div>
-        
+
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}

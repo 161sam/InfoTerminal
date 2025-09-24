@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { 
-  Play, 
-  Square, 
-  RotateCcw, 
-  Activity, 
-  Settings, 
-  Server, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
+import { useEffect, useState } from "react";
+import {
+  Play,
+  Square,
+  RotateCcw,
+  Activity,
+  Settings,
+  Server,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
   Monitor,
   RefreshCw,
   ChevronDown,
@@ -19,11 +19,11 @@ import {
   Cpu,
   Network,
   Eye,
-  EyeOff
-} from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import Button from '@/components/ui/button';
-import { toast } from '@/components/ui/toast';
+  EyeOff,
+} from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import Button from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 import {
   listStacks,
   stackStatus,
@@ -32,7 +32,7 @@ import {
   stackRestart,
   stackScale,
   streamLogs,
-} from '@/lib/ops';
+} from "@/lib/ops";
 
 interface StackInfo {
   title: string;
@@ -57,7 +57,7 @@ interface StackDetails {
   uptime?: string;
 }
 
-type ActionType = 'up' | 'down' | 'restart' | 'status';
+type ActionType = "up" | "down" | "restart" | "status";
 
 export default function OpsTab() {
   const [stacks, setStacks] = useState<Record<string, StackInfo>>({});
@@ -65,9 +65,9 @@ export default function OpsTab() {
   const [actionLoading, setActionLoading] = useState<Record<string, ActionType | null>>({});
   const [status, setStatus] = useState<StackDetails | null>(null);
   const [expandedStacks, setExpandedStacks] = useState<Record<string, boolean>>({});
-  const [logText, setLogText] = useState('');
+  const [logText, setLogText] = useState("");
   const [logStack, setLogStack] = useState<string | null>(null);
-  const [scaleService, setScaleService] = useState('');
+  const [scaleService, setScaleService] = useState("");
   const [scaleReplicas, setScaleReplicas] = useState(1);
   const [logController, setLogController] = useState<AbortController | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
@@ -81,10 +81,10 @@ export default function OpsTab() {
     if (autoRefresh) {
       const interval = setInterval(() => {
         if (status) {
-          handleAction('status', status.stack);
+          handleAction("status", status.stack);
         }
       }, 10000); // Refresh every 10 seconds
-      
+
       setRefreshInterval(interval);
       return () => clearInterval(interval);
     } else if (refreshInterval) {
@@ -99,110 +99,113 @@ export default function OpsTab() {
       const data = await listStacks();
       setStacks(data.stacks || {});
     } catch (error) {
-      toast('Failed to load stacks', { variant: 'error' });
+      toast("Failed to load stacks", { variant: "error" });
     } finally {
       setLoading(false);
     }
   };
 
   const handleAction = async (action: ActionType, stackName: string) => {
-    setActionLoading(prev => ({ ...prev, [stackName]: action }));
-    
+    setActionLoading((prev) => ({ ...prev, [stackName]: action }));
+
     try {
       switch (action) {
-        case 'status':
+        case "status":
           const statusData = await stackStatus(stackName);
           setStatus({
             stack: stackName,
             services: statusData.services || [],
             totalReplicas: statusData.services?.reduce((sum: number, s: ServiceInfo) => {
-              const replicas = s.Replicas.split('/');
-              return sum + parseInt(replicas[1] || '0');
+              const replicas = s.Replicas.split("/");
+              return sum + parseInt(replicas[1] || "0");
             }, 0),
             runningReplicas: statusData.services?.reduce((sum: number, s: ServiceInfo) => {
-              const replicas = s.Replicas.split('/');
-              return sum + parseInt(replicas[0] || '0');
-            }, 0)
+              const replicas = s.Replicas.split("/");
+              return sum + parseInt(replicas[0] || "0");
+            }, 0),
           });
           break;
-        case 'up':
+        case "up":
           await stackUp(stackName);
-          toast(`Stack ${stackName} started successfully`, { variant: 'success' });
+          toast(`Stack ${stackName} started successfully`, { variant: "success" });
           break;
-        case 'down':
+        case "down":
           await stackDown(stackName);
-          toast(`Stack ${stackName} stopped successfully`, { variant: 'success' });
+          toast(`Stack ${stackName} stopped successfully`, { variant: "success" });
           break;
-        case 'restart':
+        case "restart":
           await stackRestart(stackName);
-          toast(`Stack ${stackName} restarted successfully`, { variant: 'success' });
+          toast(`Stack ${stackName} restarted successfully`, { variant: "success" });
           break;
       }
     } catch (error) {
-      toast(`${action} action failed for ${stackName}`, { variant: 'error' });
+      toast(`${action} action failed for ${stackName}`, { variant: "error" });
     } finally {
-      setActionLoading(prev => ({ ...prev, [stackName]: null }));
+      setActionLoading((prev) => ({ ...prev, [stackName]: null }));
     }
   };
 
   const handleScale = async (stackName: string) => {
     if (!scaleService) {
-      toast('Please select a service to scale', { variant: 'error' });
-      return;
-    }
-    
-    if (scaleReplicas < 0 || scaleReplicas > 10) {
-      toast('Replicas must be between 0 and 10', { variant: 'error' });
+      toast("Please select a service to scale", { variant: "error" });
       return;
     }
 
-    setActionLoading(prev => ({ ...prev, [stackName]: 'status' }));
-    
+    if (scaleReplicas < 0 || scaleReplicas > 10) {
+      toast("Replicas must be between 0 and 10", { variant: "error" });
+      return;
+    }
+
+    setActionLoading((prev) => ({ ...prev, [stackName]: "status" }));
+
     try {
       await stackScale(stackName, scaleService, scaleReplicas);
-      toast(`Service ${scaleService} scaled to ${scaleReplicas} replicas`, { variant: 'success' });
-      
+      toast(`Service ${scaleService} scaled to ${scaleReplicas} replicas`, { variant: "success" });
+
       // Refresh status after scaling
-      setTimeout(() => handleAction('status', stackName), 2000);
+      setTimeout(() => handleAction("status", stackName), 2000);
     } catch (error) {
-      toast('Scale operation failed', { variant: 'error' });
+      toast("Scale operation failed", { variant: "error" });
     } finally {
-      setActionLoading(prev => ({ ...prev, [stackName]: null }));
+      setActionLoading((prev) => ({ ...prev, [stackName]: null }));
     }
   };
 
   const handleLogs = async (stackName: string) => {
     // Stop existing log stream
     logController?.abort();
-    
+
     const controller = new AbortController();
     setLogController(controller);
-    setLogText('');
+    setLogText("");
     setLogStack(stackName);
-    
+
     try {
       const response = await streamLogs(stackName, { signal: controller.signal });
       const reader = response.body?.getReader();
-      
+
       if (!reader) {
-        toast('Failed to start log stream', { variant: 'error' });
+        toast("Failed to start log stream", { variant: "error" });
         return;
       }
-      
+
       const decoder = new TextDecoder();
-      
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        
+
         const chunk = decoder.decode(value);
-        setLogText(prev => prev + chunk);
+        setLogText((prev) => prev + chunk);
       }
     } catch (error: unknown) {
       const isAbortError = (err: unknown): boolean =>
-        typeof err === 'object' && err !== null && 'name' in err && (err as any).name === 'AbortError';
+        typeof err === "object" &&
+        err !== null &&
+        "name" in err &&
+        (err as any).name === "AbortError";
       if (!isAbortError(error)) {
-        toast('Log streaming failed', { variant: 'error' });
+        toast("Log streaming failed", { variant: "error" });
       }
     }
   };
@@ -214,15 +217,15 @@ export default function OpsTab() {
   };
 
   const toggleStackExpansion = (stackName: string) => {
-    setExpandedStacks(prev => ({
+    setExpandedStacks((prev) => ({
       ...prev,
-      [stackName]: !prev[stackName]
+      [stackName]: !prev[stackName],
     }));
   };
 
   const getServiceStatusIcon = (service: ServiceInfo) => {
-    const [running, total] = service.Replicas.split('/').map(Number);
-    
+    const [running, total] = service.Replicas.split("/").map(Number);
+
     if (running === total && running > 0) {
       return <CheckCircle size={16} className="text-green-500" />;
     } else if (running > 0 && running < total) {
@@ -233,17 +236,17 @@ export default function OpsTab() {
   };
 
   const getStackHealthStatus = (services?: ServiceInfo[]) => {
-    if (!services || services.length === 0) return 'unknown';
-    
+    if (!services || services.length === 0) return "unknown";
+
     const totalServices = services.length;
-    const healthyServices = services.filter(s => {
-      const [running, total] = s.Replicas.split('/').map(Number);
+    const healthyServices = services.filter((s) => {
+      const [running, total] = s.Replicas.split("/").map(Number);
       return running === total && running > 0;
     }).length;
-    
-    if (healthyServices === totalServices) return 'healthy';
-    if (healthyServices > 0) return 'degraded';
-    return 'down';
+
+    if (healthyServices === totalServices) return "healthy";
+    if (healthyServices > 0) return "degraded";
+    return "down";
   };
 
   if (loading) {
@@ -259,16 +262,17 @@ export default function OpsTab() {
 
   return (
     <div className="space-y-6">
-      
       {/* Operations Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Docker Stack Operations</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
+            Docker Stack Operations
+          </h3>
           <p className="text-sm text-gray-600 dark:text-slate-400">
             All operations are audited and logged for compliance
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-2 text-sm">
             <input
@@ -279,13 +283,8 @@ export default function OpsTab() {
             />
             Auto-refresh
           </label>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadStacks}
-            disabled={loading}
-          >
+
+          <Button variant="outline" size="sm" onClick={loadStacks} disabled={loading}>
             {loading ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
           </Button>
         </div>
@@ -306,10 +305,9 @@ export default function OpsTab() {
           const isLoading = actionLoading[stackName];
           const stackStatus = status?.stack === stackName ? status : null;
           const healthStatus = getStackHealthStatus(stackStatus?.services);
-          
+
           return (
             <Panel key={stackName} className="overflow-hidden">
-              
               {/* Stack Header */}
               <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
@@ -319,7 +317,7 @@ export default function OpsTab() {
                   >
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </button>
-                  
+
                   <div className="flex items-center gap-2">
                     <Server size={20} className="text-gray-600 dark:text-slate-400" />
                     <div>
@@ -331,84 +329,89 @@ export default function OpsTab() {
                       </p>
                     </div>
                   </div>
-                  
+
                   {stackStatus && (
-                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                      healthStatus === 'healthy' ? 'bg-green-100 text-green-800' :
-                      healthStatus === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
-                      healthStatus === 'down' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {healthStatus === 'healthy' && <CheckCircle size={12} />}
-                      {healthStatus === 'degraded' && <AlertTriangle size={12} />}
-                      {healthStatus === 'down' && <Clock size={12} />}
+                    <div
+                      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        healthStatus === "healthy"
+                          ? "bg-green-100 text-green-800"
+                          : healthStatus === "degraded"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : healthStatus === "down"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {healthStatus === "healthy" && <CheckCircle size={12} />}
+                      {healthStatus === "degraded" && <AlertTriangle size={12} />}
+                      {healthStatus === "down" && <Clock size={12} />}
                       {healthStatus}
                     </div>
                   )}
                 </div>
-                
+
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2">
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleAction('status', stackName)}
-                    disabled={isLoading === 'status'}
+                    onClick={() => handleAction("status", stackName)}
+                    disabled={isLoading === "status"}
                   >
-                    {isLoading === 'status' ? (
+                    {isLoading === "status" ? (
                       <RefreshCw size={14} className="animate-spin" />
                     ) : (
                       <Monitor size={14} />
                     )}
                     Status
                   </Button>
-                  
+
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleAction('up', stackName)}
-                    disabled={isLoading === 'up'}
+                    onClick={() => handleAction("up", stackName)}
+                    disabled={isLoading === "up"}
                   >
-                    {isLoading === 'up' ? (
+                    {isLoading === "up" ? (
                       <RefreshCw size={14} className="animate-spin" />
                     ) : (
                       <Play size={14} />
                     )}
                     Start
                   </Button>
-                  
+
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleAction('down', stackName)}
-                    disabled={isLoading === 'down'}
+                    onClick={() => handleAction("down", stackName)}
+                    disabled={isLoading === "down"}
                   >
-                    {isLoading === 'down' ? (
+                    {isLoading === "down" ? (
                       <RefreshCw size={14} className="animate-spin" />
                     ) : (
                       <Square size={14} />
                     )}
                     Stop
                   </Button>
-                  
+
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleAction('restart', stackName)}
-                    disabled={isLoading === 'restart'}
+                    onClick={() => handleAction("restart", stackName)}
+                    disabled={isLoading === "restart"}
                   >
-                    {isLoading === 'restart' ? (
+                    {isLoading === "restart" ? (
                       <RefreshCw size={14} className="animate-spin" />
                     ) : (
                       <RotateCcw size={14} />
                     )}
                     Restart
                   </Button>
-                  
+
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => logStack === stackName ? stopLogs() : handleLogs(stackName)}
+                    onClick={() => (logStack === stackName ? stopLogs() : handleLogs(stackName))}
                   >
                     {logStack === stackName ? (
                       <>
@@ -428,7 +431,6 @@ export default function OpsTab() {
               {/* Expanded Content */}
               {isExpanded && (
                 <div className="p-4 space-y-4">
-                  
                   {/* Stack Files */}
                   <div>
                     <h5 className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
@@ -453,11 +455,11 @@ export default function OpsTab() {
                         <h5 className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
                           Services ({stackStatus.services.length})
                         </h5>
-                        
+
                         <div className="grid grid-cols-1 gap-3">
                           {stackStatus.services.map((service, index) => {
-                            const [running, total] = service.Replicas.split('/').map(Number);
-                            
+                            const [running, total] = service.Replicas.split("/").map(Number);
+
                             return (
                               <div
                                 key={index}
@@ -474,7 +476,7 @@ export default function OpsTab() {
                                     </div>
                                   </div>
                                 </div>
-                                
+
                                 <div className="flex items-center gap-4 text-sm">
                                   <div className="text-right">
                                     <div className="font-medium text-gray-900 dark:text-slate-100">
@@ -484,7 +486,7 @@ export default function OpsTab() {
                                       replicas
                                     </div>
                                   </div>
-                                  
+
                                   {service.Ports && (
                                     <div className="text-right">
                                       <div className="font-medium text-gray-900 dark:text-slate-100">
@@ -516,7 +518,7 @@ export default function OpsTab() {
                             </option>
                           ))}
                         </select>
-                        
+
                         <input
                           type="number"
                           min={0}
@@ -526,7 +528,7 @@ export default function OpsTab() {
                           onChange={(e) => setScaleReplicas(Number(e.target.value))}
                           placeholder="Replicas"
                         />
-                        
+
                         <Button
                           size="sm"
                           onClick={() => handleScale(stackName)}
@@ -551,7 +553,7 @@ export default function OpsTab() {
                           Stop Stream
                         </Button>
                       </div>
-                      
+
                       <div className="bg-black text-green-400 p-3 rounded-lg max-h-64 overflow-auto font-mono text-xs">
                         {logText ? (
                           <pre className="whitespace-pre-wrap">{logText}</pre>
@@ -578,8 +580,8 @@ export default function OpsTab() {
           <div>
             <h4 className="font-medium text-yellow-800 dark:text-yellow-300">Operations Notice</h4>
             <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
-              All Docker operations are logged and audited for security compliance. 
-              Only authorized personnel should perform production operations.
+              All Docker operations are logged and audited for security compliance. Only authorized
+              personnel should perform production operations.
             </p>
           </div>
         </div>

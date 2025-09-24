@@ -1,25 +1,25 @@
 // Dossier export and generation panel
-import { useState } from 'react';
-import { 
-  Download, 
-  RefreshCw, 
-  FileText, 
-  Eye, 
-  Save, 
+import { useState } from "react";
+import {
+  Download,
+  RefreshCw,
+  FileText,
+  Eye,
+  Save,
   Share2,
   CheckCircle,
   AlertTriangle,
-  Clock
-} from 'lucide-react';
-import { 
-  DossierItem, 
-  DossierSettings, 
+  Clock,
+} from "lucide-react";
+import {
+  DossierItem,
+  DossierSettings,
   GeneratedDossier,
   DossierExportOptions,
   createDossierPayload,
   validateDossierItems,
-  formatFileSize
-} from '@/lib/dossier/dossier-config';
+  formatFileSize,
+} from "@/lib/dossier/dossier-config";
 
 interface DossierExportPanelProps {
   title: string;
@@ -34,14 +34,14 @@ export function DossierExportPanel({
   items,
   settings,
   onGenerate,
-  onPreview
+  onPreview,
 }: DossierExportPanelProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedDossier, setGeneratedDossier] = useState<GeneratedDossier | null>(null);
   const [exportOptions, setExportOptions] = useState<DossierExportOptions>({
-    format: 'pdf',
+    format: "pdf",
     includeImages: true,
-    includeMetadata: true
+    includeMetadata: true,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -59,7 +59,7 @@ export function DossierExportPanel({
       const result = await onGenerate(payload);
       setGeneratedDossier(result);
     } catch (err: any) {
-      setError(err.message || 'Failed to generate dossier');
+      setError(err.message || "Failed to generate dossier");
     } finally {
       setIsGenerating(false);
     }
@@ -73,11 +73,11 @@ export function DossierExportPanel({
     let filename: string;
 
     switch (format) {
-      case 'markdown':
-        blob = new Blob([generatedDossier.markdown], { type: 'text/markdown' });
-        filename = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.md`;
+      case "markdown":
+        blob = new Blob([generatedDossier.markdown], { type: "text/markdown" });
+        filename = `${title.replace(/[^a-zA-Z0-9]/g, "_")}.md`;
         break;
-      case 'html':
+      case "html":
         // Convert markdown to basic HTML (simplified)
         const htmlContent = `
 <!DOCTYPE html>
@@ -96,13 +96,13 @@ export function DossierExportPanel({
     <pre>${generatedDossier.markdown}</pre>
 </body>
 </html>`;
-        blob = new Blob([htmlContent], { type: 'text/html' });
-        filename = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.html`;
+        blob = new Blob([htmlContent], { type: "text/html" });
+        filename = `${title.replace(/[^a-zA-Z0-9]/g, "_")}.html`;
         break;
       default:
         if (generatedDossier.pdfUrl) {
           // Open PDF URL
-          window.open(generatedDossier.pdfUrl, '_blank');
+          window.open(generatedDossier.pdfUrl, "_blank");
           return;
         }
         return;
@@ -110,7 +110,7 @@ export function DossierExportPanel({
 
     // Download the file
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
@@ -123,27 +123,27 @@ export function DossierExportPanel({
     if (isGenerating) {
       return {
         icon: <RefreshCw size={16} className="animate-spin text-blue-600" />,
-        text: 'Generating dossier...',
-        color: 'text-blue-600 dark:text-blue-400'
+        text: "Generating dossier...",
+        color: "text-blue-600 dark:text-blue-400",
       };
     }
-    
+
     if (error) {
       return {
         icon: <AlertTriangle size={16} className="text-red-600" />,
         text: error,
-        color: 'text-red-600 dark:text-red-400'
+        color: "text-red-600 dark:text-red-400",
       };
     }
-    
+
     if (generatedDossier) {
       return {
         icon: <CheckCircle size={16} className="text-green-600" />,
-        text: 'Dossier generated successfully',
-        color: 'text-green-600 dark:text-green-400'
+        text: "Dossier generated successfully",
+        color: "text-green-600 dark:text-green-400",
       };
     }
-    
+
     return null;
   };
 
@@ -153,9 +153,7 @@ export function DossierExportPanel({
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Download size={20} className="text-gray-600 dark:text-gray-400" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Generate & Export
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Generate & Export</h3>
       </div>
 
       {/* Generation Button */}
@@ -178,13 +176,12 @@ export function DossierExportPanel({
               </>
             )}
           </button>
-          
+
           {!canGenerate && !isGenerating && (
             <div className="mt-2 text-sm text-red-600 dark:text-red-400">
-              {!title.trim() && 'Please enter a title'}
-              {!validation.isValid && validation.errors.map((error, index) => (
-                <div key={index}>• {error}</div>
-              ))}
+              {!title.trim() && "Please enter a title"}
+              {!validation.isValid &&
+                validation.errors.map((error, index) => <div key={index}>• {error}</div>)}
             </div>
           )}
         </div>
@@ -201,36 +198,34 @@ export function DossierExportPanel({
       {/* Export Options */}
       {generatedDossier && (
         <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <h4 className="font-medium text-gray-900 dark:text-white mb-3">
-            Export Options
-          </h4>
-          
+          <h4 className="font-medium text-gray-900 dark:text-white mb-3">Export Options</h4>
+
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => handleExport('markdown')}
+                onClick={() => handleExport("markdown")}
                 className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <FileText size={16} />
                 Markdown
               </button>
-              
+
               <button
-                onClick={() => handleExport('html')}
+                onClick={() => handleExport("html")}
                 className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <FileText size={16} />
                 HTML
               </button>
-              
+
               <button
-                onClick={() => handleExport('pdf')}
+                onClick={() => handleExport("pdf")}
                 className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <Download size={16} />
                 PDF
               </button>
-              
+
               <button
                 onClick={() => onPreview(generatedDossier)}
                 className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -246,25 +241,29 @@ export function DossierExportPanel({
                 <input
                   type="checkbox"
                   checked={exportOptions.includeImages}
-                  onChange={(e) => setExportOptions(prev => ({ 
-                    ...prev, 
-                    includeImages: e.target.checked 
-                  }))}
+                  onChange={(e) =>
+                    setExportOptions((prev) => ({
+                      ...prev,
+                      includeImages: e.target.checked,
+                    }))
+                  }
                   className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">
                   Include images and visualizations
                 </span>
               </label>
-              
+
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={exportOptions.includeMetadata}
-                  onChange={(e) => setExportOptions(prev => ({ 
-                    ...prev, 
-                    includeMetadata: e.target.checked 
-                  }))}
+                  onChange={(e) =>
+                    setExportOptions((prev) => ({
+                      ...prev,
+                      includeMetadata: e.target.checked,
+                    }))
+                  }
                   className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">
@@ -314,7 +313,7 @@ export function DossierExportPanel({
         >
           Reset
         </button>
-        
+
         <button
           onClick={() => {
             if (generatedDossier) {

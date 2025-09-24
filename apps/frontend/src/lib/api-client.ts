@@ -1,5 +1,5 @@
 // Enhanced API client for InfoTerminal with error handling and retries
-import { getApis } from './config';
+import { getApis } from "./config";
 
 export interface ApiResponse<T = any> {
   data?: T;
@@ -17,10 +17,10 @@ class ApiClientError extends Error {
   constructor(
     message: string,
     public status?: number,
-    public response?: Response
+    public response?: Response,
   ) {
     super(message);
-    this.name = 'ApiClientError';
+    this.name = "ApiClientError";
   }
 }
 
@@ -29,10 +29,7 @@ export class ApiClient {
   private maxRetries = 3;
   private retryDelay = 1000;
 
-  async request<T = any>(
-    endpoint: string,
-    options: RequestOptions = {}
-  ): Promise<ApiResponse<T>> {
+  async request<T = any>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
     const {
       timeout = this.baseTimeout,
       retries = this.maxRetries,
@@ -51,7 +48,7 @@ export class ApiClient {
           ...fetchOptions,
           signal: controller.signal,
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             ...fetchOptions.headers,
           },
         });
@@ -62,14 +59,14 @@ export class ApiClient {
           throw new ApiClientError(
             `HTTP ${response.status}: ${response.statusText}`,
             response.status,
-            response
+            response,
           );
         }
 
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get("content-type");
         let data: T;
 
-        if (contentType?.includes('application/json')) {
+        if (contentType?.includes("application/json")) {
           data = await response.json();
         } else {
           data = (await response.text()) as unknown as T;
@@ -84,12 +81,17 @@ export class ApiClient {
         }
 
         // Don't retry on client errors (400-499)
-        if (error instanceof ApiClientError && error.status && error.status >= 400 && error.status < 500) {
+        if (
+          error instanceof ApiClientError &&
+          error.status &&
+          error.status >= 400 &&
+          error.status < 500
+        ) {
           break;
         }
 
         // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+        await new Promise((resolve) => setTimeout(resolve, retryDelay * (attempt + 1)));
       }
     }
 
@@ -100,27 +102,35 @@ export class ApiClient {
   }
 
   async get<T = any>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...options, method: 'GET' });
+    return this.request<T>(endpoint, { ...options, method: "GET" });
   }
 
-  async post<T = any>(endpoint: string, data?: any, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+  async post<T = any>(
+    endpoint: string,
+    data?: any,
+    options: RequestOptions = {},
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
-      method: 'POST',
+      method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
-  async put<T = any>(endpoint: string, data?: any, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+  async put<T = any>(
+    endpoint: string,
+    data?: any,
+    options: RequestOptions = {},
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async delete<T = any>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
+    return this.request<T>(endpoint, { ...options, method: "DELETE" });
   }
 }
 
@@ -131,36 +141,38 @@ export class AnalyticsApiClient extends ApiClient {
   // Entity Analytics
   async getEntityStats(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.timeRange) params.append('time_range', filters.timeRange);
-    if (filters.entityTypes?.length) params.append('entity_types', filters.entityTypes.join(','));
-    if (filters.sources?.length) params.append('sources', filters.sources.join(','));
-    
+    if (filters.timeRange) params.append("time_range", filters.timeRange);
+    if (filters.entityTypes?.length) params.append("entity_types", filters.entityTypes.join(","));
+    if (filters.sources?.length) params.append("sources", filters.sources.join(","));
+
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/entities?${params}`);
   }
 
   async getTopEntities(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    if (filters.entityTypes?.length) params.append('types', filters.entityTypes.join(','));
-    
+    if (filters.limit) params.append("limit", filters.limit.toString());
+    if (filters.entityTypes?.length) params.append("types", filters.entityTypes.join(","));
+
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/entities/top?${params}`);
   }
 
   // Source Coverage
   async getSourceCoverage(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.timeRange) params.append('time_range', filters.timeRange);
-    
+    if (filters.timeRange) params.append("time_range", filters.timeRange);
+
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/sources?${params}`);
   }
 
   // Evidence Quality
   async getEvidenceQuality(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.timeRange) params.append('time_range', filters.timeRange);
-    
+    if (filters.timeRange) params.append("time_range", filters.timeRange);
+
     // Try verification service first, fallback to search
-    const verificationResponse = await this.get(`${this.apis.DOC_ENTITIES_API}/v1/analytics/evidence?${params}`);
+    const verificationResponse = await this.get(
+      `${this.apis.DOC_ENTITIES_API}/v1/analytics/evidence?${params}`,
+    );
     if (verificationResponse.success) {
       return verificationResponse;
     }
@@ -171,44 +183,44 @@ export class AnalyticsApiClient extends ApiClient {
   // Workflow Runs
   async getWorkflowRuns(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    if (filters.status) params.append('status', filters.status);
-    
+    if (filters.limit) params.append("limit", filters.limit.toString());
+    if (filters.status) params.append("status", filters.status);
+
     return this.get(`${this.apis.FLOWISE_API}/v1/runs?${params}`);
   }
 
   // Timeline Data
   async getTimeline(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.timeRange) params.append('time_range', filters.timeRange);
-    if (filters.entityTypes?.length) params.append('entity_types', filters.entityTypes.join(','));
-    
+    if (filters.timeRange) params.append("time_range", filters.timeRange);
+    if (filters.entityTypes?.length) params.append("entity_types", filters.entityTypes.join(","));
+
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/timeline?${params}`);
   }
 
   // Geospatial Data
   async getGeoEntities(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.bbox) params.append('bbox', filters.bbox.join(','));
-    if (filters.entityTypes?.length) params.append('entity_types', filters.entityTypes.join(','));
-    
+    if (filters.bbox) params.append("bbox", filters.bbox.join(","));
+    if (filters.entityTypes?.length) params.append("entity_types", filters.entityTypes.join(","));
+
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/geo?${params}`);
   }
 
   // Graph Metrics
   async getGraphMetrics(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.algorithm) params.append('algorithm', filters.algorithm);
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    
+    if (filters.algorithm) params.append("algorithm", filters.algorithm);
+    if (filters.limit) params.append("limit", filters.limit.toString());
+
     return this.get(`${this.apis.GRAPH_API}/v1/analytics/metrics?${params}`);
   }
 
   // Query Insights
   async getQueryInsights(filters: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams();
-    if (filters.timeRange) params.append('time_range', filters.timeRange);
-    
+    if (filters.timeRange) params.append("time_range", filters.timeRange);
+
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/queries?${params}`);
   }
 }

@@ -1,12 +1,10 @@
-import React from 'react';
-import { Menu, ChevronDown } from 'lucide-react';
-import { useRouter } from 'next/router';
-import GlobalHealth from '../health/GlobalHealth';
-import { getMainNavItems } from '@/components/navItems';
-import HeaderUserButton from '@/components/UserLogin/HeaderUserButton';
-import { ThemeToggle } from '@/lib/theme-provider';
-
-
+import React from "react";
+import { Menu, ChevronDown } from "lucide-react";
+import { useRouter } from "next/router";
+import GlobalHealth from "../health/GlobalHealth";
+import { getMainNavItems } from "@/components/navItems";
+import HeaderUserButton from "@/components/UserLogin/HeaderUserButton";
+import { ThemeToggle } from "@/lib/theme-provider";
 
 interface HeaderProps {
   onMobileMenuClick?: () => void;
@@ -19,13 +17,11 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
   const mainNavItems = getMainNavItems();
 
   const isActiveRoute = (href: string) => {
-    if (href === '/') {
-      return router.pathname === '/';
+    if (href === "/") {
+      return router.pathname === "/";
     }
     return router.pathname.startsWith(href);
   };
-
-
 
   return (
     <header className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
@@ -40,12 +36,13 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
         </button>
 
         {/* Logo */}
-        <a href="/" className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+        <a
+          href="/"
+          className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+        >
           InfoTerminal
         </a>
-        <div className="ml-4 text-sm text-gray-500 dark:text-gray-400">
-          v1.0.0
-        </div>
+        <div className="ml-4 text-sm text-gray-500 dark:text-gray-400">v1.0.0</div>
       </div>
 
       {/* Main Navigation - Desktop */}
@@ -56,15 +53,15 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
             href={item.href}
             className={`text-sm font-medium transition-colors ${
               isActiveRoute(item.href)
-                ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400 pb-1'
-                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                ? "text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400 pb-1"
+                : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
             }`}
             title={item.description}
           >
             {item.name}
           </a>
         ))}
-        
+
         {/* More dropdown for additional items */}
         {mainNavItems.length > 5 && (
           <div className="relative group">
@@ -72,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
               More
               <ChevronDown size={16} />
             </button>
-            
+
             {/* Dropdown Menu */}
             <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <div className="py-2">
@@ -82,8 +79,8 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
                     href={item.href}
                     className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
                       isActiveRoute(item.href)
-                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                   >
                     <item.icon size={16} />

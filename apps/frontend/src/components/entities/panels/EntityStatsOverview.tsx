@@ -1,13 +1,6 @@
-import React from 'react';
-import { 
-  Target, 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  TrendingUp, 
-  Network 
-} from 'lucide-react';
-import { EntityStats } from './types';
+import React from "react";
+import { Target, CheckCircle2, Clock, AlertCircle, TrendingUp, Network } from "lucide-react";
+import { EntityStats } from "./types";
 
 interface EntityStatsOverviewProps {
   stats: EntityStats;
@@ -25,27 +18,31 @@ export default function EntityStatsOverview({ stats }: EntityStatsOverviewProps)
           <Target size={20} className="text-blue-500" />
         </div>
       </div>
-      
+
       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/30">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-green-600 dark:text-green-400 font-medium">Verified</p>
-            <p className="text-2xl font-bold text-green-800 dark:text-green-300">{stats.verified}</p>
+            <p className="text-2xl font-bold text-green-800 dark:text-green-300">
+              {stats.verified}
+            </p>
           </div>
           <CheckCircle2 size={20} className="text-green-500" />
         </div>
       </div>
-      
+
       <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-900/30">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-yellow-600 dark:text-yellow-400 font-medium">Pending</p>
-            <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300">{stats.pending}</p>
+            <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300">
+              {stats.pending}
+            </p>
           </div>
           <Clock size={20} className="text-yellow-500" />
         </div>
       </div>
-      
+
       <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-900/30">
         <div className="flex items-center justify-between">
           <div>
@@ -55,22 +52,26 @@ export default function EntityStatsOverview({ stats }: EntityStatsOverviewProps)
           <AlertCircle size={20} className="text-red-500" />
         </div>
       </div>
-      
+
       <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-900/30">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">New Today</p>
-            <p className="text-2xl font-bold text-purple-800 dark:text-purple-300">{stats.newToday}</p>
+            <p className="text-2xl font-bold text-purple-800 dark:text-purple-300">
+              {stats.newToday}
+            </p>
           </div>
           <TrendingUp size={20} className="text-purple-500" />
         </div>
       </div>
-      
+
       <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-900/30">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Connections</p>
-            <p className="text-2xl font-bold text-indigo-800 dark:text-indigo-300">{stats.totalConnections}</p>
+            <p className="text-2xl font-bold text-indigo-800 dark:text-indigo-300">
+              {stats.totalConnections}
+            </p>
           </div>
           <Network size={20} className="text-indigo-500" />
         </div>

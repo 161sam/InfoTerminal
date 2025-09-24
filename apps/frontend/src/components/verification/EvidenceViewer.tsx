@@ -1,13 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Panel from '@/components/layout/Panel';
-import { LoadingSpinner } from '@/components/ui/loading';
-import { inputStyles, buttonStyles, textStyles, cardStyles, statusStyles, compose } from '@/styles/design-tokens';
-import { 
-  ExternalLink, 
-  Search, 
-  Shield, 
+import React, { useState, useEffect } from "react";
+import Panel from "@/components/layout/Panel";
+import { LoadingSpinner } from "@/components/ui/loading";
+import {
+  inputStyles,
+  buttonStyles,
+  textStyles,
+  cardStyles,
+  statusStyles,
+  compose,
+} from "@/styles/design-tokens";
+import {
+  ExternalLink,
+  Search,
+  Shield,
   Star,
   AlertTriangle,
   CheckCircle,
@@ -15,8 +22,8 @@ import {
   Globe,
   BookOpen,
   Newspaper,
-  GraduationCap
-} from 'lucide-react';
+  GraduationCap,
+} from "lucide-react";
 
 interface Evidence {
   id: string;
@@ -41,9 +48,9 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchClaim, setSearchClaim] = useState(claim || '');
+  const [searchClaim, setSearchClaim] = useState(claim || "");
   const [maxSources, setMaxSources] = useState(5);
-  const [sourceTypes, setSourceTypes] = useState<string[]>(['web', 'wikipedia', 'news']);
+  const [sourceTypes, setSourceTypes] = useState<string[]>(["web", "wikipedia", "news"]);
 
   useEffect(() => {
     if (claim && claim !== searchClaim) {
@@ -54,7 +61,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
 
   const handleFindEvidence = async (claimText: string = searchClaim) => {
     if (!claimText.trim()) {
-      setError('Please enter a claim to find evidence for');
+      setError("Please enter a claim to find evidence for");
       return;
     }
 
@@ -62,27 +69,27 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
     setError(null);
 
     try {
-      const response = await fetch('/api/verification/find-evidence', {
-        method: 'POST',
+      const response = await fetch("/api/verification/find-evidence", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           claim: claimText,
           max_sources: maxSources,
           source_types: sourceTypes,
-          language: 'en'
-        })
+          language: "en",
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to find evidence');
+        throw new Error("Failed to find evidence");
       }
 
       const evidenceData = await response.json();
       setEvidence(evidenceData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -90,21 +97,31 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
 
   const getSourceIcon = (sourceType: string) => {
     switch (sourceType) {
-      case 'wikipedia': return <BookOpen className="h-4 w-4" />;
-      case 'news': return <Newspaper className="h-4 w-4" />;
-      case 'academic': return <GraduationCap className="h-4 w-4" />;
-      case 'web': return <Globe className="h-4 w-4" />;
-      default: return <ExternalLink className="h-4 w-4" />;
+      case "wikipedia":
+        return <BookOpen className="h-4 w-4" />;
+      case "news":
+        return <Newspaper className="h-4 w-4" />;
+      case "academic":
+        return <GraduationCap className="h-4 w-4" />;
+      case "web":
+        return <Globe className="h-4 w-4" />;
+      default:
+        return <ExternalLink className="h-4 w-4" />;
     }
   };
 
   const getSourceTypeColor = (sourceType: string) => {
     switch (sourceType) {
-      case 'wikipedia': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'news': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-      case 'academic': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
-      case 'web': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+      case "wikipedia":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+      case "news":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+      case "academic":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+      case "web":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
@@ -122,7 +139,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
           <Star
             key={star}
             className={`h-3 w-3 ${
-              star <= stars ? 'text-yellow-400 fill-current' : 'text-gray-300'
+              star <= stars ? "text-yellow-400 fill-current" : "text-gray-300"
             }`}
           />
         ))}
@@ -131,10 +148,8 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
   };
 
   const handleSourceTypeToggle = (type: string) => {
-    setSourceTypes(prev => 
-      prev.includes(type) 
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
+    setSourceTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
   };
 
@@ -171,14 +186,14 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
             <div>
               <label className={`${textStyles.body} font-medium`}>Source Types</label>
               <div className="flex flex-wrap gap-2 mt-1">
-                {['web', 'wikipedia', 'news', 'academic'].map((type) => (
+                {["web", "wikipedia", "news", "academic"].map((type) => (
                   <button
                     key={type}
                     onClick={() => handleSourceTypeToggle(type)}
                     className={`px-2 py-1 text-xs border rounded ${
                       sourceTypes.includes(type)
-                        ? 'bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-300'
-                        : 'bg-gray-100 border-gray-300 text-gray-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400'
+                        ? "bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-300"
+                        : "bg-gray-100 border-gray-300 text-gray-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
                     }`}
                   >
                     {type}
@@ -191,7 +206,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
           <button
             onClick={() => handleFindEvidence()}
             disabled={isLoading || !searchClaim.trim()}
-            className={`w-full ${compose.button('primary', (isLoading || !searchClaim.trim()) ? 'opacity-50 cursor-not-allowed' : '')}`}
+            className={`w-full ${compose.button("primary", isLoading || !searchClaim.trim() ? "opacity-50 cursor-not-allowed" : "")}`}
           >
             {isLoading ? (
               <>
@@ -209,7 +224,9 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
 
         {/* Error Alert */}
         {error && (
-          <div className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}>
+          <div
+            className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}
+          >
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               <span className={textStyles.body}>{error}</span>
@@ -223,7 +240,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
             <div className="flex items-center justify-between">
               <h3 className={textStyles.h3}>Evidence Found</h3>
               <span className={`${statusStyles.info} px-3 py-1 rounded-full text-sm font-medium`}>
-                {evidence.length} source{evidence.length !== 1 ? 's' : ''}
+                {evidence.length} source{evidence.length !== 1 ? "s" : ""}
               </span>
             </div>
 
@@ -238,14 +255,12 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
                         {getSourceIcon(item.source_type)}
-                        <span className={`${getSourceTypeColor(item.source_type)} px-2 py-1 rounded text-sm font-medium`}>
+                        <span
+                          className={`${getSourceTypeColor(item.source_type)} px-2 py-1 rounded text-sm font-medium`}
+                        >
                           {item.source_type}
                         </span>
-                        {item.domain && (
-                          <span className={textStyles.bodySmall}>
-                            {item.domain}
-                          </span>
-                        )}
+                        {item.domain && <span className={textStyles.bodySmall}>{item.domain}</span>}
                       </div>
                       <a
                         href={item.source_url}
@@ -261,19 +276,13 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
                     <h4 className={`${textStyles.body} font-medium`}>{item.source_title}</h4>
 
                     {/* Snippet */}
-                    <p className={`${textStyles.body} line-clamp-3`}>
-                      {item.snippet}
-                    </p>
+                    <p className={`${textStyles.body} line-clamp-3`}>{item.snippet}</p>
 
                     {/* Metadata */}
                     {(item.author || item.publication_date) && (
                       <div className={`flex gap-4 ${textStyles.bodySmall}`}>
-                        {item.author && (
-                          <span>By: {item.author}</span>
-                        )}
-                        {item.publication_date && (
-                          <span>Published: {item.publication_date}</span>
-                        )}
+                        {item.author && <span>By: {item.author}</span>}
+                        {item.publication_date && <span>Published: {item.publication_date}</span>}
                       </div>
                     )}
 
@@ -287,7 +296,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
                             ({(item.relevance_score * 100).toFixed(0)}%)
                           </span>
                         </div>
-                        
+
                         <div className="flex items-center gap-1">
                           {getCredibilityIcon(item.credibility_score)}
                           <span className={textStyles.bodySmall}>
@@ -297,7 +306,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
                       </div>
 
                       <button
-                        className={compose.button('secondary', 'text-sm px-3 py-1.5')}
+                        className={compose.button("secondary", "text-sm px-3 py-1.5")}
                         onClick={() => {
                           if (onStanceClassification) {
                             onStanceClassification(item);
@@ -317,20 +326,20 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
                           <span>{(item.relevance_score * 100).toFixed(0)}%</span>
                         </div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                          <div 
+                          <div
                             className="bg-blue-600 h-1 rounded-full transition-all duration-300"
                             style={{ width: `${item.relevance_score * 100}%` }}
                           />
                         </div>
                       </div>
-                      
+
                       <div>
                         <div className={`flex justify-between ${textStyles.bodySmall} mb-1`}>
                           <span>Credibility</span>
                           <span>{(item.credibility_score * 100).toFixed(0)}%</span>
                         </div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                          <div 
+                          <div
                             className="bg-green-600 h-1 rounded-full transition-all duration-300"
                             style={{ width: `${item.credibility_score * 100}%` }}
                           />
@@ -353,19 +362,31 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
                 <div>
                   <span>Avg Relevance:</span>
                   <span className="ml-1 font-medium">
-                    {(evidence.reduce((sum, e) => sum + e.relevance_score, 0) / evidence.length * 100).toFixed(0)}%
+                    {(
+                      (evidence.reduce((sum, e) => sum + e.relevance_score, 0) / evidence.length) *
+                      100
+                    ).toFixed(0)}
+                    %
                   </span>
                 </div>
                 <div>
                   <span>Avg Credibility:</span>
                   <span className="ml-1 font-medium">
-                    {(evidence.reduce((sum, e) => sum + e.credibility_score, 0) / evidence.length * 100).toFixed(0)}%
+                    {(
+                      (evidence.reduce((sum, e) => sum + e.credibility_score, 0) /
+                        evidence.length) *
+                      100
+                    ).toFixed(0)}
+                    %
                   </span>
                 </div>
                 <div>
                   <span>High Quality:</span>
                   <span className="ml-1 font-medium">
-                    {evidence.filter(e => e.relevance_score > 0.7 && e.credibility_score > 0.7).length}
+                    {
+                      evidence.filter((e) => e.relevance_score > 0.7 && e.credibility_score > 0.7)
+                        .length
+                    }
                   </span>
                 </div>
               </div>

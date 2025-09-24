@@ -1,14 +1,6 @@
-import { 
-  User, 
-  Building2, 
-  MapPin, 
-  Mail, 
-  Globe, 
-  Network, 
-  ExternalLink 
-} from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
-import { EntityLabel } from '@/lib/entities';
+import { User, Building2, MapPin, Mail, Globe, Network, ExternalLink } from "lucide-react";
+import { LucideIcon } from "lucide-react";
+import { EntityLabel } from "@/lib/entities";
 
 export interface Entity {
   id: string;
@@ -47,7 +39,7 @@ export interface EntityFilter {
 
 export interface SortConfig {
   key: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 export interface RiskLevel {
@@ -67,28 +59,28 @@ export const ENTITY_TYPE_ICONS: Record<EntityLabel, LucideIcon> = {
 };
 
 export const RISK_LEVELS: RiskLevel[] = [
-  { value: 'all', label: 'All Levels', color: 'gray' },
-  { value: 'low', label: 'Low Risk (0-3)', color: 'green' },
-  { value: 'medium', label: 'Medium Risk (4-6)', color: 'yellow' },
-  { value: 'high', label: 'High Risk (7-10)', color: 'red' }
+  { value: "all", label: "All Levels", color: "gray" },
+  { value: "low", label: "Low Risk (0-3)", color: "green" },
+  { value: "medium", label: "Medium Risk (4-6)", color: "yellow" },
+  { value: "high", label: "High Risk (7-10)", color: "red" },
 ];
 
 export function calculateEntityStats(entities: Entity[]): EntityStats {
   return {
     total: entities.length,
-    verified: entities.filter(e => e.verified).length,
-    pending: entities.filter(e => !e.verified).length,
-    highRisk: entities.filter(e => (e.riskScore || 0) >= 7).length,
-    newToday: entities.filter(e => {
+    verified: entities.filter((e) => e.verified).length,
+    pending: entities.filter((e) => !e.verified).length,
+    highRisk: entities.filter((e) => (e.riskScore || 0) >= 7).length,
+    newToday: entities.filter((e) => {
       const today = new Date().toDateString();
       return new Date(e.firstSeen).toDateString() === today;
     }).length,
-    totalConnections: entities.reduce((sum, e) => sum + (e.connections || 0), 0)
+    totalConnections: entities.reduce((sum, e) => sum + (e.connections || 0), 0),
   };
 }
 
 export function getRiskColor(score: number): string {
-  if (score >= 7) return 'text-red-600 bg-red-100';
-  if (score >= 4) return 'text-yellow-600 bg-yellow-100';
-  return 'text-green-600 bg-green-100';
+  if (score >= 7) return "text-red-600 bg-red-100";
+  if (score >= 4) return "text-yellow-600 bg-yellow-100";
+  return "text-green-600 bg-green-100";
 }

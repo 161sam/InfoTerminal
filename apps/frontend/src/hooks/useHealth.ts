@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { HealthResponse } from '../../pages/api/health';
+import { useCallback, useEffect, useState } from "react";
+import type { HealthResponse } from "../../pages/api/health";
 
 export function useHealth(pollIntervalMs = 15000) {
   const [data, setData] = useState<HealthResponse | null>(null);
@@ -7,13 +7,13 @@ export function useHealth(pollIntervalMs = 15000) {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch('/api/health');
+      const res = await fetch("/api/health");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json: HealthResponse = await res.json();
       setData(json);
       setError(null);
     } catch (e: any) {
-      setError(e.message || 'health check failed');
+      setError(e.message || "health check failed");
     }
   }, []);
 
@@ -26,16 +26,16 @@ export function useHealth(pollIntervalMs = 15000) {
   }, [refresh, pollIntervalMs]);
 
   const stateAggregate = error
-    ? 'unreachable'
+    ? "unreachable"
     : data && (data as any).services
-    ? Object.values((data as any).services).some(
-        (s: any) => s.state === 'down' || s.state === 'unreachable'
-      )
-      ? 'unreachable'
-      : Object.values((data as any).services).some((s: any) => s.state === 'degraded')
-      ? 'degraded'
-      : 'ok'
-    : 'ok';
+      ? Object.values((data as any).services).some(
+          (s: any) => s.state === "down" || s.state === "unreachable",
+        )
+        ? "unreachable"
+        : Object.values((data as any).services).some((s: any) => s.state === "degraded")
+          ? "degraded"
+          : "ok"
+      : "ok";
 
   return { data, error, refresh, stateAggregate };
 }

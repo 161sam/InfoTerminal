@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { 
-  Shield, 
-  Search, 
-  Scale, 
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import {
+  Shield,
+  Search,
+  Scale,
   Target,
   Activity,
   CheckCircle,
@@ -13,14 +13,14 @@ import {
   Clock,
   Users,
   FileText,
-  ExternalLink
-} from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
+  ExternalLink,
+} from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 interface VerificationMetrics {
   totalVerifications: number;
@@ -30,11 +30,11 @@ interface VerificationMetrics {
   avgCredibilityScore: number;
   recentActivity: Array<{
     id: string;
-    type: 'claim' | 'evidence' | 'stance' | 'credibility';
+    type: "claim" | "evidence" | "stance" | "credibility";
     description: string;
     timestamp: string;
     confidence?: number;
-    status: 'completed' | 'in-progress' | 'failed';
+    status: "completed" | "in-progress" | "failed";
   }>;
 }
 
@@ -46,7 +46,7 @@ export default function VerificationDashboard() {
     credibilityChecks: 0,
     sourceAnalysis: 0,
     avgCredibilityScore: 0,
-    recentActivity: []
+    recentActivity: [],
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,72 +66,81 @@ export default function VerificationDashboard() {
         avgCredibilityScore: 0.73,
         recentActivity: [
           {
-            id: '1',
-            type: 'credibility',
-            description: 'Assessed credibility of Reuters article on climate change',
+            id: "1",
+            type: "credibility",
+            description: "Assessed credibility of Reuters article on climate change",
             timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
             confidence: 0.92,
-            status: 'completed'
+            status: "completed",
           },
           {
-            id: '2',
-            type: 'stance',
-            description: 'Classified evidence stance for economic policy claim',
+            id: "2",
+            type: "stance",
+            description: "Classified evidence stance for economic policy claim",
             timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
             confidence: 0.78,
-            status: 'completed'
+            status: "completed",
           },
           {
-            id: '3',
-            type: 'evidence',
-            description: 'Retrieved 5 sources for healthcare reform statement',
+            id: "3",
+            type: "evidence",
+            description: "Retrieved 5 sources for healthcare reform statement",
             timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-            status: 'completed'
+            status: "completed",
           },
           {
-            id: '4',
-            type: 'claim',
-            description: 'Extracted 3 verifiable claims from news article',
+            id: "4",
+            type: "claim",
+            description: "Extracted 3 verifiable claims from news article",
             timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-            status: 'completed'
+            status: "completed",
           },
           {
-            id: '5',
-            type: 'credibility',
-            description: 'Analysis of social media source reliability',
+            id: "5",
+            type: "credibility",
+            description: "Analysis of social media source reliability",
             timestamp: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
             confidence: 0.34,
-            status: 'in-progress'
-          }
-        ]
+            status: "in-progress",
+          },
+        ],
       };
-      
+
       setTimeout(() => {
         setMetrics(mockMetrics);
         setIsLoading(false);
       }, 1000);
     } catch (error) {
-      console.error('Failed to load verification metrics:', error);
+      console.error("Failed to load verification metrics:", error);
       setIsLoading(false);
     }
   };
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'claim': return <Search className="h-4 w-4 text-blue-500" />;
-      case 'evidence': return <Target className="h-4 w-4 text-green-500" />;
-      case 'stance': return <Scale className="h-4 w-4 text-purple-500" />;
-      case 'credibility': return <Shield className="h-4 w-4 text-orange-500" />;
-      default: return <Activity className="h-4 w-4 text-gray-500" />;
+      case "claim":
+        return <Search className="h-4 w-4 text-blue-500" />;
+      case "evidence":
+        return <Target className="h-4 w-4 text-green-500" />;
+      case "stance":
+        return <Scale className="h-4 w-4 text-purple-500" />;
+      case "credibility":
+        return <Shield className="h-4 w-4 text-orange-500" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'in-progress': return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'failed': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      default: return <Activity className="h-4 w-4 text-gray-500" />;
+      case "completed":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "in-progress":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "failed":
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -140,17 +149,19 @@ export default function VerificationDashboard() {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
-    
+
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
     return date.toLocaleDateString();
   };
 
   return (
-    <DashboardLayout title="Verification Dashboard" subtitle="Overview of fact-checking and verification activities">
+    <DashboardLayout
+      title="Verification Dashboard"
+      subtitle="Overview of fact-checking and verification activities"
+    >
       <div className="p-6">
         <div className="max-w-7xl space-y-6">
-          
           {/* Header Actions */}
           <div className="flex justify-between items-center">
             <div>
@@ -158,16 +169,11 @@ export default function VerificationDashboard() {
               <p className="text-gray-600">Real-time fact-checking and claim verification</p>
             </div>
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => router.push('/verification')}
-              >
+              <Button variant="outline" onClick={() => router.push("/verification")}>
                 <Activity className="h-4 w-4 mr-2" />
                 Full Verification Tools
               </Button>
-              <Button
-                onClick={() => window.open('http://localhost:8618/nifi', '_blank')}
-              >
+              <Button onClick={() => window.open("http://localhost:8618/nifi", "_blank")}>
                 <Database className="h-4 w-4 mr-2" />
                 NiFi Orchestration
               </Button>
@@ -199,7 +205,9 @@ export default function VerificationDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Active Investigations</p>
-                    <p className="text-3xl font-bold text-green-600">{metrics.activeInvestigations}</p>
+                    <p className="text-3xl font-bold text-green-600">
+                      {metrics.activeInvestigations}
+                    </p>
                   </div>
                   <div className="p-3 bg-green-100 rounded-full">
                     <Search className="h-6 w-6 text-green-600" />
@@ -217,7 +225,9 @@ export default function VerificationDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Credibility Checks</p>
-                    <p className="text-3xl font-bold text-orange-600">{metrics.credibilityChecks}</p>
+                    <p className="text-3xl font-bold text-orange-600">
+                      {metrics.credibilityChecks}
+                    </p>
                   </div>
                   <div className="p-3 bg-orange-100 rounded-full">
                     <Shield className="h-6 w-6 text-orange-600" />
@@ -256,7 +266,6 @@ export default function VerificationDashboard() {
 
           {/* Recent Activity & Quick Actions */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
             {/* Recent Activity */}
             <Card>
               <CardHeader>
@@ -283,7 +292,10 @@ export default function VerificationDashboard() {
                     </div>
                   ) : (
                     metrics.recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50">
+                      <div
+                        key={activity.id}
+                        className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50"
+                      >
                         <div className="flex items-center gap-2">
                           {getActivityIcon(activity.type)}
                           {getStatusIcon(activity.status)}
@@ -308,7 +320,7 @@ export default function VerificationDashboard() {
                   )}
                 </div>
                 <div className="mt-4 pt-4 border-t">
-                  <Button variant="outline" size="sm" onClick={() => router.push('/verification')}>
+                  <Button variant="outline" size="sm" onClick={() => router.push("/verification")}>
                     View All Activity
                   </Button>
                 </div>
@@ -325,7 +337,7 @@ export default function VerificationDashboard() {
                   <Button
                     variant="outline"
                     className="h-20 flex flex-col gap-2"
-                    onClick={() => router.push('/verification?tab=extract')}
+                    onClick={() => router.push("/verification?tab=extract")}
                   >
                     <Search className="h-6 w-6" />
                     <span className="text-sm">Extract Claims</span>
@@ -334,7 +346,7 @@ export default function VerificationDashboard() {
                   <Button
                     variant="outline"
                     className="h-20 flex flex-col gap-2"
-                    onClick={() => router.push('/verification?tab=evidence')}
+                    onClick={() => router.push("/verification?tab=evidence")}
                   >
                     <Target className="h-6 w-6" />
                     <span className="text-sm">Find Evidence</span>
@@ -343,7 +355,7 @@ export default function VerificationDashboard() {
                   <Button
                     variant="outline"
                     className="h-20 flex flex-col gap-2"
-                    onClick={() => router.push('/verification?tab=stance')}
+                    onClick={() => router.push("/verification?tab=stance")}
                   >
                     <Scale className="h-6 w-6" />
                     <span className="text-sm">Classify Stance</span>
@@ -352,7 +364,7 @@ export default function VerificationDashboard() {
                   <Button
                     variant="outline"
                     className="h-20 flex flex-col gap-2"
-                    onClick={() => router.push('/verification?tab=credibility')}
+                    onClick={() => router.push("/verification?tab=credibility")}
                   >
                     <Shield className="h-6 w-6" />
                     <span className="text-sm">Check Credibility</span>
@@ -365,7 +377,7 @@ export default function VerificationDashboard() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open('http://localhost:8618/nifi', '_blank')}
+                      onClick={() => window.open("http://localhost:8618/nifi", "_blank")}
                     >
                       <ExternalLink className="h-4 w-4 mr-1" />
                       NiFi
@@ -373,7 +385,7 @@ export default function VerificationDashboard() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open('http://localhost:5678', '_blank')}
+                      onClick={() => window.open("http://localhost:5678", "_blank")}
                     >
                       <ExternalLink className="h-4 w-4 mr-1" />
                       n8n
@@ -442,15 +454,17 @@ export default function VerificationDashboard() {
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
-                  <h4 className="font-medium text-green-800 dark:text-green-300">All Systems Operational</h4>
+                  <h4 className="font-medium text-green-800 dark:text-green-300">
+                    All Systems Operational
+                  </h4>
                 </div>
                 <p className="text-sm text-green-700 dark:text-green-400">
-                  Verification pipeline is running smoothly. Average processing time: 2.3 seconds per claim.
+                  Verification pipeline is running smoothly. Average processing time: 2.3 seconds
+                  per claim.
                 </p>
               </div>
             </CardContent>
           </Card>
-
         </div>
       </div>
     </DashboardLayout>

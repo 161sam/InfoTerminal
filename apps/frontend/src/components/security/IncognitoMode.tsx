@@ -1,20 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  EyeOff, 
-  Shield, 
-  Timer, 
-  Trash2, 
-  AlertTriangle,
-  Lock,
-  Unlock
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { EyeOff, Shield, Timer, Trash2, AlertTriangle, Lock, Unlock } from "lucide-react";
 
 interface IncognitoSession {
   id: string;
@@ -22,7 +14,7 @@ interface IncognitoSession {
   autoWipeAt: number;
   dataSize: number;
   containerCount: number;
-  status: 'active' | 'expired' | 'wiped';
+  status: "active" | "expired" | "wiped";
 }
 
 interface IncognitoModeProps {
@@ -39,12 +31,12 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
 
   // Timer for countdown
   useEffect(() => {
-    if (!currentSession || currentSession.status !== 'active') return;
+    if (!currentSession || currentSession.status !== "active") return;
 
     const interval = setInterval(() => {
       const now = Date.now();
       const remaining = Math.max(0, currentSession.autoWipeAt - now);
-      
+
       if (remaining <= 0) {
         handleAutoWipe();
       } else {
@@ -57,7 +49,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
 
   const handleToggleIncognito = async () => {
     setIsLoading(true);
-    
+
     try {
       if (isIncognitoActive) {
         // Stop incognito mode
@@ -67,25 +59,25 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
         await startIncognitoMode();
       }
     } catch (error) {
-      console.error('Failed to toggle incognito mode:', error);
+      console.error("Failed to toggle incognito mode:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const startIncognitoMode = async () => {
-    const response = await fetch('/api/security/incognito/start', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/security/incognito/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         autoWipeMinutes: autoWipeEnabled ? wipeTimerMinutes : null,
         memoryOnlyMode: true,
-        isolatedContainers: true
-      })
+        isolatedContainers: true,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to start incognito mode');
+      throw new Error("Failed to start incognito mode");
     }
 
     const session = await response.json();
@@ -97,11 +89,11 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
     if (!currentSession) return;
 
     const response = await fetch(`/api/security/incognito/${currentSession.id}/stop`, {
-      method: 'POST'
+      method: "POST",
     });
 
     if (!response.ok) {
-      throw new Error('Failed to stop incognito mode');
+      throw new Error("Failed to stop incognito mode");
     }
 
     setCurrentSession(null);
@@ -113,20 +105,20 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
     if (!currentSession) return;
 
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`/api/security/incognito/${currentSession.id}/wipe`, {
-        method: 'POST'
+        method: "POST",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to wipe session data');
+        throw new Error("Failed to wipe session data");
       }
 
-      setCurrentSession(prev => prev ? { ...prev, status: 'wiped' } : null);
+      setCurrentSession((prev) => (prev ? { ...prev, status: "wiped" } : null));
       setIsIncognitoActive(false);
     } catch (error) {
-      console.error('Failed to wipe session:', error);
+      console.error("Failed to wipe session:", error);
     } finally {
       setIsLoading(false);
     }
@@ -139,7 +131,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
   const formatTime = (ms: number): string => {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const formatDataSize = (bytes: number): string => {
@@ -176,8 +168,8 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Incognito mode creates ephemeral containers and memory-only storage. 
-            All investigation data will be automatically wiped when the session ends.
+            Incognito mode creates ephemeral containers and memory-only storage. All investigation
+            data will be automatically wiped when the session ends.
           </AlertDescription>
         </Alert>
 
@@ -200,7 +192,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
         {!isIncognitoActive && (
           <div className="space-y-4 p-4 border rounded-lg">
             <h4 className="font-medium">Session Configuration</h4>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm font-medium">Auto-wipe Timer</p>
@@ -208,10 +200,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
                   Automatically wipe data after timeout
                 </p>
               </div>
-              <Switch
-                checked={autoWipeEnabled}
-                onCheckedChange={setAutoWipeEnabled}
-              />
+              <Switch checked={autoWipeEnabled} onCheckedChange={setAutoWipeEnabled} />
             </div>
 
             {autoWipeEnabled && (
@@ -280,7 +269,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
                 <Trash2 className="h-4 w-4" />
                 Wipe Now
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="sm"

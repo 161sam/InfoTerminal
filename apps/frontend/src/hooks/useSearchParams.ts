@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 /**
  * Helper hook to interact with URL search parameters.
@@ -18,7 +18,7 @@ export function useSearchParams() {
   const set = useCallback(
     (key: string, value: any) => {
       const q = { ...router.query } as Record<string, any>;
-      if (value === undefined || value === null || value === '') delete q[key];
+      if (value === undefined || value === null || value === "") delete q[key];
       else q[key] = value;
       router.replace({ pathname: router.pathname, query: q }, undefined, { shallow: true });
     },

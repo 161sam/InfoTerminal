@@ -1,20 +1,20 @@
 /**
  * Smart Search Component with Autocomplete and Suggestions
- * 
+ *
  * Provides intelligent search with real-time suggestions, recent searches,
  * and saved searches functionality optimized for OSINT workflows.
  */
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Search, Clock, Star, TrendingUp, Filter, X, ArrowRight, BookmarkPlus } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useDebounce } from '@/hooks/useDebounce';
-import UserJourneyTracker from '@/lib/user-journey-tracker';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { Search, Clock, Star, TrendingUp, Filter, X, ArrowRight, BookmarkPlus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useDebounce } from "@/hooks/useDebounce";
+import UserJourneyTracker from "@/lib/user-journey-tracker";
 
 interface SearchSuggestion {
   id: string;
   text: string;
-  type: 'entity' | 'query' | 'filter' | 'recent' | 'saved';
+  type: "entity" | "query" | "filter" | "recent" | "saved";
   confidence: number;
   metadata?: {
     entityType?: string;
@@ -58,7 +58,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   initialValue = "",
   showFilters = true,
   showHistory = true,
-  className = ""
+  className = "",
 }) => {
   const [query, setQuery] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
@@ -69,11 +69,11 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Record<string, any>>({});
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  
+
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debouncedQuery = useDebounce(query, 300);
-  
+
   const { trackSearch, trackClick } = UserJourneyTracker.useUserJourney();
 
   // Load saved data on mount
@@ -93,74 +93,81 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
   const loadRecentSearches = useCallback(() => {
     try {
-      const stored = localStorage.getItem('infoterminal_recent_searches');
+      const stored = localStorage.getItem("infoterminal_recent_searches");
       if (stored) {
         const parsed = JSON.parse(stored);
-        setRecentSearches(parsed.map((item: any) => ({
-          ...item,
-          timestamp: new Date(item.timestamp)
-        })));
+        setRecentSearches(
+          parsed.map((item: any) => ({
+            ...item,
+            timestamp: new Date(item.timestamp),
+          })),
+        );
       }
     } catch (error) {
-      console.warn('Failed to load recent searches:', error);
+      console.warn("Failed to load recent searches:", error);
     }
   }, []);
 
   const loadSavedSearches = useCallback(() => {
     try {
-      const stored = localStorage.getItem('infoterminal_saved_searches');
+      const stored = localStorage.getItem("infoterminal_saved_searches");
       if (stored) {
         const parsed = JSON.parse(stored);
-        setSavedSearches(parsed.map((item: any) => ({
-          ...item,
-          createdAt: new Date(item.createdAt)
-        })));
+        setSavedSearches(
+          parsed.map((item: any) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+          })),
+        );
       }
     } catch (error) {
-      console.warn('Failed to load saved searches:', error);
+      console.warn("Failed to load saved searches:", error);
     }
   }, []);
 
-  const saveRecentSearch = useCallback((searchQuery: string, resultCount: number) => {
-    const newSearch: RecentSearch = {
-      id: Date.now().toString(),
-      query: searchQuery,
-      timestamp: new Date(),
-      resultCount,
-      filters: activeFilters
-    };
+  const saveRecentSearch = useCallback(
+    (searchQuery: string, resultCount: number) => {
+      const newSearch: RecentSearch = {
+        id: Date.now().toString(),
+        query: searchQuery,
+        timestamp: new Date(),
+        resultCount,
+        filters: activeFilters,
+      };
 
-    setRecentSearches(prev => {
-      const filtered = prev.filter(s => s.query !== searchQuery);
-      const updated = [newSearch, ...filtered].slice(0, 10); // Keep last 10
-      
-      try {
-        localStorage.setItem('infoterminal_recent_searches', JSON.stringify(updated));
-      } catch (error) {
-        console.warn('Failed to save recent search:', error);
-      }
-      
-      return updated;
-    });
-  }, [activeFilters]);
+      setRecentSearches((prev) => {
+        const filtered = prev.filter((s) => s.query !== searchQuery);
+        const updated = [newSearch, ...filtered].slice(0, 10); // Keep last 10
+
+        try {
+          localStorage.setItem("infoterminal_recent_searches", JSON.stringify(updated));
+        } catch (error) {
+          console.warn("Failed to save recent search:", error);
+        }
+
+        return updated;
+      });
+    },
+    [activeFilters],
+  );
 
   const fetchSuggestions = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
-    
+
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch('/api/search/suggestions', {
-        method: 'POST',
+      const response = await fetch("/api/search/suggestions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           query: searchQuery,
           includeEntities: true,
           includeQueries: true,
-          limit: 8
-        })
+          limit: 8,
+        }),
       });
 
       if (response.ok) {
@@ -168,7 +175,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         setSuggestions(data.suggestions || []);
       }
     } catch (error) {
-      console.warn('Failed to fetch suggestions:', error);
+      console.warn("Failed to fetch suggestions:", error);
     } finally {
       setIsLoading(false);
     }
@@ -198,19 +205,15 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
     if (!isOpen) return;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex(prev => 
-          prev < getAllSuggestions().length - 1 ? prev + 1 : 0
-        );
+        setSelectedIndex((prev) => (prev < getAllSuggestions().length - 1 ? prev + 1 : 0));
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setSelectedIndex(prev => 
-          prev > 0 ? prev - 1 : getAllSuggestions().length - 1
-        );
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : getAllSuggestions().length - 1));
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (selectedIndex >= 0) {
           const allSuggestions = getAllSuggestions();
@@ -219,7 +222,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
           handleSearch();
         }
         break;
-      case 'Escape':
+      case "Escape":
         setIsOpen(false);
         setSelectedIndex(-1);
         searchInputRef.current?.blur();
@@ -229,67 +232,74 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
   const getAllSuggestions = useMemo(() => {
     const all: SearchSuggestion[] = [];
-    
+
     // Add query suggestions
     all.push(...suggestions);
-    
+
     // Add recent searches if query is empty or matches
     if (showHistory && query.length < 2) {
-      all.push(...recentSearches.slice(0, 3).map(search => ({
-        id: `recent_${search.id}`,
-        text: search.query,
-        type: 'recent' as const,
-        confidence: 1.0,
-        metadata: {
-          resultCount: search.resultCount,
-          lastUsed: search.timestamp.toISOString()
-        }
-      })));
+      all.push(
+        ...recentSearches.slice(0, 3).map((search) => ({
+          id: `recent_${search.id}`,
+          text: search.query,
+          type: "recent" as const,
+          confidence: 1.0,
+          metadata: {
+            resultCount: search.resultCount,
+            lastUsed: search.timestamp.toISOString(),
+          },
+        })),
+      );
     }
-    
+
     // Add saved searches that match query
     if (showHistory) {
-      const matchingSaved = savedSearches.filter(saved => 
-        saved.name.toLowerCase().includes(query.toLowerCase()) ||
-        saved.query.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 2);
-      
-      all.push(...matchingSaved.map(saved => ({
-        id: `saved_${saved.id}`,
-        text: saved.name,
-        type: 'saved' as const,
-        confidence: 1.0,
-        metadata: {
-          query: saved.query,
-          category: saved.tags.join(', ')
-        }
-      })));
+      const matchingSaved = savedSearches
+        .filter(
+          (saved) =>
+            saved.name.toLowerCase().includes(query.toLowerCase()) ||
+            saved.query.toLowerCase().includes(query.toLowerCase()),
+        )
+        .slice(0, 2);
+
+      all.push(
+        ...matchingSaved.map((saved) => ({
+          id: `saved_${saved.id}`,
+          text: saved.name,
+          type: "saved" as const,
+          confidence: 1.0,
+          metadata: {
+            query: saved.query,
+            category: saved.tags.join(", "),
+          },
+        })),
+      );
     }
-    
+
     return all;
   }, [suggestions, recentSearches, savedSearches, query, showHistory]);
 
   const handleSuggestionClick = (suggestion: SearchSuggestion) => {
     let searchQuery = suggestion.text;
-    
-    if (suggestion.type === 'saved' && suggestion.metadata?.query) {
+
+    if (suggestion.type === "saved" && suggestion.metadata?.query) {
       searchQuery = suggestion.metadata.query;
     }
-    
+
     setQuery(searchQuery);
     setIsOpen(false);
     setSelectedIndex(-1);
-    
+
     // Track suggestion usage
-    trackClick('search-suggestion-selected', {
+    trackClick("search-suggestion-selected", {
       suggestionType: suggestion.type,
-      confidence: suggestion.confidence
+      confidence: suggestion.confidence,
     });
-    
+
     if (onSuggestionSelect) {
       onSuggestionSelect(suggestion);
     }
-    
+
     // Execute search
     executeSearch(searchQuery);
   };
@@ -302,34 +312,34 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
   const executeSearch = async (searchQuery: string) => {
     const startTime = Date.now();
-    
+
     try {
       // Execute the search
       await onSearch(searchQuery, activeFilters);
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       // Track search
       trackSearch(searchQuery, 0, responseTime); // Result count will be updated by parent
-      
+
       // Save to recent searches
       saveRecentSearch(searchQuery, 0); // Result count will be updated
-      
+
       setIsOpen(false);
     } catch (error) {
-      console.error('Search failed:', error);
+      console.error("Search failed:", error);
     }
   };
 
   const handleFilterChange = (filterKey: string, value: any) => {
-    setActiveFilters(prev => ({
+    setActiveFilters((prev) => ({
       ...prev,
-      [filterKey]: value
+      [filterKey]: value,
     }));
   };
 
   const removeFilter = (filterKey: string) => {
-    setActiveFilters(prev => {
+    setActiveFilters((prev) => {
       const updated = { ...prev };
       delete updated[filterKey];
       return updated;
@@ -347,34 +357,34 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
       query: query.trim(),
       filters: activeFilters,
       createdAt: new Date(),
-      tags
+      tags,
     };
 
-    setSavedSearches(prev => {
+    setSavedSearches((prev) => {
       const updated = [newSavedSearch, ...prev];
-      
+
       try {
-        localStorage.setItem('infoterminal_saved_searches', JSON.stringify(updated));
+        localStorage.setItem("infoterminal_saved_searches", JSON.stringify(updated));
       } catch (error) {
-        console.warn('Failed to save search:', error);
+        console.warn("Failed to save search:", error);
       }
-      
+
       return updated;
     });
 
     setShowSaveDialog(false);
-    trackClick('search-saved', { query: query.trim() });
+    trackClick("search-saved", { query: query.trim() });
   };
 
-  const getSuggestionIcon = (type: SearchSuggestion['type']) => {
+  const getSuggestionIcon = (type: SearchSuggestion["type"]) => {
     switch (type) {
-      case 'entity':
+      case "entity":
         return <TrendingUp className="w-4 h-4 text-blue-500" />;
-      case 'recent':
+      case "recent":
         return <Clock className="w-4 h-4 text-gray-500" />;
-      case 'saved':
+      case "saved":
         return <Star className="w-4 h-4 text-yellow-500" />;
-      case 'filter':
+      case "filter":
         return <Filter className="w-4 h-4 text-purple-500" />;
       default:
         return <Search className="w-4 h-4 text-gray-500" />;
@@ -387,7 +397,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
       <div className="search-input-wrapper">
         <div className="search-input-container">
           <Search className="search-icon w-5 h-5 text-gray-400" />
-          
+
           <input
             ref={searchInputRef}
             type="text"
@@ -401,11 +411,11 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
             autoComplete="off"
             spellCheck="false"
           />
-          
+
           {query && (
             <button
               onClick={() => {
-                setQuery('');
+                setQuery("");
                 setSuggestions([]);
                 searchInputRef.current?.focus();
               }}
@@ -414,7 +424,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
               <X className="w-4 h-4" />
             </button>
           )}
-          
+
           {query.trim() && (
             <button
               onClick={() => setShowSaveDialog(true)}
@@ -432,18 +442,12 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
             {Object.entries(activeFilters).map(([key, value]) => (
               <span key={key} className="filter-tag">
                 {key}: {String(value)}
-                <button
-                  onClick={() => removeFilter(key)}
-                  className="remove-filter"
-                >
+                <button onClick={() => removeFilter(key)} className="remove-filter">
                   <X className="w-3 h-3" />
                 </button>
               </span>
             ))}
-            <button
-              onClick={clearAllFilters}
-              className="clear-all-filters"
-            >
+            <button onClick={clearAllFilters} className="clear-all-filters">
               Clear all
             </button>
           </div>
@@ -474,49 +478,49 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
               </div>
             )}
 
-            {!isLoading && getAllSuggestions().map((suggestion, index) => (
-              <button
-                key={suggestion.id}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className={`suggestion-item ${index === selectedIndex ? 'selected' : ''}`}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <div className="suggestion-icon">
-                  {getSuggestionIcon(suggestion.type)}
-                </div>
-                
-                <div className="suggestion-content">
-                  <div className="suggestion-text">
-                    {suggestion.text}
-                  </div>
-                  
-                  {suggestion.metadata && (
-                    <div className="suggestion-metadata">
-                      {suggestion.type === 'recent' && suggestion.metadata.resultCount && (
-                        <span>{suggestion.metadata.resultCount} results</span>
-                      )}
-                      {suggestion.type === 'saved' && suggestion.metadata.category && (
-                        <span>{suggestion.metadata.category}</span>
-                      )}
-                      {suggestion.type === 'entity' && suggestion.metadata.entityType && (
-                        <span>{suggestion.metadata.entityType}</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                <ArrowRight className="suggestion-arrow w-4 h-4 opacity-0 group-hover:opacity-100" />
-              </button>
-            ))}
+            {!isLoading &&
+              getAllSuggestions().map((suggestion, index) => (
+                <button
+                  key={suggestion.id}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className={`suggestion-item ${index === selectedIndex ? "selected" : ""}`}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                >
+                  <div className="suggestion-icon">{getSuggestionIcon(suggestion.type)}</div>
 
-            {!isLoading && query.trim().length < 2 && recentSearches.length === 0 && savedSearches.length === 0 && (
-              <div className="empty-state">
-                <Search className="w-8 h-8 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">
-                  Start typing to search entities, domains, or enter OSINT queries
-                </p>
-              </div>
-            )}
+                  <div className="suggestion-content">
+                    <div className="suggestion-text">{suggestion.text}</div>
+
+                    {suggestion.metadata && (
+                      <div className="suggestion-metadata">
+                        {suggestion.type === "recent" && suggestion.metadata.resultCount && (
+                          <span>{suggestion.metadata.resultCount} results</span>
+                        )}
+                        {suggestion.type === "saved" && suggestion.metadata.category && (
+                          <span>{suggestion.metadata.category}</span>
+                        )}
+                        {suggestion.type === "entity" && suggestion.metadata.entityType && (
+                          <span>{suggestion.metadata.entityType}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <ArrowRight className="suggestion-arrow w-4 h-4 opacity-0 group-hover:opacity-100" />
+                </button>
+              ))}
+
+            {!isLoading &&
+              query.trim().length < 2 &&
+              recentSearches.length === 0 &&
+              savedSearches.length === 0 && (
+                <div className="empty-state">
+                  <Search className="w-8 h-8 text-gray-300 mb-2" />
+                  <p className="text-sm text-gray-500">
+                    Start typing to search entities, domains, or enter OSINT queries
+                  </p>
+                </div>
+              )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -748,11 +752,11 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
           .search-input-container {
             padding: 10px 12px;
           }
-          
+
           .search-input {
             font-size: 16px; /* Prevent zoom on iOS */
           }
-          
+
           .suggestions-dropdown {
             max-height: 300px;
           }
@@ -770,9 +774,9 @@ interface SaveSearchDialogProps {
 }
 
 const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCancel }) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
+  const [tagInput, setTagInput] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -783,13 +787,13 @@ const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCa
 
   const addTag = (tag: string) => {
     if (tag.trim() && !tags.includes(tag.trim())) {
-      setTags(prev => [...prev, tag.trim()]);
-      setTagInput('');
+      setTags((prev) => [...prev, tag.trim()]);
+      setTagInput("");
     }
   };
 
   const removeTag = (index: number) => {
-    setTags(prev => prev.filter((_, i) => i !== index));
+    setTags((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -813,7 +817,7 @@ const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCa
             <label>Query</label>
             <input type="text" value={query} disabled />
           </div>
-          
+
           <div className="form-group">
             <label>Name *</label>
             <input
@@ -824,7 +828,7 @@ const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCa
               autoFocus
             />
           </div>
-          
+
           <div className="form-group">
             <label>Tags</label>
             <div className="tags-input">
@@ -832,7 +836,9 @@ const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCa
                 {tags.map((tag, index) => (
                   <span key={index} className="tag">
                     {tag}
-                    <button type="button" onClick={() => removeTag(index)}>×</button>
+                    <button type="button" onClick={() => removeTag(index)}>
+                      ×
+                    </button>
                   </span>
                 ))}
               </div>
@@ -841,7 +847,7 @@ const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCa
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     e.preventDefault();
                     addTag(tagInput);
                   }
@@ -850,10 +856,14 @@ const SaveSearchDialog: React.FC<SaveSearchDialogProps> = ({ query, onSave, onCa
               />
             </div>
           </div>
-          
+
           <div className="form-actions">
-            <button type="button" onClick={onCancel}>Cancel</button>
-            <button type="submit" disabled={!name.trim()}>Save</button>
+            <button type="button" onClick={onCancel}>
+              Cancel
+            </button>
+            <button type="submit" disabled={!name.trim()}>
+              Save
+            </button>
           </div>
         </form>
       </motion.div>

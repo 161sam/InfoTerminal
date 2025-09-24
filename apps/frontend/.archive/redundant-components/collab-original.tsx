@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { 
-  Users, 
-  MessageSquare, 
-  FileText, 
-  Plus, 
-  Search, 
-  Filter, 
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import {
+  Users,
+  MessageSquare,
+  FileText,
+  Plus,
+  Search,
+  Filter,
   Settings,
   Send,
   Paperclip,
@@ -31,13 +31,13 @@ import {
   Calendar,
   Tag,
   MessageCircle,
-  FolderOpen
-} from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { LoadingSpinner } from '@/components/ui/loading';
-import Button from '@/components/ui/button';
+  FolderOpen,
+} from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { LoadingSpinner } from "@/components/ui/loading";
+import Button from "@/components/ui/button";
 
 interface Workspace {
   id: string;
@@ -58,8 +58,8 @@ interface WorkspaceMember {
   id: string;
   name: string;
   email: string;
-  role: 'owner' | 'admin' | 'member' | 'viewer';
-  status: 'online' | 'away' | 'offline';
+  role: "owner" | "admin" | "member" | "viewer";
+  status: "online" | "away" | "offline";
   avatar?: string;
   lastActive: Date;
 }
@@ -71,7 +71,7 @@ interface Message {
   userName: string;
   userAvatar?: string;
   content: string;
-  type: 'text' | 'file' | 'task' | 'system';
+  type: "text" | "file" | "task" | "system";
   timestamp: Date;
   edited?: boolean;
   editedAt?: Date;
@@ -102,8 +102,8 @@ interface Task {
   workspaceId: string;
   title: string;
   description?: string;
-  status: 'todo' | 'in_progress' | 'review' | 'done';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: "todo" | "in_progress" | "review" | "done";
+  priority: "low" | "medium" | "high" | "urgent";
   assignee?: WorkspaceMember;
   reporter: WorkspaceMember;
   dueDate?: Date;
@@ -139,157 +139,164 @@ interface Document {
 // Demo data
 const DEMO_WORKSPACES: Workspace[] = [
   {
-    id: '1',
-    name: 'Operation Phoenix',
-    description: 'High-priority intelligence investigation',
+    id: "1",
+    name: "Operation Phoenix",
+    description: "High-priority intelligence investigation",
     members: [
       {
-        id: '1',
-        name: 'Dr. Sarah Chen',
-        email: 'sarah.chen@infoterminal.io',
-        role: 'owner',
-        status: 'online',
-        lastActive: new Date()
+        id: "1",
+        name: "Dr. Sarah Chen",
+        email: "sarah.chen@infoterminal.io",
+        role: "owner",
+        status: "online",
+        lastActive: new Date(),
       },
       {
-        id: '2', 
-        name: 'Marcus Rodriguez',
-        email: 'marcus.r@infoterminal.io',
-        role: 'admin',
-        status: 'online',
-        lastActive: new Date(Date.now() - 300000)
+        id: "2",
+        name: "Marcus Rodriguez",
+        email: "marcus.r@infoterminal.io",
+        role: "admin",
+        status: "online",
+        lastActive: new Date(Date.now() - 300000),
       },
       {
-        id: '3',
-        name: 'Alex Thompson',
-        email: 'alex.thompson@infoterminal.io',
-        role: 'member',
-        status: 'away',
-        lastActive: new Date(Date.now() - 900000)
-      }
+        id: "3",
+        name: "Alex Thompson",
+        email: "alex.thompson@infoterminal.io",
+        role: "member",
+        status: "away",
+        lastActive: new Date(Date.now() - 900000),
+      },
     ],
     isPrivate: true,
-    createdAt: new Date('2024-03-01T10:00:00Z'),
-    updatedAt: new Date('2024-03-15T16:30:00Z'),
-    pinnedItems: ['msg-1', 'task-1'],
-    color: 'red',
+    createdAt: new Date("2024-03-01T10:00:00Z"),
+    updatedAt: new Date("2024-03-15T16:30:00Z"),
+    pinnedItems: ["msg-1", "task-1"],
+    color: "red",
     documentsCount: 12,
     tasksCount: 8,
-    messagesCount: 245
+    messagesCount: 245,
   },
   {
-    id: '2',
-    name: 'Market Analysis Q1',
-    description: 'Quarterly financial intelligence analysis',
+    id: "2",
+    name: "Market Analysis Q1",
+    description: "Quarterly financial intelligence analysis",
     members: [
       {
-        id: '1',
-        name: 'Dr. Sarah Chen',
-        email: 'sarah.chen@infoterminal.io', 
-        role: 'member',
-        status: 'online',
-        lastActive: new Date()
+        id: "1",
+        name: "Dr. Sarah Chen",
+        email: "sarah.chen@infoterminal.io",
+        role: "member",
+        status: "online",
+        lastActive: new Date(),
       },
       {
-        id: '4',
-        name: 'Emma Wilson',
-        email: 'emma.wilson@infoterminal.io',
-        role: 'owner',
-        status: 'offline',
-        lastActive: new Date(Date.now() - 3600000)
-      }
+        id: "4",
+        name: "Emma Wilson",
+        email: "emma.wilson@infoterminal.io",
+        role: "owner",
+        status: "offline",
+        lastActive: new Date(Date.now() - 3600000),
+      },
     ],
     isPrivate: false,
-    createdAt: new Date('2024-02-15T09:00:00Z'),
-    updatedAt: new Date('2024-03-14T11:20:00Z'),
+    createdAt: new Date("2024-02-15T09:00:00Z"),
+    updatedAt: new Date("2024-03-14T11:20:00Z"),
     pinnedItems: [],
-    color: 'blue',
+    color: "blue",
     documentsCount: 6,
     tasksCount: 4,
-    messagesCount: 89
-  }
+    messagesCount: 89,
+  },
 ];
 
 const DEMO_MESSAGES: Message[] = [
   {
-    id: 'msg-1',
-    workspaceId: '1',
-    userId: '1',
-    userName: 'Dr. Sarah Chen',
-    content: 'I\'ve uploaded the preliminary analysis. The patterns we\'re seeing suggest a coordinated effort across multiple vectors.',
-    type: 'text',
-    timestamp: new Date('2024-03-15T15:30:00Z'),
+    id: "msg-1",
+    workspaceId: "1",
+    userId: "1",
+    userName: "Dr. Sarah Chen",
+    content:
+      "I've uploaded the preliminary analysis. The patterns we're seeing suggest a coordinated effort across multiple vectors.",
+    type: "text",
+    timestamp: new Date("2024-03-15T15:30:00Z"),
     attachments: [
       {
-        id: 'att-1',
-        name: 'preliminary-analysis.pdf',
-        type: 'application/pdf',
+        id: "att-1",
+        name: "preliminary-analysis.pdf",
+        type: "application/pdf",
         size: 2400000,
-        url: '/files/preliminary-analysis.pdf'
-      }
+        url: "/files/preliminary-analysis.pdf",
+      },
     ],
     reactions: [
-      { emoji: '👍', users: ['2', '3'], count: 2 },
-      { emoji: '🔥', users: ['2'], count: 1 }
-    ]
+      { emoji: "👍", users: ["2", "3"], count: 2 },
+      { emoji: "🔥", users: ["2"], count: 1 },
+    ],
   },
   {
-    id: 'msg-2',
-    workspaceId: '1', 
-    userId: '2',
-    userName: 'Marcus Rodriguez',
-    content: 'Agreed. I\'ve cross-referenced this with our threat intelligence feeds. Creating a task to investigate further.',
-    type: 'text',
-    timestamp: new Date('2024-03-15T15:45:00Z'),
-    mentions: ['1']
+    id: "msg-2",
+    workspaceId: "1",
+    userId: "2",
+    userName: "Marcus Rodriguez",
+    content:
+      "Agreed. I've cross-referenced this with our threat intelligence feeds. Creating a task to investigate further.",
+    type: "text",
+    timestamp: new Date("2024-03-15T15:45:00Z"),
+    mentions: ["1"],
   },
   {
-    id: 'msg-3',
-    workspaceId: '1',
-    userId: '3',
-    userName: 'Alex Thompson', 
-    content: 'The geospatial data from this morning supports that theory. I\'ll run additional correlation analysis.',
-    type: 'text',
-    timestamp: new Date('2024-03-15T16:00:00Z')
-  }
+    id: "msg-3",
+    workspaceId: "1",
+    userId: "3",
+    userName: "Alex Thompson",
+    content:
+      "The geospatial data from this morning supports that theory. I'll run additional correlation analysis.",
+    type: "text",
+    timestamp: new Date("2024-03-15T16:00:00Z"),
+  },
 ];
 
 function wsUrl() {
-  const port = process.env.NEXT_PUBLIC_COLLAB_PORT || process.env.IT_PORT_COLLAB || '8625';
+  const port = process.env.NEXT_PUBLIC_COLLAB_PORT || process.env.IT_PORT_COLLAB || "8625";
   return `ws://localhost:${port}/ws`;
 }
 
 const WORKSPACE_COLORS = {
-  red: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-900/30',
-  blue: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-900/30',
-  green: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-900/30',
-  purple: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-900/30',
-  orange: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-900/30'
+  red: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-900/30",
+  blue: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-900/30",
+  green:
+    "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-900/30",
+  purple:
+    "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-900/30",
+  orange:
+    "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-900/30",
 };
 
 const STATUS_COLORS = {
-  online: 'bg-green-500',
-  away: 'bg-yellow-500', 
-  offline: 'bg-gray-400'
+  online: "bg-green-500",
+  away: "bg-yellow-500",
+  offline: "bg-gray-400",
 };
 
 // Workspace List Component
-function WorkspaceList({ 
-  workspaces, 
-  selectedWorkspace, 
-  onWorkspaceSelect, 
-  onCreateWorkspace 
+function WorkspaceList({
+  workspaces,
+  selectedWorkspace,
+  onWorkspaceSelect,
+  onCreateWorkspace,
 }: {
   workspaces: Workspace[];
   selectedWorkspace?: Workspace;
   onWorkspaceSelect: (workspace: Workspace) => void;
   onCreateWorkspace: () => void;
 }) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredWorkspaces = workspaces.filter(ws =>
-    ws.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ws.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredWorkspaces = workspaces.filter(
+    (ws) =>
+      ws.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ws.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -308,7 +315,10 @@ function WorkspaceList({
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={16}
+        />
         <input
           type="text"
           placeholder="Search workspaces..."
@@ -326,13 +336,15 @@ function WorkspaceList({
             onClick={() => onWorkspaceSelect(workspace)}
             className={`w-full text-left p-3 rounded-lg border transition-colors ${
               selectedWorkspace?.id === workspace.id
-                ? 'bg-primary-50 border-primary-200 dark:bg-primary-900/30 dark:border-primary-900/30'
-                : 'bg-white border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700'
+                ? "bg-primary-50 border-primary-200 dark:bg-primary-900/30 dark:border-primary-900/30"
+                : "bg-white border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
             }`}
           >
             <div className="flex items-start gap-3">
-              <div className={`w-3 h-3 rounded-full mt-2 ${WORKSPACE_COLORS[workspace.color as keyof typeof WORKSPACE_COLORS].split(' ')[0]}`} />
-              
+              <div
+                className={`w-3 h-3 rounded-full mt-2 ${WORKSPACE_COLORS[workspace.color as keyof typeof WORKSPACE_COLORS].split(" ")[0]}`}
+              />
+
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <h4 className="font-medium text-gray-900 dark:text-white truncate">
@@ -344,11 +356,11 @@ function WorkspaceList({
                     </div>
                   )}
                 </div>
-                
+
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
                   {workspace.description}
                 </p>
-                
+
                 <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                   <div className="flex items-center gap-1">
                     <Users size={12} />
@@ -367,14 +379,14 @@ function WorkspaceList({
                 {/* Active members preview */}
                 <div className="flex items-center gap-1 mt-2">
                   {workspace.members
-                    .filter(m => m.status === 'online')
+                    .filter((m) => m.status === "online")
                     .slice(0, 3)
                     .map((member) => (
                       <div key={member.id} className="relative">
                         <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                           {member.avatar ? (
-                            <img 
-                              src={member.avatar} 
+                            <img
+                              src={member.avatar}
                               alt={member.name}
                               className="w-6 h-6 rounded-full object-cover"
                             />
@@ -382,12 +394,14 @@ function WorkspaceList({
                             <User size={12} className="text-primary-600 dark:text-primary-400" />
                           )}
                         </div>
-                        <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white dark:border-gray-800 ${STATUS_COLORS[member.status]}`} />
+                        <div
+                          className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white dark:border-gray-800 ${STATUS_COLORS[member.status]}`}
+                        />
                       </div>
                     ))}
-                  {workspace.members.filter(m => m.status === 'online').length > 3 && (
+                  {workspace.members.filter((m) => m.status === "online").length > 3 && (
                     <div className="text-xs text-gray-400 ml-1">
-                      +{workspace.members.filter(m => m.status === 'online').length - 3}
+                      +{workspace.members.filter((m) => m.status === "online").length - 3}
                     </div>
                   )}
                 </div>
@@ -401,21 +415,21 @@ function WorkspaceList({
 }
 
 // Chat Interface Component
-function ChatInterface({ 
-  workspace, 
-  messages, 
-  onSendMessage 
+function ChatInterface({
+  workspace,
+  messages,
+  onSendMessage,
 }: {
   workspace: Workspace;
   messages: Message[];
   onSendMessage: (content: string, attachments?: File[]) => void;
 }) {
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -423,16 +437,16 @@ function ChatInterface({
     if (!newMessage.trim()) return;
 
     onSendMessage(newMessage);
-    setNewMessage('');
+    setNewMessage("");
   };
 
   const formatTimestamp = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    
-    if (diff < 60000) return 'Just now';
+
+    if (diff < 60000) return "Just now";
     if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-    if (diff < 86400000) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (diff < 86400000) return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     return date.toLocaleDateString();
   };
 
@@ -441,15 +455,17 @@ function ChatInterface({
       {/* Chat Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
-          <div className={`w-4 h-4 rounded-full ${WORKSPACE_COLORS[workspace.color as keyof typeof WORKSPACE_COLORS].split(' ')[0]}`} />
+          <div
+            className={`w-4 h-4 rounded-full ${WORKSPACE_COLORS[workspace.color as keyof typeof WORKSPACE_COLORS].split(" ")[0]}`}
+          />
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">{workspace.name}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {workspace.members.filter(m => m.status === 'online').length} online
+              {workspace.members.filter((m) => m.status === "online").length} online
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
             <Search size={16} />
@@ -463,18 +479,19 @@ function ChatInterface({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => {
-          const isConsecutive = index > 0 && 
+          const isConsecutive =
+            index > 0 &&
             messages[index - 1].userId === message.userId &&
-            (message.timestamp.getTime() - messages[index - 1].timestamp.getTime()) < 300000;
+            message.timestamp.getTime() - messages[index - 1].timestamp.getTime() < 300000;
 
           return (
-            <div key={message.id} className={`group ${isConsecutive ? 'ml-12' : ''}`}>
+            <div key={message.id} className={`group ${isConsecutive ? "ml-12" : ""}`}>
               <div className="flex items-start gap-3">
                 {!isConsecutive && (
                   <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
                     {message.userAvatar ? (
-                      <img 
-                        src={message.userAvatar} 
+                      <img
+                        src={message.userAvatar}
                         alt={message.userName}
                         className="w-8 h-8 rounded-full object-cover"
                       />
@@ -483,7 +500,7 @@ function ChatInterface({
                     )}
                   </div>
                 )}
-                
+
                 <div className="flex-1 min-w-0">
                   {!isConsecutive && (
                     <div className="flex items-baseline gap-2 mb-1">
@@ -495,7 +512,7 @@ function ChatInterface({
                       </span>
                     </div>
                   )}
-                  
+
                   <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
                     {message.content}
                   </div>
@@ -504,7 +521,10 @@ function ChatInterface({
                   {message.attachments && message.attachments.length > 0 && (
                     <div className="mt-2 space-y-2">
                       {message.attachments.map((attachment) => (
-                        <div key={attachment.id} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div
+                          key={attachment.id}
+                          className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                        >
                           <Paperclip size={14} className="text-gray-400" />
                           <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">
                             {attachment.name}
@@ -574,7 +594,7 @@ function ChatInterface({
                 className="w-full p-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none"
                 rows={1}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSendMessage(e);
                   }
@@ -588,7 +608,7 @@ function ChatInterface({
               </button>
             </div>
           </div>
-          
+
           <button
             type="submit"
             disabled={!newMessage.trim()}
@@ -617,12 +637,15 @@ function ActiveCollaborators({ workspace }: { workspace: Workspace }) {
 
       <div className="space-y-2">
         {workspace.members.map((member) => (
-          <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+          <div
+            key={member.id}
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+          >
             <div className="relative">
               <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                 {member.avatar ? (
-                  <img 
-                    src={member.avatar} 
+                  <img
+                    src={member.avatar}
                     alt={member.name}
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -630,20 +653,24 @@ function ActiveCollaborators({ workspace }: { workspace: Workspace }) {
                   <User size={16} className="text-primary-600 dark:text-primary-400" />
                 )}
               </div>
-              <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${STATUS_COLORS[member.status]}`} />
+              <div
+                className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${STATUS_COLORS[member.status]}`}
+              />
             </div>
-            
+
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                 {member.name}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                {member.status === 'online' ? 'Active now' : 
-                 member.status === 'away' ? 'Away' :
-                 `Last seen ${member.lastActive.toLocaleTimeString()}`}
+                {member.status === "online"
+                  ? "Active now"
+                  : member.status === "away"
+                    ? "Away"
+                    : `Last seen ${member.lastActive.toLocaleTimeString()}`}
               </div>
             </div>
-            
+
             <div className="text-xs text-gray-400 px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
               {member.role}
             </div>
@@ -663,7 +690,7 @@ function ActiveCollaborators({ workspace }: { workspace: Workspace }) {
 export default function CollaborationPage() {
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(DEMO_WORKSPACES[0]);
   const [messages, setMessages] = useState<Message[]>(DEMO_MESSAGES);
-  const [activeTab, setActiveTab] = useState<string>('chat');
+  const [activeTab, setActiveTab] = useState<string>("chat");
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(false);
@@ -678,16 +705,16 @@ export default function CollaborationPage() {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'message') {
-          setMessages(prev => [...prev, data.message]);
+        if (data.type === "message") {
+          setMessages((prev) => [...prev, data.message]);
         }
       } catch (error) {
-        console.error('WebSocket message parsing error:', error);
+        console.error("WebSocket message parsing error:", error);
       }
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     };
 
     return () => {
@@ -695,50 +722,57 @@ export default function CollaborationPage() {
     };
   }, []);
 
-  const handleSendMessage = useCallback((content: string, attachments?: File[]) => {
-    if (!selectedWorkspace) return;
+  const handleSendMessage = useCallback(
+    (content: string, attachments?: File[]) => {
+      if (!selectedWorkspace) return;
 
-    const newMessage: Message = {
-      id: `msg-${Date.now()}`,
-      workspaceId: selectedWorkspace.id,
-      userId: '1', // Current user ID
-      userName: 'Dr. Sarah Chen', // Current user name
-      content,
-      type: 'text',
-      timestamp: new Date(),
-      attachments: attachments ? attachments.map(file => ({
-        id: `att-${Date.now()}-${file.name}`,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url: URL.createObjectURL(file)
-      })) : []
-    };
-
-    // Add message locally
-    setMessages(prev => [...prev, newMessage]);
-
-    // Send via WebSocket
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({
-        type: 'message',
+      const newMessage: Message = {
+        id: `msg-${Date.now()}`,
         workspaceId: selectedWorkspace.id,
-        message: newMessage
-      }));
-    }
-  }, [selectedWorkspace]);
+        userId: "1", // Current user ID
+        userName: "Dr. Sarah Chen", // Current user name
+        content,
+        type: "text",
+        timestamp: new Date(),
+        attachments: attachments
+          ? attachments.map((file) => ({
+              id: `att-${Date.now()}-${file.name}`,
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              url: URL.createObjectURL(file),
+            }))
+          : [],
+      };
+
+      // Add message locally
+      setMessages((prev) => [...prev, newMessage]);
+
+      // Send via WebSocket
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(
+          JSON.stringify({
+            type: "message",
+            workspaceId: selectedWorkspace.id,
+            message: newMessage,
+          }),
+        );
+      }
+    },
+    [selectedWorkspace],
+  );
 
   const handleWorkspaceSelect = async (workspace: Workspace) => {
     setIsLoadingWorkspace(true);
     try {
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setSelectedWorkspace(workspace);
       // Filter messages for selected workspace
-      const workspaceMessages = DEMO_MESSAGES.filter(m => m.workspaceId === workspace.id);
+      const workspaceMessages = DEMO_MESSAGES.filter((m) => m.workspaceId === workspace.id);
       setMessages(workspaceMessages);
     } catch (error) {
-      console.error('Error loading workspace:', error);
+      console.error("Error loading workspace:", error);
     } finally {
       setIsLoadingWorkspace(false);
     }
@@ -748,22 +782,24 @@ export default function CollaborationPage() {
     setIsCreatingWorkspace(true);
     try {
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Create new workspace');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Create new workspace");
       // In real implementation, this would create a workspace and refresh the list
     } catch (error) {
-      console.error('Error creating workspace:', error);
+      console.error("Error creating workspace:", error);
     } finally {
       setIsCreatingWorkspace(false);
     }
   };
 
-  const workspaceMessages = messages.filter(m => m.workspaceId === selectedWorkspace?.id);
+  const workspaceMessages = messages.filter((m) => m.workspaceId === selectedWorkspace?.id);
 
   return (
-    <DashboardLayout title="Collaboration" subtitle="Real-time workspace collaboration and communication">
+    <DashboardLayout
+      title="Collaboration"
+      subtitle="Real-time workspace collaboration and communication"
+    >
       <div className="flex h-[calc(100vh-12rem)] max-w-7xl mx-auto gap-6">
-        
         {/* Left Sidebar - Workspaces */}
         <div className="w-80 flex-shrink-0">
           <Panel className="h-full">
@@ -815,7 +851,9 @@ export default function CollaborationPage() {
                     <div className="h-full flex items-center justify-center">
                       <div className="text-center">
                         <FolderOpen size={48} className="mx-auto text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Document Sharing</h3>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                          Document Sharing
+                        </h3>
                         <p className="text-gray-500 dark:text-gray-400">
                           Drag and drop files or click to upload documents to share with your team.
                         </p>
@@ -831,9 +869,12 @@ export default function CollaborationPage() {
                     <div className="h-full flex items-center justify-center">
                       <div className="text-center">
                         <CheckCircle size={48} className="mx-auto text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Task Management</h3>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                          Task Management
+                        </h3>
                         <p className="text-gray-500 dark:text-gray-400">
-                          Create and track tasks within your workspace for better project coordination.
+                          Create and track tasks within your workspace for better project
+                          coordination.
                         </p>
                         <button className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
                           <Plus size={16} />
@@ -847,9 +888,12 @@ export default function CollaborationPage() {
                     <div className="h-full flex items-center justify-center">
                       <div className="text-center">
                         <Activity size={48} className="mx-auto text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Activity Feed</h3>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                          Activity Feed
+                        </h3>
                         <p className="text-gray-500 dark:text-gray-400">
-                          Track all workspace activities, updates, and team interactions in real-time.
+                          Track all workspace activities, updates, and team interactions in
+                          real-time.
                         </p>
                       </div>
                     </div>
@@ -861,7 +905,9 @@ export default function CollaborationPage() {
             <Panel className="h-full flex items-center justify-center">
               <div className="text-center">
                 <Users size={48} className="mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Select a Workspace</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  Select a Workspace
+                </h3>
                 <p className="text-gray-500 dark:text-gray-400">
                   Choose a workspace from the sidebar to start collaborating.
                 </p>

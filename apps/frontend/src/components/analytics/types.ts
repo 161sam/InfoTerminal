@@ -84,7 +84,7 @@ export interface CoverageMetric {
   category: string;
   coverage: number;
   target: number;
-  status: 'good' | 'warning' | 'critical';
+  status: "good" | "warning" | "critical";
 }
 
 export interface SourceTimeline {
@@ -110,7 +110,7 @@ export interface QualityMetric {
   score: number;
   weight: number;
   description: string;
-  status: 'good' | 'warning' | 'poor';
+  status: "good" | "warning" | "poor";
 }
 
 export interface SourceReliability {
@@ -130,7 +130,7 @@ export interface CorroborationStats {
 
 export interface QualityRecommendation {
   type: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   message: string;
   action?: string;
 }
@@ -140,7 +140,7 @@ export interface WorkflowRun {
   id: string;
   name: string;
   type: string;
-  status: 'running' | 'completed' | 'failed' | 'cancelled';
+  status: "running" | "completed" | "failed" | "cancelled";
   startTime: string;
   endTime?: string;
   duration?: number;
@@ -170,7 +170,7 @@ export interface WorkflowOutput {
 export interface TimelineEvent {
   id: string;
   timestamp: string;
-  type: 'document' | 'entity' | 'claim' | 'relationship';
+  type: "document" | "entity" | "claim" | "relationship";
   title: string;
   description: string;
   entities: string[];
@@ -337,44 +337,44 @@ export interface AnalyticsState {
 
 // Constants
 export const TIME_RANGES: TimeRange[] = [
-  { value: '1h', label: 'Last Hour' },
-  { value: '24h', label: 'Last 24 Hours', days: 1 },
-  { value: '7d', label: 'Last 7 Days', days: 7 },
-  { value: '30d', label: 'Last 30 Days', days: 30 },
-  { value: '90d', label: 'Last 90 Days', days: 90 },
-  { value: '1y', label: 'Last Year', days: 365 },
-  { value: 'custom', label: 'Custom Range' },
+  { value: "1h", label: "Last Hour" },
+  { value: "24h", label: "Last 24 Hours", days: 1 },
+  { value: "7d", label: "Last 7 Days", days: 7 },
+  { value: "30d", label: "Last 30 Days", days: 30 },
+  { value: "90d", label: "Last 90 Days", days: 90 },
+  { value: "1y", label: "Last Year", days: 365 },
+  { value: "custom", label: "Custom Range" },
 ];
 
 export const ENTITY_TYPES = [
-  'Person',
-  'Organization', 
-  'Location',
-  'Email',
-  'Domain',
-  'Phone',
-  'URL',
-  'Date',
-  'Money',
-  'Document',
+  "Person",
+  "Organization",
+  "Location",
+  "Email",
+  "Domain",
+  "Phone",
+  "URL",
+  "Date",
+  "Money",
+  "Document",
 ] as const;
 
 export const SOURCE_TYPES = [
-  'Web',
-  'Document',
-  'Social',
-  'News',
-  'Academic',
-  'Government',
-  'Database',
-  'API',
+  "Web",
+  "Document",
+  "Social",
+  "News",
+  "Academic",
+  "Government",
+  "Database",
+  "API",
 ] as const;
 
 export const WORKFLOW_TYPES = [
-  'Investigation',
-  'Verification',
-  'Entity Resolution',
-  'Relationship Analysis',
-  'Source Discovery',
-  'Data Enrichment',
+  "Investigation",
+  "Verification",
+  "Entity Resolution",
+  "Relationship Analysis",
+  "Source Discovery",
+  "Data Enrichment",
 ] as const;

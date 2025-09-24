@@ -1,10 +1,10 @@
 // Collaboration panels index - export all components
-export { CollabWorkspaceList } from './CollabWorkspaceList';
-export { CollabChatInterface } from './CollabChatInterface';
-export { CollabTeamSidebar } from './CollabTeamSidebar';
-export { CollabDocumentPanel } from './CollabDocumentPanel';
-export { CollabTaskPanel } from './CollabTaskPanel';
-export { CollabActivityPanel } from './CollabActivityPanel';
+export { CollabWorkspaceList } from "./CollabWorkspaceList";
+export { CollabChatInterface } from "./CollabChatInterface";
+export { CollabTeamSidebar } from "./CollabTeamSidebar";
+export { CollabDocumentPanel } from "./CollabDocumentPanel";
+export { CollabTaskPanel } from "./CollabTaskPanel";
+export { CollabActivityPanel } from "./CollabActivityPanel";
 
 // Re-export types and utilities
 export type {
@@ -16,8 +16,8 @@ export type {
   ActivityItem,
   Attachment,
   Reaction,
-  Comment
-} from '@/lib/collaboration/collab-config';
+  Comment,
+} from "@/lib/collaboration/collab-config";
 
 export {
   WORKSPACE_COLORS,
@@ -29,5 +29,5 @@ export {
   getLastActiveText,
   wsUrl,
   DEMO_WORKSPACES,
-  DEMO_MESSAGES
-} from '@/lib/collaboration/collab-config';
+  DEMO_MESSAGES,
+} from "@/lib/collaboration/collab-config";

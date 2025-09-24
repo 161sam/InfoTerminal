@@ -1,6 +1,6 @@
 // apps/frontend/src/components/analytics/GraphSnippet.tsx
-import React, { useEffect, useRef } from 'react';
-import CytoscapeComponent from 'react-cytoscapejs';
+import React, { useEffect, useRef } from "react";
+import CytoscapeComponent from "react-cytoscapejs";
 
 type CyInstance = {
   on: (event: string, selector: string, handler: (evt: any) => void) => void;
@@ -24,7 +24,7 @@ function GraphSnippetComponent({ data, onNodeClick, onReady }: GraphSnippetProps
       // Im Testumfeld kann der Canvas/Renderer fehlen – daher defensiv zerstören
       try {
         const cy = cyRef.current;
-        if (cy && typeof cy.destroy === 'function') cy.destroy();
+        if (cy && typeof cy.destroy === "function") cy.destroy();
       } catch {
         // noop
       } finally {
@@ -41,14 +41,14 @@ function GraphSnippetComponent({ data, onNodeClick, onReady }: GraphSnippetProps
         cy={(cy: CyInstance) => {
           cyRef.current = cy;
           if (onNodeClick) {
-            cy.on('tap', 'node', (evt: any) => {
-              const id = typeof evt?.target?.id === 'function' ? evt.target.id() : undefined;
+            cy.on("tap", "node", (evt: any) => {
+              const id = typeof evt?.target?.id === "function" ? evt.target.id() : undefined;
               if (id) onNodeClick(id);
             });
           }
           if (onReady) onReady(cy);
         }}
-        style={{ width: '100%', height: 200 }}
+        style={{ width: "100%", height: 200 }}
       />
     </div>
   );

@@ -1,8 +1,8 @@
 // Modularized Dossier Creation Page
-import { useState, useEffect } from 'react';
-import { FileText } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
+import { useState, useEffect } from "react";
+import { FileText } from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 import {
   DossierTemplateSelector,
   DossierItemManager,
@@ -14,23 +14,23 @@ import {
   GeneratedDossier,
   DOSSIER_TEMPLATES,
   EXAMPLE_ITEMS,
-  createDossierPayload
-} from '@/components/dossier/panels';
+  createDossierPayload,
+} from "@/components/dossier/panels";
 
 export default function DossierPage() {
   // State management
-  const [title, setTitle] = useState('Investigation Report');
+  const [title, setTitle] = useState("Investigation Report");
   const [items, setItems] = useState<DossierItem[]>([]);
   const [settings, setSettings] = useState<DossierSettings>({
     includeTimeline: true,
     includeSummary: true,
     includeVisualization: true,
     confidenceThreshold: 0.8,
-    language: 'en'
+    language: "en",
   });
-  
+
   const [generatedDossier, setGeneratedDossier] = useState<GeneratedDossier | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const [showPreview, setShowPreview] = useState(false);
 
   // Initialize with example items
@@ -40,47 +40,45 @@ export default function DossierPage() {
 
   // Event handlers
   const handleTemplateSelect = (templateId: string) => {
-    const template = DOSSIER_TEMPLATES.find(t => t.id === templateId);
+    const template = DOSSIER_TEMPLATES.find((t) => t.id === templateId);
     if (!template) return;
-    
+
     setTitle(template.name);
     setSettings(template.settings);
     setSelectedTemplate(templateId);
   };
 
   const handleCustomCreate = () => {
-    setSelectedTemplate('');
-    setTitle('Custom Dossier');
+    setSelectedTemplate("");
+    setTitle("Custom Dossier");
     setSettings({
       includeTimeline: true,
       includeSummary: true,
       includeVisualization: false,
       confidenceThreshold: 0.8,
-      language: 'en'
+      language: "en",
     });
   };
 
-  const handleAddItem = (newItem: Omit<DossierItem, 'id'>) => {
+  const handleAddItem = (newItem: Omit<DossierItem, "id">) => {
     const item: DossierItem = {
       ...newItem,
-      id: Date.now().toString()
+      id: Date.now().toString(),
     };
-    setItems(prev => [...prev, item]);
+    setItems((prev) => [...prev, item]);
   };
 
   const handleRemoveItem = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+    setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleUpdateItem = (id: string, updates: Partial<DossierItem>) => {
-    setItems(prev => prev.map(item => 
-      item.id === id ? { ...item, ...updates } : item
-    ));
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...updates } : item)));
   };
 
   const handleGenerate = async (payload: any): Promise<GeneratedDossier> => {
     // Simulate API call to dossier generation service
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Mock generated content
     const mockMarkdown = `# ${payload.title}
@@ -91,22 +89,26 @@ export default function DossierPage() {
 **Confidence Threshold:** ${Math.round(payload.options.confidence * 100)}%
 
 ## Executive Summary
-${payload.options.summary ? `This dossier provides a comprehensive analysis of the collected intelligence items. The investigation reveals patterns and connections across ${payload.items.nodes.length} entities and ${payload.items.edges.length} relationships.` : ''}
+${payload.options.summary ? `This dossier provides a comprehensive analysis of the collected intelligence items. The investigation reveals patterns and connections across ${payload.items.nodes.length} entities and ${payload.items.edges.length} relationships.` : ""}
 
 ## Documents Analyzed
-${payload.items.docs.map((doc: string, index: number) => `${index + 1}. ${doc}`).join('\n')}
+${payload.items.docs.map((doc: string, index: number) => `${index + 1}. ${doc}`).join("\n")}
 
 ## Key Entities
-${payload.items.nodes.map((node: string, index: number) => `${index + 1}. **${node}** - High-confidence entity`).join('\n')}
+${payload.items.nodes.map((node: string, index: number) => `${index + 1}. **${node}** - High-confidence entity`).join("\n")}
 
 ## Relationships
-${payload.items.edges.map((edge: string, index: number) => `${index + 1}. ${edge}`).join('\n')}
+${payload.items.edges.map((edge: string, index: number) => `${index + 1}. ${edge}`).join("\n")}
 
-${payload.options.timeline ? `## Timeline
+${
+  payload.options.timeline
+    ? `## Timeline
 - **2024-01-15**: Initial document discovery
 - **2024-02-01**: Entity identification began
 - **2024-03-01**: Relationship mapping completed
-` : ''}
+`
+    : ""
+}
 
 ## Conclusion
 Based on the analyzed data with a confidence threshold of ${Math.round(payload.options.confidence * 100)}%, this investigation provides actionable intelligence for further analysis.
@@ -116,13 +118,14 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
 
     const result: GeneratedDossier = {
       markdown: mockMarkdown,
-      pdfUrl: '/api/dossier/export/pdf/' + Date.now(),
+      pdfUrl: "/api/dossier/export/pdf/" + Date.now(),
       metadata: {
         title: payload.title,
         generatedAt: new Date().toISOString(),
-        itemCount: payload.items.docs.length + payload.items.nodes.length + payload.items.edges.length,
-        size: Math.round(mockMarkdown.length / 1024) + ' KB'
-      }
+        itemCount:
+          payload.items.docs.length + payload.items.nodes.length + payload.items.edges.length,
+        size: Math.round(mockMarkdown.length / 1024) + " KB",
+      },
     };
 
     return result;
@@ -134,14 +137,16 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
   };
 
   const handleExport = (format: string) => {
-    console.log('Export dossier as:', format);
+    console.log("Export dossier as:", format);
     // Handle export logic
   };
 
   return (
-    <DashboardLayout title="Dossier Creation" subtitle="Generate comprehensive intelligence reports">
+    <DashboardLayout
+      title="Dossier Creation"
+      subtitle="Generate comprehensive intelligence reports"
+    >
       <div className="max-w-7xl mx-auto space-y-6">
-        
         {/* Title Input */}
         <Panel>
           <div className="flex items-center gap-3">
@@ -162,10 +167,8 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
         </Panel>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            
             {/* Template Selection */}
             <Panel>
               <DossierTemplateSelector
@@ -188,7 +191,6 @@ Based on the analyzed data with a confidence threshold of ${Math.round(payload.o
 
           {/* Sidebar */}
           <div className="space-y-6">
-            
             {/* Settings */}
             <Panel>
               <DossierSettingsPanel

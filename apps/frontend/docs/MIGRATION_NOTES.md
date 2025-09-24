@@ -1,6 +1,6 @@
 # Frontend Migration Notes
 
-*Last Updated: September 20, 2025*
+_Last Updated: September 20, 2025_
 
 ## Monolith Modularization Progress
 
@@ -65,12 +65,14 @@
 #### Import Changes:
 
 **Before:**
+
 ```typescript
 // All functionality was in one massive file
-import ConsolidatedGraphPage from '../pages/graphx';
+import ConsolidatedGraphPage from "../pages/graphx";
 ```
 
 **After:**
+
 ```typescript
 // Focused, reusable components
 import {
@@ -80,8 +82,8 @@ import {
   GraphVisualization3D,
   GraphMLAnalytics,
   GraphTools,
-  GraphSidebar
-} from '@/components/graph/panels';
+  GraphSidebar,
+} from "@/components/graph/panels";
 ```
 
 ### ✅ COMPLETED: agent.tsx Modularization

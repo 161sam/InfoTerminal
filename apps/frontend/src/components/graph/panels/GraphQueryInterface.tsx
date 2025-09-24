@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Play, Code2 } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import Button from '@/components/ui/button';
-import StatusPill, { Status } from '@/components/ui/StatusPill';
-import { LoadingSpinner } from '@/components/ui/loading';
-import config from '@/lib/config';
+import React, { useState } from "react";
+import { Play, Code2 } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import Button from "@/components/ui/button";
+import StatusPill, { Status } from "@/components/ui/StatusPill";
+import { LoadingSpinner } from "@/components/ui/loading";
+import config from "@/lib/config";
 
 interface QueryInterfaceProps {
   initialQuery?: string;
@@ -12,29 +12,32 @@ interface QueryInterfaceProps {
 }
 
 const SAMPLE_QUERIES = [
-  { 
-    name: "All Nodes Overview", 
+  {
+    name: "All Nodes Overview",
     query: "MATCH (n) RETURN n LIMIT 25",
-    description: "Get a general overview of your graph"
+    description: "Get a general overview of your graph",
   },
-  { 
-    name: "Person Connections", 
+  {
+    name: "Person Connections",
     query: "MATCH (p:Person)-[r]-(n) RETURN p, r, n LIMIT 20",
-    description: "Find connections between people"
+    description: "Find connections between people",
   },
-  { 
-    name: "Organizations Network", 
+  {
+    name: "Organizations Network",
     query: "MATCH (o:Organization)-[r]-(n) RETURN o, r, n LIMIT 15",
-    description: "Explore organizational relationships"
+    description: "Explore organizational relationships",
   },
-  { 
-    name: "Central Nodes", 
+  {
+    name: "Central Nodes",
     query: "MATCH (n)-[r]-() RETURN n, COUNT(r) as degree ORDER BY degree DESC LIMIT 10",
-    description: "Find the most connected nodes"
-  }
+    description: "Find the most connected nodes",
+  },
 ];
 
-export default function GraphQueryInterface({ initialQuery = "MATCH (n) RETURN n LIMIT 10", onQueryResult }: QueryInterfaceProps) {
+export default function GraphQueryInterface({
+  initialQuery = "MATCH (n) RETURN n LIMIT 10",
+  onQueryResult,
+}: QueryInterfaceProps) {
   const [customQuery, setCustomQuery] = useState(initialQuery);
   const [queryResult, setQueryResult] = useState<any>(null);
   const [queryStatus, setQueryStatus] = useState<Status>();
@@ -62,7 +65,7 @@ export default function GraphQueryInterface({ initialQuery = "MATCH (n) RETURN n
       }
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
+
       const result = await response.json();
       setQueryResult(result);
       setQueryStatus("ok");
@@ -90,7 +93,7 @@ export default function GraphQueryInterface({ initialQuery = "MATCH (n) RETURN n
               rows={4}
             />
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button onClick={runCustomQuery} disabled={queryStatus === "loading"}>
               {queryStatus === "loading" ? (
@@ -100,10 +103,8 @@ export default function GraphQueryInterface({ initialQuery = "MATCH (n) RETURN n
               )}
               Execute Query
             </Button>
-            
-            {queryStatus && queryStatus !== "loading" && (
-              <StatusPill status={queryStatus} />
-            )}
+
+            {queryStatus && queryStatus !== "loading" && <StatusPill status={queryStatus} />}
           </div>
         </div>
       </Panel>
@@ -111,20 +112,21 @@ export default function GraphQueryInterface({ initialQuery = "MATCH (n) RETURN n
       <Panel title="Query Examples">
         <div className="space-y-3">
           {SAMPLE_QUERIES.map((sample, index) => (
-            <div key={index} className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            <div
+              key={index}
+              className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h4 className="font-medium text-gray-900 dark:text-slate-100">{sample.name}</h4>
-                  <p className="text-sm text-gray-600 dark:text-slate-400 mt-1">{sample.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400 mt-1">
+                    {sample.description}
+                  </p>
                   <code className="text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded mt-2 block">
                     {sample.query}
                   </code>
                 </div>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => setCustomQuery(sample.query)}
-                >
+                <Button size="sm" variant="secondary" onClick={() => setCustomQuery(sample.query)}>
                   Use
                 </Button>
               </div>

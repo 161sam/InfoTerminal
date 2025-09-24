@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
-export type ToastVariant = 'info' | 'success' | 'error';
+export type ToastVariant = "info" | "success" | "error";
 export interface ToastMessage {
   id: number;
   message: string;
@@ -14,11 +14,11 @@ const listeners = new Set<(toast: ToastMessage) => void>();
 let idCounter = 0;
 
 export function toast(message: string, opts?: { variant?: ToastVariant }) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   const t: ToastMessage = {
     id: ++idCounter,
     message,
-    variant: opts?.variant ?? 'info',
+    variant: opts?.variant ?? "info",
   };
   listeners.forEach((l) => l(t));
 }
@@ -47,5 +47,4 @@ export function ToastProvider({ children }: PropsWithChildren) {
   return <ToastContext.Provider value={toasts}>{children}</ToastContext.Provider>;
 }
 
-export const ToastViewport = dynamic(() => import('./ToastViewportImpl'), { ssr: false });
-
+export const ToastViewport = dynamic(() => import("./ToastViewportImpl"), { ssr: false });

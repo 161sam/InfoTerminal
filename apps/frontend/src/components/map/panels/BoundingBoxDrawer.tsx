@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useMapEvents, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import { BoundingBox, MAP_STYLES } from '@/lib/map/map-config';
+import { useState, useEffect } from "react";
+import { useMapEvents, useMap } from "react-leaflet";
+import L from "leaflet";
+import { BoundingBox, MAP_STYLES } from "@/lib/map/map-config";
 
 interface BoundingBoxDrawerProps {
   onBoundsChange: (bounds: BoundingBox | null) => void;
@@ -12,7 +12,7 @@ export default function BoundingBoxDrawer({ onBoundsChange, enabled }: BoundingB
   const [drawing, setDrawing] = useState(false);
   const [startPoint, setStartPoint] = useState<L.LatLng | null>(null);
   const [currentBox, setCurrentBox] = useState<L.Rectangle | null>(null);
-  
+
   const map = useMap();
 
   useMapEvents({
@@ -23,11 +23,11 @@ export default function BoundingBoxDrawer({ onBoundsChange, enabled }: BoundingB
     },
     mousemove: (e) => {
       if (!drawing || !startPoint) return;
-      
+
       if (currentBox) {
         map.removeLayer(currentBox);
       }
-      
+
       const bounds = L.latLngBounds([startPoint, e.latlng]);
       const rectangle = L.rectangle(bounds, MAP_STYLES.boundingBox);
       rectangle.addTo(map);
@@ -35,18 +35,18 @@ export default function BoundingBoxDrawer({ onBoundsChange, enabled }: BoundingB
     },
     mouseup: (e) => {
       if (!drawing || !startPoint) return;
-      
+
       const bounds = {
         south: Math.min(startPoint.lat, e.latlng.lat),
         west: Math.min(startPoint.lng, e.latlng.lng),
         north: Math.max(startPoint.lat, e.latlng.lat),
-        east: Math.max(startPoint.lng, e.latlng.lng)
+        east: Math.max(startPoint.lng, e.latlng.lng),
       };
-      
+
       onBoundsChange(bounds);
       setDrawing(false);
       setStartPoint(null);
-    }
+    },
   });
 
   useEffect(() => {

@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { sanitizeUrl } from '@/lib/endpoints';
-import { safeLog, isBrowser } from '@/lib/safe';
-import { toast } from '@/components/ui/toast';
-import useEndpoints from './useEndpoints';
+import { useEffect, useState } from "react";
+import { sanitizeUrl } from "@/lib/endpoints";
+import { safeLog, isBrowser } from "@/lib/safe";
+import { toast } from "@/components/ui/toast";
+import useEndpoints from "./useEndpoints";
 
-export type ServiceStatus = 'ok' | 'degraded' | 'fail' | 'unknown';
+export type ServiceStatus = "ok" | "degraded" | "fail" | "unknown";
 export interface ServiceEntry {
   status: ServiceStatus;
   latency?: number;
@@ -21,20 +21,20 @@ export function useServiceHealthMatrix(pollMs = 10000) {
     const run = async () => {
       const entries = await Promise.all(
         Object.entries(endpoints).map(async ([key, base]) => {
-          if (!base) return [key, { status: 'unknown' }] as [string, ServiceEntry];
-          const url = sanitizeUrl(base) + '/readyz';
+          if (!base) return [key, { status: "unknown" }] as [string, ServiceEntry];
+          const url = sanitizeUrl(base) + "/readyz";
           const start = performance.now();
           try {
-            const res = await fetch(url, { cache: 'no-store' });
+            const res = await fetch(url, { cache: "no-store" });
             const latency = Math.round(performance.now() - start);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return [key, { status: 'ok', latency }] as [string, ServiceEntry];
+            return [key, { status: "ok", latency }] as [string, ServiceEntry];
           } catch (e) {
-            safeLog('health check failed', key, e);
+            safeLog("health check failed", key, e);
             toast(`${key} unreachable`);
-            return [key, { status: 'fail' }] as [string, ServiceEntry];
+            return [key, { status: "fail" }] as [string, ServiceEntry];
           }
-        })
+        }),
       );
       if (!cancelled) setMatrix(Object.fromEntries(entries));
     };

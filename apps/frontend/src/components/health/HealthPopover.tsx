@@ -1,7 +1,7 @@
-import React from 'react';
-import ServiceHealthCard from './ServiceHealthCard';
-import type { HealthResponse } from '../../../pages/api/health';
-import config from '@/lib/config';
+import React from "react";
+import ServiceHealthCard from "./ServiceHealthCard";
+import type { HealthResponse } from "../../../pages/api/health";
+import config from "@/lib/config";
 
 interface Props {
   data: HealthResponse | null;
@@ -15,10 +15,26 @@ export const HealthPopover: React.FC<Props> = ({ data, onRefresh }) => {
       <div className="grid grid-cols-1 gap-2">
         {services && (
           <>
-            <ServiceHealthCard name="search" state={services.search.state} latencyMs={services.search.latencyMs} />
-            <ServiceHealthCard name="graph" state={services.graph.state} latencyMs={services.graph.latencyMs} />
-            <ServiceHealthCard name="docentities" state={services.docentities.state} latencyMs={services.docentities.latencyMs} />
-            <ServiceHealthCard name="nlp" state={services.nlp.state} latencyMs={services.nlp.latencyMs} />
+            <ServiceHealthCard
+              name="search"
+              state={services.search.state}
+              latencyMs={services.search.latencyMs}
+            />
+            <ServiceHealthCard
+              name="graph"
+              state={services.graph.state}
+              latencyMs={services.graph.latencyMs}
+            />
+            <ServiceHealthCard
+              name="docentities"
+              state={services.docentities.state}
+              latencyMs={services.docentities.latencyMs}
+            />
+            <ServiceHealthCard
+              name="nlp"
+              state={services.nlp.state}
+              latencyMs={services.nlp.latencyMs}
+            />
           </>
         )}
       </div>

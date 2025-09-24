@@ -1,5 +1,5 @@
-import React from 'react';
-import { EntityResult, ENTITY_COLORS } from './types';
+import React from "react";
+import { EntityResult, ENTITY_COLORS } from "./types";
 
 interface NLPEntityHighlighterProps {
   text: string;
@@ -26,7 +26,7 @@ export function highlightEntities(text: string, entities: EntityResult[]) {
         title={`${entity.label} (${Math.round(entity.confidence * 100)}%)`}
       >
         {entity.text}
-      </span>
+      </span>,
     );
 
     lastEnd = entity.end;

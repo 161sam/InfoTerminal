@@ -1,7 +1,7 @@
 // Hook for entity analytics data
-import { useState, useEffect, useCallback } from 'react';
-import { analyticsApi } from '../../lib/api-client';
-import { EntityStats, AnalyticsFilters } from '../analytics/types';
+import { useState, useEffect, useCallback } from "react";
+import { analyticsApi } from "../../lib/api-client";
+import { EntityStats, AnalyticsFilters } from "../analytics/types";
 
 export function useEntityAnalytics(filters: AnalyticsFilters) {
   const [data, setData] = useState<EntityStats | null>(null);
@@ -16,7 +16,7 @@ export function useEntityAnalytics(filters: AnalyticsFilters) {
 
     try {
       const response = await analyticsApi.getEntityStats(filters);
-      
+
       if (response.success && response.data) {
         setData(response.data);
       } else {
@@ -29,15 +29,15 @@ export function useEntityAnalytics(filters: AnalyticsFilters) {
           relationshipDensity: 0,
           trends: [],
         });
-        
+
         if (response.error) {
-          console.warn('Entity analytics service unavailable:', response.error);
+          console.warn("Entity analytics service unavailable:", response.error);
         }
       }
     } catch (err) {
-      console.warn('Error fetching entity analytics:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      
+      console.warn("Error fetching entity analytics:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
+
       // Provide empty state on error
       setData({
         totalEntities: 0,

@@ -1,21 +1,23 @@
 // Entity analytics component
-import React from 'react';
-import { Users, TrendingUp, TrendingDown, Database, Network } from 'lucide-react';
-import { useEntityAnalytics } from '../../hooks/analytics';
-import { AnalyticsFilters } from './types';
-import { DonutChart, TimeSeriesChart } from '../charts';
+import React from "react";
+import { Users, TrendingUp, TrendingDown, Database, Network } from "lucide-react";
+import { useEntityAnalytics } from "../../hooks/analytics";
+import { AnalyticsFilters } from "./types";
+import { DonutChart, TimeSeriesChart } from "../charts";
 
 interface EntityAnalyticsProps {
   filters: AnalyticsFilters;
   className?: string;
 }
 
-export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProps) {
+export function EntityAnalytics({ filters, className = "" }: EntityAnalyticsProps) {
   const { data, loading, error } = useEntityAnalytics(filters);
 
   if (loading) {
     return (
-      <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}
+      >
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
           <div className="grid grid-cols-2 gap-4 mb-6">
@@ -30,7 +32,9 @@ export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProp
 
   if (error) {
     return (
-      <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}
+      >
         <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
           <Database size={20} />
           <span className="text-sm">Service unavailable. Showing empty state.</span>
@@ -47,28 +51,32 @@ export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProp
 
   const getEntityTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      'Person': '#3b82f6',
-      'Organization': '#10b981',
-      'Location': '#f59e0b',
-      'Email': '#8b5cf6',
-      'Domain': '#ef4444',
-      'Phone': '#06b6d4',
-      'URL': '#84cc16',
-      'Date': '#f97316',
-      'Money': '#22c55e',
-      'Document': '#6366f1',
+      Person: "#3b82f6",
+      Organization: "#10b981",
+      Location: "#f59e0b",
+      Email: "#8b5cf6",
+      Domain: "#ef4444",
+      Phone: "#06b6d4",
+      URL: "#84cc16",
+      Date: "#f97316",
+      Money: "#22c55e",
+      Document: "#6366f1",
     };
-    return colors[type] || '#6b7280';
+    return colors[type] || "#6b7280";
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 ${className}`}
+    >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Users size={20} className="text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Entity Analytics</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Entity Analytics
+          </h3>
         </div>
-        
+
         {data && (
           <div className="text-xs text-gray-500 dark:text-gray-400">
             {formatNumber(data.totalEntities)} total entities
@@ -145,10 +153,10 @@ export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProp
                   Entity Types Distribution
                 </h4>
                 <DonutChart
-                  data={data.entityTypes.map(type => ({
+                  data={data.entityTypes.map((type) => ({
                     name: type.type,
                     value: type.count,
-                    color: getEntityTypeColor(type.type)
+                    color: getEntityTypeColor(type.type),
                   }))}
                   valueKey="value"
                   nameKey="name"
@@ -187,16 +195,29 @@ export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProp
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">Entity</th>
-                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">Type</th>
-                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">Mentions</th>
-                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">Sources</th>
-                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">Confidence</th>
+                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Entity
+                      </th>
+                      <th className="text-left p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Type
+                      </th>
+                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Mentions
+                      </th>
+                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Sources
+                      </th>
+                      <th className="text-right p-2 font-medium text-gray-900 dark:text-gray-100">
+                        Confidence
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.topEntities.slice(0, 10).map((entity, index) => (
-                      <tr key={entity.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                      <tr
+                        key={entity.id}
+                        className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50"
+                      >
                         <td className="p-2">
                           <div className="font-medium text-gray-900 dark:text-gray-100">
                             {entity.name}
@@ -206,11 +227,11 @@ export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProp
                           </div>
                         </td>
                         <td className="p-2">
-                          <span 
+                          <span
                             className="inline-block px-2 py-1 text-xs rounded"
                             style={{
                               backgroundColor: `${getEntityTypeColor(entity.type)}20`,
-                              color: getEntityTypeColor(entity.type)
+                              color: getEntityTypeColor(entity.type),
                             }}
                           >
                             {entity.type}
@@ -219,15 +240,17 @@ export function EntityAnalytics({ filters, className = '' }: EntityAnalyticsProp
                         <td className="p-2 text-right font-mono">
                           {formatNumber(entity.mentions)}
                         </td>
-                        <td className="p-2 text-right font-mono">
-                          {entity.sources}
-                        </td>
+                        <td className="p-2 text-right font-mono">{entity.sources}</td>
                         <td className="p-2 text-right">
-                          <span className={`font-medium ${
-                            entity.confidence >= 0.9 ? 'text-green-600 dark:text-green-400' :
-                            entity.confidence >= 0.7 ? 'text-yellow-600 dark:text-yellow-400' :
-                            'text-red-600 dark:text-red-400'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              entity.confidence >= 0.9
+                                ? "text-green-600 dark:text-green-400"
+                                : entity.confidence >= 0.7
+                                  ? "text-yellow-600 dark:text-yellow-400"
+                                  : "text-red-600 dark:text-red-400"
+                            }`}
+                          >
                             {Math.round(entity.confidence * 100)}%
                           </span>
                         </td>

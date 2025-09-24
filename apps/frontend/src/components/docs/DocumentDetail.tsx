@@ -1,34 +1,34 @@
 // apps/frontend/pages/docs/[id].tsx - Moderne Dokument-Detail-Seite
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { 
-  FileText, 
-  Download, 
-  Share2, 
-  Eye, 
-  Clock, 
-  User, 
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import {
+  FileText,
+  Download,
+  Share2,
+  Eye,
+  Clock,
+  User,
   Building2,
   MapPin,
   Network,
   Sparkles,
   ExternalLink,
   Copy,
-  Check
-} from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import EntityBadge from '@/components/entities/EntityBadge';
-import { DocRecord } from '@/types/docs';
-import { normalizeLabel } from '@/lib/entities';
-import HighlightedText from '@/components/HighlightedText';
+  Check,
+} from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import EntityBadge from "@/components/entities/EntityBadge";
+import { DocRecord } from "@/types/docs";
+import { normalizeLabel } from "@/lib/entities";
+import HighlightedText from "@/components/HighlightedText";
 
 export default function DocumentDetailPage() {
   const router = useRouter();
   const { id } = router.query;
   const [doc, setDoc] = useState<DocRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-  const [summary, setSummary] = useState<string>('');
+  const [error, setError] = useState<string>("");
+  const [summary, setSummary] = useState<string>("");
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -39,7 +39,7 @@ export default function DocumentDetailPage() {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_DOC_ENTITIES_URL;
         const response = await fetch(`${baseUrl}/v1/documents/${encodeURIComponent(id as string)}`);
-        if (!response.ok) throw new Error('Document not found');
+        if (!response.ok) throw new Error("Document not found");
         const docData = await response.json();
         const rawMeta = docData.metadata ?? {};
         const meta = {
@@ -56,7 +56,7 @@ export default function DocumentDetailPage() {
         setDoc({
           id: docData.doc_id ?? (id as string),
           doc_id: docData.doc_id ?? (id as string),
-          text: docData.text ?? '',
+          text: docData.text ?? "",
           entities: docData.entities ?? [],
           relations: docData.relations ?? [],
           meta,
@@ -64,7 +64,7 @@ export default function DocumentDetailPage() {
           html_content: docData.html_content ?? null,
         });
       } catch (err) {
-        setError('Document not found or unavailable');
+        setError("Document not found or unavailable");
       } finally {
         setLoading(false);
       }
@@ -79,14 +79,14 @@ export default function DocumentDetailPage() {
     setSummaryLoading(true);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_DOC_ENTITIES_URL}/v1/summarize`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: doc.text, language: 'en' })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: doc.text, language: "en" }),
       });
       const data = await response.json();
-      setSummary(data.summary || '');
+      setSummary(data.summary || "");
     } catch (err) {
-      console.error('Failed to generate summary:', err);
+      console.error("Failed to generate summary:", err);
     } finally {
       setSummaryLoading(false);
     }
@@ -98,7 +98,7 @@ export default function DocumentDetailPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
@@ -138,21 +138,18 @@ export default function DocumentDetailPage() {
   };
 
   return (
-    <DashboardLayout 
-      title={doc.meta?.title || 'Document'} 
-      subtitle={`Document ID: ${doc.id}`}
-    >
+    <DashboardLayout title={doc.meta?.title || "Document"} subtitle={`Document ID: ${doc.id}`}>
       <div className="p-6">
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          
           {/* Main Content */}
           <div className="xl:col-span-3 space-y-6">
-            
             {/* Document Header */}
-            <div className="rounded-xl shadow-sm p-6
+            <div
+              className="rounded-xl shadow-sm p-6
                  bg-white dark:bg-gray-900
                  border border-gray-200 dark:border-gray-800
-                 text-gray-900 dark:text-gray-100">
+                 text-gray-900 dark:text-gray-100"
+            >
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-primary-50 rounded-lg">
@@ -160,7 +157,7 @@ export default function DocumentDetailPage() {
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                      {doc.meta?.title || 'Untitled Document'}
+                      {doc.meta?.title || "Untitled Document"}
                     </h1>
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                       {doc.meta?.source && (
@@ -182,7 +179,7 @@ export default function DocumentDetailPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => copyToClipboard(window.location.href)}
@@ -193,7 +190,7 @@ export default function DocumentDetailPage() {
             hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     {copied ? <Check size={16} /> : <Copy size={16} />}
-                    {copied ? 'Copied!' : 'Share'}
+                    {copied ? "Copied!" : "Share"}
                   </button>
                   {doc.meta?.aleph_id && (
                     <a
@@ -219,7 +216,11 @@ export default function DocumentDetailPage() {
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-50"
                   >
                     <Sparkles size={16} />
-                    {summaryLoading ? 'Generating...' : doc?.text ? 'Generate Summary' : 'Summary unavailable'}
+                    {summaryLoading
+                      ? "Generating..."
+                      : doc?.text
+                        ? "Generate Summary"
+                        : "Summary unavailable"}
                   </button>
                 </div>
 
@@ -228,10 +229,12 @@ export default function DocumentDetailPage() {
                     <p className="text-gray-800 leading-relaxed">{summary}</p>
                   </div>
                 ) : (
-                  <div className="rounded-lg p-4 border-2 border-dashed
+                  <div
+                    className="rounded-lg p-4 border-2 border-dashed
                  bg-gray-50 dark:bg-gray-800
                  border-gray-300 dark:border-gray-700
-                 text-gray-600 dark:text-gray-300">
+                 text-gray-600 dark:text-gray-300"
+                  >
                     <p className="text-gray-500 text-center">
                       Click "Generate Summary" to create an AI-powered summary of this document
                     </p>
@@ -241,10 +244,12 @@ export default function DocumentDetailPage() {
             </div>
 
             {/* Document Content */}
-            <div className="rounded-xl shadow-sm p-6
+            <div
+              className="rounded-xl shadow-sm p-6
                  bg-white dark:bg-gray-900
                  border border-gray-200 dark:border-gray-800
-                 text-gray-900 dark:text-gray-100">
+                 text-gray-900 dark:text-gray-100"
+            >
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Document Content</h3>
               <div className="prose max-w-none">
                 {doc.html_content ? (
@@ -252,7 +257,9 @@ export default function DocumentDetailPage() {
                 ) : doc.text ? (
                   <HighlightedText text={doc.text} entities={doc.entities} />
                 ) : (
-                  <p className="text-gray-500 text-sm">Document text is not available for this record.</p>
+                  <p className="text-gray-500 text-sm">
+                    Document text is not available for this record.
+                  </p>
                 )}
               </div>
             </div>
@@ -260,12 +267,13 @@ export default function DocumentDetailPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            
             {/* Entities Panel */}
-            <div className="rounded-xl shadow-sm p-6
+            <div
+              className="rounded-xl shadow-sm p-6
                  bg-white dark:bg-gray-900
                  border border-gray-200 dark:border-gray-800
-                 text-gray-900 dark:text-gray-100">
+                 text-gray-900 dark:text-gray-100"
+            >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Entities</h3>
                 <span className="text-sm text-gray-500">{entityItems.length} found</span>
@@ -274,18 +282,19 @@ export default function DocumentDetailPage() {
               {doc.meta?.linking_status_counts && (
                 <div className="mb-4 text-xs text-gray-600 dark:text-gray-400 flex flex-wrap gap-3">
                   <span className="font-medium text-green-600 dark:text-green-400">
-                    Resolved: {doc.meta.linking_resolved ?? doc.meta.linking_status_counts.resolved ?? 0}
+                    Resolved:{" "}
+                    {doc.meta.linking_resolved ?? doc.meta.linking_status_counts.resolved ?? 0}
                   </span>
                   <span className="font-medium text-amber-600 dark:text-amber-400">
-                    Pending: {doc.meta.linking_pending ?? doc.meta.linking_status_counts.pending ?? 0}
+                    Pending:{" "}
+                    {doc.meta.linking_pending ?? doc.meta.linking_status_counts.pending ?? 0}
                   </span>
                   <span className="font-medium text-rose-600 dark:text-rose-400">
-                    Unmatched: {doc.meta.linking_unmatched ?? doc.meta.linking_status_counts.unmatched ?? 0}
+                    Unmatched:{" "}
+                    {doc.meta.linking_unmatched ?? doc.meta.linking_status_counts.unmatched ?? 0}
                   </span>
-                  {typeof doc.meta.linking_mean_score === 'number' && (
-                    <span>
-                      Avg. confidence: {(doc.meta.linking_mean_score * 100).toFixed(1)}%
-                    </span>
+                  {typeof doc.meta.linking_mean_score === "number" && (
+                    <span>Avg. confidence: {(doc.meta.linking_mean_score * 100).toFixed(1)}%</span>
                   )}
                 </div>
               )}
@@ -296,7 +305,7 @@ export default function DocumentDetailPage() {
                     <div key={index} className="flex items-start justify-between">
                       <EntityBadge
                         label={normalizeLabel(entity.label)}
-                        value={entity.text || entity.value || ''}
+                        value={entity.text || entity.value || ""}
                         resolutionStatus={entity.resolution_status}
                         resolutionScore={entity.resolution_score}
                         clickable
@@ -319,34 +328,42 @@ export default function DocumentDetailPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="rounded-xl shadow-sm p-6
+            <div
+              className="rounded-xl shadow-sm p-6
                  bg-white dark:bg-gray-900
                  border border-gray-200 dark:border-gray-800
-                 text-gray-900 dark:text-gray-100">
+                 text-gray-900 dark:text-gray-100"
+            >
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              
+
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
+                <button
+                  className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
             bg-gray-50 dark:bg-gray-800 rounded-lg
-            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
                   <div className="flex items-center gap-3">
                     <Network size={16} className="text-gray-500" />
                     <span>Explore Graph</span>
                   </div>
                 </button>
-                
-                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
+
+                <button
+                  className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
             bg-gray-50 dark:bg-gray-800 rounded-lg
-            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
                   <div className="flex items-center gap-3">
                     <FileText size={16} className="text-gray-500" />
                     <span>Find Similar</span>
                   </div>
                 </button>
-                
-                <button className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
+
+                <button
+                  className="w-full flex items-center justify-between p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200
             bg-gray-50 dark:bg-gray-800 rounded-lg
-            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
                   <div className="flex items-center gap-3">
                     <Download size={16} className="text-gray-500" />
                     <span>Export Data</span>

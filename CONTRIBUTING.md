@@ -7,6 +7,7 @@
 ## Commit Style
 
 - Follow [Conventional Commits](https://www.conventionalcommits.org/).
+- Use `chore(format): …` for formatting-only changes (Prettier).
 
 ## Development
 
@@ -14,10 +15,11 @@
 make dev-up
 make apps-up
 npm run lint:docs
+pnpm --filter frontend lint
 gitleaks protect --staged --redact --config .gitleaks.toml
 ```
 
-Run tests and linters before pushing.
+Run tests and linters before pushing. For frontend formatting/lint checks run `pnpm --filter frontend lint` locally.
 
 ## Phase Flows & Idempotency
 

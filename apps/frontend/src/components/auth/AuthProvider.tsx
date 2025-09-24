@@ -1,7 +1,7 @@
 // apps/frontend/src/components/auth/AuthProvider.tsx
-import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/router';
-import { useNotifications } from '@/lib/notifications';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
+import { useRouter } from "next/router";
+import { useNotifications } from "@/lib/notifications";
 
 export interface User {
   id: string;
@@ -40,9 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me', {
-        method: 'GET',
-        credentials: 'include'
+      const response = await fetch("/api/auth/me", {
+        method: "GET",
+        credentials: "include",
       });
 
       if (response.ok) {
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(userData);
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error("Auth check failed:", error);
     } finally {
       setLoading(false);
     }
@@ -58,97 +58,100 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include'
+        credentials: "include",
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Login failed');
+        throw new Error(error.error || "Login failed");
       }
 
       const data = await response.json();
-      
+
       // Handle MFA requirement
       if (data.requires_mfa) {
-        throw new Error('MFA_REQUIRED');
+        throw new Error("MFA_REQUIRED");
       }
-      
+
       setUser(data.user);
-      
-      notifications.success('Welcome back!', `Logged in as ${data.user.display_name || data.user.email}`);
-      
+
+      notifications.success(
+        "Welcome back!",
+        `Logged in as ${data.user.display_name || data.user.email}`,
+      );
+
       // Redirect to intended page or dashboard
-      const returnTo = router.query.returnTo as string || '/';
+      const returnTo = (router.query.returnTo as string) || "/";
       router.push(returnTo);
     } catch (error: any) {
-      notifications.error('Login Failed', error.message);
+      notifications.error("Login Failed", error.message);
       throw error;
     }
   };
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, first_name: name }),
-        credentials: 'include'
+        credentials: "include",
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Registration failed');
+        throw new Error(error.error || "Registration failed");
       }
 
       const data = await response.json();
-      
+
       setUser(data.user);
-      
-      notifications.success('Welcome!', 'Your account has been created successfully');
-      router.push('/');
+
+      notifications.success("Welcome!", "Your account has been created successfully");
+      router.push("/");
     } catch (error: any) {
-      notifications.error('Registration Failed', error.message);
+      notifications.error("Registration Failed", error.message);
       throw error;
     }
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       setUser(null);
-      router.push('/login');
-      notifications.info('Logged out', 'You have been signed out');
+      router.push("/login");
+      notifications.info("Logged out", "You have been signed out");
     }
   };
 
   const refreshToken = async () => {
     try {
-      const response = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        credentials: 'include'
+      const response = await fetch("/api/auth/refresh", {
+        method: "POST",
+        credentials: "include",
       });
 
-      if (!response.ok) throw new Error('Token refresh failed');
+      if (!response.ok) throw new Error("Token refresh failed");
 
       // Tokens are automatically updated in cookies by the API route
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      console.error("Token refresh failed:", error);
       logout();
     }
   };
@@ -179,48 +182,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
 
 // Login Form Component
-import { ArrowRight, Loader2 } from 'lucide-react';
-import { Form, EmailInput, PasswordInput, useForm } from '@/components/forms/FormComponents';
+import { ArrowRight, Loader2 } from "lucide-react";
+import { Form, EmailInput, PasswordInput, useForm } from "@/components/forms/FormComponents";
 
 export function LoginForm() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { values, errors, touched, setValue, setFieldTouched, validateAll } = useForm(
-    { email: '', password: '' },
+    { email: "", password: "" },
     {
       email: [
-        { type: 'required' },
+        { type: "required" },
         {
-          type: 'regex',
+          type: "regex",
           pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          message: 'Invalid email address',
+          message: "Invalid email address",
         },
       ],
       password: [
-        { type: 'required' },
+        { type: "required" },
         {
-          type: 'custom',
+          type: "custom",
           validate: (v) =>
-            typeof v === 'string' && v.length >= 8
-              ? true
-              : 'Minimum length is 8 characters',
+            typeof v === "string" && v.length >= 8 ? true : "Minimum length is 8 characters",
         },
       ],
-    }
+    },
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateAll()) return;
-    
+
     setIsLoading(true);
     try {
       await login(values.email, values.password);
@@ -234,12 +235,8 @@ export function LoginForm() {
   return (
     <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Sign In
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Welcome back to InfoTerminal
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Sign In</h2>
+        <p className="text-gray-600 dark:text-gray-400">Welcome back to InfoTerminal</p>
       </div>
 
       <Form onSubmit={handleSubmit}>
@@ -247,8 +244,8 @@ export function LoginForm() {
           label="Email Address"
           name="email"
           value={values.email}
-          onChange={(value) => setValue('email', value)}
-          onBlur={() => setFieldTouched('email')}
+          onChange={(value) => setValue("email", value)}
+          onBlur={() => setFieldTouched("email")}
           error={touched.email ? errors.email : null}
           placeholder="Enter your email"
           required
@@ -258,8 +255,8 @@ export function LoginForm() {
           label="Password"
           name="password"
           value={values.password}
-          onChange={(value) => setValue('password', value)}
-          onBlur={() => setFieldTouched('password')}
+          onChange={(value) => setValue("password", value)}
+          onBlur={() => setFieldTouched("password")}
           error={touched.password ? errors.password : null}
           placeholder="Enter your password"
           required
@@ -271,11 +268,9 @@ export function LoginForm() {
               type="checkbox"
               className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
-            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-              Remember me
-            </span>
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
           </label>
-          
+
           <button
             type="button"
             className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500"
@@ -303,9 +298,7 @@ export function LoginForm() {
         </button>
 
         <div className="text-center">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
-          </span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Don't have an account? </span>
           <button
             type="button"
             className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium"
@@ -322,55 +315,49 @@ export function LoginForm() {
 export function RegisterForm() {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { values, errors, touched, setValue, setFieldTouched, validateAll } =
-    useForm(
-      { name: '', email: '', password: '', confirmPassword: '' },
-      {
-        name: [
-          { type: 'required' },
-          {
-            type: 'custom',
-            validate: (v) =>
-              typeof v === 'string' && v.length >= 2
-                ? true
-                : 'Minimum length is 2 characters',
-          },
-        ],
-        email: [
-          { type: 'required' },
-          {
-            type: 'regex',
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: 'Invalid email address',
-          },
-        ],
-        password: [
-          { type: 'required' },
-          {
-            type: 'custom',
-            validate: (v) =>
-              typeof v === 'string' && v.length >= 8
-                ? true
-                : 'Minimum length is 8 characters',
-          },
-        ],
-        confirmPassword: [
-          { type: 'required' },
-          {
-            type: 'custom',
-            validate: (v, form) =>
-              v === (form as any)?.password ? true : 'Passwords do not match',
-          },
-        ],
-      }
-    );
+
+  const { values, errors, touched, setValue, setFieldTouched, validateAll } = useForm(
+    { name: "", email: "", password: "", confirmPassword: "" },
+    {
+      name: [
+        { type: "required" },
+        {
+          type: "custom",
+          validate: (v) =>
+            typeof v === "string" && v.length >= 2 ? true : "Minimum length is 2 characters",
+        },
+      ],
+      email: [
+        { type: "required" },
+        {
+          type: "regex",
+          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          message: "Invalid email address",
+        },
+      ],
+      password: [
+        { type: "required" },
+        {
+          type: "custom",
+          validate: (v) =>
+            typeof v === "string" && v.length >= 8 ? true : "Minimum length is 8 characters",
+        },
+      ],
+      confirmPassword: [
+        { type: "required" },
+        {
+          type: "custom",
+          validate: (v, form) => (v === (form as any)?.password ? true : "Passwords do not match"),
+        },
+      ],
+    },
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateAll()) return;
-    
+
     setIsLoading(true);
     try {
       await register(values.email, values.password, values.name);
@@ -384,12 +371,8 @@ export function RegisterForm() {
   return (
     <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Create Account
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Join InfoTerminal today
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Create Account</h2>
+        <p className="text-gray-600 dark:text-gray-400">Join InfoTerminal today</p>
       </div>
 
       <Form onSubmit={handleSubmit}>
@@ -402,8 +385,8 @@ export function RegisterForm() {
               type="text"
               name="name"
               value={values.name}
-              onChange={(e) => setValue('name', e.target.value)}
-              onBlur={() => setFieldTouched('name')}
+              onChange={(e) => setValue("name", e.target.value)}
+              onBlur={() => setFieldTouched("name")}
               placeholder="Enter your full name"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
@@ -416,8 +399,8 @@ export function RegisterForm() {
             label="Email Address"
             name="email"
             value={values.email}
-            onChange={(value) => setValue('email', value)}
-            onBlur={() => setFieldTouched('email')}
+            onChange={(value) => setValue("email", value)}
+            onBlur={() => setFieldTouched("email")}
             error={touched.email ? errors.email : null}
             placeholder="Enter your email"
             required
@@ -427,8 +410,8 @@ export function RegisterForm() {
             label="Password"
             name="password"
             value={values.password}
-            onChange={(value) => setValue('password', value)}
-            onBlur={() => setFieldTouched('password')}
+            onChange={(value) => setValue("password", value)}
+            onBlur={() => setFieldTouched("password")}
             error={touched.password ? errors.password : null}
             placeholder="Create a password"
             helpText="At least 8 characters"
@@ -439,8 +422,8 @@ export function RegisterForm() {
             label="Confirm Password"
             name="confirmPassword"
             value={values.confirmPassword}
-            onChange={(value) => setValue('confirmPassword', value)}
-            onBlur={() => setFieldTouched('confirmPassword')}
+            onChange={(value) => setValue("confirmPassword", value)}
+            onBlur={() => setFieldTouched("confirmPassword")}
             error={touched.confirmPassword ? errors.confirmPassword : null}
             placeholder="Confirm your password"
             required
@@ -454,12 +437,18 @@ export function RegisterForm() {
             className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
           />
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            I agree to the{' '}
-            <button type="button" className="text-primary-600 dark:text-primary-400 hover:text-primary-500">
+            I agree to the{" "}
+            <button
+              type="button"
+              className="text-primary-600 dark:text-primary-400 hover:text-primary-500"
+            >
               Terms of Service
-            </button>{' '}
-            and{' '}
-            <button type="button" className="text-primary-600 dark:text-primary-400 hover:text-primary-500">
+            </button>{" "}
+            and{" "}
+            <button
+              type="button"
+              className="text-primary-600 dark:text-primary-400 hover:text-primary-500"
+            >
               Privacy Policy
             </button>
           </span>
@@ -485,7 +474,7 @@ export function RegisterForm() {
 
         <div className="text-center">
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{' '}
+            Already have an account?{" "}
           </span>
           <button
             type="button"
@@ -507,11 +496,11 @@ interface AuthGuardProps {
   requirePermissions?: string[];
 }
 
-export function AuthGuard({ 
-  children, 
+export function AuthGuard({
+  children,
   fallback,
   requireRoles = [],
-  requirePermissions = [] 
+  requirePermissions = [],
 }: AuthGuardProps) {
   const { user, loading, isAuthenticated, hasRole, hasPermission } = useAuth();
   const router = useRouter();
@@ -538,7 +527,7 @@ export function AuthGuard({
   }
 
   // Check role requirements
-  if (requireRoles.length > 0 && !requireRoles.some(role => hasRole(role))) {
+  if (requireRoles.length > 0 && !requireRoles.some((role) => hasRole(role))) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -550,7 +539,10 @@ export function AuthGuard({
   }
 
   // Check permission requirements
-  if (requirePermissions.length > 0 && !requirePermissions.some(permission => hasPermission(permission))) {
+  if (
+    requirePermissions.length > 0 &&
+    !requirePermissions.some((permission) => hasPermission(permission))
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -565,8 +557,8 @@ export function AuthGuard({
 }
 
 // User Profile Dropdown
-import { Fragment } from 'react';
-import { User as UserIcon, Settings, LogOut, Shield } from 'lucide-react';
+import { Fragment } from "react";
+import { User as UserIcon, Settings, LogOut, Shield } from "lucide-react";
 
 export function UserProfileDropdown() {
   const { user, logout } = useAuth();
@@ -580,8 +572,8 @@ export function UserProfileDropdown() {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   if (!user) return null;
@@ -593,38 +585,26 @@ export function UserProfileDropdown() {
         className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       >
         {user.avatar ? (
-          <img
-            src={user.avatar}
-            alt={user.name}
-            className="w-8 h-8 rounded-full"
-          />
+          <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
         ) : (
           <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
             <UserIcon size={16} className="text-white" />
           </div>
         )}
         <div className="text-left">
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {user.name}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {user.email}
-          </p>
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
         </div>
       </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {user.name}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {user.email}
-            </p>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
             {user.roles.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
-                {user.roles.map(role => (
+                {user.roles.map((role) => (
                   <span
                     key={role}
                     className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-100 dark:bg-primary-900/20 text-primary-800 dark:text-primary-300 text-xs rounded-full"

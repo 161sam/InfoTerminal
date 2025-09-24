@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { 
-  Globe, 
-  Shield, 
-  RefreshCw, 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle, 
-  Info, 
+import { useState, useEffect } from "react";
+import {
+  Globe,
+  Shield,
+  RefreshCw,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Info,
   Server,
   Lock,
   Zap,
   BarChart3,
-  Clock
-} from 'lucide-react';
-import { loadGateway, saveGateway, getEndpoints } from '@/lib/endpoints';
+  Clock,
+} from "lucide-react";
+import { loadGateway, saveGateway, getEndpoints } from "@/lib/endpoints";
 
 interface GatewayState {
   enabled: boolean;
@@ -23,7 +23,7 @@ interface GatewayState {
 }
 
 interface GatewayHealth {
-  status: 'ok' | 'degraded' | 'fail';
+  status: "ok" | "degraded" | "fail";
   latency?: number;
   lastCheck?: string;
   version?: string;
@@ -61,18 +61,18 @@ export default function SettingsGateway() {
     try {
       const response = await fetch(`${state.url}/healthz`);
       const data = await response.json();
-      
+
       setHealth({
-        status: response.ok ? 'ok' : 'fail',
+        status: response.ok ? "ok" : "fail",
         lastCheck: new Date().toISOString(),
         latency: Math.floor(Math.random() * 100) + 50, // Mock latency
-        version: data.version || '1.0.0',
-        features: data.features || ['proxy', 'audit', 'opa']
+        version: data.version || "1.0.0",
+        features: data.features || ["proxy", "audit", "opa"],
       });
     } catch (error) {
       setHealth({
-        status: 'fail',
-        lastCheck: new Date().toISOString()
+        status: "fail",
+        lastCheck: new Date().toISOString(),
       });
     }
   };
@@ -83,7 +83,7 @@ export default function SettingsGateway() {
       requestCount: Math.floor(Math.random() * 10000) + 1000,
       errorRate: Math.random() * 5,
       avgLatency: Math.floor(Math.random() * 100) + 50,
-      uptime: 99.8
+      uptime: 99.8,
     });
   };
 
@@ -105,26 +105,28 @@ export default function SettingsGateway() {
 
   const handleTest = async () => {
     if (!state.url) return;
-    
+
     setIsTesting(true);
-    
+
     try {
       const endpoints = getEndpoints();
-      const testUrl = state.enabled ? `${state.url}/api/search/healthz` : `${endpoints.SEARCH_API}/healthz`;
-      
+      const testUrl = state.enabled
+        ? `${state.url}/api/search/healthz`
+        : `${endpoints.SEARCH_API}/healthz`;
+
       const start = performance.now();
       const response = await fetch(testUrl);
       const latency = Math.round(performance.now() - start);
-      
+
       setHealth({
-        status: response.ok ? 'ok' : 'fail',
+        status: response.ok ? "ok" : "fail",
         latency,
-        lastCheck: new Date().toISOString()
+        lastCheck: new Date().toISOString(),
       });
     } catch (error) {
       setHealth({
-        status: 'fail',
-        lastCheck: new Date().toISOString()
+        status: "fail",
+        lastCheck: new Date().toISOString(),
       });
     } finally {
       setIsTesting(false);
@@ -133,32 +135,40 @@ export default function SettingsGateway() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'ok': return <CheckCircle size={16} className="text-green-500" />;
-      case 'degraded': return <AlertTriangle size={16} className="text-yellow-500" />;
-      case 'fail': return <XCircle size={16} className="text-red-500" />;
-      default: return <Clock size={16} className="text-gray-400" />;
+      case "ok":
+        return <CheckCircle size={16} className="text-green-500" />;
+      case "degraded":
+        return <AlertTriangle size={16} className="text-yellow-500" />;
+      case "fail":
+        return <XCircle size={16} className="text-red-500" />;
+      default:
+        return <Clock size={16} className="text-gray-400" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ok': return 'bg-green-100 text-green-800 border-green-200';
-      case 'degraded': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'fail': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "ok":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "degraded":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "fail":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   return (
     <div className="space-y-6">
-      
       {/* Gateway Configuration */}
       <div className="space-y-4">
-        
         {/* Enable/Disable Toggle */}
         <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${state.enabled ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+            <div
+              className={`p-2 rounded-lg ${state.enabled ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-400"}`}
+            >
               <Globe size={20} />
             </div>
             <div>
@@ -168,15 +178,17 @@ export default function SettingsGateway() {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             {health && (
-              <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(health.status)}`}>
+              <div
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(health.status)}`}
+              >
                 {getStatusIcon(health.status)}
                 {health.status}
               </div>
             )}
-            
+
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -210,11 +222,7 @@ export default function SettingsGateway() {
               disabled={isTesting || !state.url}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700"
             >
-              {isTesting ? (
-                <RefreshCw size={14} className="animate-spin" />
-              ) : (
-                <Zap size={14} />
-              )}
+              {isTesting ? <RefreshCw size={14} className="animate-spin" /> : <Zap size={14} />}
               Test
             </button>
           </div>
@@ -227,14 +235,13 @@ export default function SettingsGateway() {
       {/* Gateway Status & Health */}
       {state.enabled && health && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
           {/* Health Status */}
           <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <Server size={16} className="text-gray-500" />
               <h5 className="font-medium text-gray-900 dark:text-slate-100">Health Status</h5>
             </div>
-            
+
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 dark:text-slate-400">Status</span>
@@ -243,21 +250,21 @@ export default function SettingsGateway() {
                   <span className="font-medium capitalize">{health.status}</span>
                 </div>
               </div>
-              
+
               {health.latency && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-slate-400">Latency</span>
                   <span className="font-medium">{health.latency}ms</span>
                 </div>
               )}
-              
+
               {health.version && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-slate-400">Version</span>
                   <span className="font-medium">{health.version}</span>
                 </div>
               )}
-              
+
               {health.lastCheck && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-slate-400">Last Check</span>
@@ -275,7 +282,7 @@ export default function SettingsGateway() {
               <Shield size={16} className="text-gray-500" />
               <h5 className="font-medium text-gray-900 dark:text-slate-100">Features</h5>
             </div>
-            
+
             <div className="space-y-2">
               {health.features?.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm">
@@ -306,7 +313,7 @@ export default function SettingsGateway() {
               <BarChart3 size={20} className="text-blue-500" />
             </div>
           </div>
-          
+
           <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/30">
             <div className="flex items-center justify-between">
               <div>
@@ -318,11 +325,13 @@ export default function SettingsGateway() {
               <CheckCircle size={20} className="text-green-500" />
             </div>
           </div>
-          
+
           <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-900/30">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Avg Latency</p>
+                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+                  Avg Latency
+                </p>
                 <p className="text-2xl font-bold text-purple-800 dark:text-purple-300">
                   {metrics.avgLatency}ms
                 </p>
@@ -330,11 +339,13 @@ export default function SettingsGateway() {
               <Zap size={20} className="text-purple-500" />
             </div>
           </div>
-          
+
           <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-900/30">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">Error Rate</p>
+                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">
+                  Error Rate
+                </p>
                 <p className="text-2xl font-bold text-orange-800 dark:text-orange-300">
                   {metrics.errorRate.toFixed(1)}%
                 </p>
@@ -364,7 +375,9 @@ export default function SettingsGateway() {
       {/* Test Result Display */}
       {health && (
         <div className="text-center" data-testid="test-result">
-          <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${getStatusColor(health.status)}`}>
+          <span
+            className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${getStatusColor(health.status)}`}
+          >
             {getStatusIcon(health.status)}
             Gateway test: {health.status}
             {health.latency && ` (${health.latency}ms)`}

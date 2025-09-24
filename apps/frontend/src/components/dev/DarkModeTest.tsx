@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Moon, Sun, Monitor, Palette, CheckCircle, AlertCircle, Info } from 'lucide-react';
-import { useTheme } from '@/lib/theme-provider';
-import Button from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { LoadingSpinner, Skeleton, ErrorState, EmptyState } from '@/components/ui/loading';
-import Panel from '@/components/layout/Panel';
+import React, { useEffect, useState } from "react";
+import { Moon, Sun, Monitor, Palette, CheckCircle, AlertCircle, Info } from "lucide-react";
+import { useTheme } from "@/lib/theme-provider";
+import Button from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { LoadingSpinner, Skeleton, ErrorState, EmptyState } from "@/components/ui/loading";
+import Panel from "@/components/layout/Panel";
 
 interface ThemeTestComponentProps {
   title: string;
@@ -47,7 +47,7 @@ export function DarkModeCompatibilityTest() {
     const computedStyle = window.getComputedStyle(element);
     const backgroundColor = computedStyle.backgroundColor;
     const color = computedStyle.color;
-    
+
     // Simple contrast ratio check (basic implementation)
     // In a real implementation, you'd use a proper contrast ratio library
     return backgroundColor !== color; // Basic check
@@ -55,11 +55,11 @@ export function DarkModeCompatibilityTest() {
 
   const testComponents = () => {
     const results = {
-      'tab-navigation': runContrastTest('test-tabs'),
-      'loading-states': runContrastTest('test-loading'),
-      'form-inputs': runContrastTest('test-forms'),
-      'status-indicators': runContrastTest('test-status'),
-      'panels': runContrastTest('test-panels'),
+      "tab-navigation": runContrastTest("test-tabs"),
+      "loading-states": runContrastTest("test-loading"),
+      "form-inputs": runContrastTest("test-forms"),
+      "status-indicators": runContrastTest("test-status"),
+      panels: runContrastTest("test-panels"),
     };
     setTestResults(results);
   };
@@ -78,7 +78,7 @@ export function DarkModeCompatibilityTest() {
                 Test all UI components across different theme modes
               </p>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600 dark:text-gray-400">Current theme:</span>
               <span className="px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded text-sm font-medium">
@@ -90,37 +90,33 @@ export function DarkModeCompatibilityTest() {
           {/* Theme Switcher */}
           <div className="flex items-center gap-3">
             <Button
-              variant={theme === 'light' ? 'default' : 'secondary'}
+              variant={theme === "light" ? "default" : "secondary"}
               size="sm"
-              onClick={() => setTheme('light')}
+              onClick={() => setTheme("light")}
             >
               <Sun size={16} className="mr-2" />
               Light
             </Button>
             <Button
-              variant={theme === 'dark' ? 'default' : 'secondary'}
+              variant={theme === "dark" ? "default" : "secondary"}
               size="sm"
-              onClick={() => setTheme('dark')}
+              onClick={() => setTheme("dark")}
             >
               <Moon size={16} className="mr-2" />
               Dark
             </Button>
             <Button
-              variant={theme === 'system' ? 'default' : 'secondary'}
+              variant={theme === "system" ? "default" : "secondary"}
               size="sm"
-              onClick={() => setTheme('system')}
+              onClick={() => setTheme("system")}
             >
               <Monitor size={16} className="mr-2" />
               System
             </Button>
-            
+
             <div className="ml-4 h-6 w-px bg-gray-300 dark:bg-gray-600" />
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={testComponents}
-            >
+
+            <Button variant="outline" size="sm" onClick={testComponents}>
               <Palette size={16} className="mr-2" />
               Run Accessibility Test
             </Button>
@@ -134,8 +130,8 @@ export function DarkModeCompatibilityTest() {
                   key={key}
                   className={`p-3 rounded-lg border ${
                     passed
-                      ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-                      : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
+                      ? "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20"
+                      : "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20"
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -144,12 +140,14 @@ export function DarkModeCompatibilityTest() {
                     ) : (
                       <AlertCircle size={16} className="text-red-600 dark:text-red-400" />
                     )}
-                    <span className={`text-sm font-medium ${
-                      passed
-                        ? 'text-green-800 dark:text-green-300'
-                        : 'text-red-800 dark:text-red-300'
-                    }`}>
-                      {key.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    <span
+                      className={`text-sm font-medium ${
+                        passed
+                          ? "text-green-800 dark:text-green-300"
+                          : "text-red-800 dark:text-red-300"
+                      }`}
+                    >
+                      {key.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                     </span>
                   </div>
                 </div>
@@ -161,7 +159,6 @@ export function DarkModeCompatibilityTest() {
 
       {/* Component Tests */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
         {/* Tab Navigation Test */}
         <ThemeTestComponent
           title="Tab Navigation"
@@ -172,7 +169,9 @@ export function DarkModeCompatibilityTest() {
               <TabsList>
                 <TabsTrigger value="default">Default</TabsTrigger>
                 <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="disabled" disabled>Disabled</TabsTrigger>
+                <TabsTrigger value="disabled" disabled>
+                  Disabled
+                </TabsTrigger>
               </TabsList>
             </Tabs>
 
@@ -223,9 +222,9 @@ export function DarkModeCompatibilityTest() {
               </div>
             </div>
 
-            <LoadingSpinner 
-              layout="card" 
-              text="Processing Data" 
+            <LoadingSpinner
+              layout="card"
+              text="Processing Data"
               subText="This may take a few moments"
               size="lg"
             />
@@ -244,7 +243,7 @@ export function DarkModeCompatibilityTest() {
               message="This is how errors are displayed"
               action={{
                 label: "Retry",
-                onClick: () => {}
+                onClick: () => {},
               }}
             />
 
@@ -260,7 +259,7 @@ export function DarkModeCompatibilityTest() {
               message="No data to display here"
               action={{
                 label: "Add Data",
-                onClick: () => {}
+                onClick: () => {},
               }}
             />
           </div>
@@ -278,13 +277,13 @@ export function DarkModeCompatibilityTest() {
                 placeholder="Text input field"
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
-              
+
               <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                 <option>Select option</option>
                 <option>Option 1</option>
                 <option>Option 2</option>
               </select>
-              
+
               <textarea
                 rows={3}
                 placeholder="Textarea field"
@@ -293,9 +292,15 @@ export function DarkModeCompatibilityTest() {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Button variant="default" size="sm">Default</Button>
-              <Button variant="secondary" size="sm">Secondary</Button>
-              <Button variant="outline" size="sm">Ghost</Button>
+              <Button variant="default" size="sm">
+                Default
+              </Button>
+              <Button variant="secondary" size="sm">
+                Secondary
+              </Button>
+              <Button variant="outline" size="sm">
+                Ghost
+              </Button>
             </div>
           </div>
         </ThemeTestComponent>
@@ -346,8 +351,8 @@ export function DarkModeCompatibilityTest() {
           <div id="test-panels" className="space-y-4">
             <Panel title="Sample Panel">
               <p className="text-gray-600 dark:text-gray-400">
-                This is content inside a panel component. It should have proper contrast
-                and readability in both light and dark modes.
+                This is content inside a panel component. It should have proper contrast and
+                readability in both light and dark modes.
               </p>
             </Panel>
 
@@ -368,19 +373,19 @@ export function DarkModeCompatibilityTest() {
       {/* Color Palette Reference */}
       <Panel title="Color Palette Reference">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          
           {/* Primary Colors */}
           <div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Primary Colors</h3>
             <div className="space-y-2">
-              {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map(weight => (
+              {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((weight) => (
                 <div key={weight} className="flex items-center gap-3">
-                  <div 
+                  <div
                     className={`w-8 h-6 rounded border border-gray-300 dark:border-gray-600`}
-                    style={{ 
-                      backgroundColor: weight < 500 
-                        ? `hsl(262, 83%, ${95 - weight / 10}%)` 
-                        : `hsl(262, 83%, ${100 - weight / 10}%)`
+                    style={{
+                      backgroundColor:
+                        weight < 500
+                          ? `hsl(262, 83%, ${95 - weight / 10}%)`
+                          : `hsl(262, 83%, ${100 - weight / 10}%)`,
                     }}
                   />
                   <span className="text-sm text-gray-600 dark:text-gray-400 font-mono">
@@ -395,9 +400,9 @@ export function DarkModeCompatibilityTest() {
           <div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Gray Scale</h3>
             <div className="space-y-2">
-              {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map(weight => (
+              {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((weight) => (
                 <div key={weight} className="flex items-center gap-3">
-                  <div 
+                  <div
                     className={`w-8 h-6 rounded border border-gray-300 dark:border-gray-600 bg-gray-${weight}`}
                   />
                   <span className="text-sm text-gray-600 dark:text-gray-400 font-mono">
@@ -413,18 +418,16 @@ export function DarkModeCompatibilityTest() {
             <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Status Colors</h3>
             <div className="space-y-2">
               {[
-                { name: 'green', label: 'Success' },
-                { name: 'yellow', label: 'Warning' },
-                { name: 'red', label: 'Error' },
-                { name: 'blue', label: 'Info' },
+                { name: "green", label: "Success" },
+                { name: "yellow", label: "Warning" },
+                { name: "red", label: "Error" },
+                { name: "blue", label: "Info" },
               ].map(({ name, label }) => (
                 <div key={name} className="flex items-center gap-3">
-                  <div 
+                  <div
                     className={`w-8 h-6 rounded border border-gray-300 dark:border-gray-600 bg-${name}-500`}
                   />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {label}
-                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{label}</span>
                 </div>
               ))}
             </div>
@@ -464,7 +467,9 @@ export function DarkModeCompatibilityTest() {
       <Panel title="Accessibility Guidelines">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Contrast Requirements</h3>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">
+              Contrast Requirements
+            </h3>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li>• Normal text: 4.5:1 contrast ratio minimum</li>
               <li>• Large text: 3:1 contrast ratio minimum</li>

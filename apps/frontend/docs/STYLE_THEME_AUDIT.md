@@ -1,6 +1,7 @@
 # Style & Theme Audit - InfoTerminal Frontend
 
 ## Overview
+
 Comprehensive analysis of styling patterns, theme implementation, and design token usage across the InfoTerminal frontend codebase.
 
 **Generated:** 2025-09-20  
@@ -13,6 +14,7 @@ Comprehensive analysis of styling patterns, theme implementation, and design tok
 ### 1. Theme Provider System
 
 #### Implementation (`src/lib/theme-provider.tsx`)
+
 ```typescript
 export function ThemeProvider({ children }: ThemeProviderProps) {
   // Theme context with dark/light/system modes
@@ -21,6 +23,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 ```
 
 #### Integration Points
+
 - **Root Level:** Applied in `_app.tsx`
 - **Toggle Component:** `src/components/layout/ThemeToggle.tsx`
 - **CSS Variables:** Tailwind CSS integration
@@ -29,12 +32,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 ### 2. Tailwind Configuration
 
 #### Version & Setup
+
 - **Version:** Tailwind CSS 4.1.12
 - **Config:** `tailwind.config.js`
 - **Plugins:** @tailwindcss/forms, @tailwindcss/typography
 - **CSS:** `src/styles/globals.css`
 
 #### Current CSS Variables
+
 ```css
 :root {
   --background: 0 0% 100%;
@@ -57,6 +62,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 ### 1. Component Styling Approaches
 
 #### Utility-First (Preferred)
+
 ```typescript
 // Clean utility usage
 className="flex items-center gap-3 px-4 py-2 rounded-lg"
@@ -75,6 +81,7 @@ className={cn(
 ```
 
 #### Inline Styles (Anti-pattern)
+
 ```typescript
 // Found in multiple components - should be eliminated
 style={{ transform: 'translateX(100%)' }}
@@ -83,17 +90,20 @@ style={{ background: 'rgba(0,0,0,0.5)' }}
 ```
 
 #### CSS Modules (Not Used)
+
 - No CSS modules found
 - All styling through Tailwind utilities
 
 ### 2. Color System Implementation
 
 #### Primary Colors
+
 - **Primary:** Blue-based (`primary-50` to `primary-900`)
 - **Usage:** Buttons, links, active states
 - **Consistency:** Well-implemented across components
 
 #### Semantic Colors
+
 ```css
 /* Status Colors */
 .text-green-600  /* Success */
@@ -108,6 +118,7 @@ style={{ background: 'rgba(0,0,0,0.5)' }}
 ```
 
 #### Dark Mode Implementation
+
 - **Pattern:** `dark:` prefix classes
 - **Coverage:** ~90% of components support dark mode
 - **Issues:** Some hardcoded colors without dark variants
@@ -119,20 +130,24 @@ style={{ background: 'rgba(0,0,0,0.5)' }}
 ### 1. Dialog/Modal Styling
 
 #### Current Implementation
+
 ```typescript
 // Dialog backdrop
-className="fixed inset-0 z-[100] bg-black/40"
+className = "fixed inset-0 z-[100] bg-black/40";
 
 // Dialog content
-className="fixed left-1/2 top-1/2 z-[101] w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white shadow-xl"
+className =
+  "fixed left-1/2 top-1/2 z-[101] w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white shadow-xl";
 ```
 
 #### Issues Found
+
 - **Z-index:** Magic numbers (`z-[100]`, `z-[101]`)
 - **Viewport:** No max-height constraints
 - **Responsive:** Limited mobile optimization
 
 #### Recommended Tokens
+
 ```css
 /* Z-index scale */
 --z-dropdown: 1000;
@@ -148,16 +163,20 @@ className="fixed left-1/2 top-1/2 z-[101] w-full -translate-x-1/2 -translate-y-1
 ### 2. Header Styling
 
 #### Current Pattern
+
 ```typescript
-className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm"
+className =
+  "flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm";
 ```
 
 #### Issues
+
 - **Magic Numbers:** Hardcoded spacing values
 - **Duplication:** Similar patterns across components
 - **Responsiveness:** Some mobile-specific overrides
 
 #### Recommended Tokens
+
 ```css
 --header-height: 4rem;
 --header-padding-x: 1.5rem;
@@ -168,6 +187,7 @@ className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900
 ### 3. Navigation Styling
 
 #### Active State Pattern
+
 ```typescript
 className={`text-sm font-medium transition-colors ${
   isActiveRoute(item.href)
@@ -177,6 +197,7 @@ className={`text-sm font-medium transition-colors ${
 ```
 
 #### Mobile Navigation
+
 ```typescript
 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
   isActive
@@ -188,6 +209,7 @@ className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
 ### 4. Button Component Styling
 
 #### Current Implementation (`src/components/ui/button.tsx`)
+
 ```typescript
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
@@ -202,13 +224,14 @@ const buttonVariants = cva(
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
-      }
-    }
-  }
-)
+      },
+    },
+  },
+);
 ```
 
 #### Strengths
+
 - **CVA Usage:** Proper class-variance-authority implementation
 - **Variants:** Good variety of button types
 - **Consistency:** Used across multiple components
@@ -220,23 +243,25 @@ const buttonVariants = cva(
 ### 1. Spacing System
 
 #### Current Usage
+
 ```typescript
 // Inconsistent spacing patterns
-className="p-4"           // Some components
-className="px-6 py-3"     // Header
-className="gap-2"         // Some layouts
-className="gap-3"         // Other layouts
-className="gap-4"         // Yet others
+className = "p-4"; // Some components
+className = "px-6 py-3"; // Header
+className = "gap-2"; // Some layouts
+className = "gap-3"; // Other layouts
+className = "gap-4"; // Yet others
 ```
 
 #### Recommended Standardization
+
 ```css
 /* Spacing scale */
---space-xs: 0.5rem;   /* 8px */
---space-sm: 0.75rem;  /* 12px */
---space-md: 1rem;     /* 16px */
---space-lg: 1.5rem;   /* 24px */
---space-xl: 2rem;     /* 32px */
+--space-xs: 0.5rem; /* 8px */
+--space-sm: 0.75rem; /* 12px */
+--space-md: 1rem; /* 16px */
+--space-lg: 1.5rem; /* 24px */
+--space-xl: 2rem; /* 32px */
 
 /* Component spacing */
 --component-padding: var(--space-md);
@@ -246,23 +271,26 @@ className="gap-4"         // Yet others
 ### 2. Typography System
 
 #### Current Implementation
+
 ```typescript
 // Title styles
-className="text-lg font-semibold text-gray-900 dark:text-slate-100"
+className = "text-lg font-semibold text-gray-900 dark:text-slate-100";
 
 // Body text
-className="text-sm text-gray-600 dark:text-slate-400"
+className = "text-sm text-gray-600 dark:text-slate-400";
 
 // Muted text
-className="text-xs text-gray-500 dark:text-slate-500"
+className = "text-xs text-gray-500 dark:text-slate-500";
 ```
 
 #### Issues Found
+
 - **Inconsistency:** Mixed `text-gray-*` and `text-slate-*`
 - **Duplication:** Same text styles repeated
 - **Scale:** Limited typography scale
 
 #### Recommended Typography Tokens
+
 ```css
 /* Font sizes */
 --text-xs: 0.75rem;
@@ -286,19 +314,21 @@ className="text-xs text-gray-500 dark:text-slate-500"
 ### 3. Border Radius System
 
 #### Current Usage
+
 ```typescript
-className="rounded-lg"        // Most components
-className="rounded-2xl"       // Dialogs
-className="rounded-full"      // Avatar, badges
-className="rounded-md"        // Buttons
+className = "rounded-lg"; // Most components
+className = "rounded-2xl"; // Dialogs
+className = "rounded-full"; // Avatar, badges
+className = "rounded-md"; // Buttons
 ```
 
 #### Recommended Tokens
+
 ```css
---radius-sm: 0.375rem;   /* rounded-md */
---radius-md: 0.5rem;     /* rounded-lg */
---radius-lg: 0.75rem;    /* rounded-xl */
---radius-full: 9999px;   /* rounded-full */
+--radius-sm: 0.375rem; /* rounded-md */
+--radius-md: 0.5rem; /* rounded-lg */
+--radius-lg: 0.75rem; /* rounded-xl */
+--radius-full: 9999px; /* rounded-full */
 ```
 
 ---
@@ -308,6 +338,7 @@ className="rounded-md"        // Buttons
 ### 1. Missing Component Tokens
 
 #### Status Pills
+
 ```typescript
 // Current implementation varies
 <StatusPill status="ok" />        // Green
@@ -316,6 +347,7 @@ className="rounded-md"        // Buttons
 ```
 
 #### Recommended Status Tokens
+
 ```css
 --status-success-bg: theme(colors.green.100);
 --status-success-text: theme(colors.green.800);
@@ -328,13 +360,15 @@ className="rounded-md"        // Buttons
 ### 2. Animation System
 
 #### Current Implementation
+
 ```typescript
-className="transition-colors"           // Basic transitions
-className="animate-spin"               // Loading states
-className="hover:bg-gray-100"          // Hover effects
+className = "transition-colors"; // Basic transitions
+className = "animate-spin"; // Loading states
+className = "hover:bg-gray-100"; // Hover effects
 ```
 
 #### Missing Animation Tokens
+
 ```css
 /* Transition durations */
 --duration-fast: 150ms;
@@ -349,13 +383,15 @@ className="hover:bg-gray-100"          // Hover effects
 ### 3. Shadow System
 
 #### Current Usage
+
 ```typescript
-className="shadow-sm"              // Subtle shadows
-className="shadow-lg"              // Dialog shadows
-className="shadow-xl"              // Prominent shadows
+className = "shadow-sm"; // Subtle shadows
+className = "shadow-lg"; // Dialog shadows
+className = "shadow-xl"; // Prominent shadows
 ```
 
 #### Enhancement Opportunities
+
 ```css
 /* Elevation system */
 --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -370,6 +406,7 @@ className="shadow-xl"              // Prominent shadows
 ### 1. Transform Inline Styles to Utilities
 
 #### Dialog Positioning
+
 ```typescript
 // Current
 style={{ transform: 'translateX(100%)' }}
@@ -379,6 +416,7 @@ className="translate-x-full"
 ```
 
 #### Z-Index Management
+
 ```typescript
 // Current
 style={{ zIndex: 9999 }}
@@ -390,6 +428,7 @@ className="z-[9999]" // Or preferably a token
 ### 2. Convert Magic Numbers
 
 #### Spacing
+
 ```typescript
 // Current
 style={{ padding: '24px 32px' }}
@@ -399,6 +438,7 @@ className="px-8 py-6"
 ```
 
 #### Colors
+
 ```typescript
 // Current
 style={{ background: 'rgba(0,0,0,0.5)' }}
@@ -414,11 +454,13 @@ className="bg-black/50"
 ### 1. Color Contrast Analysis
 
 #### Current Contrast Ratios
+
 - **Primary on White:** Good (>4.5:1)
 - **Gray Text:** Needs audit
 - **Dark Mode:** Generally good
 
 #### Recommendations
+
 - Audit all text/background combinations
 - Test with contrast checking tools
 - Ensure 4.5:1 minimum ratio
@@ -426,10 +468,12 @@ className="bg-black/50"
 ### 2. Forced Colors Mode
 
 #### Current Support
+
 - Limited forced-colors mode support
 - Needs Windows High Contrast testing
 
 #### Recommended Additions
+
 ```css
 @media (forced-colors: active) {
   .button {
@@ -441,10 +485,13 @@ className="bg-black/50"
 ### 3. Reduced Motion Support
 
 #### Current Implementation
+
 ```css
 /* Add to globals.css */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -457,21 +504,25 @@ className="bg-black/50"
 ## Migration Strategy
 
 ### Phase 1: Token Creation
+
 1. **Create design tokens** in Tailwind config
 2. **Add CSS custom properties** for complex values
 3. **Document token usage** guidelines
 
 ### Phase 2: Inline Style Elimination
+
 1. **Audit all inline styles** (automated search)
 2. **Convert to utility classes** systematically
 3. **Remove style props** from components
 
 ### Phase 3: Consistency Improvements
+
 1. **Standardize spacing** across components
 2. **Unify color usage** (gray vs slate)
 3. **Implement component variants** with CVA
 
 ### Phase 4: Enhancement
+
 1. **Add missing design tokens**
 2. **Improve animation system**
 3. **Enhance accessibility support**
@@ -481,6 +532,7 @@ className="bg-black/50"
 ## Automated Tools
 
 ### 1. Style Linting
+
 ```json
 // Add to ESLint config
 "rules": {
@@ -491,6 +543,7 @@ className="bg-black/50"
 ```
 
 ### 2. Utility Class Analysis
+
 ```bash
 # Find inline styles
 grep -r "style={{" src/
@@ -503,6 +556,7 @@ grep -r "z-\[" src/
 ```
 
 ### 3. Design Token Validation
+
 ```typescript
 // Utility to validate token usage
 const validateClassName = (className: string) => {
@@ -516,21 +570,25 @@ const validateClassName = (className: string) => {
 ## Success Metrics
 
 ### 1. Code Quality
+
 - **Zero inline styles** in components
 - **Consistent spacing** usage (< 5 different gap values)
 - **Unified color system** (single gray scale)
 
 ### 2. Design Consistency
+
 - **Standardized component variants**
 - **Consistent dark mode** support
 - **Proper focus states** for accessibility
 
 ### 3. Performance
+
 - **Reduced CSS bundle size** through token usage
 - **Improved runtime performance** via consistent classes
 - **Better tree-shaking** with utility-first approach
 
 ### 4. Developer Experience
+
 - **Clear design token documentation**
 - **Easy theme customization**
 - **Consistent component APIs**

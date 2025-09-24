@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import UploadBox from '@/components/upload/UploadBox';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Panel from '@/components/layout/Panel';
+import { useState } from "react";
+import UploadBox from "@/components/upload/UploadBox";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Panel from "@/components/layout/Panel";
 
 export default function DocumentsPage() {
   const [lastResults, setLastResults] = useState<any[]>([]);

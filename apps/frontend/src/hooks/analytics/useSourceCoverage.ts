@@ -1,7 +1,7 @@
 // Hook for source coverage analytics
-import { useState, useEffect, useCallback } from 'react';
-import { analyticsApi } from '../../lib/api-client';
-import { SourceCoverage, AnalyticsFilters } from '../analytics/types';
+import { useState, useEffect, useCallback } from "react";
+import { analyticsApi } from "../../lib/api-client";
+import { SourceCoverage, AnalyticsFilters } from "../analytics/types";
 
 export function useSourceCoverage(filters: AnalyticsFilters) {
   const [data, setData] = useState<SourceCoverage | null>(null);
@@ -16,7 +16,7 @@ export function useSourceCoverage(filters: AnalyticsFilters) {
 
     try {
       const response = await analyticsApi.getSourceCoverage(filters);
-      
+
       if (response.success && response.data) {
         setData(response.data);
       } else {
@@ -29,15 +29,15 @@ export function useSourceCoverage(filters: AnalyticsFilters) {
           coverage: [],
           timeline: [],
         });
-        
+
         if (response.error) {
-          console.warn('Source coverage service unavailable:', response.error);
+          console.warn("Source coverage service unavailable:", response.error);
         }
       }
     } catch (err) {
-      console.warn('Error fetching source coverage:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      
+      console.warn("Error fetching source coverage:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
+
       setData({
         totalSources: 0,
         activeSources: 0,

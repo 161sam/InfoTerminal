@@ -1,8 +1,8 @@
-import React from 'react';
-import { Users, FileText, Sparkles } from 'lucide-react';
-import Panel from '@/components/layout/Panel';
-import { LoadingSpinner } from '@/components/ui/loading';
-import { Domain, DomainConfig, ExampleText, NLPTab } from './types';
+import React from "react";
+import { Users, FileText, Sparkles } from "lucide-react";
+import Panel from "@/components/layout/Panel";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { Domain, DomainConfig, ExampleText, NLPTab } from "./types";
 
 interface NLPTextInputProps {
   inputText: string;
@@ -25,9 +25,8 @@ export default function NLPTextInput({
   activeTab,
   onExtractEntities,
   onSummarize,
-  onSentiment
+  onSentiment,
 }: NLPTextInputProps) {
-  
   return (
     <Panel title="Text Input">
       <div className="space-y-4">
@@ -44,7 +43,15 @@ export default function NLPTextInput({
           />
           <div className="mt-2 flex items-center justify-between text-sm text-gray-500">
             <span>{inputText.length} characters</span>
-            <span>{inputText.trim().split(/\s+/).filter(w => w).length} words</span>
+            <span>
+              {
+                inputText
+                  .trim()
+                  .split(/\s+/)
+                  .filter((w) => w).length
+              }{" "}
+              words
+            </span>
           </div>
         </div>
 
@@ -62,7 +69,9 @@ export default function NLPTextInput({
               >
                 <div className="flex items-center gap-2 mb-1">
                   {currentDomain && <currentDomain.icon size={14} className="text-gray-500" />}
-                  <div className="font-medium text-sm text-gray-900 dark:text-slate-100">{example.title}</div>
+                  <div className="font-medium text-sm text-gray-900 dark:text-slate-100">
+                    {example.title}
+                  </div>
                 </div>
                 <div className="text-xs text-gray-500 dark:text-slate-400 truncate">
                   {example.text.slice(0, 120)}...
@@ -79,20 +88,20 @@ export default function NLPTextInput({
             disabled={!inputText.trim() || isLoading}
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading && activeTab === 'entities' ? (
+            {isLoading && activeTab === "entities" ? (
               <LoadingSpinner size="sm" />
             ) : (
               <Users size={16} />
             )}
             Extract Entities
           </button>
-          
+
           <button
             onClick={onSummarize}
             disabled={!inputText.trim() || isLoading}
             className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading && activeTab === 'summary' ? (
+            {isLoading && activeTab === "summary" ? (
               <LoadingSpinner size="sm" />
             ) : (
               <FileText size={16} />

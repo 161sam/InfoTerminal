@@ -1,13 +1,16 @@
-import { Marker, Popup } from 'react-leaflet';
-import { HeatmapPoint, createHeatmapIcon, formatCoordinates } from '@/lib/map/map-config';
+import { Marker, Popup } from "react-leaflet";
+import { HeatmapPoint, createHeatmapIcon, formatCoordinates } from "@/lib/map/map-config";
 
 interface HeatmapVisualizationProps {
   heatmapData: HeatmapPoint[];
   activeTab: string;
 }
 
-export default function HeatmapVisualization({ heatmapData, activeTab }: HeatmapVisualizationProps) {
-  if (activeTab !== 'heatmap') return null;
+export default function HeatmapVisualization({
+  heatmapData,
+  activeTab,
+}: HeatmapVisualizationProps) {
+  if (activeTab !== "heatmap") return null;
 
   return (
     <>
@@ -19,8 +22,10 @@ export default function HeatmapVisualization({ heatmapData, activeTab }: Heatmap
         >
           <Popup>
             <div>
-              <strong>Entity Density</strong><br />
-              Count: {point.intensity}<br />
+              <strong>Entity Density</strong>
+              <br />
+              Count: {point.intensity}
+              <br />
               Location: {formatCoordinates(point.latitude, point.longitude)}
             </div>
           </Popup>

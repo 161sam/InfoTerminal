@@ -1,6 +1,6 @@
-import { useRef, useEffect } from 'react';
-import { Search } from 'lucide-react';
-import { SEARCH_SUGGESTIONS, SearchSuggestion } from '@/lib/search/search-config';
+import { useRef, useEffect } from "react";
+import { Search } from "lucide-react";
+import { SEARCH_SUGGESTIONS, SearchSuggestion } from "@/lib/search/search-config";
 
 interface SearchHeaderProps {
   query: string;
@@ -18,7 +18,7 @@ export default function SearchHeader({ query, setQuery, onSearch, onClear }: Sea
   }, []);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onSearch();
     }
   };
@@ -65,7 +65,9 @@ export default function SearchHeader({ query, setQuery, onSearch, onClear }: Sea
                 className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
                 <span>{suggestion.text}</span>
-                <span className="text-xs text-gray-500 dark:text-slate-400">({suggestion.category})</span>
+                <span className="text-xs text-gray-500 dark:text-slate-400">
+                  ({suggestion.category})
+                </span>
               </button>
             ))}
           </div>

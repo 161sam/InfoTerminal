@@ -1,16 +1,16 @@
-import React from 'react';
-import { 
-  Bot, 
-  User, 
+import React from "react";
+import {
+  Bot,
+  User,
   Settings,
   Clock,
   Copy,
   AlertCircle,
   CheckCircle,
   ChevronDown,
-  ChevronRight
-} from 'lucide-react';
-import { Message, AgentCapability, CAPABILITY_COLORS } from './types';
+  ChevronRight,
+} from "lucide-react";
+import { Message, AgentCapability, CAPABILITY_COLORS } from "./types";
 
 interface AgentMessageBubbleProps {
   message: Message;
@@ -20,34 +20,36 @@ interface AgentMessageBubbleProps {
   agentCapabilities: AgentCapability[];
 }
 
-export default function AgentMessageBubble({ 
-  message, 
-  showSteps, 
-  setShowSteps, 
+export default function AgentMessageBubble({
+  message,
+  showSteps,
+  setShowSteps,
   copyToClipboard,
-  agentCapabilities
+  agentCapabilities,
 }: AgentMessageBubbleProps) {
-  const isUser = message.role === 'user';
-  const isSystem = message.role === 'system';
-  const capability = agentCapabilities.find(c => c.id === message.agentType);
-  
+  const isUser = message.role === "user";
+  const isSystem = message.role === "system";
+  const capability = agentCapabilities.find((c) => c.id === message.agentType);
+
   const toggleSteps = () => {
-    setShowSteps(prev => ({
+    setShowSteps((prev) => ({
       ...prev,
-      [message.id]: !prev[message.id]
+      [message.id]: !prev[message.id],
     }));
   };
 
   return (
-    <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${
-          isSystem 
-            ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400' 
-            : capability
-            ? CAPABILITY_COLORS[capability.color as keyof typeof CAPABILITY_COLORS]
-            : 'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
-        }`}>
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${
+            isSystem
+              ? "bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400"
+              : capability
+                ? CAPABILITY_COLORS[capability.color as keyof typeof CAPABILITY_COLORS]
+                : "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+          }`}
+        >
           {isSystem ? (
             <Settings size={16} />
           ) : capability ? (
@@ -57,25 +59,27 @@ export default function AgentMessageBubble({
           )}
         </div>
       )}
-      
-      <div className={`max-w-3xl ${isUser ? 'order-first' : ''}`}>
-        <div className={`p-3 rounded-lg ${
-          isUser 
-            ? 'bg-primary-600 text-white'
-            : isSystem
-            ? 'bg-orange-50 text-orange-900 border border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-900/30'
-            : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-        }`}>
+
+      <div className={`max-w-3xl ${isUser ? "order-first" : ""}`}>
+        <div
+          className={`p-3 rounded-lg ${
+            isUser
+              ? "bg-primary-600 text-white"
+              : isSystem
+                ? "bg-orange-50 text-orange-900 border border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-900/30"
+                : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+          }`}
+        >
           <div className="prose prose-sm max-w-none">
             <p className="whitespace-pre-wrap m-0">{message.content}</p>
           </div>
         </div>
-        
+
         {/* Message Metadata */}
         <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-slate-400 flex-wrap">
           <span>{message.timestamp.toLocaleTimeString()}</span>
-          
-          {message.role === 'assistant' && capability && (
+
+          {message.role === "assistant" && capability && (
             <>
               <span>•</span>
               <span className="inline-flex items-center gap-1">
@@ -89,15 +93,18 @@ export default function AgentMessageBubble({
             <>
               <span>•</span>
               <div className="flex flex-wrap gap-1">
-                {message.toolsUsed.map(tool => (
-                  <span key={tool} className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-xs">
+                {message.toolsUsed.map((tool) => (
+                  <span
+                    key={tool}
+                    className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-xs"
+                  >
                     {tool}
                   </span>
                 ))}
               </div>
             </>
           )}
-          
+
           {message.executionTime && (
             <>
               <span>•</span>
@@ -129,7 +136,7 @@ export default function AgentMessageBubble({
                   <span>Execution Steps ({message.steps.length})</span>
                   {showSteps[message.id] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </button>
-                
+
                 {showSteps[message.id] && (
                   <div className="p-2 space-y-2 border-t border-gray-200 dark:border-gray-700">
                     {message.steps.map((step, idx) => (
@@ -145,7 +152,7 @@ export default function AgentMessageBubble({
                             <div className="text-red-600 dark:text-red-400">{step.error}</div>
                           ) : (
                             <div className="text-gray-600 dark:text-gray-400">
-                              {step.result ? 'Completed successfully' : 'Processing...'}
+                              {step.result ? "Completed successfully" : "Processing..."}
                             </div>
                           )}
                         </div>
@@ -155,7 +162,7 @@ export default function AgentMessageBubble({
                 )}
               </div>
             )}
-            
+
             {message.references && (
               <details className="bg-gray-50 dark:bg-gray-900 rounded-lg">
                 <summary className="cursor-pointer p-2 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">

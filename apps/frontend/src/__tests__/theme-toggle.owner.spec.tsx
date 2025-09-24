@@ -28,10 +28,10 @@ describe("Theme single authority", () => {
     const { getByRole } = render(
       <ThemeProvider>
         <ThemeToggle />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
-    const btn = getByRole('button');
+    const btn = getByRole("button");
     const html = document.documentElement;
     const body = document.body;
 
@@ -53,4 +53,3 @@ describe("Theme single authority", () => {
     expect(body.classList.contains("dark")).toBe(false);
   });
 });
-

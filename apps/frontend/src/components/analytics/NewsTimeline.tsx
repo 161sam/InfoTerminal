@@ -1,7 +1,15 @@
-import React from 'react';
+import React from "react";
 
-export interface NewsItem { id: string; title: string; date: string; url?: string }
-interface Props { items: NewsItem[]; onItemClick?: (id: string) => void }
+export interface NewsItem {
+  id: string;
+  title: string;
+  date: string;
+  url?: string;
+}
+interface Props {
+  items: NewsItem[];
+  onItemClick?: (id: string) => void;
+}
 
 export const NewsTimeline: React.FC<Props> = ({ items, onItemClick }) => (
   <ul data-testid="news-timeline">

@@ -1,8 +1,8 @@
-import { Search } from 'lucide-react';
-import { LoadingSpinner, EmptyState, ErrorState } from '@/components/ui/loading';
-import DossierButton from '@/components/DossierButton';
-import { SearchResult, formatSearchTime } from '@/lib/search/search-config';
-import SearchResultCard from './SearchResultCard';
+import { Search } from "lucide-react";
+import { LoadingSpinner, EmptyState, ErrorState } from "@/components/ui/loading";
+import DossierButton from "@/components/DossierButton";
+import { SearchResult, formatSearchTime } from "@/lib/search/search-config";
+import SearchResultCard from "./SearchResultCard";
 
 interface SearchResultsProps {
   query: string;
@@ -21,18 +21,18 @@ export default function SearchResults({
   searchTime,
   isLoading,
   error,
-  onRetry
+  onRetry,
 }: SearchResultsProps) {
   // Error state
   if (error) {
     return (
-      <ErrorState 
+      <ErrorState
         variant="error"
         title="Search Error"
         message={error}
         action={{
           label: "Try Again",
-          onClick: onRetry
+          onClick: onRetry,
         }}
       />
     );
@@ -41,12 +41,12 @@ export default function SearchResults({
   // Loading state
   if (isLoading) {
     return (
-      <LoadingSpinner 
-        layout="block" 
-        variant="primary" 
-        size="lg" 
-        text="Searching..." 
-        subText="Finding relevant results" 
+      <LoadingSpinner
+        layout="block"
+        variant="primary"
+        size="lg"
+        text="Searching..."
+        subText="Finding relevant results"
       />
     );
   }
@@ -54,7 +54,7 @@ export default function SearchResults({
   // Empty state
   if (!isLoading && query && results.length === 0 && !error) {
     return (
-      <EmptyState 
+      <EmptyState
         icon={Search}
         title="No results found"
         message="Try adjusting your search terms or filters"
@@ -71,12 +71,14 @@ export default function SearchResults({
           <p className="text-sm text-gray-600 dark:text-slate-400">
             {totalResults.toLocaleString()} results found in {formatSearchTime(searchTime)}
           </p>
-          <DossierButton getPayload={() => ({ 
-            query, 
-            entities: [], 
-            graphSelection: { nodes: [], edges: [] },
-            searchResults: results
-          })} />
+          <DossierButton
+            getPayload={() => ({
+              query,
+              entities: [],
+              graphSelection: { nodes: [], edges: [] },
+              searchResults: results,
+            })}
+          />
         </div>
 
         {/* Results List */}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 type Options = {
   ingestAleph?: boolean;
@@ -16,14 +16,19 @@ type State = {
 };
 
 export function useDemoLoader() {
-  const [state, setState] = useState<State>({ loading: false, progress: 0, result: null, error: null });
+  const [state, setState] = useState<State>({
+    loading: false,
+    progress: 0,
+    result: null,
+    error: null,
+  });
 
   async function loadDemo(opts: Options) {
     setState({ loading: true, progress: 0, result: null, error: null });
     try {
-      const res = await fetch('/api/demo/load', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/demo/load", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(opts),
       });
       const data = await res.json();
@@ -34,7 +39,7 @@ export function useDemoLoader() {
   }
 
   async function resetDemo() {
-    await fetch('/api/demo/reset', { method: 'POST' });
+    await fetch("/api/demo/reset", { method: "POST" });
   }
 
   return { ...state, loadDemo, resetDemo };

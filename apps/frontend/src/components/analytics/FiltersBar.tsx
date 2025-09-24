@@ -1,7 +1,7 @@
 // Global filters bar for analytics dashboard
-import React from 'react';
-import { Calendar, Filter, Tag, RefreshCw } from 'lucide-react';
-import { AnalyticsFilters, TIME_RANGES, ENTITY_TYPES, SOURCE_TYPES, WORKFLOW_TYPES } from './types';
+import React from "react";
+import { Calendar, Filter, Tag, RefreshCw } from "lucide-react";
+import { AnalyticsFilters, TIME_RANGES, ENTITY_TYPES, SOURCE_TYPES, WORKFLOW_TYPES } from "./types";
 
 interface FiltersBarProps {
   filters: AnalyticsFilters;
@@ -10,19 +10,24 @@ interface FiltersBarProps {
   className?: string;
 }
 
-export function FiltersBar({ filters, onFiltersChange, onRefresh, className = '' }: FiltersBarProps) {
+export function FiltersBar({
+  filters,
+  onFiltersChange,
+  onRefresh,
+  className = "",
+}: FiltersBarProps) {
   const handleTimeRangeChange = (timeRange: string) => {
-    const range = TIME_RANGES.find(r => r.value === timeRange);
+    const range = TIME_RANGES.find((r) => r.value === timeRange);
     let dateRange = undefined;
 
-    if (timeRange !== 'custom' && range?.days) {
+    if (timeRange !== "custom" && range?.days) {
       const to = new Date();
       const from = new Date(to);
       from.setDate(from.getDate() - range.days);
-      
+
       dateRange = {
-        from: from.toISOString().split('T')[0],
-        to: to.toISOString().split('T')[0],
+        from: from.toISOString().split("T")[0],
+        to: to.toISOString().split("T")[0],
       };
     }
 
@@ -30,33 +35,36 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
   };
 
   const handleEntityTypesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedTypes = Array.from(e.target.selectedOptions, option => option.value);
+    const selectedTypes = Array.from(e.target.selectedOptions, (option) => option.value);
     onFiltersChange({ entityTypes: selectedTypes });
   };
 
   const handleSourcesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedSources = Array.from(e.target.selectedOptions, option => option.value);
+    const selectedSources = Array.from(e.target.selectedOptions, (option) => option.value);
     onFiltersChange({ sources: selectedSources });
   };
 
   const handleWorkflowsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedWorkflows = Array.from(e.target.selectedOptions, option => option.value);
+    const selectedWorkflows = Array.from(e.target.selectedOptions, (option) => option.value);
     onFiltersChange({ workflows: selectedWorkflows });
   };
 
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const tags = e.target.value.split(',').map(tag => tag.trim()).filter(Boolean);
+    const tags = e.target.value
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
     onFiltersChange({ tags });
   };
 
-  const handleCustomDateChange = (field: 'from' | 'to', value: string) => {
+  const handleCustomDateChange = (field: "from" | "to", value: string) => {
     const dateRange = { ...filters.dateRange, [field]: value };
     onFiltersChange({ dateRange });
   };
 
   const clearFilters = () => {
     onFiltersChange({
-      timeRange: '30d',
+      timeRange: "30d",
       entityTypes: [],
       sources: [],
       tags: [],
@@ -67,13 +75,17 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 ${className}`}
+    >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Filter size={18} className="text-gray-600 dark:text-gray-400" />
-          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Analytics Filters</h3>
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            Analytics Filters
+          </h3>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <button
             onClick={clearFilters}
@@ -105,7 +117,7 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
             onChange={(e) => handleTimeRangeChange(e.target.value)}
             className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
-            {TIME_RANGES.map(range => (
+            {TIME_RANGES.map((range) => (
               <option key={range.value} value={range.value}>
                 {range.label}
               </option>
@@ -114,23 +126,27 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
         </div>
 
         {/* Custom Date Range */}
-        {filters.timeRange === 'custom' && (
+        {filters.timeRange === "custom" && (
           <>
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">From</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                From
+              </label>
               <input
                 type="date"
-                value={filters.dateRange?.from || ''}
-                onChange={(e) => handleCustomDateChange('from', e.target.value)}
+                value={filters.dateRange?.from || ""}
+                onChange={(e) => handleCustomDateChange("from", e.target.value)}
                 className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">To</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                To
+              </label>
               <input
                 type="date"
-                value={filters.dateRange?.to || ''}
-                onChange={(e) => handleCustomDateChange('to', e.target.value)}
+                value={filters.dateRange?.to || ""}
+                onChange={(e) => handleCustomDateChange("to", e.target.value)}
                 className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
@@ -139,15 +155,17 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
 
         {/* Entity Types */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Entity Types</label>
+          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Entity Types
+          </label>
           <select
             multiple
             value={filters.entityTypes}
             onChange={handleEntityTypesChange}
             className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            style={{ height: '70px' }}
+            style={{ height: "70px" }}
           >
-            {ENTITY_TYPES.map(type => (
+            {ENTITY_TYPES.map((type) => (
               <option key={type} value={type}>
                 {type}
               </option>
@@ -157,15 +175,17 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
 
         {/* Source Types */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Sources</label>
+          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Sources
+          </label>
           <select
             multiple
             value={filters.sources}
             onChange={handleSourcesChange}
             className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            style={{ height: '70px' }}
+            style={{ height: "70px" }}
           >
-            {SOURCE_TYPES.map(type => (
+            {SOURCE_TYPES.map((type) => (
               <option key={type} value={type}>
                 {type}
               </option>
@@ -175,15 +195,17 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
 
         {/* Workflows */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Workflows</label>
+          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Workflows
+          </label>
           <select
             multiple
             value={filters.workflows}
             onChange={handleWorkflowsChange}
             className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            style={{ height: '70px' }}
+            style={{ height: "70px" }}
           >
-            {WORKFLOW_TYPES.map(type => (
+            {WORKFLOW_TYPES.map((type) => (
               <option key={type} value={type}>
                 {type}
               </option>
@@ -199,7 +221,7 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
           </label>
           <input
             type="text"
-            value={filters.tags.join(', ')}
+            value={filters.tags.join(", ")}
             onChange={handleTagsChange}
             placeholder="tag1, tag2, ..."
             className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
@@ -208,47 +230,68 @@ export function FiltersBar({ filters, onFiltersChange, onRefresh, className = ''
       </div>
 
       {/* Active Filters Summary */}
-      {(filters.entityTypes.length > 0 || filters.sources.length > 0 || filters.tags.length > 0 || filters.workflows.length > 0) && (
+      {(filters.entityTypes.length > 0 ||
+        filters.sources.length > 0 ||
+        filters.tags.length > 0 ||
+        filters.workflows.length > 0) && (
         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-wrap gap-1">
-            {filters.entityTypes.map(type => (
-              <span key={type} className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded">
+            {filters.entityTypes.map((type) => (
+              <span
+                key={type}
+                className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded"
+              >
                 Entity: {type}
                 <button
-                  onClick={() => onFiltersChange({ entityTypes: filters.entityTypes.filter(t => t !== type) })}
+                  onClick={() =>
+                    onFiltersChange({ entityTypes: filters.entityTypes.filter((t) => t !== type) })
+                  }
                   className="ml-1 hover:text-blue-900 dark:hover:text-blue-200"
                 >
                   ×
                 </button>
               </span>
             ))}
-            {filters.sources.map(source => (
-              <span key={source} className="inline-flex items-center px-2 py-1 text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded">
+            {filters.sources.map((source) => (
+              <span
+                key={source}
+                className="inline-flex items-center px-2 py-1 text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded"
+              >
                 Source: {source}
                 <button
-                  onClick={() => onFiltersChange({ sources: filters.sources.filter(s => s !== source) })}
+                  onClick={() =>
+                    onFiltersChange({ sources: filters.sources.filter((s) => s !== source) })
+                  }
                   className="ml-1 hover:text-green-900 dark:hover:text-green-200"
                 >
                   ×
                 </button>
               </span>
             ))}
-            {filters.tags.map(tag => (
-              <span key={tag} className="inline-flex items-center px-2 py-1 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded">
+            {filters.tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center px-2 py-1 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded"
+              >
                 Tag: {tag}
                 <button
-                  onClick={() => onFiltersChange({ tags: filters.tags.filter(t => t !== tag) })}
+                  onClick={() => onFiltersChange({ tags: filters.tags.filter((t) => t !== tag) })}
                   className="ml-1 hover:text-purple-900 dark:hover:text-purple-200"
                 >
                   ×
                 </button>
               </span>
             ))}
-            {filters.workflows.map(workflow => (
-              <span key={workflow} className="inline-flex items-center px-2 py-1 text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 rounded">
+            {filters.workflows.map((workflow) => (
+              <span
+                key={workflow}
+                className="inline-flex items-center px-2 py-1 text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 rounded"
+              >
                 Workflow: {workflow}
                 <button
-                  onClick={() => onFiltersChange({ workflows: filters.workflows.filter(w => w !== workflow) })}
+                  onClick={() =>
+                    onFiltersChange({ workflows: filters.workflows.filter((w) => w !== workflow) })
+                  }
                   className="ml-1 hover:text-orange-900 dark:hover:text-orange-200"
                 >
                   ×

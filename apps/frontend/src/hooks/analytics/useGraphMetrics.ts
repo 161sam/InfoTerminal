@@ -1,7 +1,7 @@
-// Hook for graph metrics data  
-import { useState, useEffect, useCallback } from 'react';
-import { analyticsApi } from '../../lib/api-client';
-import { AnalyticsFilters } from '../analytics/types';
+// Hook for graph metrics data
+import { useState, useEffect, useCallback } from "react";
+import { analyticsApi } from "../../lib/api-client";
+import { AnalyticsFilters } from "../analytics/types";
 
 export interface GraphMetrics {
   nodeCount: number;
@@ -41,11 +41,11 @@ export function useGraphMetrics(filters: AnalyticsFilters) {
 
     try {
       const response = await analyticsApi.getGraphMetrics({
-        algorithm: 'pagerank',
+        algorithm: "pagerank",
         limit: 20,
         ...filters,
       });
-      
+
       if (response.success && response.data) {
         setData(response.data);
       } else {
@@ -64,15 +64,15 @@ export function useGraphMetrics(filters: AnalyticsFilters) {
             distribution: {},
           },
         });
-        
+
         if (response.error) {
-          console.warn('Graph metrics service unavailable:', response.error);
+          console.warn("Graph metrics service unavailable:", response.error);
         }
       }
     } catch (err) {
-      console.warn('Error fetching graph metrics:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      
+      console.warn("Error fetching graph metrics:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
+
       setData({
         nodeCount: 0,
         edgeCount: 0,

@@ -133,7 +133,7 @@ Legacy playbook functionality is maintained through the `/api/agent/playbooks` e
 import { EnhancedAgentChat } from '@/components/agents/AgentChat';
 
 // Use in any component
-<EnhancedAgentChat 
+<EnhancedAgentChat
   apiBaseUrl="/api/agent"
   enableWorkflows={true}
   maxHeight="600px"
@@ -143,11 +143,11 @@ import { EnhancedAgentChat } from '@/components/agents/AgentChat';
 ### Service Health Check
 
 ```typescript
-import { checkAllAgentHealth } from '@/lib/agent-config';
+import { checkAllAgentHealth } from "@/lib/agent-config";
 
 const checkServices = async () => {
   const health = await checkAllAgentHealth();
-  console.log('Service status:', health);
+  console.log("Service status:", health);
 };
 ```
 
@@ -155,14 +155,14 @@ const checkServices = async () => {
 
 ```typescript
 // Execute a specific capability
-const response = await fetch('/api/agent/capabilities', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("/api/agent/capabilities", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    capability: 'research_assistant',
-    context: 'Research topic: Climate change impacts',
-    tools: ['web_search', 'fact_checking']
-  })
+    capability: "research_assistant",
+    context: "Research topic: Climate change impacts",
+    tools: ["web_search", "fact_checking"],
+  }),
 });
 ```
 
@@ -171,6 +171,7 @@ const response = await fetch('/api/agent/capabilities', {
 ### Adding New Capabilities
 
 1. Define the capability in `agent-config.ts`:
+
 ```typescript
 {
   id: 'new_agent',

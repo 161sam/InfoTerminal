@@ -1,11 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Panel from '@/components/layout/Panel';
-import { LoadingSpinner } from '@/components/ui/loading';
-import { inputStyles, buttonStyles, textStyles, cardStyles, statusStyles, compose } from '@/styles/design-tokens';
-import { 
-  Shield, 
+import React, { useState, useEffect } from "react";
+import Panel from "@/components/layout/Panel";
+import { LoadingSpinner } from "@/components/ui/loading";
+import {
+  inputStyles,
+  buttonStyles,
+  textStyles,
+  cardStyles,
+  statusStyles,
+  compose,
+} from "@/styles/design-tokens";
+import {
+  Shield,
   ExternalLink,
   AlertTriangle,
   CheckCircle,
@@ -13,8 +20,8 @@ import {
   TrendingUp,
   TrendingDown,
   Eye,
-  Globe
-} from 'lucide-react';
+  Globe,
+} from "lucide-react";
 
 interface CredibilityData {
   credibility_score: number;
@@ -48,12 +55,16 @@ interface CredibilityDashboardProps {
   showAnalytics?: boolean;
 }
 
-export function CredibilityDashboard({ sourceUrl, className, showAnalytics = false }: CredibilityDashboardProps) {
+export function CredibilityDashboard({
+  sourceUrl,
+  className,
+  showAnalytics = false,
+}: CredibilityDashboardProps) {
   const [credibilityData, setCredibilityData] = useState<CredibilityData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [inputUrl, setInputUrl] = useState(sourceUrl || '');
-  
+  const [inputUrl, setInputUrl] = useState(sourceUrl || "");
+
   // Analytics state (v0.3.0+)
   const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics | null>(null);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
@@ -68,7 +79,7 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
   const handleAssessCredibility = async (url: string = inputUrl) => {
     if (!url.trim()) {
-      setError('Please enter a URL to assess');
+      setError("Please enter a URL to assess");
       return;
     }
 
@@ -76,93 +87,96 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
     try {
       new URL(url);
     } catch {
-      setError('Please enter a valid URL');
+      setError("Please enter a valid URL");
       return;
     }
 
     setIsLoading(true);
     setError(null);
-    
+
     // Performance tracking (v0.3.0+)
     const startTime = performance.now();
 
     try {
       const response = await fetch(`/api/verification/credibility?url=${encodeURIComponent(url)}`);
-      
+
       if (!response.ok) {
-        throw new Error('Failed to assess credibility');
+        throw new Error("Failed to assess credibility");
       }
 
       const data = await response.json();
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-      
+
       setCredibilityData(data);
-      
+
       // Update performance metrics
       const metrics: PerformanceMetrics = {
         response_time_ms: responseTime,
-        cache_hit: response.headers.get('x-cache-status') === 'hit',
-        timestamp: Date.now()
+        cache_hit: response.headers.get("x-cache-status") === "hit",
+        timestamp: Date.now(),
       };
       setPerformanceMetrics(metrics);
-      
+
       // Update analytics if enabled
       if (showAnalytics) {
         await updateAnalytics(url, data.credibility_score, metrics);
       }
-      
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   // Analytics functions (v0.3.0+)
-  const updateAnalytics = async (url: string, credibilityScore: number, metrics: PerformanceMetrics) => {
+  const updateAnalytics = async (
+    url: string,
+    credibilityScore: number,
+    metrics: PerformanceMetrics,
+  ) => {
     try {
       // Store assessment in local analytics
-      const stored = localStorage.getItem('credibility-analytics') || '{}';
+      const stored = localStorage.getItem("credibility-analytics") || "{}";
       const analytics = JSON.parse(stored) as Partial<AnalyticsData>;
-      
+
       analytics.assessment_count = (analytics.assessment_count || 0) + 1;
       analytics.recent_assessments = analytics.recent_assessments || [];
-      
+
       // Add new assessment
       analytics.recent_assessments.unshift({
         url: url,
         credibility_score: credibilityScore,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       // Keep only last 50 assessments
       analytics.recent_assessments = analytics.recent_assessments.slice(0, 50);
-      
+
       // Update performance stats
       const responseTimes = analytics.recent_assessments.map(() => metrics.response_time_ms);
-      analytics.average_response_time = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-      
+      analytics.average_response_time =
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+
       // Calculate cache hit rate (simplified)
       analytics.cache_hit_rate = 0.8; // This would be calculated from actual metrics
-      
-      localStorage.setItem('credibility-analytics', JSON.stringify(analytics));
+
+      localStorage.setItem("credibility-analytics", JSON.stringify(analytics));
       setAnalyticsData(analytics as AnalyticsData);
-      
     } catch (err) {
-      console.warn('Failed to update analytics:', err);
+      console.warn("Failed to update analytics:", err);
     }
   };
-  
+
   // Load analytics on component mount
   useEffect(() => {
     if (showAnalytics) {
-      const stored = localStorage.getItem('credibility-analytics');
+      const stored = localStorage.getItem("credibility-analytics");
       if (stored) {
         try {
           setAnalyticsData(JSON.parse(stored));
         } catch (err) {
-          console.warn('Failed to load analytics:', err);
+          console.warn("Failed to load analytics:", err);
         }
       }
     }
@@ -170,37 +184,65 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
   const getBiasIcon = (bias: string) => {
     switch (bias.toLowerCase()) {
-      case 'left': return <TrendingDown className="h-4 w-4 text-blue-500" />;
-      case 'right': return <TrendingUp className="h-4 w-4 text-red-500" />;
-      case 'center': return <Eye className="h-4 w-4 text-green-500" />;
-      default: return <Globe className="h-4 w-4 text-gray-500" />;
+      case "left":
+        return <TrendingDown className="h-4 w-4 text-blue-500" />;
+      case "right":
+        return <TrendingUp className="h-4 w-4 text-red-500" />;
+      case "center":
+        return <Eye className="h-4 w-4 text-green-500" />;
+      default:
+        return <Globe className="h-4 w-4 text-gray-500" />;
     }
   };
 
   const getBiasColor = (bias: string) => {
     switch (bias.toLowerCase()) {
-      case 'left': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'right': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-      case 'center': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+      case "left":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+      case "right":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+      case "center":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
   const getFactualColor = (factual: string) => {
     switch (factual.toLowerCase()) {
-      case 'high': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
-      case 'low': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+      case "high":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+      case "low":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
   const getCredibilityLevel = (score: number) => {
-    if (score >= 0.8) return { level: 'Very High', color: 'text-green-600', bgColor: 'bg-green-50 dark:bg-green-900/20' };
-    if (score >= 0.6) return { level: 'High', color: 'text-green-600', bgColor: 'bg-green-50 dark:bg-green-900/20' };
-    if (score >= 0.4) return { level: 'Medium', color: 'text-yellow-600', bgColor: 'bg-yellow-50 dark:bg-yellow-900/20' };
-    if (score >= 0.2) return { level: 'Low', color: 'text-red-600', bgColor: 'bg-red-50 dark:bg-red-900/20' };
-    return { level: 'Very Low', color: 'text-red-600', bgColor: 'bg-red-50 dark:bg-red-900/20' };
+    if (score >= 0.8)
+      return {
+        level: "Very High",
+        color: "text-green-600",
+        bgColor: "bg-green-50 dark:bg-green-900/20",
+      };
+    if (score >= 0.6)
+      return {
+        level: "High",
+        color: "text-green-600",
+        bgColor: "bg-green-50 dark:bg-green-900/20",
+      };
+    if (score >= 0.4)
+      return {
+        level: "Medium",
+        color: "text-yellow-600",
+        bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+      };
+    if (score >= 0.2)
+      return { level: "Low", color: "text-red-600", bgColor: "bg-red-50 dark:bg-red-900/20" };
+    return { level: "Very Low", color: "text-red-600", bgColor: "bg-red-50 dark:bg-red-900/20" };
   };
 
   const getOverallRating = (data: CredibilityData) => {
@@ -225,7 +267,10 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
             <button
               onClick={() => handleAssessCredibility()}
               disabled={isLoading || !inputUrl.trim()}
-              className={compose.button('primary', (isLoading || !inputUrl.trim()) ? 'opacity-50 cursor-not-allowed' : '')}
+              className={compose.button(
+                "primary",
+                isLoading || !inputUrl.trim() ? "opacity-50 cursor-not-allowed" : "",
+              )}
             >
               {isLoading ? (
                 <>
@@ -233,7 +278,7 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                   Analyzing...
                 </>
               ) : (
-                'Assess'
+                "Assess"
               )}
             </button>
           </div>
@@ -241,7 +286,9 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
         {/* Error */}
         {error && (
-          <div className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}>
+          <div
+            className={`${cardStyles.base} ${cardStyles.padding} ${statusStyles.error} border-red-200 dark:border-red-800`}
+          >
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               <span className={textStyles.body}>{error}</span>
@@ -253,10 +300,14 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
         {credibilityData && (
           <div className="space-y-6">
             {/* Overall Rating */}
-            <div className={`${cardStyles.base} ${cardStyles.padding} ${getOverallRating(credibilityData).bgColor}`}>
+            <div
+              className={`${cardStyles.base} ${cardStyles.padding} ${getOverallRating(credibilityData).bgColor}`}
+            >
               <div className="flex items-center justify-between mb-2">
                 <h3 className={`${textStyles.body} font-medium`}>Overall Credibility Rating</h3>
-                <span className={`${getOverallRating(credibilityData).color} ${statusStyles.info} px-3 py-1 rounded-full text-sm font-medium`}>
+                <span
+                  className={`${getOverallRating(credibilityData).color} ${statusStyles.info} px-3 py-1 rounded-full text-sm font-medium`}
+                >
                   {getOverallRating(credibilityData).level}
                 </span>
               </div>
@@ -268,7 +319,7 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${credibilityData.credibility_score * 100}%` }}
                       />
@@ -285,7 +336,7 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-green-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${credibilityData.transparency_score * 100}%` }}
                       />
@@ -305,8 +356,11 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                   {getBiasIcon(credibilityData.bias_rating)}
                   <span className={`${textStyles.body} font-medium`}>Political Bias</span>
                 </div>
-                <span className={`${getBiasColor(credibilityData.bias_rating)} px-2 py-1 rounded text-sm font-medium`}>
-                  {credibilityData.bias_rating.charAt(0).toUpperCase() + credibilityData.bias_rating.slice(1)}
+                <span
+                  className={`${getBiasColor(credibilityData.bias_rating)} px-2 py-1 rounded text-sm font-medium`}
+                >
+                  {credibilityData.bias_rating.charAt(0).toUpperCase() +
+                    credibilityData.bias_rating.slice(1)}
                 </span>
               </div>
 
@@ -315,8 +369,11 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                   <CheckCircle className="h-4 w-4" />
                   <span className={`${textStyles.body} font-medium`}>Factual Reporting</span>
                 </div>
-                <span className={`${getFactualColor(credibilityData.factual_reporting)} px-2 py-1 rounded text-sm font-medium`}>
-                  {credibilityData.factual_reporting.charAt(0).toUpperCase() + credibilityData.factual_reporting.slice(1)}
+                <span
+                  className={`${getFactualColor(credibilityData.factual_reporting)} px-2 py-1 rounded text-sm font-medium`}
+                >
+                  {credibilityData.factual_reporting.charAt(0).toUpperCase() +
+                    credibilityData.factual_reporting.slice(1)}
                 </span>
               </div>
             </div>
@@ -330,7 +387,10 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                 </h4>
                 <div className="space-y-2">
                   {credibilityData.authority_indicators.map((indicator, index) => (
-                    <div key={index} className={`flex items-center gap-2 ${cardStyles.base} p-2 ${statusStyles.success} border-green-200 dark:border-green-800`}>
+                    <div
+                      key={index}
+                      className={`flex items-center gap-2 ${cardStyles.base} p-2 ${statusStyles.success} border-green-200 dark:border-green-800`}
+                    >
                       <CheckCircle className="h-4 w-4 text-green-500" />
                       <span className={textStyles.body}>{indicator}</span>
                     </div>
@@ -348,7 +408,10 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                 </h4>
                 <div className="space-y-2">
                   {credibilityData.red_flags.map((flag, index) => (
-                    <div key={index} className={`flex items-center gap-2 ${cardStyles.base} p-2 ${statusStyles.error} border-red-200 dark:border-red-800`}>
+                    <div
+                      key={index}
+                      className={`flex items-center gap-2 ${cardStyles.base} p-2 ${statusStyles.error} border-red-200 dark:border-red-800`}
+                    >
                       <AlertTriangle className="h-4 w-4 text-red-500" />
                       <span className={textStyles.body}>{flag}</span>
                     </div>
@@ -359,19 +422,27 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
 
             {/* Credibility Guide */}
             <div className={`${cardStyles.base} p-3 bg-gray-50 dark:bg-gray-900/20`}>
-              <h4 className={`${textStyles.body} font-medium mb-2`}>Credibility Assessment Guide</h4>
+              <h4 className={`${textStyles.body} font-medium mb-2`}>
+                Credibility Assessment Guide
+              </h4>
               <div className="grid grid-cols-1 gap-2">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  <span className={textStyles.bodySmall}><strong>80-100%:</strong> Highly credible, well-established source</span>
+                  <span className={textStyles.bodySmall}>
+                    <strong>80-100%:</strong> Highly credible, well-established source
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                  <span className={textStyles.bodySmall}><strong>40-79%:</strong> Moderately credible, verify with other sources</span>
+                  <span className={textStyles.bodySmall}>
+                    <strong>40-79%:</strong> Moderately credible, verify with other sources
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full" />
-                  <span className={textStyles.bodySmall}><strong>0-39%:</strong> Low credibility, use with extreme caution</span>
+                  <span className={textStyles.bodySmall}>
+                    <strong>0-39%:</strong> Low credibility, use with extreme caution
+                  </span>
                 </div>
               </div>
             </div>
@@ -401,30 +472,44 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
                     onClick={() => setShowPerformancePanel(!showPerformancePanel)}
                     className={`${textStyles.link} text-sm`}
                   >
-                    {showPerformancePanel ? 'Hide' : 'Show'} Details
+                    {showPerformancePanel ? "Hide" : "Show"} Details
                   </button>
                 </div>
-                
+
                 <div className={`grid grid-cols-3 gap-2 ${textStyles.bodySmall}`}>
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
                     <span>Response: {performanceMetrics.response_time_ms.toFixed(0)}ms</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className={`w-2 h-2 rounded-full ${performanceMetrics.cache_hit ? 'bg-green-500' : 'bg-gray-400'}`} />
-                    <span>{performanceMetrics.cache_hit ? 'Cache Hit' : 'Cache Miss'}</span>
+                    <div
+                      className={`w-2 h-2 rounded-full ${performanceMetrics.cache_hit ? "bg-green-500" : "bg-gray-400"}`}
+                    />
+                    <span>{performanceMetrics.cache_hit ? "Cache Hit" : "Cache Miss"}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-purple-500 rounded-full" />
                     <span>{new Date(performanceMetrics.timestamp).toLocaleTimeString()}</span>
                   </div>
                 </div>
-                
+
                 {showPerformancePanel && (
                   <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                     <div className={textStyles.bodySmall}>
-                      <div>Cache Status: {performanceMetrics.cache_hit ? 'Hit (data served from cache)' : 'Miss (fresh data retrieved)'}</div>
-                      <div>Response Speed: {performanceMetrics.response_time_ms < 500 ? 'Fast' : performanceMetrics.response_time_ms < 1000 ? 'Normal' : 'Slow'}</div>
+                      <div>
+                        Cache Status:{" "}
+                        {performanceMetrics.cache_hit
+                          ? "Hit (data served from cache)"
+                          : "Miss (fresh data retrieved)"}
+                      </div>
+                      <div>
+                        Response Speed:{" "}
+                        {performanceMetrics.response_time_ms < 500
+                          ? "Fast"
+                          : performanceMetrics.response_time_ms < 1000
+                            ? "Normal"
+                            : "Slow"}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -435,40 +520,57 @@ export function CredibilityDashboard({ sourceUrl, className, showAnalytics = fal
             {showAnalytics && analyticsData && (
               <div className={`${cardStyles.base} p-3 bg-blue-50 dark:bg-blue-900/20`}>
                 <h4 className={`${textStyles.body} font-medium mb-2`}>Assessment Analytics</h4>
-                
+
                 <div className="grid grid-cols-3 gap-4 mb-3">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-blue-600">{analyticsData.assessment_count}</div>
+                    <div className="text-lg font-bold text-blue-600">
+                      {analyticsData.assessment_count}
+                    </div>
                     <div className={textStyles.bodySmall}>Total Assessments</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-green-600">{analyticsData.average_response_time.toFixed(0)}ms</div>
+                    <div className="text-lg font-bold text-green-600">
+                      {analyticsData.average_response_time.toFixed(0)}ms
+                    </div>
                     <div className={textStyles.bodySmall}>Avg Response</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-purple-600">{(analyticsData.cache_hit_rate * 100).toFixed(0)}%</div>
+                    <div className="text-lg font-bold text-purple-600">
+                      {(analyticsData.cache_hit_rate * 100).toFixed(0)}%
+                    </div>
                     <div className={textStyles.bodySmall}>Cache Hit Rate</div>
                   </div>
                 </div>
-                
-                {analyticsData.recent_assessments && analyticsData.recent_assessments.length > 0 && (
-                  <div>
-                    <h5 className={`${textStyles.bodySmall} font-medium mb-1`}>Recent Assessments</h5>
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                      {analyticsData.recent_assessments.slice(0, 5).map((assessment, index) => (
-                        <div key={index} className={`flex items-center justify-between ${textStyles.bodySmall}`}>
-                          <span className="truncate flex-1 pr-2">{assessment.url}</span>
-                          <span className={`font-medium ${
-                            assessment.credibility_score >= 0.7 ? 'text-green-600' :
-                            assessment.credibility_score >= 0.4 ? 'text-yellow-600' : 'text-red-600'
-                          }`}>
-                            {(assessment.credibility_score * 100).toFixed(0)}%
-                          </span>
-                        </div>
-                      ))}
+
+                {analyticsData.recent_assessments &&
+                  analyticsData.recent_assessments.length > 0 && (
+                    <div>
+                      <h5 className={`${textStyles.bodySmall} font-medium mb-1`}>
+                        Recent Assessments
+                      </h5>
+                      <div className="space-y-1 max-h-32 overflow-y-auto">
+                        {analyticsData.recent_assessments.slice(0, 5).map((assessment, index) => (
+                          <div
+                            key={index}
+                            className={`flex items-center justify-between ${textStyles.bodySmall}`}
+                          >
+                            <span className="truncate flex-1 pr-2">{assessment.url}</span>
+                            <span
+                              className={`font-medium ${
+                                assessment.credibility_score >= 0.7
+                                  ? "text-green-600"
+                                  : assessment.credibility_score >= 0.4
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                              }`}
+                            >
+                              {(assessment.credibility_score * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             )}
           </div>

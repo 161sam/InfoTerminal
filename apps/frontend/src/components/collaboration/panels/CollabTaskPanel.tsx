@@ -1,23 +1,23 @@
 // Collaboration task management panel
-import { useState } from 'react';
-import { 
-  CheckCircle, 
-  Plus, 
-  Search, 
-  Filter, 
-  Calendar, 
-  User, 
+import { useState } from "react";
+import {
+  CheckCircle,
+  Plus,
+  Search,
+  Filter,
+  Calendar,
+  User,
   Clock,
   AlertCircle,
   Circle,
-  MoreVertical
-} from 'lucide-react';
-import { 
-  Workspace, 
-  Task, 
+  MoreVertical,
+} from "lucide-react";
+import {
+  Workspace,
+  Task,
   TASK_STATUS_COLORS,
-  PRIORITY_COLORS 
-} from '@/lib/collaboration/collab-config';
+  PRIORITY_COLORS,
+} from "@/lib/collaboration/collab-config";
 
 interface CollabTaskPanelProps {
   workspace: Workspace;
@@ -26,41 +26,42 @@ interface CollabTaskPanelProps {
   onTaskAction?: (task: Task, action: string) => void;
 }
 
-export function CollabTaskPanel({ 
-  workspace, 
-  tasks = [], 
+export function CollabTaskPanel({
+  workspace,
+  tasks = [],
   onCreateTask,
-  onTaskAction 
+  onTaskAction,
 }: CollabTaskPanelProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
 
-  const filteredTasks = tasks.filter(task => {
-    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
-    const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
-    
+    const matchesStatus = statusFilter === "all" || task.status === statusFilter;
+    const matchesPriority = priorityFilter === "all" || task.priority === priorityFilter;
+
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
   const tasksByStatus = {
-    todo: filteredTasks.filter(t => t.status === 'todo'),
-    in_progress: filteredTasks.filter(t => t.status === 'in_progress'),
-    review: filteredTasks.filter(t => t.status === 'review'),
-    done: filteredTasks.filter(t => t.status === 'done')
+    todo: filteredTasks.filter((t) => t.status === "todo"),
+    in_progress: filteredTasks.filter((t) => t.status === "in_progress"),
+    review: filteredTasks.filter((t) => t.status === "review"),
+    done: filteredTasks.filter((t) => t.status === "done"),
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'todo':
+      case "todo":
         return <Circle size={16} className="text-gray-400" />;
-      case 'in_progress':
+      case "in_progress":
         return <Clock size={16} className="text-blue-500" />;
-      case 'review':
+      case "review":
         return <AlertCircle size={16} className="text-yellow-500" />;
-      case 'done':
+      case "done":
         return <CheckCircle size={16} className="text-green-500" />;
       default:
         return <Circle size={16} className="text-gray-400" />;
@@ -69,14 +70,14 @@ export function CollabTaskPanel({
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'todo':
-        return 'To Do';
-      case 'in_progress':
-        return 'In Progress';
-      case 'review':
-        return 'Review';
-      case 'done':
-        return 'Done';
+      case "todo":
+        return "To Do";
+      case "in_progress":
+        return "In Progress";
+      case "review":
+        return "Review";
+      case "done":
+        return "Done";
       default:
         return status;
     }
@@ -84,14 +85,14 @@ export function CollabTaskPanel({
 
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
-      case 'low':
-        return 'Low';
-      case 'medium':
-        return 'Medium';
-      case 'high':
-        return 'High';
-      case 'urgent':
-        return 'Urgent';
+      case "low":
+        return "Low";
+      case "medium":
+        return "Medium";
+      case "high":
+        return "High";
+      case "urgent":
+        return "Urgent";
       default:
         return priority;
     }
@@ -108,7 +109,7 @@ export function CollabTaskPanel({
           <p className="text-gray-500 dark:text-gray-400 mb-4">
             Create and track tasks within your workspace for better project coordination.
           </p>
-          <button 
+          <button
             onClick={onCreateTask}
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
           >
@@ -125,14 +126,10 @@ export function CollabTaskPanel({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Tasks
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {filteredTasks.length} tasks
-          </p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tasks</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{filteredTasks.length} tasks</p>
         </div>
-        <button 
+        <button
           onClick={onCreateTask}
           className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700"
         >
@@ -145,7 +142,10 @@ export function CollabTaskPanel({
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="space-y-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search tasks..."
@@ -154,7 +154,7 @@ export function CollabTaskPanel({
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
             />
           </div>
-          
+
           <div className="flex gap-3">
             <select
               value={statusFilter}
@@ -167,7 +167,7 @@ export function CollabTaskPanel({
               <option value="review">Review</option>
               <option value="done">Done</option>
             </select>
-            
+
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
@@ -197,7 +197,7 @@ export function CollabTaskPanel({
                   {statusTasks.length}
                 </span>
               </div>
-              
+
               <div className="space-y-2 flex-1 overflow-y-auto">
                 {statusTasks.map((task) => (
                   <TaskCard
@@ -206,7 +206,7 @@ export function CollabTaskPanel({
                     onAction={(action) => onTaskAction?.(task, action)}
                   />
                 ))}
-                
+
                 {statusTasks.length === 0 && (
                   <div className="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
                     No {getStatusLabel(status).toLowerCase()} tasks
@@ -229,32 +229,32 @@ interface TaskCardProps {
 function TaskCard({ task, onAction }: TaskCardProps) {
   const statusClass = TASK_STATUS_COLORS[task.status];
   const priorityClass = PRIORITY_COLORS[task.priority];
-  
+
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
-  
+
   return (
     <div className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-2">
-        <h5 
+        <h5
           className="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 flex-1"
-          onClick={() => onAction('view')}
+          onClick={() => onAction("view")}
         >
           {task.title}
         </h5>
         <button
-          onClick={() => onAction('menu')}
+          onClick={() => onAction("menu")}
           className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
         >
           <MoreVertical size={14} />
         </button>
       </div>
-      
+
       {task.description && (
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
           {task.description}
         </p>
       )}
-      
+
       <div className="flex items-center gap-2 mb-2">
         <span className={`px-2 py-1 text-xs rounded-full ${priorityClass}`}>
           {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
@@ -268,7 +268,7 @@ function TaskCard({ task, onAction }: TaskCardProps) {
           </span>
         ))}
       </div>
-      
+
       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-1">
           {task.assignee ? (
@@ -280,18 +280,20 @@ function TaskCard({ task, onAction }: TaskCardProps) {
             <span>Unassigned</span>
           )}
         </div>
-        
+
         {task.dueDate && (
-          <div className={`flex items-center gap-1 ${isOverdue ? 'text-red-500 dark:text-red-400' : ''}`}>
+          <div
+            className={`flex items-center gap-1 ${isOverdue ? "text-red-500 dark:text-red-400" : ""}`}
+          >
             <Calendar size={12} />
             <span>{task.dueDate.toLocaleDateString()}</span>
           </div>
         )}
       </div>
-      
+
       {task.attachments.length > 0 && (
         <div className="mt-2 text-xs text-gray-400">
-          {task.attachments.length} attachment{task.attachments.length !== 1 ? 's' : ''}
+          {task.attachments.length} attachment{task.attachments.length !== 1 ? "s" : ""}
         </div>
       )}
     </div>

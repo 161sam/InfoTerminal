@@ -1,17 +1,21 @@
 // Enhanced dossier builder modal for analytics export
-import React, { useState, useEffect } from 'react';
-import { 
-  FileText, 
-  Download, 
-  Settings, 
-  X, 
+import React, { useState, useEffect } from "react";
+import {
+  FileText,
+  Download,
+  Settings,
+  X,
   CheckCircle2,
   Calendar,
   Filter,
   Eye,
-  Copy
-} from 'lucide-react';
-import { AnalyticsFilters, AnalyticsDossierSection, AnalyticsDossierExport } from '../analytics/types';
+  Copy,
+} from "lucide-react";
+import {
+  AnalyticsFilters,
+  AnalyticsDossierSection,
+  AnalyticsDossierExport,
+} from "../analytics/types";
 
 interface DossierBuilderModalProps {
   isOpen: boolean;
@@ -28,32 +32,32 @@ export function DossierBuilderModal({
   filters,
   availableSections,
   onExport,
-  className = ''
+  className = "",
 }: DossierBuilderModalProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
-  const [exportFormat, setExportFormat] = useState<'markdown' | 'pdf' | 'html'>('pdf');
+  const [exportFormat, setExportFormat] = useState<"markdown" | "pdf" | "html">("pdf");
   const [includeMetadata, setIncludeMetadata] = useState(true);
-  const [step, setStep] = useState<'configure' | 'preview' | 'generating'>('configure');
+  const [step, setStep] = useState<"configure" | "preview" | "generating">("configure");
   const [generatedDossier, setGeneratedDossier] = useState<AnalyticsDossierExport | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       // Reset form when modal opens
       setTitle(`Analytics Report - ${new Date().toLocaleDateString()}`);
-      setDescription('Comprehensive OSINT analytics report based on selected filters and data sources.');
-      setSelectedSections(availableSections.filter(s => s.enabled).map(s => s.id));
-      setStep('configure');
+      setDescription(
+        "Comprehensive OSINT analytics report based on selected filters and data sources.",
+      );
+      setSelectedSections(availableSections.filter((s) => s.enabled).map((s) => s.id));
+      setStep("configure");
       setGeneratedDossier(null);
     }
   }, [isOpen, availableSections]);
 
   const handleSectionToggle = (sectionId: string) => {
-    setSelectedSections(prev =>
-      prev.includes(sectionId)
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
+    setSelectedSections((prev) =>
+      prev.includes(sectionId) ? prev.filter((id) => id !== sectionId) : [...prev, sectionId],
     );
   };
 
@@ -66,23 +70,23 @@ export function DossierBuilderModal({
       title: title.trim(),
       description: description.trim(),
       filters: { ...filters },
-      sections: availableSections.filter(s => selectedSections.includes(s.id)),
+      sections: availableSections.filter((s) => selectedSections.includes(s.id)),
       metadata: {
         generatedAt: new Date().toISOString(),
-        generatedBy: 'Analytics Dashboard',
-        version: '1.0',
+        generatedBy: "Analytics Dashboard",
+        version: "1.0",
       },
     };
 
     setGeneratedDossier(dossier);
-    setStep('preview');
+    setStep("preview");
   };
 
   const handleExport = () => {
     if (!generatedDossier) return;
 
-    setStep('generating');
-    
+    setStep("generating");
+
     // Simulate export process
     setTimeout(() => {
       onExport(generatedDossier);
@@ -97,22 +101,26 @@ export function DossierBuilderModal({
 
   const getFormatDescription = (format: string) => {
     switch (format) {
-      case 'pdf': return 'Print-ready PDF with charts and tables';
-      case 'markdown': return 'Structured Markdown for documentation';
-      case 'html': return 'Interactive HTML with embedded visualizations';
-      default: return '';
+      case "pdf":
+        return "Print-ready PDF with charts and tables";
+      case "markdown":
+        return "Structured Markdown for documentation";
+      case "html":
+        return "Interactive HTML with embedded visualizations";
+      default:
+        return "";
     }
   };
 
   const getSectionIcon = (sectionId: string) => {
     const icons: Record<string, React.ComponentType<any>> = {
-      'entity-analytics': () => <div className="w-4 h-4 bg-blue-500 rounded" />,
-      'source-coverage': () => <div className="w-4 h-4 bg-green-500 rounded" />,
-      'evidence-quality': () => <div className="w-4 h-4 bg-purple-500 rounded" />,
-      'workflow-runs': () => <div className="w-4 h-4 bg-orange-500 rounded" />,
-      'activity-timeline': () => <div className="w-4 h-4 bg-red-500 rounded" />,
-      'geospatial': () => <div className="w-4 h-4 bg-yellow-500 rounded" />,
-      'query-insights': () => <div className="w-4 h-4 bg-indigo-500 rounded" />,
+      "entity-analytics": () => <div className="w-4 h-4 bg-blue-500 rounded" />,
+      "source-coverage": () => <div className="w-4 h-4 bg-green-500 rounded" />,
+      "evidence-quality": () => <div className="w-4 h-4 bg-purple-500 rounded" />,
+      "workflow-runs": () => <div className="w-4 h-4 bg-orange-500 rounded" />,
+      "activity-timeline": () => <div className="w-4 h-4 bg-red-500 rounded" />,
+      geospatial: () => <div className="w-4 h-4 bg-yellow-500 rounded" />,
+      "query-insights": () => <div className="w-4 h-4 bg-indigo-500 rounded" />,
     };
     const IconComponent = icons[sectionId];
     return IconComponent ? <IconComponent /> : <FileText size={16} />;
@@ -122,7 +130,9 @@ export function DossierBuilderModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden ${className}`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
@@ -146,12 +156,14 @@ export function DossierBuilderModal({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {step === 'configure' && (
+          {step === "configure" && (
             <div className="p-6 space-y-6">
               {/* Basic Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Report Information</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Report Information
+                </h3>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Title
@@ -164,7 +176,7 @@ export function DossierBuilderModal({
                     placeholder="Enter report title..."
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Description
@@ -182,7 +194,9 @@ export function DossierBuilderModal({
               {/* Filter Summary */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Applied Filters</h3>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Applied Filters
+                  </h3>
                   <button
                     onClick={handleCopyFilters}
                     className="inline-flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
@@ -191,39 +205,48 @@ export function DossierBuilderModal({
                     Copy
                   </button>
                 </div>
-                
+
                 <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Time Range:</span>
-                      <span className="ml-2 text-gray-600 dark:text-gray-400">{filters.timeRange}</span>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        Time Range:
+                      </span>
+                      <span className="ml-2 text-gray-600 dark:text-gray-400">
+                        {filters.timeRange}
+                      </span>
                     </div>
-                    
+
                     {filters.entityTypes.length > 0 && (
                       <div>
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Entity Types:</span>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Entity Types:
+                        </span>
                         <span className="ml-2 text-gray-600 dark:text-gray-400">
-                          {filters.entityTypes.slice(0, 2).join(', ')}
-                          {filters.entityTypes.length > 2 && ` +${filters.entityTypes.length - 2} more`}
+                          {filters.entityTypes.slice(0, 2).join(", ")}
+                          {filters.entityTypes.length > 2 &&
+                            ` +${filters.entityTypes.length - 2} more`}
                         </span>
                       </div>
                     )}
-                    
+
                     {filters.sources.length > 0 && (
                       <div>
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Sources:</span>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Sources:
+                        </span>
                         <span className="ml-2 text-gray-600 dark:text-gray-400">
-                          {filters.sources.slice(0, 2).join(', ')}
+                          {filters.sources.slice(0, 2).join(", ")}
                           {filters.sources.length > 2 && ` +${filters.sources.length - 2} more`}
                         </span>
                       </div>
                     )}
-                    
+
                     {filters.tags.length > 0 && (
                       <div>
                         <span className="font-medium text-gray-700 dark:text-gray-300">Tags:</span>
                         <span className="ml-2 text-gray-600 dark:text-gray-400">
-                          {filters.tags.slice(0, 2).join(', ')}
+                          {filters.tags.slice(0, 2).join(", ")}
                           {filters.tags.length > 2 && ` +${filters.tags.length - 2} more`}
                         </span>
                       </div>
@@ -234,16 +257,18 @@ export function DossierBuilderModal({
 
               {/* Section Selection */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Include Sections</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Include Sections
+                </h3>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {availableSections.map((section) => (
                     <div
                       key={section.id}
                       className={`border rounded-lg p-3 cursor-pointer transition-colors ${
                         selectedSections.includes(section.id)
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                       }`}
                       onClick={() => handleSectionToggle(section.id)}
                     >
@@ -255,7 +280,7 @@ export function DossierBuilderModal({
                             <div className="w-5 h-5 border border-gray-300 dark:border-gray-600 rounded" />
                           )}
                         </div>
-                        
+
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             {getSectionIcon(section.id)}
@@ -275,30 +300,34 @@ export function DossierBuilderModal({
 
               {/* Export Format */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Export Format</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Export Format
+                </h3>
+
                 <div className="space-y-3">
-                  {(['pdf', 'markdown', 'html'] as const).map((format) => (
+                  {(["pdf", "markdown", "html"] as const).map((format) => (
                     <div
                       key={format}
                       className={`border rounded-lg p-3 cursor-pointer transition-colors ${
                         exportFormat === format
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                       }`}
                       onClick={() => setExportFormat(format)}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          exportFormat === format
-                            ? 'border-blue-500 bg-blue-500'
-                            : 'border-gray-300 dark:border-gray-600'
-                        }`}>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 ${
+                            exportFormat === format
+                              ? "border-blue-500 bg-blue-500"
+                              : "border-gray-300 dark:border-gray-600"
+                          }`}
+                        >
                           {exportFormat === format && (
                             <div className="w-full h-full rounded-full bg-white scale-50" />
                           )}
                         </div>
-                        
+
                         <div>
                           <div className="font-medium text-gray-900 dark:text-gray-100 uppercase">
                             {format}
@@ -320,7 +349,10 @@ export function DossierBuilderModal({
                     onChange={(e) => setIncludeMetadata(e.target.checked)}
                     className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                   />
-                  <label htmlFor="includeMetadata" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="includeMetadata"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Include metadata and generation details
                   </label>
                 </div>
@@ -328,18 +360,20 @@ export function DossierBuilderModal({
             </div>
           )}
 
-          {step === 'preview' && generatedDossier && (
+          {step === "preview" && generatedDossier && (
             <div className="p-6 space-y-6">
               <div className="flex items-center gap-2 mb-4">
                 <Eye size={20} className="text-blue-600" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Preview Dossier</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Preview Dossier
+                </h3>
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-6">
                 <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                   {generatedDossier.title}
                 </h4>
-                
+
                 {generatedDossier.description && (
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
                     {generatedDossier.description}
@@ -366,7 +400,9 @@ export function DossierBuilderModal({
                     </span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Time Range:</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                      Time Range:
+                    </span>
                     <span className="ml-2 text-gray-600 dark:text-gray-400">
                       {generatedDossier.filters.timeRange}
                     </span>
@@ -374,7 +410,9 @@ export function DossierBuilderModal({
                 </div>
 
                 <div className="space-y-3">
-                  <h5 className="font-medium text-gray-900 dark:text-gray-100">Included Sections:</h5>
+                  <h5 className="font-medium text-gray-900 dark:text-gray-100">
+                    Included Sections:
+                  </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {generatedDossier.sections.map((section) => (
                       <div key={section.id} className="flex items-center gap-2 text-sm">
@@ -388,7 +426,7 @@ export function DossierBuilderModal({
             </div>
           )}
 
-          {step === 'generating' && (
+          {step === "generating" && (
             <div className="p-6 flex flex-col items-center justify-center min-h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -404,13 +442,13 @@ export function DossierBuilderModal({
         {/* Footer */}
         <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700">
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            {step === 'configure' && selectedSections.length > 0 && (
+            {step === "configure" && selectedSections.length > 0 && (
               <span>{selectedSections.length} sections selected</span>
             )}
           </div>
-          
+
           <div className="flex items-center gap-3">
-            {step === 'configure' && (
+            {step === "configure" && (
               <>
                 <button
                   onClick={onClose}
@@ -428,11 +466,11 @@ export function DossierBuilderModal({
                 </button>
               </>
             )}
-            
-            {step === 'preview' && (
+
+            {step === "preview" && (
               <>
                 <button
-                  onClick={() => setStep('configure')}
+                  onClick={() => setStep("configure")}
                   className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
                 >
                   Back

@@ -1,25 +1,20 @@
 // apps/frontend/vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import path from 'path';
+import { defineConfig } from "vitest/config";
+import tsconfigPaths from "vite-tsconfig-paths";
+import path from "path";
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
-    environment: 'jsdom',
+    environment: "jsdom",
     globals: true,
     // Enthält Polyfills für ResizeObserver & Canvas:
-    setupFiles: ['src/test/setupTests.tsx'],
+    setupFiles: ["src/test/setupTests.tsx"],
     css: true,
-    include: ['src/__tests__/**/*.{test,spec}.{ts,tsx}', 'src/tests/**/*.{test,spec}.{ts,tsx}'],
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/e2e/**',
-    ],
+    include: ["src/__tests__/**/*.{test,spec}.{ts,tsx}", "src/tests/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/e2e/**"],
     coverage: {
-      reporter: ['text', 'lcov'],
+      reporter: ["text", "lcov"],
       lines: 92,
       branches: 92,
       statements: 92,
@@ -27,11 +22,11 @@ export default defineConfig({
     },
   },
   esbuild: {
-    jsx: 'automatic',
+    jsx: "automatic",
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      "@": path.resolve(__dirname, "src"),
     },
   },
 });

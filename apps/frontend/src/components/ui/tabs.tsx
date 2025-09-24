@@ -5,44 +5,46 @@ import { cn } from "@/lib/utils";
 type TabsContextType = {
   value: string | undefined;
   setValue: (v: string) => void;
-  orientation?: 'horizontal' | 'vertical';
-  variant?: 'default' | 'pills' | 'underline' | 'cards';
+  orientation?: "horizontal" | "vertical";
+  variant?: "default" | "pills" | "underline" | "cards";
 };
 
 const TabsContext = createContext<TabsContextType | null>(null);
 
 // Tab variants using CVA for consistent styling
-const tabsListVariants = cva(
-  "inline-flex items-center justify-center",
-  {
-    variants: {
-      variant: {
-        default: "rounded-lg bg-gray-100 dark:bg-gray-800 p-1",
-        pills: "rounded-full bg-gray-50 dark:bg-gray-900 p-1 border border-gray-200 dark:border-gray-700",
-        underline: "border-b border-gray-200 dark:border-gray-700",
-        cards: "gap-2",
-      },
-      orientation: {
-        horizontal: "flex-row gap-1",
-        vertical: "flex-col gap-2",
-      },
+const tabsListVariants = cva("inline-flex items-center justify-center", {
+  variants: {
+    variant: {
+      default: "rounded-lg bg-gray-100 dark:bg-gray-800 p-1",
+      pills:
+        "rounded-full bg-gray-50 dark:bg-gray-900 p-1 border border-gray-200 dark:border-gray-700",
+      underline: "border-b border-gray-200 dark:border-gray-700",
+      cards: "gap-2",
     },
-    defaultVariants: {
-      variant: "default",
-      orientation: "horizontal",
+    orientation: {
+      horizontal: "flex-row gap-1",
+      vertical: "flex-col gap-2",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "default",
+    orientation: "horizontal",
+  },
+});
 
 const tabsTriggerVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap font-medium text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "rounded-md px-3 py-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-gray-900 data-[state=inactive]:hover:bg-gray-50 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:text-gray-100 dark:data-[state=inactive]:hover:bg-gray-700",
-        pills: "rounded-full px-4 py-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-gray-900 data-[state=inactive]:hover:bg-gray-100 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:text-gray-100 dark:data-[state=inactive]:hover:bg-gray-800",
-        underline: "border-b-2 border-transparent px-4 py-3 data-[state=active]:border-primary-600 data-[state=active]:text-primary-600 data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700 data-[state=inactive]:hover:border-gray-300 dark:data-[state=active]:text-primary-400 dark:data-[state=active]:border-primary-400 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:text-gray-300",
-        cards: "rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 data-[state=active]:bg-primary-50 data-[state=active]:border-primary-300 data-[state=active]:text-primary-700 data-[state=inactive]:bg-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-50 data-[state=inactive]:hover:border-gray-300 dark:data-[state=active]:bg-primary-900/30 dark:data-[state=active]:border-primary-600 dark:data-[state=active]:text-primary-300 dark:data-[state=inactive]:bg-gray-800 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:bg-gray-700",
+        default:
+          "rounded-md px-3 py-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-gray-900 data-[state=inactive]:hover:bg-gray-50 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:text-gray-100 dark:data-[state=inactive]:hover:bg-gray-700",
+        pills:
+          "rounded-full px-4 py-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-gray-900 data-[state=inactive]:hover:bg-gray-100 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:text-gray-100 dark:data-[state=inactive]:hover:bg-gray-800",
+        underline:
+          "border-b-2 border-transparent px-4 py-3 data-[state=active]:border-primary-600 data-[state=active]:text-primary-600 data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700 data-[state=inactive]:hover:border-gray-300 dark:data-[state=active]:text-primary-400 dark:data-[state=active]:border-primary-400 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:text-gray-300",
+        cards:
+          "rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 data-[state=active]:bg-primary-50 data-[state=active]:border-primary-300 data-[state=active]:text-primary-700 data-[state=inactive]:bg-white data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-50 data-[state=inactive]:hover:border-gray-300 dark:data-[state=active]:bg-primary-900/30 dark:data-[state=active]:border-primary-600 dark:data-[state=active]:text-primary-300 dark:data-[state=inactive]:bg-gray-800 dark:data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:hover:bg-gray-700",
       },
       size: {
         sm: "px-2 py-1 text-xs",
@@ -54,15 +56,15 @@ const tabsTriggerVariants = cva(
       variant: "default",
       size: "md",
     },
-  }
+  },
 );
 
 export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  orientation?: 'horizontal' | 'vertical';
-  variant?: 'default' | 'pills' | 'underline' | 'cards';
+  orientation?: "horizontal" | "vertical";
+  variant?: "default" | "pills" | "underline" | "cards";
 }
 
 /**
@@ -72,15 +74,15 @@ export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
  * - Responsive design with horizontal/vertical orientation
  * - Consistent with InfoTerminal design system
  */
-function Tabs({ 
-  value, 
-  defaultValue, 
-  onValueChange, 
-  orientation = 'horizontal',
-  variant = 'default',
-  className = "", 
-  children, 
-  ...props 
+function Tabs({
+  value,
+  defaultValue,
+  onValueChange,
+  orientation = "horizontal",
+  variant = "default",
+  className = "",
+  children,
+  ...props
 }: TabsProps) {
   const [internal, setInternal] = useState<string | undefined>(defaultValue);
   const isControlled = typeof value !== "undefined";
@@ -91,12 +93,15 @@ function Tabs({
     onValueChange?.(v);
   };
 
-  const ctx = useMemo(() => ({ 
-    value: current, 
-    setValue, 
-    orientation, 
-    variant 
-  }), [current, orientation, variant]);
+  const ctx = useMemo(
+    () => ({
+      value: current,
+      setValue,
+      orientation,
+      variant,
+    }),
+    [current, orientation, variant],
+  );
 
   return (
     <TabsContext.Provider value={ctx}>
@@ -107,17 +112,21 @@ function Tabs({
   );
 }
 
-export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement>, 
-  VariantProps<typeof tabsListVariants> {}
+export interface TabsListProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof tabsListVariants> {}
 
 function TabsList({ variant, orientation, className = "", children, ...props }: TabsListProps) {
   const ctx = useContext(TabsContext);
-  const actualVariant = variant ?? ctx?.variant ?? 'default';
-  const actualOrientation = orientation ?? ctx?.orientation ?? 'horizontal';
+  const actualVariant = variant ?? ctx?.variant ?? "default";
+  const actualOrientation = orientation ?? ctx?.orientation ?? "horizontal";
 
   return (
-    <div 
-      className={cn(tabsListVariants({ variant: actualVariant, orientation: actualOrientation }), className)} 
+    <div
+      className={cn(
+        tabsListVariants({ variant: actualVariant, orientation: actualOrientation }),
+        className,
+      )}
       role="tablist"
       {...props}
     >
@@ -126,34 +135,35 @@ function TabsList({ variant, orientation, className = "", children, ...props }: 
   );
 }
 
-export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof tabsTriggerVariants> {
+export interface TabsTriggerProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof tabsTriggerVariants> {
   value: string;
   icon?: React.ElementType;
   badge?: string | number;
   description?: string;
 }
 
-function TabsTrigger({ 
-  value, 
-  variant, 
+function TabsTrigger({
+  value,
+  variant,
   size,
   icon: Icon,
   badge,
   description,
-  className = "", 
-  children, 
-  onClick, 
-  ...props 
+  className = "",
+  children,
+  onClick,
+  ...props
 }: TabsTriggerProps) {
   const ctx = useContext(TabsContext);
   if (!ctx) {
     throw new Error("TabsTrigger must be used within <Tabs>");
   }
-  
+
   const isActive = ctx.value === value;
-  const actualVariant = variant ?? ctx.variant ?? 'default';
-  const dataState = isActive ? 'active' : 'inactive';
+  const actualVariant = variant ?? ctx.variant ?? "default";
+  const dataState = isActive ? "active" : "inactive";
 
   return (
     <button
@@ -169,24 +179,24 @@ function TabsTrigger({
       {...props}
     >
       <div className="flex items-center gap-2">
-        {Icon && <Icon size={size === 'sm' ? 14 : size === 'lg' ? 20 : 16} />}
-        
+        {Icon && <Icon size={size === "sm" ? 14 : size === "lg" ? 20 : 16} />}
+
         <div className="flex flex-col items-start">
           <span>{children}</span>
           {description && (
-            <span className="text-xs opacity-70 font-normal mt-0.5">
-              {description}
-            </span>
+            <span className="text-xs opacity-70 font-normal mt-0.5">{description}</span>
           )}
         </div>
-        
+
         {badge && (
-          <span className={cn(
-            "inline-flex items-center justify-center rounded-full text-xs font-medium min-w-[1.25rem] h-5 px-1",
-            isActive 
-              ? "bg-white/20 text-white" 
-              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-          )}>
+          <span
+            className={cn(
+              "inline-flex items-center justify-center rounded-full text-xs font-medium min-w-[1.25rem] h-5 px-1",
+              isActive
+                ? "bg-white/20 text-white"
+                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+            )}
+          >
             {badge}
           </span>
         )}
@@ -200,12 +210,12 @@ export interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
   forceMount?: boolean;
 }
 
-function TabsContent({ 
-  value, 
+function TabsContent({
+  value,
   forceMount = false,
-  className = "", 
-  children, 
-  ...props 
+  className = "",
+  children,
+  ...props
 }: TabsContentProps) {
   const ctx = useContext(TabsContext);
   if (!ctx) {
@@ -217,13 +227,13 @@ function TabsContent({
   if (!isActive && !forceMount) return null;
 
   return (
-    <div 
-      role="tabpanel" 
-      data-state={isActive ? 'active' : 'inactive'}
+    <div
+      role="tabpanel"
+      data-state={isActive ? "active" : "inactive"}
       className={cn(
         "mt-6 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         !isActive && "hidden",
-        className
+        className,
       )}
       {...props}
     >
@@ -239,12 +249,12 @@ export interface NestedTabsProps extends TabsProps {
 
 function NestedTabs({ level = 1, className, ...props }: NestedTabsProps) {
   return (
-    <Tabs 
+    <Tabs
       className={cn(
         level === 1 && "space-y-6",
         level === 2 && "space-y-4",
         level >= 3 && "space-y-2",
-        className
+        className,
       )}
       {...props}
     />
@@ -252,31 +262,23 @@ function NestedTabs({ level = 1, className, ...props }: NestedTabsProps) {
 }
 
 // Pre-configured tab variants for common use cases
-export const MainTabs = (props: TabsProps) => (
-  <Tabs variant="default" {...props} />
-);
+export const MainTabs = (props: TabsProps) => <Tabs variant="default" {...props} />;
 
-export const SubTabs = (props: TabsProps) => (
-  <Tabs variant="underline" {...props} />
-);
+export const SubTabs = (props: TabsProps) => <Tabs variant="underline" {...props} />;
 
-export const NavigationTabs = (props: TabsProps) => (
-  <Tabs variant="pills" {...props} />
-);
+export const NavigationTabs = (props: TabsProps) => <Tabs variant="pills" {...props} />;
 
-export const CardTabs = (props: TabsProps) => (
-  <Tabs variant="cards" {...props} />
-);
+export const CardTabs = (props: TabsProps) => <Tabs variant="cards" {...props} />;
 
 // Export types
 export type { TabsContextType };
 
-export { 
-  Tabs, 
-  TabsList, 
-  TabsTrigger, 
-  TabsContent, 
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
   NestedTabs,
   tabsListVariants,
-  tabsTriggerVariants
+  tabsTriggerVariants,
 };

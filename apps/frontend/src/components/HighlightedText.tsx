@@ -1,13 +1,7 @@
 "use client";
 import { highlightText, Entity } from "@/lib/nlp";
 
-export default function HighlightedText({
-  text,
-  entities,
-}: {
-  text: string;
-  entities: Entity[];
-}) {
+export default function HighlightedText({ text, entities }: { text: string; entities: Entity[] }) {
   const parts = highlightText(text, entities);
   return (
     <p className="leading-relaxed">
@@ -18,7 +12,7 @@ export default function HighlightedText({
           </mark>
         ) : (
           <span key={i}>{p.t}</span>
-        )
+        ),
       )}
     </p>
   );

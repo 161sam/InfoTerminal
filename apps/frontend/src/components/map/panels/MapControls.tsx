@@ -1,15 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Search, 
-  Settings,
-  RefreshCw,
-  BarChart3
-} from 'lucide-react';
-import { BoundingBox, GeoStatistics, NearbySearch, formatBounds } from '@/lib/map/map-config';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, Settings, RefreshCw, BarChart3 } from "lucide-react";
+import { BoundingBox, GeoStatistics, NearbySearch, formatBounds } from "@/lib/map/map-config";
 
 interface MapControlsProps {
   searchLocation: string;
@@ -52,23 +47,19 @@ export default function MapControls({
   showControls,
   setShowControls,
   onRefresh,
-  onFetchStats
+  onFetchStats,
 }: MapControlsProps) {
   return (
     <Card className="absolute top-4 right-4 z-[1000] w-80">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Geospatial Controls</CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowControls(!showControls)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setShowControls(!showControls)}>
             <Settings className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      
+
       {showControls && (
         <CardContent className="space-y-4">
           {/* Search Location */}
@@ -86,9 +77,7 @@ export default function MapControls({
               </Button>
             </div>
             {geocodeSuccess && geocodeMessage && (
-              <div className="text-xs text-green-600">
-                Found: {geocodeMessage}
-              </div>
+              <div className="text-xs text-green-600">Found: {geocodeMessage}</div>
             )}
           </div>
 
@@ -99,7 +88,7 @@ export default function MapControls({
               <TabsTrigger value="nearby">Nearby</TabsTrigger>
               <TabsTrigger value="heatmap">Heatmap</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="entities" className="mt-3 space-y-3">
               <div className="flex items-center space-x-2">
                 <Switch
@@ -111,7 +100,7 @@ export default function MapControls({
                   Draw bounding box
                 </label>
               </div>
-              
+
               {selectedBounds && (
                 <div className="text-xs text-gray-600">
                   <div>Entities: {entitiesCount}</div>
@@ -119,7 +108,7 @@ export default function MapControls({
                 </div>
               )}
             </TabsContent>
-            
+
             <TabsContent value="nearby" className="mt-3 space-y-3">
               <div className="text-sm">Click on map to find nearby entities</div>
               <div>
@@ -127,20 +116,20 @@ export default function MapControls({
                 <Input
                   type="number"
                   value={nearbySearch.radius}
-                  onChange={(e) => setNearbySearch({ ...nearbySearch, radius: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setNearbySearch({ ...nearbySearch, radius: Number(e.target.value) })
+                  }
                   min="1"
                   max="100"
                   className="mt-1"
                 />
               </div>
             </TabsContent>
-            
+
             <TabsContent value="heatmap" className="mt-3">
               <div className="text-sm">Draw bounding box to generate entity heatmap</div>
               {heatmapPointsCount > 0 && (
-                <div className="text-xs text-gray-600">
-                  Heatmap points: {heatmapPointsCount}
-                </div>
+                <div className="text-xs text-gray-600">Heatmap points: {heatmapPointsCount}</div>
               )}
             </TabsContent>
           </Tabs>
@@ -150,7 +139,10 @@ export default function MapControls({
             <div className="bg-gray-50 p-3 rounded text-xs">
               <div className="font-medium mb-2">Statistics</div>
               <div>Total nodes: {geoStats.total_nodes.toLocaleString()}</div>
-              <div>Geocoded: {geoStats.geocoded_nodes.toLocaleString()} ({geoStats.geocoding_percentage.toFixed(1)}%)</div>
+              <div>
+                Geocoded: {geoStats.geocoded_nodes.toLocaleString()} (
+                {geoStats.geocoding_percentage.toFixed(1)}%)
+              </div>
               <div>Node types: {geoStats.node_types_with_coordinates.length}</div>
             </div>
           )}
