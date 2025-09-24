@@ -100,3 +100,11 @@ jobs:
         run: git diff --exit-code
       - name: Observability baseline gate
         run: python scripts/check_observability_baseline.py
+
+  synthetic-smoke:
+    name: Synthetic Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate synthetic smoke targets
+        run: python scripts/synthetic_smoke.py --validate-only

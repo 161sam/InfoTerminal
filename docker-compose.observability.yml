@@ -7,6 +7,7 @@ services:
     volumes:
       - prometheus-data:/prometheus
       - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus/synthetic-smoke-targets.json:/etc/prometheus/synthetic-smoke-targets.json:ro
     ports:
       - "${IT_PORT_PROM:-3412}:9090"
     profiles: ["observability"]
@@ -65,6 +66,14 @@ services:
     profiles: ["observability"]
     depends_on:
       - loki
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    command:
+      - --config.file=/etc/blackbox/blackbox.yml
+    volumes:
+      - ./observability/blackbox.yml:/etc/blackbox/blackbox.yml:ro
+    profiles: ["observability"]
 
 volumes:
   prometheus-data: {}
