@@ -1,0 +1,42 @@
+[
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "frontend",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://web:3000/api/health"
+    ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "search-api",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://search-api:8080/readyz"
+    ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "graph-api",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://graph-api:8080/readyz"
+    ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "doc-entities",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://doc-entities:8000/readyz"
+    ]
+  }
+]

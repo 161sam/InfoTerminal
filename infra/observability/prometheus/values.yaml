@@ -12,3 +12,65 @@ server:
           regex: (search-api|graph-api|gateway)
     - job_name: 'node-exporter'
       static_configs: []
+    - job_name: 'synthetic-smoke'
+      metrics_path: /probe
+      file_sd_configs:
+        - files:
+            - /etc/config/synthetic-smoke-targets.json
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [module]
+          target_label: __param_module
+        - source_labels: [service]
+          target_label: service
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter.default.svc:9115
+        - target_label: job
+          replacement: synthetic-smoke
+  serverFiles:
+    synthetic-smoke-targets.json: |
+      [
+        {
+          "labels": {
+            "module": "http_2xx",
+            "service": "frontend",
+            "synthetic": "true"
+          },
+          "targets": [
+            "http://frontend.default.svc:3000/api/health"
+          ]
+        },
+        {
+          "labels": {
+            "module": "http_2xx",
+            "service": "search-api",
+            "synthetic": "true"
+          },
+          "targets": [
+            "http://search-api.default.svc:8080/readyz"
+          ]
+        },
+        {
+          "labels": {
+            "module": "http_2xx",
+            "service": "graph-api",
+            "synthetic": "true"
+          },
+          "targets": [
+            "http://graph-api.default.svc:8080/readyz"
+          ]
+        },
+        {
+          "labels": {
+            "module": "http_2xx",
+            "service": "doc-entities",
+            "synthetic": "true"
+          },
+          "targets": [
+            "http://doc-entities.default.svc:8000/readyz"
+          ]
+        }
+      ]

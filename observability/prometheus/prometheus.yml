@@ -26,3 +26,21 @@ scrape_configs:
     static_configs:
       - targets: ["flowise-connector:8080"]
     # optional; /metrics active when IT_ENABLE_METRICS=1
+  - job_name: "synthetic-smoke"
+    metrics_path: /probe
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/synthetic-smoke-targets.json
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [module]
+        target_label: __param_module
+      - source_labels: [service]
+        target_label: service
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+      - target_label: job
+        replacement: synthetic-smoke
