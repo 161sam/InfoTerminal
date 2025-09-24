@@ -44,8 +44,10 @@ async def validate_bearer(token: str) -> Optional[Dict[str, Any]]:
             audience=AUDIENCE,
             issuer=ISSUER,
             options={"verify_at_hash": False},
-            leeway=SKEW,
         )
+        exp = claims.get("exp")
+        if exp and exp + SKEW < int(time.time()):
+            raise JWTError("token expired")
         return claims
     except Exception as e:
         log.warning("JWT validation failed: %s", e)
