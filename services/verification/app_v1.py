@@ -64,7 +64,7 @@ app = FastAPI(
 
 # Setup middleware
 if HAS_SHARED_STANDARDS:
-    setup_standard_middleware(app)
+    setup_standard_middleware(app, service_name="verification")
 else:
     # Fallback middleware setup
     app.add_middleware(

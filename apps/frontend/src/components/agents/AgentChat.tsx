@@ -162,7 +162,10 @@ export const EnhancedAgentChat: React.FC<AgentChatProps> = ({
   const [showSteps, setShowSteps] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("chat");
-  const [agentStatus, setAgentStatus] = useState({ healthy: false, lastCheck: null });
+  const [agentStatus, setAgentStatus] = useState<{ healthy: boolean; lastCheck: Date | null }>({
+    healthy: false,
+    lastCheck: null,
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

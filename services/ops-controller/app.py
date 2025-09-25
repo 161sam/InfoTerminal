@@ -26,6 +26,18 @@ _lock_at = 0.0
 # Global security session manager
 security_manager: Optional[SessionManager] = None
 
+
+@APP.get("/health")
+async def legacy_health() -> Dict[str, Any]:
+    """Legacy health endpoint for Docker health checks."""
+    return {"ok": True, "deprecated": True}
+
+
+@APP.get("/healthz")
+async def healthz() -> Dict[str, Any]:
+    """Lightweight liveness probe used by compose."""
+    return {"status": "ok"}
+
 # Pydantic models for security endpoints
 class StartIncognitoRequest(BaseModel):
     sessionId: str

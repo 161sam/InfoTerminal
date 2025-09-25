@@ -33,17 +33,30 @@ except ImportError:
         size: int = 10
 
 # Import models (use existing models and extend as needed)
-from ..models.api_models import (
-    ExtractClaimsRequest,
-    ClaimResponse,
-    FindEvidenceRequest,
-    EvidenceResponse,
-    ClassifyStanceRequest,
-    StanceResponse,
-    CredibilityRequest,
-    CredibilityResponse,
-    MediaAnalysisResponse
-)
+try:
+    from ..models.api_models import (
+        ExtractClaimsRequest,
+        ClaimResponse,
+        FindEvidenceRequest,
+        EvidenceResponse,
+        ClassifyStanceRequest,
+        StanceResponse,
+        CredibilityRequest,
+        CredibilityResponse,
+        MediaAnalysisResponse,
+    )
+except ImportError:
+    from models.api_models import (  # type: ignore
+        ExtractClaimsRequest,
+        ClaimResponse,
+        FindEvidenceRequest,
+        EvidenceResponse,
+        ClassifyStanceRequest,
+        StanceResponse,
+        CredibilityRequest,
+        CredibilityResponse,
+        MediaAnalysisResponse,
+    )
 
 router = APIRouter(tags=["Verification"], prefix="/v1")
 
@@ -54,13 +67,20 @@ try:
     from ..stance_classifier import StanceClassifier
     from ..evidence_retrieval import EvidenceRetriever
     from ..media_forensics import MediaForensics
-except ImportError as e:
-    # Handle missing service components
-    VerificationService = None
-    ClaimExtractor = None
-    StanceClassifier = None
-    EvidenceRetriever = None
-    MediaForensics = None
+except ImportError:
+    try:  # Fallback to absolute imports when package context is missing
+        from service import VerificationService  # type: ignore
+        from claim_extractor import ClaimExtractor  # type: ignore
+        from stance_classifier import StanceClassifier  # type: ignore
+        from evidence_retrieval import EvidenceRetriever  # type: ignore
+        from media_forensics import MediaForensics  # type: ignore
+    except ImportError:
+        # Handle missing service components
+        VerificationService = None
+        ClaimExtractor = None
+        StanceClassifier = None
+        EvidenceRetriever = None
+        MediaForensics = None
 
 
 # Additional response models

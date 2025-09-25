@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install system dependencies for image processing
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
@@ -17,15 +17,15 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements first for better caching
-COPY services/media-forensics/requirements.txt ./
+COPY ./services/media-forensics/requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy shared modules and service code
-COPY services/_shared/ /app/_shared/
-COPY services/common/ /app/common/
-COPY services/media-forensics/ ./
+COPY ./services/_shared/ /app/_shared/
+COPY ./services/common/ /app/common/
+COPY ./services/media-forensics/ ./
 
 # Ensure shared modules are importable
 ENV PYTHONPATH="/app:$PYTHONPATH"

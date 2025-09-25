@@ -15,7 +15,7 @@ requests[socks]==2.31.0
 
 # Security & Anonymization
 fake-useragent==1.4.0
-cryptography==41.0.8
+cryptography==41.0.7
 
 # Monitoring & Health
 prometheus-client==0.19.0

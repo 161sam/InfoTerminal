@@ -19,14 +19,14 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY services/ops-controller/requirements.txt .
+COPY ./services/ops-controller/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy shared libraries first (for better caching)
-COPY services/_shared/ /app/_shared/
+COPY ./services/_shared/ /app/_shared/
 
 # Copy service files
-COPY services/ops-controller/ .
+COPY ./services/ops-controller/ .
 
 # Create necessary directories
 RUN mkdir -p /app/data /app/logs

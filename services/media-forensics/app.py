@@ -39,7 +39,11 @@ except ImportError:
     def make_readyz(name, version, ts, checks): return {"status": "ready"}, 200
     def setup_otel(app, service_name, version): pass
     def enable_prometheus_metrics(app, **kwargs): pass
-    class RequestIdMiddleware: pass
+    from starlette.middleware.base import BaseHTTPMiddleware
+
+    class RequestIdMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request, call_next):
+            return await call_next(request)
 
 
 app = FastAPI(

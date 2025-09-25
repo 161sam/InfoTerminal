@@ -21,7 +21,9 @@ import { ComponentType } from "react";
 import { LucideIcon } from "lucide-react";
 
 // Helper to wrap LucideIcon to expected props
-function wrapLucideIcon(Icon: LucideIcon): ComponentType<{ size?: number; className?: string }> {
+function wrapLucideIcon(
+  Icon: LucideIcon,
+): ComponentType<{ size?: number | string; className?: string }> {
   return ({ size = 20, className }) => <Icon size={size} className={className} />;
 }
 

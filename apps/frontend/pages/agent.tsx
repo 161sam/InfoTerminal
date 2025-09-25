@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState } from "react";
 import { MessageSquare, Monitor, Bot, Settings } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -55,9 +56,9 @@ export default function ConsolidatedAgentPage() {
           <p className="font-semibold">New: single-turn MVP chat</p>
           <p className="mt-1">
             Need the lightweight mocked agent demo from Wave 4?{" "}
-            <a href="/agent/mvp" className="text-primary-700 underline">
+            <Link href="/agent/mvp" className="text-primary-700 underline">
               Open the MVP chat interface
-            </a>{" "}
+            </Link>{" "}
             to trigger the mocked tool governance flow.
           </p>
         </div>

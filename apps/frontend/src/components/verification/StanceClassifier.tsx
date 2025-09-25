@@ -349,7 +349,7 @@ export function StanceClassifier({
                 <div className="flex items-center gap-1">
                   <HelpCircle className="h-3 w-3 text-gray-500" />
                   <span className={textStyles.bodySmall}>
-                    <strong>Unrelated:</strong> Evidence doesn't address the claim
+                    <strong>Unrelated:</strong> Evidence does not address the claim
                   </span>
                 </div>
               </div>

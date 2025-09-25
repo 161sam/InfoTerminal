@@ -12,11 +12,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY ./services/egress-gateway/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy shared libraries and service code
+COPY ./services/_shared/ /app/_shared/
+COPY ./services/common/ /app/common/
+COPY ./services/egress-gateway/ /app/
 
 # Create tor data directory with proper permissions
 RUN mkdir -p /var/lib/tor && \
@@ -24,7 +26,7 @@ RUN mkdir -p /var/lib/tor && \
     chmod 700 /var/lib/tor
 
 # Copy Tor configuration
-COPY config/tor.conf /etc/tor/torrc
+COPY ./services/egress-gateway/config/tor.conf /etc/tor/torrc
 
 # Create non-root user for security
 RUN useradd -m -u 1000 appuser && \
@@ -40,5 +42,5 @@ EXPOSE 8615
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -fsS http://localhost:8615/healthz || exit 1
 
-# Start script that handles Tor and the app
+# Start the compatibility app; health endpoints now answer 200 with deprecation headers
 CMD ["python", "app.py"]

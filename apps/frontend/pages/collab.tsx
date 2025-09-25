@@ -22,7 +22,7 @@ type TabType = "chat" | "documents" | "tasks" | "activity";
 
 export default function CollaborationPage() {
   // State management
-  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<TabType>("chat");
   const [messages, setMessages] = useState<Message[]>(DEMO_MESSAGES);
   const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(false);

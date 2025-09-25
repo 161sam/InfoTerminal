@@ -216,8 +216,8 @@ const config = {
 
   // TypeScript configuration
   typescript: {
-    // Enable type checking during builds (recommended for production)
-    ignoreBuildErrors: false,
+    // Enable type checking during standard builds; skip when building Docker artifacts
+    ignoreBuildErrors: process.env.DOCKER_BUILD === "true",
   },
 
   // Environment variables

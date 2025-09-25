@@ -130,6 +130,7 @@ vi.mock("@/hooks/useFileUpload", () => {
   return {
     __esModule: true,
     default: () => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [uploads, setUploads] = React.useState([]) as [
         Upload[],
         React.Dispatch<React.SetStateAction<Upload[]>>,

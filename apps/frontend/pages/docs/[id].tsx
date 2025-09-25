@@ -56,7 +56,7 @@ export default function DocPage() {
             <DocCard doc={doc} />
           </Panel>
           <Panel title="Content">
-            <EntityHighlighter text={doc.text} entities={doc.entities} />
+            <EntityHighlighter text={doc.text ?? ""} entities={doc.entities} />
           </Panel>
         </div>
         <aside className="lg:col-span-1 space-y-4">

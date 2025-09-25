@@ -14,18 +14,18 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
-COPY services/doc-entities/requirements.txt .
+COPY ./services/doc-entities/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Download spaCy model
 RUN python -m spacy download en_core_web_sm || echo "spaCy model download failed, will use fallback"
 
 # Copy shared libraries first (for better caching)
-COPY services/_shared/ /app/_shared/
-COPY services/common/ /app/common/
+COPY ./services/_shared/ /app/_shared/
+COPY ./services/common/ /app/common/
 
 # Copy service files
-COPY services/doc-entities/ .
+COPY ./services/doc-entities/ .
 
 # Set Python path to include shared modules
 ENV PYTHONPATH="/app:$PYTHONPATH"

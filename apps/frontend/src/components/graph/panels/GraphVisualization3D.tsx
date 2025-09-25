@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { Settings, Download, Cube } from "lucide-react";
+import { Settings, Download, Box } from "lucide-react";
 import Panel from "@/components/layout/Panel";
 import Button from "@/components/ui/button";
 import { LoadingSpinner, EmptyState } from "@/components/ui/loading";
@@ -83,7 +83,7 @@ export default function GraphVisualization3D({ graphData }: GraphVisualization3D
             />
           ) : (
             <EmptyState
-              icon={Cube}
+              icon={Box}
               title="3D View Loading"
               message="Preparing 3D visualization components..."
             />

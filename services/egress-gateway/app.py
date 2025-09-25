@@ -41,7 +41,7 @@ app = FastAPI(
 )
 
 # Standard deprecation response
-def deprecation_response(new_endpoint: str, method: str = "GET"):
+def deprecation_response(new_endpoint: str, method: str = "GET", status_code: int = 410):
     return JSONResponse(
         content={
             "error": {
@@ -60,7 +60,7 @@ def deprecation_response(new_endpoint: str, method: str = "GET"):
                 }
             }
         },
-        status_code=410,  # Gone
+        status_code=status_code,
         headers={
             "X-Deprecated": f"Use {new_endpoint} instead",
             "X-Migration-Guide": "https://github.com/161sam/InfoTerminal/docs/egress-gateway-migration.md"
@@ -70,13 +70,16 @@ def deprecation_response(new_endpoint: str, method: str = "GET"):
 # Legacy endpoint redirects
 @app.get("/healthz")
 async def healthz():
-    """Health check - redirects to new implementation."""
-    return deprecation_response("/healthz (use app_v1.py)")
+    """Health check returns 200 but signals the migration path."""
+    return deprecation_response(
+        "/healthz (use app_v1.py)",
+        status_code=200
+    )
 
 @app.get("/health")
 async def legacy_health():
     """DEPRECATED: Use /healthz instead.""" 
-    return deprecation_response("/healthz")
+    return deprecation_response("/healthz", status_code=200)
 
 @app.post("/proxy/request")
 async def proxy_request():

@@ -10,18 +10,18 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
-COPY services/verification/requirements.txt .
+COPY ./services/verification/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Download spaCy model
 RUN python -m spacy download en_core_web_sm || echo "spaCy model download failed, will use fallback"
 
 # Copy shared libraries first (for better caching)
-COPY services/_shared/ /app/_shared/
-COPY services/common/ /app/common/
+COPY ./services/_shared/ /app/_shared/
+COPY ./services/common/ /app/common/
 
 # Copy application code
-COPY services/verification/ .
+COPY ./services/verification/ .
 
 # Set Python path to include shared modules
 ENV PYTHONPATH="/app:$PYTHONPATH"
@@ -40,5 +40,5 @@ EXPOSE 8617
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -fsS http://localhost:8617/healthz || exit 1
 
-# Start the service
-CMD ["python", "app.py"]
+# Start the service with uvicorn
+CMD ["uvicorn", "app_v1:app", "--host", "0.0.0.0", "--port", "8617"]

@@ -17,7 +17,7 @@ interface ServiceEndpoint {
   key: keyof EndpointSettings;
   label: string;
   description: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   required: boolean;
   defaultPort?: string;
 }

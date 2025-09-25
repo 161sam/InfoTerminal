@@ -80,7 +80,7 @@ class EvidenceResponse(BaseModel):
 
 class StanceResponse(BaseModel):
     """Response model for stance classification."""
-    stance: str = Field(..., description="Stance classification", regex="^(support|contradict|neutral|unrelated)$")
+    stance: str = Field(..., description="Stance classification", pattern="^(support|contradict|neutral|unrelated)$")
     confidence: float = Field(..., description="Classification confidence", ge=0.0, le=1.0)
     reasoning: str = Field(..., description="Explanation of the classification")
     key_phrases: List[str] = Field(..., description="Key phrases that influenced classification")

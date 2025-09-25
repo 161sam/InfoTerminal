@@ -21,7 +21,7 @@ COPY services/search-api/ /app
 RUN pip install --no-cache-dir -e .
 
 # Set Python path to include shared modules
-ENV PYTHONPATH="/app:$PYTHONPATH"
+ENV PYTHONPATH="/app/src:/app:$PYTHONPATH"
 
 # Expose port
 EXPOSE 8080

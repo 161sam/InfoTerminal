@@ -7,13 +7,18 @@ export const DIRECT_ENDPOINTS = {
   VIEWS_API: process.env.NEXT_PUBLIC_VIEWS_API ?? "http://127.0.0.1:8403",
 } as const;
 
+const DOC_ENTITIES_DEFAULT = process.env.NEXT_PUBLIC_DOCENTITIES_API ?? "http://127.0.0.1:8613";
+const DOC_ENTITIES_ALIAS = process.env.NEXT_PUBLIC_DOC_ENTITIES_API ?? DOC_ENTITIES_DEFAULT;
+const NLP_API_DEFAULT = process.env.NEXT_PUBLIC_NLP_API ?? DOC_ENTITIES_ALIAS;
+
 export const OTHER_ENDPOINTS = {
   // New doc-entities service (replaces legacy nlp-service)
-  DOCENTITIES_API: process.env.NEXT_PUBLIC_DOCENTITIES_API ?? "http://127.0.0.1:8613",
+  DOCENTITIES_API: DOC_ENTITIES_DEFAULT,
 
   // Agent services
   AGENT_API: process.env.NEXT_PUBLIC_AGENT_API ?? "http://127.0.0.1:8610",
-  DOC_ENTITIES_API: process.env.NEXT_PUBLIC_DOC_ENTITIES_API ?? "http://127.0.0.1:8613",
+  DOC_ENTITIES_API: DOC_ENTITIES_ALIAS,
+  NLP_API: NLP_API_DEFAULT,
 
   // External integrations
   FLOWISE_API: process.env.NEXT_PUBLIC_FLOWISE_API ?? "http://127.0.0.1:8620",

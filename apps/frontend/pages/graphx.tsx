@@ -10,7 +10,7 @@ import {
   Search,
   Code2,
   BarChart3,
-  Cube,
+  Box,
   Brain,
   Settings,
 } from "lucide-react";
@@ -168,7 +168,7 @@ export default function ConsolidatedGraphPage() {
             <TabsTrigger value="graph" icon={Network}>
               Graph View
             </TabsTrigger>
-            <TabsTrigger value="viz3d" icon={Cube}>
+            <TabsTrigger value="viz3d" icon={Box}>
               3D Visualization
             </TabsTrigger>
             <TabsTrigger value="ml" icon={Brain}>

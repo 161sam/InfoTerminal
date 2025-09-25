@@ -28,10 +28,12 @@ COPY --from=deps /app/node_modules /app/node_modules
 COPY apps/frontend/ /app/apps/frontend
 # Copy shared scripts referenced by prebuild hooks (../../scripts)
 COPY scripts /app/scripts
+COPY tools /app/tools
 
 # Environment variables for build
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+ENV DOCKER_BUILD true
 ENV NEXT_IGNORE_ESLINT 1
 ENV NEXT_IGNORE_TYPECHECK 1
 

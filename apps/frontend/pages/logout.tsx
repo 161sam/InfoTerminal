@@ -60,7 +60,7 @@ export default function LogoutPage() {
         {status === "error" && (
           <div className="flex flex-col items-center gap-3 text-red-600 dark:text-red-200">
             <ShieldOff className="h-8 w-8" />
-            <p className="text-sm">We couldn't complete the logout. Please try again.</p>
+            <p className="text-sm">We could not complete the logout. Please try again.</p>
             <button
               type="button"
               className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, type ComponentType } from "react";
 import {
   Settings,
   Server,
@@ -15,7 +15,6 @@ import {
   Brain,
   Eye,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
@@ -59,7 +58,7 @@ interface ServiceEndpoint {
   key: keyof EndpointSettings;
   label: string;
   description: string;
-  icon: LucideIcon;
+  icon: ComponentType<{ size?: number | string; className?: string }>;
   required: boolean;
   defaultPort?: string;
 }
@@ -133,7 +132,7 @@ export default function SettingsPage() {
   }: {
     id: SettingsTab;
     label: string;
-    icon: LucideIcon;
+    icon: ComponentType<{ size?: number | string; className?: string }>;
   }) => (
     <button
       onClick={() => handleTabSelect(id)}
