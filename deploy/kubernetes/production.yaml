@@ -81,7 +81,13 @@ spec:
       labels:
         app: gateway
         component: api-gateway
+        security.infoterminal.dev/egress: allowed
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/gateway: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: gateway
         image: infoterminal/gateway:latest
@@ -110,6 +116,13 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         livenessProbe:
           httpGet:
             path: /health
@@ -165,7 +178,13 @@ spec:
       labels:
         app: frontend
         component: web-ui
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/frontend: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: frontend
         image: infoterminal/frontend:latest
@@ -183,6 +202,13 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "500m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         livenessProbe:
           httpGet:
             path: /api/health
@@ -230,7 +256,13 @@ spec:
       labels:
         app: feedback-aggregator
         component: feedback-service
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/feedback-aggregator: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: feedback-aggregator
         image: infoterminal/feedback-aggregator:latest
@@ -271,6 +303,13 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
 ---
 apiVersion: v1
 kind: Service
@@ -306,7 +345,13 @@ spec:
       labels:
         app: performance-monitor
         component: monitoring-service
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/performance-monitor: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: performance-monitor
         image: infoterminal/performance-monitor:latest
@@ -339,6 +384,13 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
 ---
 apiVersion: v1
 kind: Service
@@ -374,7 +426,13 @@ spec:
       labels:
         app: cache-manager
         component: caching-service
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/cache-manager: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: cache-manager
         image: infoterminal/cache-manager:latest
@@ -405,6 +463,13 @@ spec:
             port: 8082
           initialDelaySeconds: 5
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
 ---
 apiVersion: v1
 kind: Service
@@ -440,7 +505,13 @@ spec:
       labels:
         app: websocket-manager
         component: realtime-service
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/websocket-manager: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: websocket-manager
         image: infoterminal/websocket-manager:latest
@@ -476,6 +547,13 @@ spec:
             port: 8083
           initialDelaySeconds: 5
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
 ---
 apiVersion: v1
 kind: Service
@@ -512,7 +590,13 @@ spec:
       labels:
         app: postgres
         component: database
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/postgres: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: postgres
         image: postgres:15
@@ -556,6 +640,13 @@ spec:
             - infoterminal
           initialDelaySeconds: 5
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
   volumeClaimTemplates:
   - metadata:
       name: postgres-storage
@@ -601,7 +692,13 @@ spec:
       labels:
         app: redis
         component: cache
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/redis: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: redis
         image: redis:7-alpine
@@ -637,6 +734,13 @@ spec:
             - ping
           initialDelaySeconds: 5
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
   volumeClaimTemplates:
   - metadata:
       name: redis-storage
@@ -682,7 +786,13 @@ spec:
       labels:
         app: neo4j
         component: graph-database
+        security.infoterminal.dev/egress: internal
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/neo4j: runtime/default
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: neo4j
         image: neo4j:5
@@ -724,6 +834,13 @@ spec:
             port: 7474
           initialDelaySeconds: 30
           periodSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
   volumeClaimTemplates:
   - metadata:
       name: neo4j-data
@@ -811,6 +928,58 @@ spec:
             name: websocket-manager
             port:
               number: 8083
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: restrict-default-egress
+  namespace: infoterminal
+spec:
+  podSelector:
+    matchExpressions:
+      - key: security.infoterminal.dev/egress
+        operator: NotIn
+        values:
+          - allowed
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-external-egress
+  namespace: infoterminal
+spec:
+  podSelector:
+    matchLabels:
+      security.infoterminal.dev/egress: allowed
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector: {}
+    - to:
+        - namespaceSelector: {}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+        - protocol: UDP
+          port: 53
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

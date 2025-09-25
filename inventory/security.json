@@ -1,0 +1,1510 @@
+{
+  "compose": [
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.sso.yml",
+        "docker-compose.superset-airflow.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "airflow",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "airflow-db-init",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "airflow-init",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "airflow-scheduler",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "aleph",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "alertmanager",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "auth-service",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "blackbox-exporter",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "collab-hub",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.nlp.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "doc-entities",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "egress-allowed",
+      "name": "egress-gateway",
+      "networks": [
+        "default",
+        "egress"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "federation-proxy",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.agents.yml"
+      ],
+      "egress_policy": "egress-allowed",
+      "name": "flowise-connector",
+      "networks": [
+        "default",
+        "egress"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "forensics",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "frontend",
+      "networks": [
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.gateway.yml"
+      ],
+      "egress_policy": "egress-allowed",
+      "name": "gateway",
+      "networks": [
+        "egress",
+        "infoterminal_mesh"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "grafana",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "graph-api",
+      "networks": [
+        "default",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.graph-views.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "graph-views",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.graph-views.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "it-neo4j",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "loki",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "media-forensics",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "egress_policy": "egress-allowed",
+      "name": "n8n",
+      "networks": [
+        "egress",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.neo.yml",
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "neo4j",
+      "networks": [
+        "default",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "egress-allowed",
+      "name": "nifi",
+      "networks": [
+        "default",
+        "egress",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.sso.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "oauth2-proxy-airflow",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.sso.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "oauth2-proxy-superset",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.opa.host.yml",
+        "docker-compose.opa.yml"
+      ],
+      "egress_policy": "egress-allowed",
+      "name": "opa",
+      "networks": [
+        "default",
+        "egress",
+        "infoterminal_mesh"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.agents.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "opa-audit-sink",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "opensearch",
+      "networks": [
+        "default",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "ops-controller",
+      "networks": [
+        "default",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "plugin-runner",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "postgres",
+      "networks": [
+        "default",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "prometheus",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "promtail",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "rag-api",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "redis",
+      "networks": [
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "search-api",
+      "networks": [
+        "default",
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.sso.yml",
+        "docker-compose.superset-airflow.yml",
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "superset",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "superset-db-init",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.superset-airflow.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "superset-init",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "tempo",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "verification",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.verification.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "verification-service",
+      "networks": [
+        "infoterminal"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "web",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    },
+    {
+      "apparmor": [
+        "docker-default"
+      ],
+      "cap_add": [
+        "CHOWN",
+        "DAC_OVERRIDE",
+        "FOWNER",
+        "NET_BIND_SERVICE",
+        "SETGID",
+        "SETUID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "compose_files": [
+        "docker-compose.yml"
+      ],
+      "egress_policy": "internal-only",
+      "name": "xai",
+      "networks": [
+        "default"
+      ],
+      "no_new_privileges": true,
+      "seccomp": [
+        "./security/runtime/seccomp/infoterminal-default.json"
+      ]
+    }
+  ],
+  "generated_at": "2025-09-25T07:26:47Z",
+  "kubernetes": [
+    {
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/gateway": "runtime/default"
+      },
+      "containers": [
+        {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "name": "gateway",
+          "readOnlyRootFilesystem": null,
+          "runAsNonRoot": null,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      ],
+      "name": "gateway",
+      "namespace": "infoterminal",
+      "podSecurityContext": {
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    },
+    {
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/frontend": "runtime/default"
+      },
+      "containers": [
+        {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "name": "frontend",
+          "readOnlyRootFilesystem": null,
+          "runAsNonRoot": null,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      ],
+      "name": "frontend",
+      "namespace": "infoterminal",
+      "podSecurityContext": {
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    },
+    {
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/feedback-aggregator": "runtime/default"
+      },
+      "containers": [
+        {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "name": "feedback-aggregator",
+          "readOnlyRootFilesystem": null,
+          "runAsNonRoot": null,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      ],
+      "name": "feedback-aggregator",
+      "namespace": "infoterminal",
+      "podSecurityContext": {
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    },
+    {
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/performance-monitor": "runtime/default"
+      },
+      "containers": [
+        {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "name": "performance-monitor",
+          "readOnlyRootFilesystem": null,
+          "runAsNonRoot": null,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      ],
+      "name": "performance-monitor",
+      "namespace": "infoterminal",
+      "podSecurityContext": {
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    },
+    {
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/cache-manager": "runtime/default"
+      },
+      "containers": [
+        {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "name": "cache-manager",
+          "readOnlyRootFilesystem": null,
+          "runAsNonRoot": null,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      ],
+      "name": "cache-manager",
+      "namespace": "infoterminal",
+      "podSecurityContext": {
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    },
+    {
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/websocket-manager": "runtime/default"
+      },
+      "containers": [
+        {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "name": "websocket-manager",
+          "readOnlyRootFilesystem": null,
+          "runAsNonRoot": null,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      ],
+      "name": "websocket-manager",
+      "namespace": "infoterminal",
+      "podSecurityContext": {
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    }
+  ],
+  "networkPolicies": [
+    {
+      "egress": null,
+      "ingress": null,
+      "name": "restrict-default-egress",
+      "namespace": "infoterminal",
+      "podSelector": null,
+      "policyTypes": null
+    },
+    {
+      "egress": null,
+      "ingress": null,
+      "name": "allow-external-egress",
+      "namespace": "infoterminal",
+      "podSelector": null,
+      "policyTypes": null
+    }
+  ]
+}

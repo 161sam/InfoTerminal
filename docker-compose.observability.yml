@@ -1,5 +1,21 @@
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - NET_BIND_SERVICE
+    - SETGID
+    - SETUID
+
 services:
   prometheus:
+    <<: *runtime_defaults
     image: prom/prometheus:v2.54.1
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -13,6 +29,7 @@ services:
     profiles: ["observability"]
 
   alertmanager:
+    <<: *runtime_defaults
     image: prom/alertmanager:v0.27.0
     volumes:
       - ./observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
@@ -21,6 +38,7 @@ services:
     profiles: ["observability"]
 
   grafana:
+    <<: *runtime_defaults
     image: grafana/grafana:10.4.5
     environment:
       - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
@@ -39,6 +57,7 @@ services:
       - prometheus
 
   loki:
+    <<: *runtime_defaults
     image: grafana/loki:2.9.4
     command: -config.file=/etc/loki/loki.yml
     volumes:
@@ -48,6 +67,7 @@ services:
     profiles: ["observability"]
 
   tempo:
+    <<: *runtime_defaults
     image: grafana/tempo:2.4.1
     command: ["-config.file=/etc/tempo/tempo.yml"]
     volumes:
@@ -57,6 +77,7 @@ services:
     profiles: ["observability"]
 
   promtail:
+    <<: *runtime_defaults
     image: grafana/promtail:2.9.4
     command: -config.file=/etc/promtail/promtail.yml
     volumes:
@@ -68,6 +89,7 @@ services:
       - loki
 
   blackbox-exporter:
+    <<: *runtime_defaults
     image: prom/blackbox-exporter:v0.25.0
     command:
       - --config.file=/etc/blackbox/blackbox.yml
@@ -78,3 +100,7 @@ services:
 volumes:
   prometheus-data: {}
   grafana-data: {}
+
+networks:
+  default:
+    internal: true

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-24T05:02:57Z",
+  "generated_at": "2025-09-25T07:26:00Z",
   "services": [
     {
       "compose_files": [],
@@ -183,6 +183,21 @@
       "readyz": false
     },
     {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [],
+      "healthz": true,
+      "language": "unknown",
+      "metrics": false,
+      "name": "archive",
+      "path": "services/archive",
+      "ports": [],
+      "profiles": [],
+      "readyz": false
+    },
+    {
       "compose_files": [
         "docker-compose.yml"
       ],
@@ -223,13 +238,34 @@
       "readyz": true
     },
     {
-      "compose_files": [],
+      "compose_files": [
+        "docker-compose.observability.yml"
+      ],
       "depends_on": [],
       "env": [],
       "feature_flags": [],
       "frameworks": [],
-      "healthz": true,
+      "healthz": false,
       "language": "unknown",
+      "metrics": false,
+      "name": "blackbox-exporter",
+      "path": null,
+      "ports": [],
+      "profiles": [
+        "observability"
+      ],
+      "readyz": false
+    },
+    {
+      "compose_files": [],
+      "depends_on": [],
+      "env": [],
+      "feature_flags": [],
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": true,
+      "language": "python",
       "metrics": true,
       "name": "cache-manager",
       "path": "services/cache-manager",
@@ -1042,9 +1078,11 @@
       "depends_on": [],
       "env": [],
       "feature_flags": [],
-      "frameworks": [],
+      "frameworks": [
+        "fastapi"
+      ],
       "healthz": true,
-      "language": "unknown",
+      "language": "python",
       "metrics": true,
       "name": "performance-monitor",
       "path": "services/performance-monitor",
@@ -1230,7 +1268,8 @@
       ],
       "feature_flags": [],
       "frameworks": [
-        "fastapi"
+        "fastapi",
+        "typer"
       ],
       "healthz": true,
       "language": "python",
@@ -1431,9 +1470,11 @@
       "depends_on": [],
       "env": [],
       "feature_flags": [],
-      "frameworks": [],
+      "frameworks": [
+        "fastapi"
+      ],
       "healthz": true,
-      "language": "unknown",
+      "language": "python",
       "metrics": true,
       "name": "websocket-manager",
       "path": "services/websocket-manager",

@@ -1,10 +1,27 @@
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - NET_BIND_SERVICE
+    - SETGID
+    - SETUID
+
 services:
   # Remove direct host ports for Superset when SSO profile is used
   superset:
     profiles: ["sso"]
+    <<: *runtime_defaults
     ports: []
 
   oauth2-proxy-superset:
+    <<: *runtime_defaults
     image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
     profiles: ["sso"]
     environment:
@@ -30,9 +47,11 @@ services:
   # Remove direct host ports for Airflow when SSO profile is used
   airflow:
     profiles: ["sso"]
+    <<: *runtime_defaults
     ports: []
 
   oauth2-proxy-airflow:
+    <<: *runtime_defaults
     image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
     profiles: ["sso"]
     environment:
@@ -55,3 +74,6 @@ services:
       airflow:
         condition: service_started
 
+networks:
+  default:
+    internal: true

@@ -1,9 +1,25 @@
 # docker-compose.verification.yml
 # InfoTerminal v0.2.0 - Complete Verification & Orchestration Stack
 
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - NET_BIND_SERVICE
+    - SETGID
+    - SETUID
+
 services:
   # Core Verification Service
   verification-service:
+    <<: *runtime_defaults
     build: 
       context: .
       dockerfile: services/verification/Dockerfile
@@ -42,6 +58,7 @@ services:
 
   # Redis Cache Service (v0.3.0+)
   redis:
+    <<: *runtime_defaults
     image: redis:7.2-alpine
     container_name: infoterminal-redis
     ports:
@@ -73,6 +90,7 @@ services:
 
   # Enhanced Ops Controller with Verification Orchestration
   ops-controller:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/ops-controller/Dockerfile
@@ -112,6 +130,7 @@ services:
 
   # Apache NiFi for Data Pipeline Orchestration
   nifi:
+    <<: *runtime_defaults
     image: apache/nifi:2.0.0
     container_name: infoterminal-nifi
     ports:
@@ -141,6 +160,7 @@ services:
       start_period: 120s
     networks:
       - infoterminal
+      - egress
     restart: unless-stopped
     volumes:
       - nifi-conf:/opt/nifi/nifi-current/conf
@@ -155,6 +175,7 @@ services:
 
   # n8n for Workflow Automation
   n8n:
+    <<: *runtime_defaults
     image: n8nio/n8n:1.58.2
     container_name: infoterminal-n8n
     ports:
@@ -194,6 +215,7 @@ services:
       start_period: 60s
     networks:
       - infoterminal
+      - egress
     restart: unless-stopped
     volumes:
       - n8n-data:/home/node/.n8n
@@ -201,6 +223,7 @@ services:
 
   # Enhanced Frontend with Verification UI
   frontend:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
@@ -236,6 +259,7 @@ services:
 
   # Enhanced PostgreSQL with Verification Schema
   postgres:
+    <<: *runtime_defaults
     image: postgres:16-alpine
     container_name: infoterminal-postgres
     ports:
@@ -261,6 +285,7 @@ services:
 
   # Existing core services (search-api, graph-api, etc.)
   search-api:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/search-api/Dockerfile
@@ -283,6 +308,7 @@ services:
     restart: unless-stopped
 
   graph-api:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/graph-api/Dockerfile
@@ -305,6 +331,7 @@ services:
     restart: unless-stopped
 
   opensearch:
+    <<: *runtime_defaults
     image: opensearchproject/opensearch:2.11.1
     container_name: infoterminal-opensearch
     ports:
@@ -337,6 +364,7 @@ services:
       - opensearch-data:/usr/share/opensearch/data
 
   neo4j:
+    <<: *runtime_defaults
     image: neo4j:5.15
     container_name: infoterminal-neo4j
     ports:
@@ -365,6 +393,7 @@ networks:
   infoterminal:
     driver: bridge
     name: infoterminal-network
+    internal: true
 
 volumes:
   # Verification Service

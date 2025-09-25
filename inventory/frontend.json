@@ -25,14 +25,6 @@
       "route": "/api/agent/playbooks"
     },
     {
-      "file": "apps/frontend/pages/api/auth/[...nextauth].ts",
-      "route": "/api/auth/[...nextauth]"
-    },
-    {
-      "file": "apps/frontend/pages/api/auth/login.ts",
-      "route": "/api/auth/login"
-    },
-    {
       "file": "apps/frontend/pages/api/auth/logout.ts",
       "route": "/api/auth/logout"
     },
@@ -41,12 +33,32 @@
       "route": "/api/auth/me"
     },
     {
+      "file": "apps/frontend/pages/api/auth/oidc/config.ts",
+      "route": "/api/auth/oidc/config"
+    },
+    {
+      "file": "apps/frontend/pages/api/auth/oidc/token.ts",
+      "route": "/api/auth/oidc/token"
+    },
+    {
       "file": "apps/frontend/pages/api/auth/refresh.ts",
       "route": "/api/auth/refresh"
     },
     {
+      "file": "apps/frontend/pages/api/auth/session.ts",
+      "route": "/api/auth/session"
+    },
+    {
       "file": "apps/frontend/pages/api/collab/audit.ts",
       "route": "/api/collab/audit"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/dossier/export.ts",
+      "route": "/api/collab/dossier/export"
+    },
+    {
+      "file": "apps/frontend/pages/api/collab/dossier/templates.ts",
+      "route": "/api/collab/dossier/templates"
     },
     {
       "file": "apps/frontend/pages/api/collab/labels.ts",
@@ -248,6 +260,7 @@
     "NEXT_PUBLIC_AGENT_MAX_ITERATIONS",
     "NEXT_PUBLIC_AGENT_TIMEOUT",
     "NEXT_PUBLIC_ALEPH_URL",
+    "NEXT_PUBLIC_AUTH_REQUIRED",
     "NEXT_PUBLIC_COLLAB_PORT",
     "NEXT_PUBLIC_DEBUG_AGENT",
     "NEXT_PUBLIC_DOCENTITIES_API",
@@ -266,10 +279,13 @@
     "NEXT_PUBLIC_GRAPH_DEEPLINK_BASE",
     "NEXT_PUBLIC_N8N_URL",
     "NEXT_PUBLIC_NLP_URL",
+    "NEXT_PUBLIC_OIDC_CLIENT_ID",
+    "NEXT_PUBLIC_OIDC_ISSUER",
+    "NEXT_PUBLIC_OIDC_REDIRECT_URI",
     "NEXT_PUBLIC_SEARCH_API",
     "NEXT_PUBLIC_VIEWS_API"
   ],
-  "generated_at": "2025-09-24T05:03:01Z",
+  "generated_at": "2025-09-25T07:26:47Z",
   "pages": [
     {
       "file": "apps/frontend/pages/agent/[tab].tsx",
@@ -290,6 +306,10 @@
     {
       "file": "apps/frontend/pages/asset/[id].tsx",
       "route": "/asset/[id]"
+    },
+    {
+      "file": "apps/frontend/pages/auth/callback.tsx",
+      "route": "/auth/callback"
     },
     {
       "file": "apps/frontend/pages/collab.tsx",
@@ -342,6 +362,14 @@
     {
       "file": "apps/frontend/pages/index.tsx",
       "route": "/"
+    },
+    {
+      "file": "apps/frontend/pages/login.tsx",
+      "route": "/login"
+    },
+    {
+      "file": "apps/frontend/pages/logout.tsx",
+      "route": "/logout"
     },
     {
       "file": "apps/frontend/pages/media-forensics.tsx",

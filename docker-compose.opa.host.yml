@@ -1,4 +1,32 @@
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - NET_BIND_SERVICE
+    - SETGID
+    - SETUID
+
 services:
   opa:
+    <<: *runtime_defaults
     ports:
       - "8651:8181"   # untypischer Host-Port
+    networks:
+      infoterminal_mesh: {}
+      default: {}
+      egress: {}
+
+networks:
+  infoterminal_mesh:
+    external: true
+  default:
+    internal: true
+  egress:
+    external: false

@@ -1,5 +1,21 @@
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - NET_BIND_SERVICE
+    - SETGID
+    - SETUID
+
 services:
   doc-entities:
+    <<: *runtime_defaults
     build: ./services/doc-entities
     ports: ["${IT_PORT_DOC_ENTITIES:-8613}:8000"]
     env_file: .env
@@ -11,3 +27,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+networks:
+  default:
+    internal: true

@@ -1,5 +1,21 @@
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - SETGID
+    - SETUID
+    - NET_BIND_SERVICE
+
 services:
   search-api:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/search-api/Dockerfile
@@ -14,6 +30,7 @@ services:
       opensearch:
         condition: service_healthy
   graph-api:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/graph-api/Dockerfile
@@ -28,6 +45,7 @@ services:
       neo4j:
         condition: service_healthy
   graph-views:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/graph-views/Dockerfile
@@ -46,6 +64,7 @@ services:
       postgres:
         condition: service_healthy
   auth-service:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/auth-service/Dockerfile
@@ -76,6 +95,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
   web:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
@@ -91,6 +111,7 @@ services:
       auth-service:
         condition: service_healthy
   opensearch:
+    <<: *runtime_defaults
     image: opensearchproject/opensearch:2
     environment:
       - discovery.type=single-node
@@ -105,6 +126,7 @@ services:
     volumes:
       - opensearch_data:/usr/share/opensearch/data
   neo4j:
+    <<: *runtime_defaults
     image: neo4j:5
     environment:
       - NEO4J_AUTH=neo4j/neo4j
@@ -120,6 +142,7 @@ services:
     volumes:
       - neo4j_data:/data
   postgres:
+    <<: *runtime_defaults
     image: postgres:16
     environment:
       - POSTGRES_USER=it_user
@@ -136,6 +159,7 @@ services:
       - ./infra/postgres/init:/docker-entrypoint-initdb.d
     restart: unless-stopped
   doc-entities:
+    <<: *runtime_defaults
     build: ./services/doc-entities
     ports: ["${IT_PORT_DOC_ENTITIES:-8613}:8000"]
     env_file: .env
@@ -148,6 +172,7 @@ services:
       postgres:
         condition: service_healthy
   egress-gateway:
+    <<: *runtime_defaults
     build: ./services/egress-gateway
     ports: ["${IT_PORT_EGRESS_GATEWAY:-8615}:8615"]
     env_file: .env
@@ -159,12 +184,12 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
-    cap_add:
-      - NET_ADMIN
-    security_opt:
-      - seccomp:unconfined
+    networks:
+      - default
+      - egress
     restart: unless-stopped
   rag-api:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/rag-api/Dockerfile
@@ -187,6 +212,7 @@ services:
       timeout: 5s
       retries: 10
   plugin-runner:
+    <<: *runtime_defaults
     build: ./services/plugin-runner
     ports: ["${IT_PORT_PLUGIN_RUNNER:-8621}:8000"]
     env_file: .env
@@ -207,6 +233,7 @@ services:
       retries: 5
     restart: unless-stopped
   xai:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/xai/Dockerfile
@@ -217,6 +244,7 @@ services:
       timeout: 5s
       retries: 10
   forensics:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/forensics/Dockerfile
@@ -229,6 +257,7 @@ services:
       timeout: 5s
       retries: 10
   collab-hub:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/collab-hub/Dockerfile
@@ -241,6 +270,7 @@ services:
       timeout: 5s
       retries: 10
   federation-proxy:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/federation-proxy/Dockerfile
@@ -251,6 +281,7 @@ services:
       timeout: 5s
       retries: 10
   verification:
+    <<: *runtime_defaults
     build: ./services/verification
     ports: ["${IT_PORT_VERIFICATION:-8617}:8617"]
     env_file: .env
@@ -261,6 +292,7 @@ services:
       retries: 5
     restart: unless-stopped
   ops-controller:
+    <<: *runtime_defaults
     build:
       context: ./services/ops-controller
     image: infoterminal/ops-controller:0.1
@@ -281,10 +313,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/workspace:ro
-    networks:
-      - default
     restart: unless-stopped
   media-forensics:
+    <<: *runtime_defaults
     build: ./services/media-forensics
     ports: ["${IT_PORT_MEDIA_FORENSICS:-8618}:8000"]
     env_file: .env
@@ -301,6 +332,7 @@ services:
   # Optional modules --------------------------------------------------
   aleph:
     profiles: ["aleph"]
+    <<: *runtime_defaults
     image: alephdata/aleph:latest
     environment:
       - ALEPH_DEBUG=true
@@ -308,16 +340,19 @@ services:
       - "${IT_PORT_ALEPH:-8641}:8080"
   superset:
     profiles: ["superset"]
+    <<: *runtime_defaults
     image: apache/superset:latest
     ports:
       - "${IT_PORT_SUPERSET:-8644}:8088"
   airflow:
     profiles: ["airflow"]
+    <<: *runtime_defaults
     image: apache/airflow:2
     ports:
       - "${IT_PORT_AIRFLOW:-8642}:8080"
   nifi:
     profiles: ["nifi"]
+    <<: *runtime_defaults
     image: apache/nifi:2.0.0
     environment:
       - NIFI_WEB_HTTPS_PORT=
@@ -330,3 +365,10 @@ volumes:
   postgres_data:
   demo_data:
   plugin_results:
+
+networks:
+  default:
+    name: infoterminal_internal
+    internal: true
+  egress:
+    name: infoterminal_egress

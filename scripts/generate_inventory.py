@@ -27,7 +27,7 @@ import sys
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Set
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 try:
     import yaml  # type: ignore
@@ -234,6 +234,188 @@ def collect_services() -> Dict[str, Any]:
     return {
         "generated_at": iso_now(),
         "services": [asdict(record) for record in records],
+    }
+
+
+def _normalise_security_option(option: Any) -> str:
+    if isinstance(option, str):
+        return option.strip()
+    return ""
+
+
+def _ensure_list(value: Any) -> List[str]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(item) for item in value]
+    return [str(value)]
+
+
+def collect_security_inventory() -> Dict[str, Any]:
+    compose_globs = ["docker-compose*.yml", "docker-compose*.yaml", "auth-service-compose.yml"]
+    compose_records: Dict[str, Dict[str, Any]] = defaultdict(
+        lambda: {
+            "compose_files": set(),
+            "seccomp": set(),
+            "apparmor": set(),
+            "no_new_privileges": False,
+            "cap_drop": set(),
+            "cap_add": set(),
+            "networks": set(),
+            "internal_default": False,
+            "unrestricted_network": False,
+        }
+    )
+
+    for pattern in compose_globs:
+        for path in REPO_ROOT.glob(pattern):
+            try:
+                data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            except yaml.YAMLError:
+                continue
+            services = data.get("services") or {}
+            networks = data.get("networks") or {}
+            default_network = networks.get("default") if isinstance(networks, dict) else {}
+            default_internal = bool(default_network.get("internal")) if isinstance(default_network, dict) else False
+            internal_networks = {
+                name
+                for name, cfg in (networks.items() if isinstance(networks, dict) else [])
+                if isinstance(cfg, dict) and cfg.get("internal")
+            }
+            for svc_name, cfg in services.items():
+                record = compose_records[svc_name]
+                record["compose_files"].add(str(path.relative_to(REPO_ROOT)))
+
+                security_opts = [_normalise_security_option(opt) for opt in (cfg.get("security_opt") or [])]
+                for opt in security_opts:
+                    if opt.startswith("seccomp="):
+                        record["seccomp"].add(opt.split("=", 1)[1])
+                    elif opt.startswith("apparmor:"):
+                        record["apparmor"].add(opt.split(":", 1)[1])
+                    elif opt.startswith("no-new-privileges") and ("=true" in opt.lower() or ":true" in opt.lower()):
+                        record["no_new_privileges"] = True
+
+                for cap in _ensure_list(cfg.get("cap_drop")):
+                    record["cap_drop"].add(cap)
+                for cap in _ensure_list(cfg.get("cap_add")):
+                    record["cap_add"].add(cap)
+
+                raw_networks = cfg.get("networks")
+                resolved_networks: Set[str] = set()
+                if isinstance(raw_networks, list):
+                    for item in raw_networks:
+                        if isinstance(item, str):
+                            resolved_networks.add(item)
+                        elif isinstance(item, dict):
+                            name = item.get("name")
+                            if name:
+                                resolved_networks.add(str(name))
+                elif isinstance(raw_networks, dict):
+                    for name in raw_networks.keys():
+                        resolved_networks.add(str(name))
+                else:
+                    resolved_networks.add("default")
+
+                for net in resolved_networks:
+                    record["networks"].add(net)
+                    if net == "egress":
+                        record["unrestricted_network"] = True
+                    elif net == "default":
+                        if default_internal:
+                            record["internal_default"] = True
+                        else:
+                            record["unrestricted_network"] = True
+                    elif net in internal_networks:
+                        record["internal_default"] = True
+                    else:
+                        record["unrestricted_network"] = True
+
+    compose_summary = []
+    for name, payload in sorted(compose_records.items()):
+        cap_drop_list = sorted(payload["cap_drop"]) if payload["cap_drop"] else []
+        cap_add_list = sorted(payload["cap_add"]) if payload["cap_add"] else []
+        networks_list = sorted(payload["networks"]) if payload["networks"] else []
+        if "egress" in networks_list:
+            egress_policy = "egress-allowed"
+        elif payload["internal_default"] and not payload["unrestricted_network"]:
+            egress_policy = "internal-only"
+        else:
+            egress_policy = "unspecified"
+        compose_summary.append(
+            {
+                "name": name,
+                "compose_files": sorted(payload["compose_files"]),
+                "seccomp": sorted(payload["seccomp"]),
+                "apparmor": sorted(payload["apparmor"]),
+                "no_new_privileges": payload["no_new_privileges"],
+                "cap_drop": cap_drop_list,
+                "cap_add": cap_add_list,
+                "networks": networks_list,
+                "egress_policy": egress_policy,
+            }
+        )
+
+    k8s_path = REPO_ROOT / "deploy" / "kubernetes" / "production.yaml"
+    kubernetes_summary: List[Dict[str, Any]] = []
+    network_policies: List[Dict[str, Any]] = []
+    if k8s_path.exists():
+        try:
+            docs = list(yaml.safe_load_all(k8s_path.read_text(encoding="utf-8")))
+        except yaml.YAMLError:
+            docs = []
+        for doc in docs:
+            if not isinstance(doc, dict):
+                continue
+            kind = doc.get("kind")
+            metadata = doc.get("metadata", {})
+            namespace = metadata.get("namespace", "infoterminal")
+            if kind == "Deployment":
+                template = doc.get("spec", {}).get("template", {})
+                pod_meta = template.get("metadata", {})
+                pod_spec = template.get("spec", {})
+                annotations = pod_meta.get("annotations", {})
+                pod_context = pod_spec.get("securityContext", {})
+                containers_summary: List[Dict[str, Any]] = []
+                for container in pod_spec.get("containers", []):
+                    if not isinstance(container, dict):
+                        continue
+                    ctx = container.get("securityContext", {})
+                    containers_summary.append(
+                        {
+                            "name": container.get("name"),
+                            "allowPrivilegeEscalation": ctx.get("allowPrivilegeEscalation"),
+                            "readOnlyRootFilesystem": ctx.get("readOnlyRootFilesystem"),
+                            "runAsNonRoot": ctx.get("runAsNonRoot"),
+                            "seccompProfile": ctx.get("seccompProfile"),
+                            "capabilities": ctx.get("capabilities"),
+                        }
+                    )
+                kubernetes_summary.append(
+                    {
+                        "name": metadata.get("name"),
+                        "namespace": namespace,
+                        "annotations": annotations,
+                        "podSecurityContext": pod_context,
+                        "containers": containers_summary,
+                    }
+                )
+            elif kind == "NetworkPolicy":
+                network_policies.append(
+                    {
+                        "name": metadata.get("name"),
+                        "namespace": namespace,
+                        "policyTypes": doc.get("policyTypes"),
+                        "podSelector": doc.get("podSelector"),
+                        "ingress": doc.get("ingress"),
+                        "egress": doc.get("egress"),
+                    }
+                )
+
+    return {
+        "generated_at": iso_now(),
+        "compose": compose_summary,
+        "kubernetes": kubernetes_summary,
+        "networkPolicies": network_policies,
     }
 
 
@@ -483,6 +665,7 @@ def main() -> None:
     frontend_payload = collect_frontend_inventory()
     findings_report = build_findings(services_payload)
     observability_payload = build_observability_inventory(services_payload)
+    security_payload = collect_security_inventory()
 
     outputs = {
         INVENTORY_DIR / "services.json": json.dumps(services_payload, indent=2, sort_keys=True) + "\n",
@@ -491,6 +674,7 @@ def main() -> None:
         INVENTORY_DIR / "frontend.json": json.dumps(frontend_payload, indent=2, sort_keys=True) + "\n",
         INVENTORY_DIR / "findings.md": findings_report,
         INVENTORY_DIR / "observability.json": json.dumps(observability_payload, indent=2, sort_keys=True) + "\n",
+        INVENTORY_DIR / "security.json": json.dumps(security_payload, indent=2, sort_keys=True) + "\n",
     }
 
     write_outputs(outputs, dry_run=args.dry_run)
@@ -498,4 +682,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

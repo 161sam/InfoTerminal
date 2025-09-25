@@ -1,6 +1,6 @@
 # Inventory Findings
 
-Generated: 2025-09-24T05:03:01Z
+Generated: 2025-09-25T07:26:47Z
 
 ## Services missing /healthz
 
@@ -10,6 +10,7 @@ Generated: 2025-09-24T05:03:01Z
 - airflow-scheduler
 - aleph
 - alertmanager
+- blackbox-exporter
 - common
 - frontend
 - grafana
@@ -42,6 +43,8 @@ Generated: 2025-09-24T05:03:01Z
 - airflow-scheduler
 - aleph
 - alertmanager
+- archive
+- blackbox-exporter
 - cli
 - common
 - entity-resolution
@@ -76,6 +79,8 @@ Generated: 2025-09-24T05:03:01Z
 - airflow-scheduler
 - aleph
 - alertmanager
+- archive
+- blackbox-exporter
 - common
 - frontend
 - grafana

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-24T05:02:58Z",
+  "generated_at": "2025-09-25T07:26:45Z",
   "services": {
     "_shared": [
       {
@@ -388,6 +388,41 @@
           "200"
         ],
         "summary": "Check Plugin Health"
+      }
+    ],
+    "archive": [
+      {
+        "lineno": 12,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/archive/nlp-service.backup.20250916/app.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 16,
+        "method": "POST",
+        "path": "/ner",
+        "response_model": null,
+        "source": "services/archive/nlp-service.backup.20250916/app.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 23,
+        "method": "POST",
+        "path": "/summarize",
+        "response_model": null,
+        "source": "services/archive/nlp-service.backup.20250916/app.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       }
     ],
     "auth-service": [
@@ -1298,7 +1333,7 @@
         "summary": "Legacy endpoint - activities are now automatically logged"
       },
       {
-        "lineno": 388,
+        "lineno": 613,
         "method": "POST",
         "path": "/audit",
         "response_model": null,
@@ -1309,7 +1344,7 @@
         "summary": null
       },
       {
-        "lineno": 362,
+        "lineno": 587,
         "method": "POST",
         "path": "/collab/notes",
         "response_model": null,
@@ -1320,7 +1355,7 @@
         "summary": null
       },
       {
-        "lineno": 381,
+        "lineno": 606,
         "method": "GET",
         "path": "/collab/notes/{case_id}",
         "response_model": null,
@@ -1375,9 +1410,20 @@
         "summary": "Update comment content with edit tracking."
       },
       {
-        "lineno": 284,
+        "lineno": 444,
         "method": "POST",
         "path": "/dossier/export",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 439,
+        "method": "GET",
+        "path": "/dossier/templates",
         "response_model": null,
         "source": "services/collab-hub/app/main.py",
         "status_codes": [
@@ -1408,17 +1454,6 @@
         "summary": "Legacy endpoint - use /healthz (no prefix) instead"
       },
       {
-        "lineno": 13,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/collab-hub/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Liveness probe - returns OK if service is running."
-      },
-      {
         "lineno": 112,
         "method": "GET",
         "path": "/healthz",
@@ -1428,6 +1463,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 13,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/collab-hub/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Liveness probe - returns OK if service is running."
       },
       {
         "lineno": 84,
@@ -1452,6 +1498,17 @@
         "summary": "Legacy endpoint - use /v1/labels instead"
       },
       {
+        "lineno": 573,
+        "method": "GET",
+        "path": "/labels",
+        "response_model": null,
+        "source": "services/collab-hub/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 925,
         "method": "GET",
         "path": "/labels",
@@ -1461,17 +1518,6 @@
           "200"
         ],
         "summary": "Get label usage statistics across all tasks."
-      },
-      {
-        "lineno": 348,
-        "method": "GET",
-        "path": "/labels",
-        "response_model": null,
-        "source": "services/collab-hub/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
       },
       {
         "lineno": 117,
@@ -1518,17 +1564,6 @@
         "summary": "Legacy endpoint - use /v1/tasks instead"
       },
       {
-        "lineno": 252,
-        "method": "GET",
-        "path": "/tasks",
-        "response_model": "PaginatedResponse[Task]",
-        "source": "services/collab-hub/routers/collab_hub_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "List tasks with filtering, searching, and pagination."
-      },
-      {
         "lineno": 128,
         "method": "GET",
         "path": "/tasks",
@@ -1538,6 +1573,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 252,
+        "method": "GET",
+        "path": "/tasks",
+        "response_model": "PaginatedResponse[Task]",
+        "source": "services/collab-hub/routers/collab_hub_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "List tasks with filtering, searching, and pagination."
       },
       {
         "lineno": 127,
@@ -1551,17 +1597,6 @@
         "summary": "Legacy endpoint - use /v1/tasks instead"
       },
       {
-        "lineno": 309,
-        "method": "POST",
-        "path": "/tasks",
-        "response_model": "Task",
-        "source": "services/collab-hub/routers/collab_hub_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Create a new task with comprehensive properties."
-      },
-      {
         "lineno": 133,
         "method": "POST",
         "path": "/tasks",
@@ -1571,6 +1606,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 309,
+        "method": "POST",
+        "path": "/tasks",
+        "response_model": "Task",
+        "source": "services/collab-hub/routers/collab_hub_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Create a new task with comprehensive properties."
       },
       {
         "lineno": 508,
@@ -1595,17 +1641,6 @@
         "summary": "Legacy endpoint - use /v1/tasks/{task_id} instead"
       },
       {
-        "lineno": 468,
-        "method": "DELETE",
-        "path": "/tasks/{task_id}",
-        "response_model": null,
-        "source": "services/collab-hub/routers/collab_hub_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Delete task and associated comments/files."
-      },
-      {
         "lineno": 161,
         "method": "DELETE",
         "path": "/tasks/{task_id}",
@@ -1615,6 +1650,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 468,
+        "method": "DELETE",
+        "path": "/tasks/{task_id}",
+        "response_model": null,
+        "source": "services/collab-hub/routers/collab_hub_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Delete task and associated comments/files."
       },
       {
         "lineno": 350,
@@ -1650,17 +1696,6 @@
         "summary": "Legacy endpoint - use /v1/tasks/{task_id}/move instead"
       },
       {
-        "lineno": 420,
-        "method": "POST",
-        "path": "/tasks/{task_id}/move",
-        "response_model": "Task",
-        "source": "services/collab-hub/routers/collab_hub_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Move task to different status (todo, in_progress, done, etc.)."
-      },
-      {
         "lineno": 144,
         "method": "POST",
         "path": "/tasks/{task_id}/move",
@@ -1670,6 +1705,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 420,
+        "method": "POST",
+        "path": "/tasks/{task_id}/move",
+        "response_model": "Task",
+        "source": "services/collab-hub/routers/collab_hub_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Move task to different status (todo, in_progress, done, etc.)."
       },
       {
         "lineno": 163,
@@ -1683,7 +1729,7 @@
         "summary": "Legacy endpoint - use /v1/tasks/{task_id} (PUT) instead"
       },
       {
-        "lineno": 268,
+        "lineno": 423,
         "method": "POST",
         "path": "/tasks/{task_id}/update",
         "response_model": null,
@@ -2318,17 +2364,6 @@
         "summary": "Legacy health endpoint. Use /v1/healthz instead."
       },
       {
-        "lineno": 12,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/federation-proxy/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Liveness probe - returns OK if service is running."
-      },
-      {
         "lineno": 109,
         "method": "GET",
         "path": "/healthz",
@@ -2338,6 +2373,17 @@
           "200"
         ],
         "summary": "Deprecated health endpoint."
+      },
+      {
+        "lineno": 12,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/federation-proxy/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Liveness probe - returns OK if service is running."
       },
       {
         "lineno": 66,
@@ -2775,6 +2821,17 @@
         "summary": "DEPRECATED: Use /v1/agents/chat instead."
       },
       {
+        "lineno": 647,
+        "method": "POST",
+        "path": "/chat",
+        "response_model": "ChatResponse",
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 52,
         "method": "POST",
         "path": "/chat",
@@ -2786,18 +2843,7 @@
         "summary": "Chat with AI Agent"
       },
       {
-        "lineno": 616,
-        "method": "POST",
-        "path": "/chat",
-        "response_model": "ChatResponse",
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
-        "lineno": 755,
+        "lineno": 786,
         "method": "POST",
         "path": "/chat/{conversation_id}/cancel",
         "response_model": "CancelResponse",
@@ -2885,6 +2931,17 @@
         "summary": "DEPRECATED: Use core health endpoint instead."
       },
       {
+        "lineno": 619,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 114,
         "method": "GET",
         "path": "/healthz",
@@ -2896,9 +2953,9 @@
         "summary": "Health Check"
       },
       {
-        "lineno": 588,
+        "lineno": 796,
         "method": "GET",
-        "path": "/healthz",
+        "path": "/info",
         "response_model": null,
         "source": "services/flowise-connector/app/main.py",
         "status_codes": [
@@ -2918,17 +2975,6 @@
         "summary": "Service Information"
       },
       {
-        "lineno": 765,
-        "method": "GET",
-        "path": "/info",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
-      },
-      {
         "lineno": 134,
         "method": "GET",
         "path": "/readyz",
@@ -2940,6 +2986,17 @@
         "summary": "DEPRECATED: Use core readiness endpoint instead."
       },
       {
+        "lineno": 624,
+        "method": "GET",
+        "path": "/readyz",
+        "response_model": null,
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 130,
         "method": "GET",
         "path": "/readyz",
@@ -2949,17 +3006,6 @@
           "200"
         ],
         "summary": "Readiness Check"
-      },
-      {
-        "lineno": 593,
-        "method": "GET",
-        "path": "/readyz",
-        "response_model": null,
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
       },
       {
         "lineno": 418,
@@ -2984,6 +3030,17 @@
         "summary": "DEPRECATED: Use /v1/agents/tools instead."
       },
       {
+        "lineno": 641,
+        "method": "GET",
+        "path": "/tools",
+        "response_model": "ToolsResponse",
+        "source": "services/flowise-connector/app/main.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 172,
         "method": "GET",
         "path": "/tools",
@@ -2993,17 +3050,6 @@
           "200"
         ],
         "summary": "List Available Tools"
-      },
-      {
-        "lineno": 610,
-        "method": "GET",
-        "path": "/tools",
-        "response_model": "ToolsResponse",
-        "source": "services/flowise-connector/app/main.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": null
       },
       {
         "lineno": 158,
@@ -3085,17 +3131,6 @@
         "summary": "Legacy health endpoint. Use /healthz instead."
       },
       {
-        "lineno": 13,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/forensics/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Liveness probe - returns OK if service is running."
-      },
-      {
         "lineno": 43,
         "method": "GET",
         "path": "/healthz",
@@ -3105,6 +3140,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 13,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/forensics/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Liveness probe - returns OK if service is running."
       },
       {
         "lineno": 39,
@@ -3252,7 +3298,18 @@
     ],
     "gateway": [
       {
-        "lineno": 130,
+        "lineno": 230,
+        "method": "GET",
+        "path": "/demo/trace",
+        "response_model": null,
+        "source": "services/gateway/app/app.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Simple endpoint used to validate trace export wiring."
+      },
+      {
+        "lineno": 215,
         "method": "GET",
         "path": "/healthz",
         "response_model": null,
@@ -3263,7 +3320,7 @@
         "summary": null
       },
       {
-        "lineno": 140,
+        "lineno": 225,
         "method": "GET",
         "path": "/metrics",
         "response_model": null,
@@ -3274,7 +3331,7 @@
         "summary": null
       },
       {
-        "lineno": 135,
+        "lineno": 220,
         "method": "GET",
         "path": "/readyz",
         "response_model": null,
@@ -4228,17 +4285,6 @@
         "summary": "DEPRECATED: Use /healthz in app_v1.py instead."
       },
       {
-        "lineno": 34,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": "HealthResponse",
-        "source": "services/opa-audit-sink/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Health Check"
-      },
-      {
         "lineno": 7,
         "method": "GET",
         "path": "/healthz",
@@ -4248,6 +4294,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 34,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": "HealthResponse",
+        "source": "services/opa-audit-sink/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Health Check"
       },
       {
         "lineno": 135,
@@ -5778,17 +5835,6 @@
         "summary": "Legacy health endpoint. Use /healthz instead."
       },
       {
-        "lineno": 13,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/rag-api/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Liveness probe - returns OK if service is running."
-      },
-      {
         "lineno": 54,
         "method": "GET",
         "path": "/healthz",
@@ -5798,6 +5844,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 13,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/rag-api/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Liveness probe - returns OK if service is running."
       },
       {
         "lineno": 167,
@@ -5954,17 +6011,6 @@
         "summary": "Retrieve relevant law paragraphs from OpenSearch index."
       },
       {
-        "lineno": 19,
-        "method": "GET",
-        "path": "/readyz",
-        "response_model": null,
-        "source": "services/rag-api/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Readiness probe - checks if service can handle requests."
-      },
-      {
         "lineno": 59,
         "method": "GET",
         "path": "/readyz",
@@ -5974,6 +6020,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 19,
+        "method": "GET",
+        "path": "/readyz",
+        "response_model": null,
+        "source": "services/rag-api/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Readiness probe - checks if service can handle requests."
       },
       {
         "lineno": 374,
@@ -6176,6 +6233,28 @@
         "summary": "DEPRECATED: Use /v1/search instead."
       },
       {
+        "lineno": 677,
+        "method": "POST",
+        "path": "/v1/audio/transcriptions",
+        "response_model": null,
+        "source": "services/search-api/.venv/lib/python3.11/site-packages/transformers/commands/serving.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 658,
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "response_model": null,
+        "source": "services/search-api/.venv/lib/python3.11/site-packages/transformers/commands/serving.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
         "lineno": 601,
         "method": "DELETE",
         "path": "/v1/documents/{doc_id}",
@@ -6207,6 +6286,39 @@
           "200"
         ],
         "summary": "Index documents"
+      },
+      {
+        "lineno": 696,
+        "method": "GET",
+        "path": "/v1/models",
+        "response_model": null,
+        "source": "services/search-api/.venv/lib/python3.11/site-packages/transformers/commands/serving.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 695,
+        "method": "OPTIONS",
+        "path": "/v1/models",
+        "response_model": null,
+        "source": "services/search-api/.venv/lib/python3.11/site-packages/transformers/commands/serving.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
+      },
+      {
+        "lineno": 668,
+        "method": "POST",
+        "path": "/v1/responses",
+        "response_model": null,
+        "source": "services/search-api/.venv/lib/python3.11/site-packages/transformers/commands/serving.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": null
       },
       {
         "lineno": 261,
@@ -6864,17 +6976,6 @@
         "summary": "Legacy health endpoint. Use /healthz instead."
       },
       {
-        "lineno": 13,
-        "method": "GET",
-        "path": "/healthz",
-        "response_model": null,
-        "source": "services/xai/routers/core_v1.py",
-        "status_codes": [
-          "200"
-        ],
-        "summary": "Liveness probe - returns OK if service is running."
-      },
-      {
         "lineno": 16,
         "method": "GET",
         "path": "/healthz",
@@ -6884,6 +6985,17 @@
           "200"
         ],
         "summary": null
+      },
+      {
+        "lineno": 13,
+        "method": "GET",
+        "path": "/healthz",
+        "response_model": null,
+        "source": "services/xai/routers/core_v1.py",
+        "status_codes": [
+          "200"
+        ],
+        "summary": "Liveness probe - returns OK if service is running."
       },
       {
         "lineno": 79,

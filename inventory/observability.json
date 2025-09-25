@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-24T05:03:01Z",
+  "generated_at": "2025-09-25T07:26:47Z",
   "optional_labels": [
     "tenant"
   ],
@@ -140,6 +140,21 @@
       "readyz": null
     },
     {
+      "frameworks": [],
+      "healthz": "/healthz",
+      "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "archive",
+      "path": "services/archive",
+      "readyz": null
+    },
+    {
       "frameworks": [
         "fastapi"
       ],
@@ -162,8 +177,25 @@
     },
     {
       "frameworks": [],
-      "healthz": "/healthz",
+      "healthz": null,
       "language": "unknown",
+      "metrics": {
+        "labels": [],
+        "optional_labels": [
+          "tenant"
+        ],
+        "path": null
+      },
+      "name": "blackbox-exporter",
+      "path": null,
+      "readyz": null
+    },
+    {
+      "frameworks": [
+        "fastapi"
+      ],
+      "healthz": "/healthz",
+      "language": "python",
       "metrics": {
         "labels": [
           "service",
@@ -717,9 +749,11 @@
       "readyz": "/readyz"
     },
     {
-      "frameworks": [],
+      "frameworks": [
+        "fastapi"
+      ],
       "healthz": "/healthz",
-      "language": "unknown",
+      "language": "python",
       "metrics": {
         "labels": [
           "service",
@@ -854,7 +888,8 @@
     },
     {
       "frameworks": [
-        "fastapi"
+        "fastapi",
+        "typer"
       ],
       "healthz": "/healthz",
       "language": "python",
@@ -985,9 +1020,11 @@
       "readyz": null
     },
     {
-      "frameworks": [],
+      "frameworks": [
+        "fastapi"
+      ],
       "healthz": "/healthz",
-      "language": "unknown",
+      "language": "python",
       "metrics": {
         "labels": [
           "service",

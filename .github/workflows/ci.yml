@@ -156,6 +156,20 @@ jobs:
           echo "secrets hygiene gate failed with status ${{ steps.secrets.outputs.secrets_status }}"
           exit 1
 
+  runtime-hardening-smoke:
+    name: Security (Runtime Hardening)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate inventory
+        run: python scripts/generate_inventory.py
+      - name: Validate runtime hardening
+        run: python scripts/runtime_hardening_smoke.py
+
   observability:
     name: Observability Baseline
     runs-on: ubuntu-latest
