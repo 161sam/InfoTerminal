@@ -51,17 +51,17 @@ metadata:
 type: Opaque
 data:
   # Database credentials (base64 encoded)
-  postgres-password: aW5mb3Rlcm1pbmFsX3Bhc3N3b3Jk
-  neo4j-password: bmVvNGpfcGFzc3dvcmQ=
+  postgres-password: PLACEHOLDER_BASE64_POSTGRES_PASSWORD
+  neo4j-password: PLACEHOLDER_BASE64_NEO4J_PASSWORD
   
   # JWT secrets
-  jwt-secret: eW91cl9qd3Rfc2VjcmV0X2tleQ==
+  jwt-secret: PLACEHOLDER_BASE64_JWT_SECRET
   
   # External API keys
-  github-token: Z2hwX3lvdXJfZ2l0aHViX3Rva2Vu
+  github-token: PLACEHOLDER_BASE64_GITHUB_TOKEN
   
   # Encryption keys
-  encryption-key: eW91cl9lbmNyeXB0aW9uX2tleQ==
+  encryption-key: PLACEHOLDER_BASE64_ENCRYPTION_KEY
 ---
 apiVersion: apps/v1
 kind: Deployment

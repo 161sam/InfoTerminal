@@ -5,6 +5,7 @@
 !**/.env.example
 !**/.env.local.example
 secrets/
+!artifacts/security/secrets/
 *.pem
 *.key
 *.crt
