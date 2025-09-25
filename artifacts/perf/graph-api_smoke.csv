@@ -1,0 +1,2 @@
+service_name,timestamp,status,total_requests,success_count,error_count,success_rate,duration_seconds,throughput_rps,latency_min_ms,latency_mean_ms,latency_p50_ms,latency_p95_ms,latency_p99_ms,latency_max_ms,latency_slo_target_ms,latency_slo_met,throughput_slo_target_rps,throughput_slo_met
+graph-api,2025-09-25T09:11:37.350537+00:00,ok,6,6,0,1.0,0.3649635834426313,16.439996405677395,104.73796471384743,121.65452781421044,120.23255804380547,137.61989235853798,138.83133428644905,139.13419476842682,550.0,True,6.0,True

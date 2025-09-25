@@ -1,0 +1,56 @@
+{
+  "config": {
+    "concurrency": 2,
+    "dry_run": false,
+    "headers": {},
+    "latency_slo_ms": 1500.0,
+    "method": "POST",
+    "payload": {
+      "language": "en",
+      "text": "Open-source intelligence accelerates investigations."
+    },
+    "service_name": "doc-entities",
+    "simulate": true,
+    "throughput_slo_rps": 4.0,
+    "timeout": 10.0,
+    "total_requests": 5,
+    "url": "http://localhost:8613/v1/extract/entities",
+    "verify_tls": true
+  },
+  "errors": [],
+  "metrics": {
+    "duration_seconds": 0.5409837282051064,
+    "error_count": 0,
+    "latency_ms": {
+      "max_ms": 248.12401600686994,
+      "mean_ms": 216.3934912820426,
+      "min_ms": 203.88536781077235,
+      "p50_ms": 211.15105511181483,
+      "p95_ms": 240.76469283404577,
+      "p99_ms": 246.6521513723051
+    },
+    "success_count": 5,
+    "success_rate": 1.0,
+    "throughput_rps": 9.242422164136368,
+    "total_requests": 5
+  },
+  "notes": [
+    "simulation_mode",
+    "seed=4278845189"
+  ],
+  "service_name": "doc-entities",
+  "slo": {
+    "latency_p95_ms": {
+      "actual": 240.76469283404577,
+      "met": true,
+      "target": 1500.0
+    },
+    "throughput_rps": {
+      "actual": 9.242422164136368,
+      "met": true,
+      "target": 4.0
+    }
+  },
+  "status": "ok",
+  "timestamp": "2025-09-25T09:11:37.350985+00:00"
+}

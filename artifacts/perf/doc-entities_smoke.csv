@@ -1,0 +1,2 @@
+service_name,timestamp,status,total_requests,success_count,error_count,success_rate,duration_seconds,throughput_rps,latency_min_ms,latency_mean_ms,latency_p50_ms,latency_p95_ms,latency_p99_ms,latency_max_ms,latency_slo_target_ms,latency_slo_met,throughput_slo_target_rps,throughput_slo_met
+doc-entities,2025-09-25T09:11:37.350985+00:00,ok,5,5,0,1.0,0.5409837282051064,9.242422164136368,203.88536781077235,216.3934912820426,211.15105511181483,240.76469283404577,246.6521513723051,248.12401600686994,1500.0,True,4.0,True

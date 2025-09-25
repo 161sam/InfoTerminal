@@ -43,6 +43,7 @@ _Last update: 2025-09-25 – generated after running `scripts/generate_inventory
 - Infrastruktur-Services aus den Compose-Overlays fehlen weiterhin bei `/healthz`, `/readyz`, `/metrics`; Nachverfolgung via `inventory/findings.md`. 【F:inventory/findings.md†L1-L69】
 - Compose overlays expose Prometheus/Grafana/Loki/Tempo on host ports 3412–3416. 【F:inventory/services.json†L266-L289】
 - **J3 SLOs & Alerts – done**: Grafana liefert Availability/Latency/Error-SLIs je Kernservice, Prometheus überwacht Burn-Rates (1h/6h) und P95-Schwellen; Fake-Series via Pushgateway dienen zum Test-Feuer. 【F:grafana/dashboards/api-slo.json†L1-L200】【F:monitoring/alerts/performance-alerts.yml†L1-L200】【F:docs/dev/slo.md†L1-L200】
+- Performance benchmarks unter `benchmarks/` erzeugen deterministische JSON/CSV-Summaries (inkl. SLO-Auswertung) und der neue Grafana-Datensatz `perf-trends.json` zeigt P95-Latenz & Throughput je Kernservice samt Service-Auswahl. 【F:benchmarks/common.py†L1-L280】【F:benchmarks/perf_smoke.py†L1-L83】【F:grafana/dashboards/perf-trends.json†L1-L86】【F:docs/performance/benchmarks.md†L1-L118】
 
 ## Inventory Highlights
 - Services inventory stored in `inventory/services.json`; API discovery in `inventory/apis.json`; database artefacts aggregated in `inventory/db.json`; frontend surface captured in `inventory/frontend.json`. 【F:inventory/services.json†L1-L392】【F:inventory/apis.json†L1-L20】【F:inventory/db.json†L1-L40】【F:inventory/frontend.json†L1-L210】

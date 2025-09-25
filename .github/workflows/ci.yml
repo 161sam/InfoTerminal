@@ -57,6 +57,22 @@ jobs:
       - name: Test
         run: npm -w apps/frontend run test --silent -- --reporter=dot
 
+  migrations_smoke:
+    name: DB Migrations Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "sqlalchemy>=2"
+      - name: Run migrations smoke test
+        run: python scripts/migrations_smoke.py
+
   sbom-source-integrity:
     name: Supply-Chain (SBOM Source)
     runs-on: ubuntu-latest
@@ -195,6 +211,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate synthetic smoke targets
         run: python scripts/synthetic_smoke.py --validate-only
+
+  perf-smoke:
+    name: Performance Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run perf smoke benchmarks (simulate)
+        run: python benchmarks/perf_smoke.py
 
   vuln-policy-sca:
     name: Supply-Chain (Dependency SCA)
