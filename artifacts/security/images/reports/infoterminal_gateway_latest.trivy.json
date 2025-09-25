@@ -1,0 +1,294 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2025-09-25T08:17:41.911316686+02:00",
+  "ArtifactName": "infoterminal/gateway:latest",
+  "ArtifactType": "container_image",
+  "Metadata": {
+    "OS": {
+      "Family": "alpine",
+      "Name": "3.22.1"
+    },
+    "ImageID": "sha256:a53f1aa4316f232d04261438582831de4384b68fc5057f89ec4d1bb8843fb9e5",
+    "DiffIDs": [
+      "sha256:418dccb7d85a63a6aa574439840f7a6fa6fd2321b3e2394568a317735e867d35",
+      "sha256:689195d1c9adf3fad82fbd3e2d279fa1bee001c73287e7e9ee2ed7a1881f2424",
+      "sha256:fddb0c9d0c8fa53f1466bdcc0baf00ad6ab1f3b5bcc5bdd152d3ce98f88c8a16",
+      "sha256:00d0857b2a165e6b4dd62bd0d23f87e4e63a809a02b77333fe4351adadd52da7",
+      "sha256:2242aa99b811291379705b0930fbbe6d09b1b788ebcafe13311c4389021bf051",
+      "sha256:7b624ddea2956624d68445b70dcc92c76e6df6f5cfcfa6ad5c827bd9dee8f2ce",
+      "sha256:e6aa5ad820bef51f34c9b1eab6cae03f83f8e1aff394b4ab5545f008055b28ed",
+      "sha256:aad3c8d1405861977ecd8c9562fc6c8be341b0bedc0369e4e5c7ea9d3604f890"
+    ],
+    "RepoTags": [
+      "infoterminal/gateway:latest"
+    ],
+    "RepoDigests": [
+      "infoterminal/gateway@sha256:a53f1aa4316f232d04261438582831de4384b68fc5057f89ec4d1bb8843fb9e5"
+    ],
+    "ImageConfig": {
+      "architecture": "amd64",
+      "created": "2025-09-24T13:25:39.89783942Z",
+      "history": [
+        {
+          "created": "2025-07-15T11:01:16Z",
+          "created_by": "ADD alpine-minirootfs-3.22.1-x86_64.tar.gz / # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-07-15T11:01:16Z",
+          "created_by": "CMD [\"/bin/sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "ENV NODE_VERSION=20.19.5",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "RUN /bin/sh -c addgroup -g 1000 node     \u0026\u0026 adduser -u 1000 -G node -s /bin/sh -D node     \u0026\u0026 apk add --no-cache         libstdc++     \u0026\u0026 apk add --no-cache --virtual .build-deps         curl     \u0026\u0026 ARCH= OPENSSL_ARCH='linux*' \u0026\u0026 alpineArch=\"$(apk --print-arch)\"       \u0026\u0026 case \"${alpineArch##*-}\" in         x86_64) ARCH='x64' CHECKSUM=\"3ea6ae2833f2d75e4d84731a9c01f50eff5198d78f724fa673281468e1c2077b\" OPENSSL_ARCH=linux-x86_64;;         x86) OPENSSL_ARCH=linux-elf;;         aarch64) OPENSSL_ARCH=linux-aarch64;;         arm*) OPENSSL_ARCH=linux-armv4;;         ppc64le) OPENSSL_ARCH=linux-ppc64le;;         s390x) OPENSSL_ARCH=linux-s390x;;         *) ;;       esac   \u0026\u0026 if [ -n \"${CHECKSUM}\" ]; then     set -eu;     curl -fsSLO --compressed \"https://unofficial-builds.nodejs.org/download/release/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz\";     echo \"$CHECKSUM  node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz\" | sha256sum -c -       \u0026\u0026 tar -xJf \"node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz\" -C /usr/local --strip-components=1 --no-same-owner       \u0026\u0026 ln -s /usr/local/bin/node /usr/local/bin/nodejs;   else     echo \"Building from source\"     \u0026\u0026 apk add --no-cache --virtual .build-deps-full         binutils-gold         g++         gcc         gnupg         libgcc         linux-headers         make         python3         py-setuptools     \u0026\u0026 export GNUPGHOME=\"$(mktemp -d)\"     \u0026\u0026 for key in       5BE8A3F6C8A5C01D106C0AD820B1A390B168D356       DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7       CC68F5A3106FF448322E48ED27F5E38D5B0A215F       8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600       890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4       C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C       108F52B48DB57BB0CC439B2997B01419BD92F80A       A363A499291CBBC940DD62E41F10027AF002F8B0     ; do       { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$key\" \u0026\u0026 gpg --batch --fingerprint \"$key\"; } ||       { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys \"$key\" \u0026\u0026 gpg --batch --fingerprint \"$key\"; } ;     done     \u0026\u0026 curl -fsSLO --compressed \"https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz\"     \u0026\u0026 curl -fsSLO --compressed \"https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc\"     \u0026\u0026 gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc     \u0026\u0026 gpgconf --kill all     \u0026\u0026 rm -rf \"$GNUPGHOME\"     \u0026\u0026 grep \" node-v$NODE_VERSION.tar.xz\\$\" SHASUMS256.txt | sha256sum -c -     \u0026\u0026 tar -xf \"node-v$NODE_VERSION.tar.xz\"     \u0026\u0026 cd \"node-v$NODE_VERSION\"     \u0026\u0026 ./configure     \u0026\u0026 make -j$(getconf _NPROCESSORS_ONLN) V=     \u0026\u0026 make install     \u0026\u0026 apk del .build-deps-full     \u0026\u0026 cd ..     \u0026\u0026 rm -Rf \"node-v$NODE_VERSION\"     \u0026\u0026 rm \"node-v$NODE_VERSION.tar.xz\" SHASUMS256.txt.asc SHASUMS256.txt;   fi   \u0026\u0026 rm -f \"node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz\"   \u0026\u0026 find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name \"$OPENSSL_ARCH\" -exec rm -rf {} \\;   \u0026\u0026 apk del .build-deps   \u0026\u0026 node --version   \u0026\u0026 npm --version   \u0026\u0026 rm -rf /tmp/* # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "ENV YARN_VERSION=1.22.22",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "RUN /bin/sh -c apk add --no-cache --virtual .build-deps-yarn curl gnupg tar   \u0026\u0026 export GNUPGHOME=\"$(mktemp -d)\"   \u0026\u0026 for key in     6A010C5166006599AA17F08146C2130DFD2497F5   ; do     { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$key\" \u0026\u0026 gpg --batch --fingerprint \"$key\"; } ||     { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys \"$key\" \u0026\u0026 gpg --batch --fingerprint \"$key\"; } ;   done   \u0026\u0026 curl -fsSLO --compressed \"https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz\"   \u0026\u0026 curl -fsSLO --compressed \"https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc\"   \u0026\u0026 gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz   \u0026\u0026 gpgconf --kill all   \u0026\u0026 rm -rf \"$GNUPGHOME\"   \u0026\u0026 mkdir -p /opt   \u0026\u0026 tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/   \u0026\u0026 ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn   \u0026\u0026 ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg   \u0026\u0026 rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz   \u0026\u0026 apk del .build-deps-yarn   \u0026\u0026 yarn --version   \u0026\u0026 rm -rf /tmp/* # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "COPY docker-entrypoint.sh /usr/local/bin/ # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "ENTRYPOINT [\"docker-entrypoint.sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-03T19:47:58Z",
+          "created_by": "CMD [\"node\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-03T22:13:27Z",
+          "created_by": "WORKDIR /app",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-24T13:13:05Z",
+          "created_by": "COPY package.json ./ # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-24T13:25:39Z",
+          "created_by": "RUN /bin/sh -c npm install --omit=dev \u0026\u0026 npm install ts-node typescript # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-24T13:25:39Z",
+          "created_by": "COPY . . # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-24T13:25:39Z",
+          "created_by": "ENV PORT=8080",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-24T13:25:39Z",
+          "created_by": "EXPOSE map[8080/tcp:{}]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-24T13:25:39Z",
+          "created_by": "CMD [\"node\" \"server.js\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        }
+      ],
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:418dccb7d85a63a6aa574439840f7a6fa6fd2321b3e2394568a317735e867d35",
+          "sha256:689195d1c9adf3fad82fbd3e2d279fa1bee001c73287e7e9ee2ed7a1881f2424",
+          "sha256:fddb0c9d0c8fa53f1466bdcc0baf00ad6ab1f3b5bcc5bdd152d3ce98f88c8a16",
+          "sha256:00d0857b2a165e6b4dd62bd0d23f87e4e63a809a02b77333fe4351adadd52da7",
+          "sha256:2242aa99b811291379705b0930fbbe6d09b1b788ebcafe13311c4389021bf051",
+          "sha256:7b624ddea2956624d68445b70dcc92c76e6df6f5cfcfa6ad5c827bd9dee8f2ce",
+          "sha256:e6aa5ad820bef51f34c9b1eab6cae03f83f8e1aff394b4ab5545f008055b28ed",
+          "sha256:aad3c8d1405861977ecd8c9562fc6c8be341b0bedc0369e4e5c7ea9d3604f890"
+        ]
+      },
+      "config": {
+        "Cmd": [
+          "node",
+          "server.js"
+        ],
+        "Entrypoint": [
+          "docker-entrypoint.sh"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "NODE_VERSION=20.19.5",
+          "YARN_VERSION=1.22.22",
+          "PORT=8080"
+        ],
+        "WorkingDir": "/app",
+        "ArgsEscaped": true
+      }
+    }
+  },
+  "Results": [
+    {
+      "Target": "infoterminal/gateway:latest (alpine 3.22.1)",
+      "Class": "os-pkgs",
+      "Type": "alpine"
+    },
+    {
+      "Target": "Node.js",
+      "Class": "lang-pkgs",
+      "Type": "node-pkg",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2025-5889",
+          "PkgID": "brace-expansion@2.0.1",
+          "PkgName": "brace-expansion",
+          "PkgPath": "usr/local/lib/node_modules/npm/node_modules/brace-expansion/package.json",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/brace-expansion@2.0.1",
+            "UID": "5312e61c89337017"
+          },
+          "InstalledVersion": "2.0.1",
+          "FixedVersion": "2.0.2, 1.1.12, 3.0.1, 4.0.1",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:c88300f8759af46375ccc157a0a0dbf7cdaeded52394b5ce2ce074e3b773fe82",
+            "DiffID": "sha256:689195d1c9adf3fad82fbd3e2d279fa1bee001c73287e7e9ee2ed7a1881f2424"
+          },
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-5889",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Title": "brace-expansion: juliangruber brace-expansion index.js expand redos",
+          "Description": "A vulnerability was found in juliangruber brace-expansion up to 1.1.11/2.0.1/3.0.0/4.0.0. It has been rated as problematic. Affected by this issue is the function expand of the file index.js. The manipulation leads to inefficient regular expression complexity. The attack may be launched remotely. The complexity of an attack is rather high. The exploitation is known to be difficult. The exploit has been disclosed to the public and may be used. Upgrading to version 1.1.12, 2.0.2, 3.0.1 and 4.0.1 is able to address this issue. The name of the patch is a5b98a4f30d7813266b221435e1eaaf25a1b0ac5. It is recommended to upgrade the affected component.",
+          "Severity": "LOW",
+          "CweIDs": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "VendorSeverity": {
+            "amazon": 2,
+            "ghsa": 1,
+            "redhat": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L",
+              "V3Score": 3.1
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L",
+              "V3Score": 3.1
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2025-5889",
+            "https://gist.github.com/mmmsssttt404/37a40ce7d6e5ca604858fe30814d9466",
+            "https://github.com/juliangruber/brace-expansion",
+            "https://github.com/juliangruber/brace-expansion/commit/0b6a9781e18e9d2769bb2931f4856d1360243ed2",
+            "https://github.com/juliangruber/brace-expansion/commit/15f9b3c75ebf5988198241fecaebdc45eff28a9f",
+            "https://github.com/juliangruber/brace-expansion/commit/36603d5f3599a37af9e85eda30acd7d28599c36e",
+            "https://github.com/juliangruber/brace-expansion/commit/c3c73c8b088defc70851843be88ccc3af08e7217",
+            "https://github.com/juliangruber/brace-expansion/pull/65/commits/a5b98a4f30d7813266b221435e1eaaf25a1b0ac5",
+            "https://github.com/juliangruber/brace-expansion/releases/tag/v4.0.1",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-5889",
+            "https://vuldb.com/?ctiid.311660",
+            "https://vuldb.com/?id.311660",
+            "https://vuldb.com/?submit.585717",
+            "https://www.cve.org/CVERecord?id=CVE-2025-5889"
+          ],
+          "PublishedDate": "2025-06-09T19:15:25.46Z",
+          "LastModifiedDate": "2025-06-12T16:06:47.857Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2024-21538",
+          "PkgID": "cross-spawn@7.0.3",
+          "PkgName": "cross-spawn",
+          "PkgPath": "usr/local/lib/node_modules/npm/node_modules/cross-spawn/package.json",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/cross-spawn@7.0.3",
+            "UID": "480da04347e2e299"
+          },
+          "InstalledVersion": "7.0.3",
+          "FixedVersion": "7.0.5, 6.0.6",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:c88300f8759af46375ccc157a0a0dbf7cdaeded52394b5ce2ce074e3b773fe82",
+            "DiffID": "sha256:689195d1c9adf3fad82fbd3e2d279fa1bee001c73287e7e9ee2ed7a1881f2424"
+          },
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-21538",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Title": "cross-spawn: regular expression denial of service",
+          "Description": "Versions of the package cross-spawn before 6.0.6, from 7.0.0 and before 7.0.5 are vulnerable to Regular Expression Denial of Service (ReDoS) due to improper input sanitization. An attacker can increase the CPU usage and crash the program by crafting a very large and well crafted string.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-1333"
+          ],
+          "VendorSeverity": {
+            "amazon": 2,
+            "azure": 3,
+            "cbl-mariner": 3,
+            "ghsa": 3,
+            "redhat": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:N/A:H",
+              "V3Score": 4.4
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2024-21538",
+            "https://github.com/moxystudio/node-cross-spawn",
+            "https://github.com/moxystudio/node-cross-spawn/commit/5ff3a07d9add449021d806e45c4168203aa833ff",
+            "https://github.com/moxystudio/node-cross-spawn/commit/640d391fde65388548601d95abedccc12943374f",
+            "https://github.com/moxystudio/node-cross-spawn/commit/d35c865b877d2f9ded7c1ed87521c2fdb689c8dd",
+            "https://github.com/moxystudio/node-cross-spawn/issues/165",
+            "https://github.com/moxystudio/node-cross-spawn/pull/160",
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-21538",
+            "https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-8366349",
+            "https://security.snyk.io/vuln/SNYK-JS-CROSSSPAWN-8303230",
+            "https://www.cve.org/CVERecord?id=CVE-2024-21538"
+          ],
+          "PublishedDate": "2024-11-08T05:15:06.453Z",
+          "LastModifiedDate": "2025-05-20T15:16:03.53Z"
+        }
+      ]
+    }
+  ]
+}

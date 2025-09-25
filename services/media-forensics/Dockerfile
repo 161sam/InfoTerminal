@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 # Install system dependencies for image processing
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
@@ -14,17 +17,18 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements first for better caching
-COPY requirements.txt .
+COPY services/media-forensics/requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application
-COPY app.py .
+# Copy shared modules and service code
+COPY services/_shared/ /app/_shared/
+COPY services/common/ /app/common/
+COPY services/media-forensics/ ./
 
-# Copy shared modules if available
-COPY ../../services/_shared /app/_shared 2>/dev/null || true
-COPY ../../services/common /app/common 2>/dev/null || true
+# Ensure shared modules are importable
+ENV PYTHONPATH="/app:$PYTHONPATH"
 
 EXPOSE 8000
 

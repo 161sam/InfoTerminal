@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "description": "Accepted container vulnerabilities with justification and expiry. Review quarterly.",
+    "last_reviewed": "2025-09-25",
+    "owner": "security"
+  },
+  "acceptances": [
+    {
+      "id": "CVE-2018-3750",
+      "images": [
+        "infoterminal/frontend:latest"
+      ],
+      "components": [
+        "deep-extend"
+      ],
+      "reason": "Frontend package deep-extend will be removed via pnpm audit fix patch; release scheduled in sprint FT-2025.10.",
+      "expires": "2025-10-15T00:00:00+00:00",
+      "owner": "frontend",
+      "notes": "Track remediation in ticket SEC-FE-127; dependency bump prepared in branch feat/frontend-deps-oct.",
+      "reference": "https://avd.aquasec.com/nvd/cve-2018-3750"
+    },
+    {
+      "id": "CVE-2018-3739",
+      "images": [
+        "infoterminal/frontend:latest"
+      ],
+      "components": [
+        "https-proxy-agent"
+      ],
+      "reason": "Frontend will upgrade https-proxy-agent to >=2.2.4 together with pnpm audit run.",
+      "expires": "2025-10-15T00:00:00+00:00",
+      "owner": "frontend",
+      "notes": "Patched module staged in SEC-FE-127 rollout; waiting on regression tests.",
+      "reference": "https://avd.aquasec.com/nvd/cve-2018-3739"
+    },
+    {
+      "id": "CVE-2021-44906",
+      "images": [
+        "infoterminal/frontend:latest"
+      ],
+      "components": [
+        "minimist"
+      ],
+      "reason": "Legacy minimist dependency to be dropped when migrating Next.js configs; mitigation tracked for sprint FT-2025.10.",
+      "expires": "2025-10-15T00:00:00+00:00",
+      "owner": "frontend",
+      "notes": "Migration plan in SEC-FE-128 to replace minimist usage with native options parser.",
+      "reference": "https://avd.aquasec.com/nvd/cve-2021-44906"
+    },
+    {
+      "id": "CVE-2025-7783",
+      "images": [
+        "infoterminal/frontend:latest"
+      ],
+      "components": [
+        "form-data"
+      ],
+      "reason": "Form-data dependency bump blocked by fetch polyfill change; fix scheduled alongside Next.js upgrade.",
+      "expires": "2025-10-22T00:00:00+00:00",
+      "owner": "frontend",
+      "notes": "See SEC-FE-130 for compatibility testing with node-fetch 3.x.",
+      "reference": "https://avd.aquasec.com/nvd/cve-2025-7783"
+    },
+    {
+      "id": "CVE-2021-3918",
+      "images": [
+        "infoterminal/frontend:latest"
+      ],
+      "components": [
+        "json-schema"
+      ],
+      "reason": "json-schema pinned by ajv v8 transitive; upgrade to ajv 8.17.x under review.",
+      "expires": "2025-10-22T00:00:00+00:00",
+      "owner": "frontend",
+      "notes": "Follow SEC-FE-131 for ajv migration and regression coverage.",
+      "reference": "https://avd.aquasec.com/nvd/cve-2021-3918"
+    },
+    {
+      "id": "CVE-2025-29927",
+      "images": [
+        "infoterminal/frontend:latest"
+      ],
+      "components": [
+        "next"
+      ],
+      "reason": "Next.js patch release containing the fix is planned for adoption with October hardening window (v14.2.6+).",
+      "expires": "2025-10-31T00:00:00+00:00",
+      "owner": "frontend",
+      "notes": "Upgrade tracked in SEC-FE-132; waiting on node10 compatibility tests.",
+      "reference": "https://github.com/vercel/next.js/releases"
+    },
+    {
+      "id": "CVE-2019-8457",
+      "images": [
+        "apache/nifi:2.0.0",
+        "grafana/promtail:2.9.4",
+        "neo4j:5",
+        "neo4j:5.15",
+        "neo4j:5.22",
+        "neo4j:5.24.2-community"
+      ],
+      "components": [
+        "libdb5.3"
+      ],
+      "reason": "Upstream images still ship Berkeley DB 5.3; replacement packages scheduled once vendor releases patched builds.",
+      "expires": "2025-11-30T00:00:00+00:00",
+      "owner": "platform",
+      "notes": "Monitor vendor advisories (NiFi 2.0.1, Grafana Agent >0.38, Neo4j 5.25) and switch to patched base images.",
+      "reference": "https://avd.aquasec.com/nvd/cve-2019-8457"
+    }
+  ]
+}

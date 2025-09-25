@@ -1,0 +1,541 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2025-09-25T08:17:47.437429926+02:00",
+  "ArtifactName": "postgres:16-alpine",
+  "ArtifactType": "container_image",
+  "Metadata": {
+    "OS": {
+      "Family": "alpine",
+      "Name": "3.22.1"
+    },
+    "ImageID": "sha256:1c6d2f6e4d30d49c529e09a627e8178db5011dde88d955eb08db2e135e64aa09",
+    "DiffIDs": [
+      "sha256:418dccb7d85a63a6aa574439840f7a6fa6fd2321b3e2394568a317735e867d35",
+      "sha256:0398fe53e78877db185248c1c5ad2e54965864df36859769c835aa35ba608340",
+      "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697",
+      "sha256:3d7d9c048029d0489d0ff5f2153fad7e78c3df959a76be095d528a1d51dfc1de",
+      "sha256:8dace4bfacdfabb469a4817a51b52f050fbb0b0a43ea4313fac658b191d2b807",
+      "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc",
+      "sha256:39c93a87c0c1082682d08fb0bb657b8fc61e66c2bf8187170bb58227134af8eb",
+      "sha256:344de4daa9da428f34857c7e5449184e2e494613625f436950c9408d16670ec0",
+      "sha256:328198ffb07dc12dd84d4066f5eb3ad50ff600795471c4a9b46144438004560c",
+      "sha256:2a41419436794aadbd3adaf7b7ac88d8b1b8737a3f24f85074f9155e1ace3983",
+      "sha256:a61029bb8e1897e02ad89eb7ee76ec3bb44b8361c240b96f0b5133173d9c8738"
+    ],
+    "RepoTags": [
+      "postgres:16-alpine"
+    ],
+    "RepoDigests": [
+      "postgres@sha256:1c6d2f6e4d30d49c529e09a627e8178db5011dde88d955eb08db2e135e64aa09"
+    ],
+    "ImageConfig": {
+      "architecture": "amd64",
+      "created": "2025-09-08T20:04:25Z",
+      "history": [
+        {
+          "created": "2025-07-15T11:01:16Z",
+          "created_by": "ADD alpine-minirootfs-3.22.1-x86_64.tar.gz / # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-07-15T11:01:16Z",
+          "created_by": "CMD [\"/bin/sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c set -eux; \taddgroup -g 70 -S postgres; \tadduser -u 70 -S -D -G postgres -H -h /var/lib/postgresql -s /bin/sh postgres; \tinstall --verbose --directory --owner postgres --group postgres --mode 1777 /var/lib/postgresql # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV GOSU_VERSION=1.18",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c set -eux; \t\tapk add --no-cache --virtual .gosu-deps \t\tca-certificates \t\tdpkg \t\tgnupg \t; \t\tdpkgArch=\"$(dpkg --print-architecture | awk -F- '{ print $NF }')\"; \twget -O /usr/local/bin/gosu \"https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch\"; \twget -O /usr/local/bin/gosu.asc \"https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc\"; \t\texport GNUPGHOME=\"$(mktemp -d)\"; \tgpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \tgpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \tgpgconf --kill all; \trm -rf \"$GNUPGHOME\" /usr/local/bin/gosu.asc; \t\tapk del --no-network .gosu-deps; \t\tchmod +x /usr/local/bin/gosu; \tgosu --version; \tgosu nobody true # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c set -eux; ln -svf gosu /usr/local/bin/su-exec; su-exec nobody true # backwards compatibility (removed in PostgreSQL 17+) # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV LANG=en_US.utf8",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c mkdir /docker-entrypoint-initdb.d # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV PG_MAJOR=16",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV PG_VERSION=16.10",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV PG_SHA256=de8485f4ce9c32e3ddfeef0b7c261eed1cecb54c9bcd170e437ff454cb292b42",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV DOCKER_PG_LLVM_DEPS=llvm19-dev \t\tclang19",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c set -eux; \t\twget -O postgresql.tar.bz2 \"https://ftp.postgresql.org/pub/source/v$PG_VERSION/postgresql-$PG_VERSION.tar.bz2\"; \techo \"$PG_SHA256 *postgresql.tar.bz2\" | sha256sum -c -; \tmkdir -p /usr/src/postgresql; \ttar \t\t--extract \t\t--file postgresql.tar.bz2 \t\t--directory /usr/src/postgresql \t\t--strip-components 1 \t; \trm postgresql.tar.bz2; \t\tapk add --no-cache --virtual .build-deps \t\t$DOCKER_PG_LLVM_DEPS \t\tbison \t\tcoreutils \t\tdpkg-dev dpkg \t\tflex \t\tg++ \t\tgcc \t\tkrb5-dev \t\tlibc-dev \t\tlibedit-dev \t\tlibxml2-dev \t\tlibxslt-dev \t\tlinux-headers \t\tmake \t\topenldap-dev \t\topenssl-dev \t\tperl-dev \t\tperl-ipc-run \t\tperl-utils \t\tpython3-dev \t\ttcl-dev \t\tutil-linux-dev \t\tzlib-dev \t\ticu-dev \t\tlz4-dev \t\tzstd-dev \t; \t\tcd /usr/src/postgresql; \tawk '$1 == \"#define\" \u0026\u0026 $2 == \"DEFAULT_PGSOCKET_DIR\" \u0026\u0026 $3 == \"\\\"/tmp\\\"\" { $3 = \"\\\"/var/run/postgresql\\\"\"; print; next } { print }' src/include/pg_config_manual.h \u003e src/include/pg_config_manual.h.new; \tgrep '/var/run/postgresql' src/include/pg_config_manual.h.new; \tmv src/include/pg_config_manual.h.new src/include/pg_config_manual.h; \tgnuArch=\"$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)\"; \t\texport LLVM_CONFIG=\"/usr/lib/llvm19/bin/llvm-config\"; \texport CLANG=clang-19; \t\t./configure \t\t--enable-option-checking=fatal \t\t--build=\"$gnuArch\" \t\t--enable-integer-datetimes \t\t--enable-thread-safety \t\t--enable-tap-tests \t\t--disable-rpath \t\t--with-uuid=e2fs \t\t--with-pgport=5432 \t\t--with-system-tzdata=/usr/share/zoneinfo \t\t--prefix=/usr/local \t\t--with-includes=/usr/local/include \t\t--with-libraries=/usr/local/lib \t\t--with-gssapi \t\t--with-ldap \t\t--with-tcl \t\t--with-perl \t\t--with-python \t\t--with-openssl \t\t--with-libxml \t\t--with-libxslt \t\t--with-icu \t\t--with-llvm \t\t--with-lz4 \t\t--with-zstd \t; \tmake -j \"$(nproc)\" world-bin; \tmake install-world-bin; \tmake -C contrib install; \t\trunDeps=\"$( \t\tscanelf --needed --nobanner --format '%n#p' --recursive /usr/local \t\t\t| tr ',' '\\n' \t\t\t| sort -u \t\t\t| awk 'system(\"[ -e /usr/local/lib/\" $1 \" ]\") == 0 { next } { print \"so:\" $1 }' \t\t\t| grep -v -e perl -e python -e tcl \t)\"; \tapk add --no-cache --virtual .postgresql-rundeps \t\t$runDeps \t\tbash \t\ttzdata \t\tzstd \t\ticu-data-full \t\t$([ \"$(apk --print-arch)\" != 'ppc64le' ] \u0026\u0026 echo 'nss_wrapper') \t; \tapk del --no-network .build-deps; \tcd /; \trm -rf \t\t/usr/src/postgresql \t\t/usr/local/share/doc \t\t/usr/local/share/man \t; \t\tpostgres --version # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c set -eux; \tcp -v /usr/local/share/postgresql/postgresql.conf.sample /usr/local/share/postgresql/postgresql.conf.sample.orig; \tsed -ri \"s!^#?(listen_addresses)\\s*=\\s*\\S+.*!\\1 = '*'!\" /usr/local/share/postgresql/postgresql.conf.sample; \tgrep -F \"listen_addresses = '*'\" /usr/local/share/postgresql/postgresql.conf.sample # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c install --verbose --directory --owner postgres --group postgres --mode 3777 /var/run/postgresql # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENV PGDATA=/var/lib/postgresql/data",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c install --verbose --directory --owner postgres --group postgres --mode 1777 \"$PGDATA\" # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "VOLUME [/var/lib/postgresql/data]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "COPY docker-entrypoint.sh docker-ensure-initdb.sh /usr/local/bin/ # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "RUN /bin/sh -c ln -sT docker-ensure-initdb.sh /usr/local/bin/docker-enforce-initdb.sh # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "ENTRYPOINT [\"docker-entrypoint.sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "STOPSIGNAL SIGINT",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "EXPOSE map[5432/tcp:{}]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-09-08T20:04:25Z",
+          "created_by": "CMD [\"postgres\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        }
+      ],
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:418dccb7d85a63a6aa574439840f7a6fa6fd2321b3e2394568a317735e867d35",
+          "sha256:0398fe53e78877db185248c1c5ad2e54965864df36859769c835aa35ba608340",
+          "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697",
+          "sha256:3d7d9c048029d0489d0ff5f2153fad7e78c3df959a76be095d528a1d51dfc1de",
+          "sha256:8dace4bfacdfabb469a4817a51b52f050fbb0b0a43ea4313fac658b191d2b807",
+          "sha256:a1bdd438eddcc650e818213880ce6f3ab07e2d5820953dd13fb920fd91539dbc",
+          "sha256:39c93a87c0c1082682d08fb0bb657b8fc61e66c2bf8187170bb58227134af8eb",
+          "sha256:344de4daa9da428f34857c7e5449184e2e494613625f436950c9408d16670ec0",
+          "sha256:328198ffb07dc12dd84d4066f5eb3ad50ff600795471c4a9b46144438004560c",
+          "sha256:2a41419436794aadbd3adaf7b7ac88d8b1b8737a3f24f85074f9155e1ace3983",
+          "sha256:a61029bb8e1897e02ad89eb7ee76ec3bb44b8361c240b96f0b5133173d9c8738"
+        ]
+      },
+      "config": {
+        "Cmd": [
+          "postgres"
+        ],
+        "Entrypoint": [
+          "docker-entrypoint.sh"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "GOSU_VERSION=1.18",
+          "LANG=en_US.utf8",
+          "PG_MAJOR=16",
+          "PG_VERSION=16.10",
+          "PG_SHA256=de8485f4ce9c32e3ddfeef0b7c261eed1cecb54c9bcd170e437ff454cb292b42",
+          "DOCKER_PG_LLVM_DEPS=llvm19-dev \t\tclang19",
+          "PGDATA=/var/lib/postgresql/data"
+        ],
+        "Volumes": {
+          "/var/lib/postgresql/data": {}
+        },
+        "WorkingDir": "/",
+        "StopSignal": "SIGINT"
+      }
+    }
+  },
+  "Results": [
+    {
+      "Target": "postgres:16-alpine (alpine 3.22.1)",
+      "Class": "os-pkgs",
+      "Type": "alpine"
+    },
+    {
+      "Target": "usr/local/bin/gosu",
+      "Class": "lang-pkgs",
+      "Type": "gobinary",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2025-22874",
+          "PkgName": "stdlib",
+          "PkgIdentifier": {
+            "PURL": "pkg:golang/stdlib@1.24.0",
+            "UID": "16f940fd52e7fd38"
+          },
+          "InstalledVersion": "1.24.0",
+          "FixedVersion": "1.24.4",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:7bf27ab46e7dac11afe40811cd1abbf6efdaf2b9ea236b7264195a333364ffa7",
+            "DiffID": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-22874",
+          "DataSource": {
+            "ID": "govulndb",
+            "Name": "The Go Vulnerability Database",
+            "URL": "https://pkg.go.dev/vuln/"
+          },
+          "Title": "crypto/x509: Usage of ExtKeyUsageAny disables policy validation in crypto/x509",
+          "Description": "Calling Verify with a VerifyOptions.KeyUsages that contains ExtKeyUsageAny unintentionally disabledpolicy validation. This only affected certificate chains which contain policy graphs, which are rather uncommon.",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "amazon": 2,
+            "azure": 3,
+            "bitnami": 3,
+            "cbl-mariner": 3,
+            "redhat": 3
+          },
+          "CVSS": {
+            "bitnami": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2025-22874",
+            "https://go.dev/cl/670375",
+            "https://go.dev/issue/73612",
+            "https://groups.google.com/g/golang-announce/c/ufZ8WpEsA3A",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-22874",
+            "https://pkg.go.dev/vuln/GO-2025-3749",
+            "https://www.cve.org/CVERecord?id=CVE-2025-22874"
+          ],
+          "PublishedDate": "2025-06-11T17:15:42.167Z",
+          "LastModifiedDate": "2025-06-12T16:06:20.18Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-47906",
+          "PkgName": "stdlib",
+          "PkgIdentifier": {
+            "PURL": "pkg:golang/stdlib@1.24.0",
+            "UID": "16f940fd52e7fd38"
+          },
+          "InstalledVersion": "1.24.0",
+          "FixedVersion": "1.23.12, 1.24.6",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:7bf27ab46e7dac11afe40811cd1abbf6efdaf2b9ea236b7264195a333364ffa7",
+            "DiffID": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-47906",
+          "DataSource": {
+            "ID": "govulndb",
+            "Name": "The Go Vulnerability Database",
+            "URL": "https://pkg.go.dev/vuln/"
+          },
+          "Title": "If the PATH environment variable contains paths which are executables  ...",
+          "Description": "If the PATH environment variable contains paths which are executables (rather than just directories), passing certain strings to LookPath (\"\", \".\", and \"..\"), can result in the binaries listed in the PATH being unexpectedly returned.",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "amazon": 3,
+            "bitnami": 2
+          },
+          "CVSS": {
+            "bitnami": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L",
+              "V3Score": 6.5
+            }
+          },
+          "References": [
+            "https://go.dev/cl/691775",
+            "https://go.dev/issue/74466",
+            "https://groups.google.com/g/golang-announce/c/x5MKroML2yM",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-47906",
+            "https://pkg.go.dev/vuln/GO-2025-3956"
+          ],
+          "PublishedDate": "2025-09-18T19:15:37.66Z",
+          "LastModifiedDate": "2025-09-19T16:00:27.847Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-47907",
+          "PkgName": "stdlib",
+          "PkgIdentifier": {
+            "PURL": "pkg:golang/stdlib@1.24.0",
+            "UID": "16f940fd52e7fd38"
+          },
+          "InstalledVersion": "1.24.0",
+          "FixedVersion": "1.23.12, 1.24.6",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:7bf27ab46e7dac11afe40811cd1abbf6efdaf2b9ea236b7264195a333364ffa7",
+            "DiffID": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-47907",
+          "DataSource": {
+            "ID": "govulndb",
+            "Name": "The Go Vulnerability Database",
+            "URL": "https://pkg.go.dev/vuln/"
+          },
+          "Title": "database/sql: Postgres Scan Race Condition",
+          "Description": "Cancelling a query (e.g. by cancelling the context passed to one of the query methods) during a call to the Scan method of the returned Rows can result in unexpected results if other queries are being made in parallel. This can result in a race condition that may overwrite the expected results with those of another query, causing the call to Scan to return either unexpected results from the other query or an error.",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "amazon": 3,
+            "azure": 3,
+            "bitnami": 3,
+            "cbl-mariner": 3,
+            "redhat": 2
+          },
+          "CVSS": {
+            "bitnami": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:L",
+              "V3Score": 7
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:L",
+              "V3Score": 7
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2025-47907",
+            "https://go.dev/cl/693735",
+            "https://go.dev/issue/74831",
+            "https://groups.google.com/g/golang-announce/c/x5MKroML2yM",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-47907",
+            "https://pkg.go.dev/vuln/GO-2025-3849",
+            "https://www.cve.org/CVERecord?id=CVE-2025-47907"
+          ],
+          "PublishedDate": "2025-08-07T16:15:30.357Z",
+          "LastModifiedDate": "2025-08-07T21:26:37.453Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-0913",
+          "PkgName": "stdlib",
+          "PkgIdentifier": {
+            "PURL": "pkg:golang/stdlib@1.24.0",
+            "UID": "16f940fd52e7fd38"
+          },
+          "InstalledVersion": "1.24.0",
+          "FixedVersion": "1.23.10, 1.24.4",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:7bf27ab46e7dac11afe40811cd1abbf6efdaf2b9ea236b7264195a333364ffa7",
+            "DiffID": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-0913",
+          "DataSource": {
+            "ID": "govulndb",
+            "Name": "The Go Vulnerability Database",
+            "URL": "https://pkg.go.dev/vuln/"
+          },
+          "Title": "Inconsistent handling of O_CREATE|O_EXCL on Unix and Windows in os in syscall",
+          "Description": "os.OpenFile(path, os.O_CREATE|O_EXCL) behaved differently on Unix and Windows systems when the target path was a dangling symlink. On Unix systems, OpenFile with O_CREATE and O_EXCL flags never follows symlinks. On Windows, when the target path was a symlink to a nonexistent location, OpenFile would create a file in that location. OpenFile now always returns an error when the O_CREATE and O_EXCL flags are both set and the target path is a symlink.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-59"
+          ],
+          "VendorSeverity": {
+            "bitnami": 2
+          },
+          "CVSS": {
+            "bitnami": {
+              "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+              "V3Score": 5.5
+            }
+          },
+          "References": [
+            "https://go.dev/cl/672396",
+            "https://go.dev/issue/73702",
+            "https://groups.google.com/g/golang-announce/c/ufZ8WpEsA3A",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-0913",
+            "https://pkg.go.dev/vuln/GO-2025-3750"
+          ],
+          "PublishedDate": "2025-06-11T18:15:24.627Z",
+          "LastModifiedDate": "2025-08-08T14:53:03.55Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-22871",
+          "PkgName": "stdlib",
+          "PkgIdentifier": {
+            "PURL": "pkg:golang/stdlib@1.24.0",
+            "UID": "16f940fd52e7fd38"
+          },
+          "InstalledVersion": "1.24.0",
+          "FixedVersion": "1.23.8, 1.24.2",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:7bf27ab46e7dac11afe40811cd1abbf6efdaf2b9ea236b7264195a333364ffa7",
+            "DiffID": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-22871",
+          "DataSource": {
+            "ID": "govulndb",
+            "Name": "The Go Vulnerability Database",
+            "URL": "https://pkg.go.dev/vuln/"
+          },
+          "Title": "net/http: Request smuggling due to acceptance of invalid chunked data in net/http",
+          "Description": "The net/http package improperly accepts a bare LF as a line terminator in chunked data chunk-size lines. This can permit request smuggling if a net/http server is used in conjunction with a server that incorrectly accepts a bare LF as part of a chunk-ext.",
+          "Severity": "MEDIUM",
+          "VendorSeverity": {
+            "alma": 2,
+            "amazon": 3,
+            "bitnami": 4,
+            "cbl-mariner": 3,
+            "oracle-oval": 2,
+            "redhat": 2,
+            "rocky": 2
+          },
+          "CVSS": {
+            "bitnami": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+              "V3Score": 9.1
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:L/I:L/A:N",
+              "V3Score": 5.4
+            }
+          },
+          "References": [
+            "http://www.openwall.com/lists/oss-security/2025/04/04/4",
+            "https://access.redhat.com/errata/RHSA-2025:9635",
+            "https://access.redhat.com/security/cve/CVE-2025-22871",
+            "https://bugzilla.redhat.com/2358493",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2358493",
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22871",
+            "https://errata.almalinux.org/9/ALSA-2025-9635.html",
+            "https://errata.rockylinux.org/RLSA-2025:9845",
+            "https://go.dev/cl/652998",
+            "https://go.dev/issue/71988",
+            "https://groups.google.com/g/golang-announce/c/Y2uBTVKjBQk",
+            "https://linux.oracle.com/cve/CVE-2025-22871.html",
+            "https://linux.oracle.com/errata/ELSA-2025-9845.html",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-22871",
+            "https://pkg.go.dev/vuln/GO-2025-3563",
+            "https://www.cve.org/CVERecord?id=CVE-2025-22871"
+          ],
+          "PublishedDate": "2025-04-08T20:15:20.183Z",
+          "LastModifiedDate": "2025-04-18T15:15:57.923Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-4673",
+          "PkgName": "stdlib",
+          "PkgIdentifier": {
+            "PURL": "pkg:golang/stdlib@1.24.0",
+            "UID": "16f940fd52e7fd38"
+          },
+          "InstalledVersion": "1.24.0",
+          "FixedVersion": "1.23.10, 1.24.4",
+          "Status": "fixed",
+          "Layer": {
+            "Digest": "sha256:7bf27ab46e7dac11afe40811cd1abbf6efdaf2b9ea236b7264195a333364ffa7",
+            "DiffID": "sha256:aa579b0e77eb4f6cf32f7de22a61c98ea3b91e04770ceb26ab3e8e7afac1d697"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-4673",
+          "DataSource": {
+            "ID": "govulndb",
+            "Name": "The Go Vulnerability Database",
+            "URL": "https://pkg.go.dev/vuln/"
+          },
+          "Title": "net/http: Sensitive headers not cleared on cross-origin redirect in net/http",
+          "Description": "Proxy-Authorization and Proxy-Authenticate headers persisted on cross-origin redirects potentially leaking sensitive information.",
+          "Severity": "MEDIUM",
+          "VendorSeverity": {
+            "alma": 2,
+            "amazon": 2,
+            "azure": 2,
+            "bitnami": 2,
+            "cbl-mariner": 2,
+            "oracle-oval": 2,
+            "redhat": 2,
+            "ubuntu": 2
+          },
+          "CVSS": {
+            "bitnami": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N",
+              "V3Score": 6.8
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N",
+              "V3Score": 6.8
+            }
+          },
+          "References": [
+            "https://access.redhat.com/errata/RHSA-2025:15887",
+            "https://access.redhat.com/security/cve/CVE-2025-4673",
+            "https://bugzilla.redhat.com/2373305",
+            "https://errata.almalinux.org/9/ALSA-2025-15887.html",
+            "https://go.dev/cl/679257",
+            "https://go.dev/issue/73816",
+            "https://groups.google.com/g/golang-announce/c/ufZ8WpEsA3A",
+            "https://linux.oracle.com/cve/CVE-2025-4673.html",
+            "https://linux.oracle.com/errata/ELSA-2025-10677.html",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-4673",
+            "https://pkg.go.dev/vuln/GO-2025-3751",
+            "https://ubuntu.com/security/notices/USN-7574-1",
+            "https://www.cve.org/CVERecord?id=CVE-2025-4673"
+          ],
+          "PublishedDate": "2025-06-11T17:15:42.993Z",
+          "LastModifiedDate": "2025-06-12T16:06:20.18Z"
+        }
+      ]
+    }
+  ]
+}

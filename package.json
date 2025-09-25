@@ -20,7 +20,13 @@
   "name": "info-terminal",
   "overrides": {
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "minimist": "1.2.8",
+    "deep-extend": "0.6.1",
+    "https-proxy-agent": "7.0.6",
+    "form-data": "4.0.2",
+    "json-schema": "0.5.2",
+    "next": "14.2.7"
   },
   "private": true,
   "scripts": {

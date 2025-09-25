@@ -1,0 +1,171 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2025-09-25T08:17:45.595528157+02:00",
+  "ArtifactName": "openpolicyagent/opa:latest",
+  "ArtifactType": "container_image",
+  "Metadata": {
+    "OS": {
+      "Family": "wolfi",
+      "Name": "20230201"
+    },
+    "ImageID": "sha256:6778219912abe5063fc7a8e3deb577be6b0ecfbb8baf3a82297c182cac18fd12",
+    "DiffIDs": [
+      "sha256:06c024ae792d74d0895bdec8220e09bfb83c9d2708e913ec6c89829dd6e22624",
+      "sha256:e1b222db9efdd62064418899fce5384c6e028f0494c4deb19d8eaa1956070e9c",
+      "sha256:fa5a185ee6b397d87b43b8ba32ec9f569b6dfef8e82afe90dc0f5070451ec9ca",
+      "sha256:4c5265b572ea6816122903921a80256d63711a16e5423354a0da4018b253a7f8",
+      "sha256:9a23fd1748353fd59bb604ec0f95fb9b87f25649909cac8060a616fd60a141e4",
+      "sha256:5d6a8bd372fb60e04dfe5a23cdc6d504366fd2552d036adb23f82377839e4314"
+    ],
+    "RepoTags": [
+      "openpolicyagent/opa:latest"
+    ],
+    "RepoDigests": [
+      "openpolicyagent/opa@sha256:6778219912abe5063fc7a8e3deb577be6b0ecfbb8baf3a82297c182cac18fd12"
+    ],
+    "ImageConfig": {
+      "architecture": "amd64",
+      "author": "github.com/chainguard-dev/apko",
+      "created": "2025-08-28T15:07:42.722375309Z",
+      "history": [
+        {
+          "created": "2025-08-22T21:52:25Z",
+          "created_by": "apko"
+        },
+        {
+          "created": "2025-08-22T21:52:25Z",
+          "created_by": "apko"
+        },
+        {
+          "created": "2025-08-22T21:52:25Z",
+          "created_by": "apko"
+        },
+        {
+          "created": "2025-08-22T21:52:25Z",
+          "created_by": "apko"
+        },
+        {
+          "created": "2025-08-22T21:52:25Z",
+          "created_by": "apko"
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "LABEL org.opencontainers.image.authors=Torin Sandall \u003ctorinsandall@gmail.com\u003e",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "LABEL org.opencontainers.image.source=https://github.com/open-policy-agent/opa",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ARG USER=1000:1000",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "USER 1000:1000",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ARG TARGETOS=linux",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ARG TARGETARCH=amd64",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ARG BIN_DIR=_release/1.8.0",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ARG BIN_SUFFIX=",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "COPY _release/1.8.0/opa_linux_amd64 /opa # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin:/",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "ENTRYPOINT [\"/opa\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-08-28T15:07:42Z",
+          "created_by": "CMD [\"run\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        }
+      ],
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:06c024ae792d74d0895bdec8220e09bfb83c9d2708e913ec6c89829dd6e22624",
+          "sha256:e1b222db9efdd62064418899fce5384c6e028f0494c4deb19d8eaa1956070e9c",
+          "sha256:fa5a185ee6b397d87b43b8ba32ec9f569b6dfef8e82afe90dc0f5070451ec9ca",
+          "sha256:4c5265b572ea6816122903921a80256d63711a16e5423354a0da4018b253a7f8",
+          "sha256:9a23fd1748353fd59bb604ec0f95fb9b87f25649909cac8060a616fd60a141e4",
+          "sha256:5d6a8bd372fb60e04dfe5a23cdc6d504366fd2552d036adb23f82377839e4314"
+        ]
+      },
+      "config": {
+        "Cmd": [
+          "run"
+        ],
+        "Entrypoint": [
+          "/opa"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin:/",
+          "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+        ],
+        "Labels": {
+          "dev.chainguard.package.main": "",
+          "org.opencontainers.image.authors": "Torin Sandall \u003ctorinsandall@gmail.com\u003e",
+          "org.opencontainers.image.created": "2025-08-22T21:52:25Z",
+          "org.opencontainers.image.source": "https://github.com/open-policy-agent/opa",
+          "org.opencontainers.image.url": "https://images.chainguard.dev/directory/image/glibc-dynamic/overview",
+          "org.opencontainers.image.vendor": "Chainguard"
+        },
+        "User": "1000:1000",
+        "ArgsEscaped": true
+      }
+    }
+  },
+  "Results": [
+    {
+      "Target": "openpolicyagent/opa:latest (wolfi 20230201)",
+      "Class": "os-pkgs",
+      "Type": "wolfi"
+    },
+    {
+      "Target": "opa",
+      "Class": "lang-pkgs",
+      "Type": "gobinary"
+    }
+  ]
+}

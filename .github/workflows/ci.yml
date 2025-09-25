@@ -191,3 +191,52 @@ jobs:
         run: |
           echo "vuln_policy_sca failed with status ${{ steps.sca.outputs.sca_status }}"
           exit 1
+
+  vuln-policy-images:
+    name: Supply-Chain (Container Images)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Trivy
+        run: |
+          TRIVY_VERSION=0.53.0
+          curl -sSL https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz | tar -xz
+          sudo install -m 0755 trivy /usr/local/bin/trivy
+          rm -f trivy LICENSE README.md README
+      - name: Configure Trivy environment
+        run: |
+          echo "DOCKER_HOST=unix:///var/run/docker.sock" >> "$GITHUB_ENV"
+          echo "PATH=/usr/local/bin:$PATH" >> "$GITHUB_ENV"
+          echo "TRIVY_CACHE_DIR=${RUNNER_TEMP}/trivy-cache" >> "$GITHUB_ENV"
+      - name: Run container vulnerability scan
+        id: images
+        run: |
+          set +e
+          python3 scripts/run_vuln_policy_images.py
+          status=$?
+          echo "images_status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Ensure artefacts are committed
+        run: |
+          git status --short artifacts/security/images || true
+          git diff --stat artifacts/security/images || true
+          git diff --exit-code artifacts/security/images
+      - name: Publish container scan summary comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: container-images
+          path: artifacts/security/images/pr_comment.md
+      - name: Enforce policy status
+        if: steps.images.outputs.images_status != '0'
+        run: |
+          echo "vuln_policy_images failed with status ${{ steps.images.outputs.images_status }}"
+          exit 1
+
