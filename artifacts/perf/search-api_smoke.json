@@ -1,0 +1,58 @@
+{
+  "config": {
+    "concurrency": 2,
+    "dry_run": false,
+    "headers": {},
+    "latency_slo_ms": 400.0,
+    "method": "POST",
+    "payload": {
+      "facets": [],
+      "filters": {},
+      "highlight": false,
+      "q": "osint"
+    },
+    "service_name": "search-api",
+    "simulate": true,
+    "throughput_slo_rps": 8.0,
+    "timeout": 5.0,
+    "total_requests": 6,
+    "url": "http://localhost:8611/v1/search",
+    "verify_tls": true
+  },
+  "errors": [],
+  "metrics": {
+    "duration_seconds": 0.5138715675158586,
+    "error_count": 0,
+    "latency_ms": {
+      "max_ms": 194.8815505589324,
+      "mean_ms": 171.2905225052862,
+      "min_ms": 144.92933512136943,
+      "p50_ms": 175.39324454268433,
+      "p95_ms": 191.0281020706563,
+      "p99_ms": 194.11086086127716
+    },
+    "success_count": 6,
+    "success_rate": 1.0,
+    "throughput_rps": 11.676069234585222,
+    "total_requests": 6
+  },
+  "notes": [
+    "simulation_mode",
+    "seed=1611412368"
+  ],
+  "service_name": "search-api",
+  "slo": {
+    "latency_p95_ms": {
+      "actual": 191.0281020706563,
+      "met": true,
+      "target": 400.0
+    },
+    "throughput_rps": {
+      "actual": 11.676069234585222,
+      "met": true,
+      "target": 8.0
+    }
+  },
+  "status": "ok",
+  "timestamp": "2025-09-25T09:11:37.349843+00:00"
+}

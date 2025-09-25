@@ -1,0 +1,53 @@
+{
+  "config": {
+    "concurrency": 2,
+    "dry_run": false,
+    "headers": {},
+    "latency_slo_ms": 450.0,
+    "method": "GET",
+    "payload": null,
+    "service_name": "agent-connector",
+    "simulate": true,
+    "throughput_slo_rps": 7.0,
+    "timeout": 5.0,
+    "total_requests": 6,
+    "url": "http://localhost:8633/v1/plugins/registry",
+    "verify_tls": true
+  },
+  "errors": [],
+  "metrics": {
+    "duration_seconds": 0.4725385441619666,
+    "error_count": 0,
+    "latency_ms": {
+      "max_ms": 172.700160510817,
+      "mean_ms": 157.51284805398888,
+      "min_ms": 127.78386365695174,
+      "p50_ms": 165.38455007731451,
+      "p95_ms": 172.13549376802803,
+      "p99_ms": 172.5872271622592
+    },
+    "success_count": 6,
+    "success_rate": 1.0,
+    "throughput_rps": 12.69737691057737,
+    "total_requests": 6
+  },
+  "notes": [
+    "simulation_mode",
+    "seed=3017016339"
+  ],
+  "service_name": "agent-connector",
+  "slo": {
+    "latency_p95_ms": {
+      "actual": 172.13549376802803,
+      "met": true,
+      "target": 450.0
+    },
+    "throughput_rps": {
+      "actual": 12.69737691057737,
+      "met": true,
+      "target": 7.0
+    }
+  },
+  "status": "ok",
+  "timestamp": "2025-09-25T09:11:37.351534+00:00"
+}

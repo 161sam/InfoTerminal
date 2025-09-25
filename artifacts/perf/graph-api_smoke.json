@@ -1,0 +1,57 @@
+{
+  "config": {
+    "concurrency": 2,
+    "dry_run": false,
+    "headers": {},
+    "latency_slo_ms": 550.0,
+    "method": "POST",
+    "payload": {
+      "parameters": {},
+      "query": "MATCH (n) RETURN n LIMIT 3",
+      "read_only": true
+    },
+    "service_name": "graph-api",
+    "simulate": true,
+    "throughput_slo_rps": 6.0,
+    "timeout": 5.0,
+    "total_requests": 6,
+    "url": "http://localhost:8612/v1/cypher",
+    "verify_tls": true
+  },
+  "errors": [],
+  "metrics": {
+    "duration_seconds": 0.3649635834426313,
+    "error_count": 0,
+    "latency_ms": {
+      "max_ms": 139.13419476842682,
+      "mean_ms": 121.65452781421044,
+      "min_ms": 104.73796471384743,
+      "p50_ms": 120.23255804380547,
+      "p95_ms": 137.61989235853798,
+      "p99_ms": 138.83133428644905
+    },
+    "success_count": 6,
+    "success_rate": 1.0,
+    "throughput_rps": 16.439996405677395,
+    "total_requests": 6
+  },
+  "notes": [
+    "simulation_mode",
+    "seed=950917131"
+  ],
+  "service_name": "graph-api",
+  "slo": {
+    "latency_p95_ms": {
+      "actual": 137.61989235853798,
+      "met": true,
+      "target": 550.0
+    },
+    "throughput_rps": {
+      "actual": 16.439996405677395,
+      "met": true,
+      "target": 6.0
+    }
+  },
+  "status": "ok",
+  "timestamp": "2025-09-25T09:11:37.350537+00:00"
+}
