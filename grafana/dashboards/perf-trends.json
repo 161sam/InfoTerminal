@@ -1,0 +1,86 @@
+{
+  "uid": "perf-trends",
+  "title": "Perf Trends",
+  "timezone": "",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5m",
+  "tags": ["performance", "slo"],
+  "templating": {
+    "list": [
+      {
+        "type": "query",
+        "name": "service",
+        "label": "Service",
+        "datasource": "Prometheus",
+        "refresh": 2,
+        "query": "label_values(http_requests_total, service)",
+        "current": {
+          "text": "search-api",
+          "value": "search-api"
+        },
+        "includeAll": false,
+        "multi": false,
+        "options": []
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Latency p95 (ms)",
+      "description": "P95 latency derived from http_server_duration_seconds_bucket per service.",
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_seconds_bucket{service=\"$service\"}[$__interval])) by (le)) * 1000",
+          "legendFormat": "p95",
+          "datasource": "Prometheus"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Throughput (req/s)",
+      "description": "Request throughput based on http_requests_total per service.",
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{service=\"$service\"}[$__interval]))",
+          "legendFormat": "throughput",
+          "datasource": "Prometheus"
+        }
+      ]
+    }
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  }
+}

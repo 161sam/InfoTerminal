@@ -182,6 +182,18 @@ jobs:
       - name: Validate synthetic smoke targets
         run: python scripts/synthetic_smoke.py --validate-only
 
+  perf-smoke:
+    name: Performance Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run perf smoke benchmarks (simulate)
+        run: python benchmarks/perf_smoke.py
+
   vuln-policy-sca:
     name: Supply-Chain (Dependency SCA)
     runs-on: ubuntu-latest

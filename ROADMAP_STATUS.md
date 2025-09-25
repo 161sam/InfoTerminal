@@ -166,12 +166,13 @@ The Phase 2–4 roadmap is organized into subsystem packages A–L plus Hardeni
   - **J4 Synthetic Smoke – done**: Blackbox-Exporter + Prometheus Job `synthetic-smoke` überwachen Frontend, Search-, Graph- und Doc-Entities-APIs; das Dashboard `infoterminal-overview` enthält eine Synthetic-Uptime-Row und CI prüft die Zieldefinitionen deterministisch. 【F:observability/blackbox.yml†L1-L9】【F:observability/prometheus/prometheus.yml†L1-L60】【F:monitoring/grafana-dashboards/infoterminal-overview.json†L1296-L1400】【F:scripts/synthetic_smoke.py†L1-L200】【F:.github/workflows/ci.yml†L1-L120】
   - **J5 Source SBOM & License Gate – done**: `scripts/generate_source_sbom.py` erzeugt CycloneDX-SBOMs für Backend/Frontend, konsolidiert ein Lizenzinventar (`artifacts/compliance/licenses/license_inventory.csv`) und der CI-Job `sbom_source_integrity` verweigert fehlende/leer Artefakte. Dokumentiert in `docs/compliance/licenses.md` und `THIRD_PARTY_NOTICES.md`. 【F:scripts/generate_source_sbom.py†L1-L215】【F:scripts/check_sbom_source_integrity.py†L1-L60】【F:docs/compliance/licenses.md†L1-L62】【F:THIRD_PARTY_NOTICES.md†L1-L40】
   - **J6 Image SBOM & License Gate – done**: `scripts/generate_image_sboms.py` legt pro referenziertem Compose/Kubernetes-Image ein CycloneDX-Artefakt in `artifacts/sbom/images/` ab und schreibt `artifacts/compliance/licenses/images.json`. Der neue CI-Job `sbom_image_integrity` bricht bei fehlenden/mangelhaften Dateien ab, `docs/compliance/licenses.md` beschreibt den Ablauf. 【F:scripts/generate_image_sboms.py†L1-L340】【F:scripts/check_sbom_image_integrity.py†L1-L88】【F:docs/compliance/licenses.md†L31-L62】【F:artifacts/compliance/licenses/images.json†L1-L200】
+  - **J7 Perf Benchmarks – neu**: `benchmarks/` liefert konfigurierbare HTTP-Benchmarks mit SLO-Auswertung + deterministischen JSON/CSV-Artefakten, `benchmarks/perf_smoke.py` speist den CI-Job „perf-smoke“, und `grafana/dashboards/perf-trends.json` ergänzt P95-Latenz/Throughput-Panels; Setup & Interpretation dokumentiert `docs/performance/benchmarks.md`. 【F:benchmarks/common.py†L1-L280】【F:benchmarks/perf_smoke.py†L1-L83】【F:grafana/dashboards/perf-trends.json†L1-L86】【F:docs/performance/benchmarks.md†L1-L118】
 - **Gaps / Risks**:
   - Metrics missing for 37 services; long-tail services lack SLO coverage beyond the four core APIs. 【F:inventory/findings.md†L1-L69】
   - Queue/backpressure not configured; scaling docs outdated.
 - **DoD Checklist**:
   - [x] Observability: Unified dashboards + alert SLOs.
-  - [ ] Tests: Load/latency benchmarks with documented results.
+  - [x] Tests: Load/latency benchmarks with documented results.
   - [ ] Docs: Scaling runbook + retry/timeout matrix.
   - [ ] Security: Pen-test checklists for infra components.
 - **Dependencies**: Packages A–I (all rely on infra), Hardening, Release.
