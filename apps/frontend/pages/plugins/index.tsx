@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { invokeTool } from "../../lib/plugins";
 import Link from "next/link";
 import {
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
+import Image from "next/image";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { canAccessFeature } from "@/lib/auth/rbac";
 
@@ -157,7 +158,7 @@ function PluginCard({
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
               {plugin.icon ? (
-                <img src={plugin.icon} alt={plugin.name} className="w-6 h-6" />
+                <Image src={plugin.icon} alt={plugin.name} width={24} height={24} className="w-6 h-6" unoptimized />
               ) : (
                 <CategoryIcon size={24} className="text-gray-600 dark:text-slate-400" />
               )}
@@ -386,11 +387,28 @@ export default function PluginsPage() {
     });
   }, [items, health, filters]);
 
-  useEffect(() => {
-    loadPlugins();
-  }, []);
+  const refreshAllHealth = useCallback(async (pluginList = items) => {
+    setRefreshing(true);
+    const healthPromises = pluginList.map(async (plugin) => {
+      try {
+        const response = await fetch(`/api/plugins/${plugin.name}/health`);
+        const data = await response.json();
+        return { name: plugin.name, status: data.status || "unknown" };
+      } catch {
+        return { name: plugin.name, status: "unknown" };
+      }
+    });
 
-  const loadPlugins = async () => {
+    try {
+      const healthResults = await Promise.all(healthPromises);
+      const healthMap = Object.fromEntries(healthResults.map((h) => [h.name, h.status]));
+      setHealth(healthMap);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [items]);
+
+  const loadPlugins = useCallback(async () => {
     setLoading(true);
     try {
       const [reg, state] = await Promise.all([
@@ -417,28 +435,13 @@ export default function PluginsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [refreshAllHealth]);
 
-  const refreshAllHealth = async (pluginList = items) => {
-    setRefreshing(true);
-    const healthPromises = pluginList.map(async (plugin) => {
-      try {
-        const response = await fetch(`/api/plugins/${plugin.name}/health`);
-        const data = await response.json();
-        return { name: plugin.name, status: data.status || "unknown" };
-      } catch {
-        return { name: plugin.name, status: "unknown" };
-      }
-    });
+  useEffect(() => {
+    loadPlugins();
+  }, [loadPlugins]);
 
-    try {
-      const healthResults = await Promise.all(healthPromises);
-      const healthMap = Object.fromEntries(healthResults.map((h) => [h.name, h.status]));
-      setHealth(healthMap);
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  // moved above
 
   const refreshPluginHealth = async (pluginName: string) => {
     try {

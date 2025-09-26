@@ -1,6 +1,6 @@
 // Import as any to avoid type dependency on ESLint
 // Types are provided by @types/eslint if available
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line
 const rule = require("../../../../tools/eslint-rules/no-direct-host-fetch.js");
 import { expect, test } from "vitest";
 

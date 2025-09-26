@@ -174,7 +174,7 @@ export default function DocumentDetailPage() {
                       )}
                       <span className="inline-flex items-center gap-1">
                         <Eye size={16} />
-                        {doc.text.length.toLocaleString()} characters
+                        {(doc.text ? doc.text.length : 0).toLocaleString()} characters
                       </span>
                     </div>
                   </div>
@@ -236,7 +236,7 @@ export default function DocumentDetailPage() {
                  text-gray-600 dark:text-gray-300"
                   >
                     <p className="text-gray-500 text-center">
-                      Click "Generate Summary" to create an AI-powered summary of this document
+                      Click &quot;Generate Summary&quot; to create an AI-powered summary of this document
                     </p>
                   </div>
                 )}

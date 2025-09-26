@@ -1,7 +1,7 @@
 // Hook for query insights data
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { QueryInsights, AnalyticsFilters } from "../analytics/types";
+import { QueryInsights, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useQueryInsights(filters: AnalyticsFilters) {
   const [data, setData] = useState<QueryInsights | null>(null);

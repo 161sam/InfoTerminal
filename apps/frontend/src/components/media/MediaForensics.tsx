@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Progress } from "../ui/progress";
+import Image from "next/image";
 import {
   Upload,
   Image as ImageIcon,
@@ -400,24 +401,27 @@ export const MediaForensics: React.FC<MediaForensicsProps> = ({
             {results.map((result, idx) => (
               <div key={idx} className="flex items-center gap-3 p-3 border rounded">
                 {result.thumbnail && (
-                  <img
+                  <Image
                     src={result.thumbnail}
-                    alt=""
+                    alt={result.title || "thumbnail"}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 object-cover rounded"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
+                    unoptimized
                   />
                 )}
                 <div className="flex-1">
                   <div className="font-medium">{result.title}</div>
                   <div className="text-sm text-gray-500">Source: {result.source}</div>
                   {result.url && (
-                    <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-                      <a href={result.url} target="_blank" rel="noopener noreferrer">
-                        View Source <ExternalLink className="h-3 w-3 ml-1" />
-                      </a>
-                    </Button>
+                    <a
+                      href={result.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-primary-600 hover:underline"
+                    >
+                      View Source <ExternalLink className="h-3 w-3 ml-1" />
+                    </a>
                   )}
                 </div>
               </div>

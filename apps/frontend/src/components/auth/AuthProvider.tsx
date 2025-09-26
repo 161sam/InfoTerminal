@@ -1,5 +1,6 @@
 // apps/frontend/src/components/auth/AuthProvider.tsx
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { toSearchParams } from "@/lib/url";
 import { useRouter } from "next/router";
 import { useNotifications } from "@/lib/notifications";
 import type { User } from "@/types/auth";
@@ -257,7 +258,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           remember: typeof options?.remember === "boolean" ? options.remember : undefined,
         });
 
-        const params = new URLSearchParams({
+        const params = toSearchParams({
           response_type: "code",
           client_id: config.clientId,
           redirect_uri: redirectUri,

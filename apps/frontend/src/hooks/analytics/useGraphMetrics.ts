@@ -1,7 +1,7 @@
 // Hook for graph metrics data
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { AnalyticsFilters } from "../analytics/types";
+import { AnalyticsFilters } from "@/components/analytics/types";
 
 export interface GraphMetrics {
   nodeCount: number;

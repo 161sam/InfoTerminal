@@ -23,6 +23,7 @@ function createContext(overrides: Partial<any> = {}) {
       ...overrides.res,
     },
     resolvedUrl: "/",
+    query: {},
     ...overrides,
   };
 }

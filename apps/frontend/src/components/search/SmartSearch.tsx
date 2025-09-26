@@ -21,6 +21,7 @@ interface SearchSuggestion {
     resultCount?: number;
     lastUsed?: string;
     category?: string;
+    query?: string;
   };
 }
 
@@ -76,20 +77,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
   const { trackSearch, trackClick } = UserJourneyTracker.useUserJourney();
 
-  // Load saved data on mount
-  useEffect(() => {
-    loadRecentSearches();
-    loadSavedSearches();
-  }, []);
-
-  // Fetch suggestions when query changes
-  useEffect(() => {
-    if (debouncedQuery.trim().length >= 2) {
-      fetchSuggestions(debouncedQuery);
-    } else {
-      setSuggestions([]);
-    }
-  }, [debouncedQuery]);
+  // effects moved below to avoid "used before declaration" type errors
 
   const loadRecentSearches = useCallback(() => {
     try {
@@ -201,23 +189,24 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
     }, 100);
   };
 
+  // allSuggestions is defined below; keep handlers after it's available
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) return;
 
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex((prev) => (prev < getAllSuggestions().length - 1 ? prev + 1 : 0));
+        setSelectedIndex((prev) => (prev < allSuggestions.length - 1 ? prev + 1 : 0));
         break;
       case "ArrowUp":
         e.preventDefault();
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : getAllSuggestions().length - 1));
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : allSuggestions.length - 1));
         break;
       case "Enter":
         e.preventDefault();
         if (selectedIndex >= 0) {
-          const allSuggestions = getAllSuggestions();
-          handleSuggestionClick(allSuggestions[selectedIndex]);
+          const arr = allSuggestions;
+          handleSuggestionClick(arr[selectedIndex]);
         } else {
           handleSearch();
         }
@@ -230,7 +219,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
     }
   };
 
-  const getAllSuggestions = useMemo(() => {
+  const allSuggestions = useMemo(() => {
     const all: SearchSuggestion[] = [];
 
     // Add query suggestions
@@ -278,6 +267,21 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
     return all;
   }, [suggestions, recentSearches, savedSearches, query, showHistory]);
+
+  // Load saved data on mount
+  useEffect(() => {
+    loadRecentSearches();
+    loadSavedSearches();
+  }, [loadRecentSearches, loadSavedSearches]);
+
+  // Fetch suggestions when query changes
+  useEffect(() => {
+    if (debouncedQuery.trim().length >= 2) {
+      fetchSuggestions(debouncedQuery);
+    } else {
+      setSuggestions([]);
+    }
+  }, [debouncedQuery, fetchSuggestions]);
 
   const handleSuggestionClick = (suggestion: SearchSuggestion) => {
     let searchQuery = suggestion.text;
@@ -471,7 +475,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
               </div>
             )}
 
-            {!isLoading && getAllSuggestions().length === 0 && query.trim().length >= 2 && (
+      {!isLoading && allSuggestions.length === 0 && query.trim().length >= 2 && (
               <div className="no-suggestions">
                 <Search className="w-4 h-4 text-gray-400" />
                 <span>No suggestions found</span>
@@ -479,7 +483,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
             )}
 
             {!isLoading &&
-              getAllSuggestions().map((suggestion, index) => (
+              allSuggestions.map((suggestion, index) => (
                 <button
                   key={suggestion.id}
                   onClick={() => handleSuggestionClick(suggestion)}

@@ -94,28 +94,38 @@ export const generateCleanURL = (
 
   if (!config) return `/${page}`;
 
+  const hasTabs = (c: any): c is { base: string; tabs: Record<string, string>; defaultTab: string } =>
+    !!c && typeof c === "object" && (c as any).tabs && typeof (c as any).tabs === "object";
+
+  const hasDomains = (
+    c: any,
+  ): c is { base: string; domains: Record<string, string>; defaultDomain: string } =>
+    !!c && typeof c === "object" && (c as any).domains && typeof (c as any).domains === "object";
+
   // GraphX URLs
   if (page === "graphx" && tab) {
-    if (useCleanURL && config.tabs && tab in config.tabs) {
+    if (useCleanURL && hasTabs(config) && tab in config.tabs) {
       return config.tabs[tab as keyof typeof config.tabs];
     }
-    return tab === config.defaultTab ? config.base : `${config.base}?tab=${tab}`;
+    return hasTabs(config) && tab === config.defaultTab ? config.base : `${config.base}?tab=${tab}`;
   }
 
   // NLP URLs
   if (page === "nlp" && domain) {
-    if (useCleanURL && config.domains && domain in config.domains) {
+    if (useCleanURL && hasDomains(config) && domain in config.domains) {
       return config.domains[domain as keyof typeof config.domains];
     }
-    return domain === config.defaultDomain ? config.base : `${config.base}?domain=${domain}`;
+    return hasDomains(config) && domain === config.defaultDomain
+      ? config.base
+      : `${config.base}?domain=${domain}`;
   }
 
   // Agent URLs
   if (page === "agent" && tab) {
-    if (useCleanURL && config.tabs && tab in config.tabs) {
+    if (useCleanURL && hasTabs(config) && tab in config.tabs) {
       return config.tabs[tab as keyof typeof config.tabs];
     }
-    return tab === config.defaultTab ? config.base : `${config.base}?tab=${tab}`;
+    return hasTabs(config) && tab === config.defaultTab ? config.base : `${config.base}?tab=${tab}`;
   }
 
   return config.base;
@@ -166,10 +176,12 @@ export const getPageURL = (page: string, tab?: string, domain?: string): string 
   return generateCleanURL(page, tab, domain, true);
 };
 
-export default {
+const URLRouterUtils = {
   URL_PATTERNS,
   parseRouteParams,
   generateCleanURL,
   useURLBasedState,
   getPageURL,
 };
+
+export default URLRouterUtils;

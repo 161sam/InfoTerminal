@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { getApis } from "@/lib/config";
@@ -30,18 +30,18 @@ export default function ConsolidatedNLPPage() {
   const currentDomain = DOMAINS.find((d) => d.id === activeDomain);
   const currentExamples = EXAMPLE_TEXTS[activeDomain] || EXAMPLE_TEXTS.general;
 
-  const checkHealth = async () => {
+  const checkHealth = useCallback(async () => {
     try {
       const response = await fetch(`${DOC_ENTITIES_API}/healthz`);
       setIsHealthy(response.ok);
     } catch {
       setIsHealthy(false);
     }
-  };
+  }, [DOC_ENTITIES_API]);
 
   useEffect(() => {
     checkHealth();
-  }, [DOC_ENTITIES_API]);
+  }, [checkHealth]);
 
   const callNER = async () => {
     if (!inputText.trim()) return;

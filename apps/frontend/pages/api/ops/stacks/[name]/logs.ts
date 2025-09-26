@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { toSearchParams } from "@/lib/url";
 
 const OPS_CONTROLLER_URL = process.env.OPS_CONTROLLER_URL || "http://localhost:8614";
 
@@ -23,13 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Build query parameters for the ops-controller
-    const params = new URLSearchParams();
-    if (typeof service === "string") {
-      params.set("service", service);
-    }
-    if (typeof tail === "string") {
-      params.set("tail", tail);
-    }
+    const params = toSearchParams({});
+    if (typeof service === "string") params.set("service", service);
+    if (typeof tail === "string") params.set("tail", tail);
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
     const response = await fetch(

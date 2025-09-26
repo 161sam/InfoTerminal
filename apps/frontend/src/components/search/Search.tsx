@@ -217,12 +217,12 @@ export default function Search() {
                 {query && (
                   <>
                     {" "}
-                    for "<span className="font-medium text-gray-900">{query}</span>"
+                    for <span className="font-medium text-gray-900">&quot;{query}&quot;</span>
                   </>
                 )}
               </>
             ) : (
-              <>No results found{query && <> for "{query}"</>}</>
+              <>No results found{query && <> for &quot;{query}&quot;</>}</>
             )}
           </p>
           {loading && (

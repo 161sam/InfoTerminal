@@ -1,7 +1,7 @@
 // Hook for timeline data
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { TimelineData, AnalyticsFilters } from "../analytics/types";
+import { TimelineData, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useTimeline(filters: AnalyticsFilters) {
   const [data, setData] = useState<TimelineData | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Panel from "@/components/layout/Panel";
 import { LoadingSpinner } from "@/components/ui/loading";
 import {
@@ -62,19 +62,9 @@ export function StanceClassifier({
     if (initialClaim !== claim) {
       setClaim(initialClaim || "");
     }
-  }, [initialClaim]);
+  }, [initialClaim, claim]);
 
-  useEffect(() => {
-    if (initialEvidence && initialEvidence.snippet !== evidence) {
-      setEvidence(initialEvidence.snippet);
-      // Auto-classify if both claim and evidence are provided
-      if (initialClaim && initialEvidence.snippet) {
-        handleClassifyStance();
-      }
-    }
-  }, [initialEvidence]);
-
-  const handleClassifyStance = async () => {
+  const handleClassifyStance = useCallback(async () => {
     if (!claim.trim() || !evidence.trim()) {
       setError("Please provide both a claim and evidence to classify");
       return;
@@ -111,7 +101,22 @@ export function StanceClassifier({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [claim, evidence, context, onStanceResult]);
+
+  useEffect(() => {
+    if (!initialEvidence?.snippet) return;
+
+    // Sync evidence from props first
+    if (initialEvidence.snippet !== evidence) {
+      setEvidence(initialEvidence.snippet);
+      return; // wait for evidence to sync before auto-classifying
+    }
+
+    // Auto-classify once both claim and evidence are available and in sync
+    if (initialClaim && evidence) {
+      handleClassifyStance();
+    }
+  }, [initialEvidence, initialClaim, evidence, handleClassifyStance]);
 
   const getStanceIcon = (stance: string) => {
     switch (stance) {

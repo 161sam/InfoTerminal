@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,33 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
 
+  const handleManualWipe = useCallback(async () => {
+    if (!currentSession) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`/api/security/incognito/${currentSession.id}/wipe`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to wipe session data");
+      }
+
+      setCurrentSession((prev) => (prev ? { ...prev, status: "wiped" } : null));
+      setIsIncognitoActive(false);
+    } catch (error) {
+      console.error("Failed to wipe session:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentSession]);
+
+  const handleAutoWipe = useCallback(async () => {
+    await handleManualWipe();
+  }, [handleManualWipe]);
+
   // Timer for countdown
   useEffect(() => {
     if (!currentSession || currentSession.status !== "active") return;
@@ -45,7 +72,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [currentSession]);
+  }, [currentSession, handleAutoWipe]);
 
   const handleToggleIncognito = async () => {
     setIsLoading(true);
@@ -101,32 +128,7 @@ export function IncognitoMode({ className }: IncognitoModeProps) {
     setTimeRemaining(null);
   };
 
-  const handleManualWipe = async () => {
-    if (!currentSession) return;
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(`/api/security/incognito/${currentSession.id}/wipe`, {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to wipe session data");
-      }
-
-      setCurrentSession((prev) => (prev ? { ...prev, status: "wiped" } : null));
-      setIsIncognitoActive(false);
-    } catch (error) {
-      console.error("Failed to wipe session:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAutoWipe = async () => {
-    await handleManualWipe();
-  };
+  
 
   const formatTime = (ms: number): string => {
     const minutes = Math.floor(ms / 60000);

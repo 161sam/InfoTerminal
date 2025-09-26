@@ -1,4 +1,7 @@
 packages:
-  - "apps/*"
-  - "services/*"
-  - "packages/*"
+  - apps/*
+  - services/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - protobufjs

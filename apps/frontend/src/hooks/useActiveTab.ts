@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { NextRouter } from "next/router";
 
 interface UseActiveTabOptions<T extends string> {
@@ -16,7 +16,10 @@ export function useActiveTab<T extends string>({
 }: UseActiveTabOptions<T>): [T, (tab: T) => void] {
   const [activeTab, setActiveTabState] = useState<T>(defaultTab);
 
-  const isValidTab = (value: string): value is T => validTabs.includes(value as T);
+  const isValidTab = useCallback(
+    (value: string): value is T => validTabs.includes(value as T),
+    [validTabs],
+  );
 
   useEffect(() => {
     if (!router.isReady) {

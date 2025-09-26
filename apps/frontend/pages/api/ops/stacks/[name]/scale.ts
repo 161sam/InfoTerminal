@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { toSearchParams } from "@/lib/url";
 
 const OPS_CONTROLLER_URL = process.env.OPS_CONTROLLER_URL || "http://localhost:8614";
 
@@ -30,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const params = new URLSearchParams({ service, replicas });
+    const params = toSearchParams({ service, replicas });
     const response = await fetch(
       `${OPS_CONTROLLER_URL}/ops/stacks/${encodeURIComponent(name)}/scale?${params}`,
       {

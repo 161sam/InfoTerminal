@@ -323,7 +323,7 @@ export default function AgentChatPanel({ agentCapabilities }: AgentChatPanelProp
                       layout="inline"
                       variant="primary"
                       text={`Processing with ${currentCapability?.displayName || "AI Agent"}...`}
-                      icon={Zap}
+                      icon="zap"
                     />
                   )}
                   <div ref={messagesEndRef} />

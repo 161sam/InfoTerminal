@@ -59,10 +59,10 @@ export default function GraphMLAnalytics({ onAnalysisResult }: MLAnalyticsProps)
       x: e.embedding?.[0] ?? 0,
       y: e.embedding?.[1] ?? 0,
     }));
-    let minX = Math.min(...points.map((p) => p.x));
-    let maxX = Math.max(...points.map((p) => p.x));
-    let minY = Math.min(...points.map((p) => p.y));
-    let maxY = Math.max(...points.map((p) => p.y));
+    let minX = Math.min(...points.map((p: { x: number; y: number }) => p.x));
+    let maxX = Math.max(...points.map((p: { x: number; y: number }) => p.x));
+    let minY = Math.min(...points.map((p: { x: number; y: number }) => p.y));
+    let maxY = Math.max(...points.map((p: { x: number; y: number }) => p.y));
     const pad = 20;
     const scaleX = (x: number) => pad + (W - 2 * pad) * ((x - minX) / (maxX - minX || 1));
     const scaleY = (y: number) => pad + (H - 2 * pad) * (1 - (y - minY) / (maxY - minY || 1));

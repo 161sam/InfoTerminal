@@ -58,20 +58,6 @@ export default function useFileUpload(
     [allowedTypes, maxFileSize],
   );
 
-  const processQueue = useCallback(() => {
-    const activeUploads = uploads.filter((u) => u.status === "uploading").length;
-    const pendingUploads = queueRef.current.filter((u) => u.status === "pending");
-
-    const slotsAvailable = maxConcurrent - activeUploads;
-    const uploadsToStart = pendingUploads.slice(0, slotsAvailable);
-
-    uploadsToStart.forEach((item) => {
-      if (item.status === "pending") {
-        uploadSingle(item);
-      }
-    });
-  }, [uploads, maxConcurrent]);
-
   const uploadSingle = useCallback(
     async (item: UploadItem) => {
       const abortController = new AbortController();
@@ -228,7 +214,74 @@ export default function useFileUpload(
         setTimeout(processQueue, 100);
       }
     },
-    [url, processQueue],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [url],
+  );
+
+  const processQueue = useCallback(() => {
+    const activeUploads = uploads.filter((u) => u.status === "uploading").length;
+    const pendingUploads = queueRef.current.filter((u) => u.status === "pending");
+
+    const slotsAvailable = maxConcurrent - activeUploads;
+    const uploadsToStart = pendingUploads.slice(0, slotsAvailable);
+
+    uploadsToStart.forEach((item) => {
+      if (item.status === "pending") {
+        uploadSingle(item);
+      }
+    });
+  }, [uploads, maxConcurrent, uploadSingle]);
+
+  const retryUpload = useCallback(
+    async (id: string): Promise<any> => {
+      const upload = uploads.find((u) => u.id === id);
+      if (!upload) return null;
+
+      const validationError = validateFile(upload.file);
+      if (validationError) {
+        setUploads((prev) =>
+          prev.map((u) => (u.id === id ? { ...u, status: "error", message: validationError } : u)),
+        );
+        return { file: upload.fileName, status: "error", message: validationError };
+      }
+
+      setUploads((prev) =>
+        prev.map((u) =>
+          u.id === id ? { ...u, status: "pending", progress: 0, message: "Retrying..." } : u,
+        ),
+      );
+
+      // Add back to queue
+      if (!queueRef.current.find((item) => item.id === id)) {
+        queueRef.current.push(upload);
+      }
+
+      setTimeout(processQueue, 100);
+
+      return new Promise((resolve) => {
+        const checkStatus = () => {
+          const currentUpload = uploads.find((u) => u.id === id);
+          if (currentUpload?.status === "success") {
+            resolve({
+              file: currentUpload.fileName,
+              status: "success",
+              doc_id: currentUpload.doc_id,
+              aleph_id: currentUpload.aleph_id,
+            });
+          } else if (currentUpload?.status === "error") {
+            resolve({
+              file: currentUpload.fileName,
+              status: "error",
+              message: currentUpload.message,
+            });
+          } else {
+            setTimeout(checkStatus, 1000);
+          }
+        };
+        checkStatus();
+      });
+    },
+    [uploads, validateFile, processQueue],
   );
 
   const startUpload = useCallback(
@@ -288,7 +341,7 @@ export default function useFileUpload(
 
       return Promise.all(results);
     },
-    [validateFile, processQueue],
+    [validateFile, processQueue, retryUpload],
   );
 
   const cancelUpload = useCallback(
@@ -317,57 +370,7 @@ export default function useFileUpload(
     [uploads],
   );
 
-  const retryUpload = useCallback(
-    async (id: string): Promise<any> => {
-      const upload = uploads.find((u) => u.id === id);
-      if (!upload) return null;
-
-      const validationError = validateFile(upload.file);
-      if (validationError) {
-        setUploads((prev) =>
-          prev.map((u) => (u.id === id ? { ...u, status: "error", message: validationError } : u)),
-        );
-        return { file: upload.fileName, status: "error", message: validationError };
-      }
-
-      setUploads((prev) =>
-        prev.map((u) =>
-          u.id === id ? { ...u, status: "pending", progress: 0, message: "Retrying..." } : u,
-        ),
-      );
-
-      // Add back to queue
-      if (!queueRef.current.find((item) => item.id === id)) {
-        queueRef.current.push(upload);
-      }
-
-      setTimeout(processQueue, 100);
-
-      return new Promise((resolve) => {
-        const checkStatus = () => {
-          const currentUpload = uploads.find((u) => u.id === id);
-          if (currentUpload?.status === "success") {
-            resolve({
-              file: currentUpload.fileName,
-              status: "success",
-              doc_id: currentUpload.doc_id,
-              aleph_id: currentUpload.aleph_id,
-            });
-          } else if (currentUpload?.status === "error") {
-            resolve({
-              file: currentUpload.fileName,
-              status: "error",
-              message: currentUpload.message,
-            });
-          } else {
-            setTimeout(checkStatus, 1000);
-          }
-        };
-        checkStatus();
-      });
-    },
-    [uploads, validateFile, processQueue],
-  );
+  
 
   const clearCompleted = useCallback(() => {
     setUploads((prev) =>

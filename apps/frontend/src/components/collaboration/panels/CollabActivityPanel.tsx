@@ -1,5 +1,6 @@
 // Collaboration activity feed panel
 import { useState } from "react";
+import Image from "next/image";
 import {
   Activity,
   MessageSquare,
@@ -180,10 +181,13 @@ function ActivityCard({ activity, isFirst }: ActivityCardProps) {
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                 {activity.actor.avatar ? (
-                  <img
+                  <Image
                     src={activity.actor.avatar}
                     alt={activity.actor.name}
+                    width={24}
+                    height={24}
                     className="w-6 h-6 rounded-full object-cover"
+                    unoptimized
                   />
                 ) : (
                   <User size={12} className="text-primary-600 dark:text-primary-400" />

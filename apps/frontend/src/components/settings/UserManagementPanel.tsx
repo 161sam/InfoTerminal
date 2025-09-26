@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/utils";
@@ -141,7 +142,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
           {/* Avatar */}
           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-primary-600 text-white">
             {user?.avatar_url ? (
-              <img src={user.avatar_url} alt={displayName} className="h-full w-full object-cover" />
+              <Image src={user.avatar_url} alt={displayName} width={96} height={96} className="h-full w-full object-cover" unoptimized />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-lg font-semibold">
                 {avatarInitials}

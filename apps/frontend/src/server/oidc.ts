@@ -119,6 +119,8 @@ export async function getOidcMetadata(): Promise<OidcMetadata> {
   }
 }
 
+import { toSearchParams } from "@/lib/url";
+
 async function requestToken(params: URLSearchParams): Promise<TokenResponse> {
   const metadata = await getOidcMetadata();
 
@@ -147,7 +149,7 @@ export async function exchangeAuthorizationCode(
   codeVerifier: string,
   overrideRedirectUri?: string,
 ): Promise<TokenResponse> {
-  const params = new URLSearchParams({
+  const params = toSearchParams({
     grant_type: "authorization_code",
     code,
     client_id: getClientId(),
@@ -159,7 +161,7 @@ export async function exchangeAuthorizationCode(
 }
 
 export async function refreshWithToken(refreshToken: string): Promise<TokenResponse> {
-  const params = new URLSearchParams({
+  const params = toSearchParams({
     grant_type: "refresh_token",
     refresh_token: refreshToken,
     client_id: getClientId(),

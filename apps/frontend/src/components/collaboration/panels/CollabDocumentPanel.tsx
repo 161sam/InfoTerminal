@@ -9,7 +9,7 @@ import {
   Share2,
   FileText,
   File,
-  Image,
+  Image as ImageIcon,
   Video,
   Upload,
 } from "lucide-react";
@@ -68,7 +68,7 @@ export function CollabDocumentPanel({
   };
 
   const getFileIcon = (type: string) => {
-    if (type.startsWith("image/")) return <Image size={16} />;
+    if (type.startsWith("image/")) return <ImageIcon size={16} />;
     if (type.startsWith("video/")) return <Video size={16} />;
     if (type.includes("pdf") || type.includes("document")) return <FileText size={16} />;
     return <File size={16} />;

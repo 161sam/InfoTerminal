@@ -5,7 +5,7 @@
  * bookmarked entities, and running analyses.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Activity,
@@ -82,15 +82,21 @@ const InvestigationDashboard: React.FC = () => {
 
   const { trackClick, trackWorkflowStep } = UserJourneyTracker.useUserJourney();
 
-  useEffect(() => {
-    loadDashboardData();
+  // effect moved below to avoid used-before-declaration type issues
 
-    // Set up periodic refresh for running analyses
-    const interval = setInterval(loadRunningAnalyses, 5000);
-    return () => clearInterval(interval);
+  const loadRunningAnalyses = useCallback(async () => {
+    try {
+      const response = await fetch("/api/analyses/running");
+      if (response.ok) {
+        const data = await response.json();
+        setRunningAnalyses(data.analyses || []);
+      }
+    } catch (error) {
+      console.error("Failed to load running analyses:", error);
+    }
   }, []);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     setIsLoading(true);
     try {
       await Promise.all([
@@ -105,7 +111,7 @@ const InvestigationDashboard: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [loadRunningAnalyses]);
 
   const loadInvestigations = async () => {
     try {
@@ -155,17 +161,15 @@ const InvestigationDashboard: React.FC = () => {
     }
   };
 
-  const loadRunningAnalyses = async () => {
-    try {
-      const response = await fetch("/api/analyses/running");
-      if (response.ok) {
-        const data = await response.json();
-        setRunningAnalyses(data.analyses || []);
-      }
-    } catch (error) {
-      console.error("Failed to load running analyses:", error);
-    }
-  };
+  // moved above
+
+  useEffect(() => {
+    loadDashboardData();
+
+    // Set up periodic refresh for running analyses
+    const interval = setInterval(loadRunningAnalyses, 5000);
+    return () => clearInterval(interval);
+  }, [loadDashboardData, loadRunningAnalyses]);
 
   const quickActions: QuickAction[] = [
     {

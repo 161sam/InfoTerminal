@@ -67,21 +67,8 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
 
   const { trackWorkflowStep, trackClick } = UserJourneyTracker.useUserJourney();
 
-  // Initialize tutorial
-  useEffect(() => {
-    if (isVisible && scenario) {
-      initializeTutorial();
-    }
-
-    return () => {
-      if (introInstance) {
-        introInstance.exit();
-      }
-    };
-  }, [isVisible, scenario]);
-
-  const initializeTutorial = () => {
-    const progress = scenario.steps.map((step) => ({
+  const initializeTutorial = React.useCallback(() => {
+    const progress = scenario.steps.map((step: ScenarioStep) => ({
       stepId: step.id,
       status: "pending" as const,
       hintsUsed: 0,
@@ -95,14 +82,27 @@ const TutorialSystem: React.FC<TutorialSystemProps> = ({
 
     // Track tutorial start
     trackWorkflowStep(scenario.id, "tutorial_started");
-  };
+  }, [scenario, trackWorkflowStep]);
+
+  // Initialize tutorial
+  useEffect(() => {
+    if (isVisible && scenario) {
+      initializeTutorial();
+    }
+
+    return () => {
+      if (introInstance) {
+        introInstance.exit();
+      }
+    };
+  }, [isVisible, scenario, initializeTutorial, introInstance]);
 
   if (!isVisible) return null;
 
   return (
     <div className="tutorial-system">
       <div className="tutorial-placeholder">
-        <h3>Tutorial System for {scenario.title}</h3>
+        <h3>Tutorial System for {scenario.name}</h3>
         <p>This is a placeholder for the interactive tutorial system.</p>
       </div>
     </div>

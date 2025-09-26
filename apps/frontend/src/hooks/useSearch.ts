@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { SearchResponse } from "../types/search";
 import useEndpoints from "./useEndpoints";
 import { sanitizeUrl } from "@/lib/endpoints";
@@ -22,6 +22,21 @@ export function useSearch(params: UseSearchInput) {
   const [error, setError] = useState<Error | null>(null);
   const { SEARCH_API } = useEndpoints();
 
+  const filtersKey = useMemo(() => JSON.stringify(params.filters || {}), [params.filters]);
+  const entityKey = useMemo(() => (params.entity || []).join(","), [params.entity]);
+  const valueKey = useMemo(() => (params.value || []).join(","), [params.value]);
+
+  const computedFilters = useMemo(() => {
+    const base: Record<string, string[]> = JSON.parse(filtersKey || "{}");
+    const entityArr = entityKey ? entityKey.split(",").filter(Boolean) : undefined;
+    const valueArr = valueKey ? valueKey.split(",").filter(Boolean) : undefined;
+    const f: Record<string, string[]> = { ...base };
+    if (entityArr && entityArr.length) f["entity_type"] = entityArr;
+    if (valueArr && valueArr.length) f["value"] = valueArr;
+    return f;
+  }, [filtersKey, entityKey, valueKey]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const controller = new AbortController();
     const run = async () => {
@@ -31,9 +46,7 @@ export function useSearch(params: UseSearchInput) {
         const page = params.page ?? 1;
         const pageSize = params.pageSize ?? 20;
 
-        const filters: Record<string, string[]> = { ...(params.filters || {}) };
-        if (params.entity) filters["entity_type"] = params.entity;
-        if (params.value) filters["value"] = params.value;
+        const filters: Record<string, string[]> = computedFilters;
 
         let sort: any = undefined;
         if (params.sort && params.sort !== "relevance") {
@@ -78,9 +91,7 @@ export function useSearch(params: UseSearchInput) {
     params.rerank,
     params.page,
     params.pageSize,
-    JSON.stringify(params.filters),
-    params.entity?.join(","),
-    params.value?.join(","),
+    computedFilters,
     SEARCH_API,
   ]);
 

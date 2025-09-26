@@ -86,6 +86,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { trackClick } = UserJourneyTracker.useUserJourney();
 
   // Reset form when widget opens
   useEffect(() => {
@@ -146,9 +147,21 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
     setStep("submitting");
 
     try {
-      // Get user journey tracker instance
-      const tracker = UserJourneyTracker.getInstance();
-      const sessionSummary = tracker.getSessionSummary();
+      // Obtain session info if tracker supports it; otherwise use defaults
+      let sessionSummary: { sessionId: string; userId: string } = { sessionId: "", userId: "" };
+      try {
+        const anyTracker: any = UserJourneyTracker as any;
+        const inst = anyTracker.getInstance?.();
+        const summary = inst?.getSessionSummary?.();
+        if (summary && typeof summary === "object") {
+          sessionSummary = {
+            sessionId: String(summary.sessionId ?? ""),
+            userId: String(summary.userId ?? ""),
+          };
+        }
+      } catch {
+        // ignore, use defaults
+      }
 
       // Collect browser information
       const browserInfo = {
@@ -197,15 +210,11 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ isOpen, onClose, contex
       const result = await response.json();
 
       // Track feedback submission
-      tracker.trackAction({
-        actionType: "feedback_submitted",
-        element: "feedback-widget",
-        metadata: {
-          feedbackId: result.id,
-          feedbackType: formData.type,
-          rating: formData.rating,
-          hasStepsToReproduce: !!formData.stepsToReproduce,
-        },
+      trackClick("feedback_submitted", {
+        feedbackId: result.id,
+        feedbackType: formData.type,
+        rating: formData.rating,
+        hasStepsToReproduce: !!formData.stepsToReproduce,
       });
 
       setStep("success");

@@ -1,5 +1,6 @@
 // pages/api/users/index.ts
 import type { NextApiRequest, NextApiResponse } from "next";
+import { toSearchParams } from "@/lib/url";
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:8080";
 
@@ -14,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Build query string for GET requests
     const queryString =
       req.method === "GET" && Object.keys(req.query).length > 0
-        ? "?" + new URLSearchParams(req.query as Record<string, string>).toString()
+        ? "?" + toSearchParams(req.query as Record<string, string>).toString()
         : "";
 
     // Forward request to auth service

@@ -54,6 +54,8 @@ export default function GraphVisualization3D({ graphData }: GraphVisualization3D
     );
   }
 
+  const DeckAny: any = ScatterplotLayer ? DeckGLComp : null;
+
   return (
     <Panel title="3D Graph Visualization">
       <div className="space-y-4">
@@ -69,8 +71,7 @@ export default function GraphVisualization3D({ graphData }: GraphVisualization3D
           className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
         >
           {ScatterplotLayer ? (
-            // @ts-ignore: dynamic ESM default
-            <DeckGLComp
+            <DeckAny
               initialViewState={{
                 longitude: 0,
                 latitude: 0,

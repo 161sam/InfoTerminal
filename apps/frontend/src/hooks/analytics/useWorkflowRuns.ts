@@ -1,7 +1,7 @@
 // Hook for workflow runs data
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { WorkflowRun, AnalyticsFilters } from "../analytics/types";
+import { WorkflowRun, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useWorkflowRuns(filters: AnalyticsFilters) {
   const [data, setData] = useState<WorkflowRun[]>([]);

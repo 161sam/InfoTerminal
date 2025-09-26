@@ -85,7 +85,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           ) : (
             <div className="space-y-5">
               <p className="text-sm text-gray-600 dark:text-slate-300">
-                Start the single sign-on flow to authenticate with your organisation's identity
+                Start the single sign-on flow to authenticate with your organisation&#39;s identity
                 provider.
               </p>
 

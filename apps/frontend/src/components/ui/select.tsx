@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState, useCallback } from "react";
 
 type SelectContextType = {
   value: string | undefined;
@@ -21,12 +21,15 @@ function Select({ value, defaultValue, onValueChange, children }: SelectProps) {
   const [open, setOpen] = useState(false);
   const isControlled = typeof value !== "undefined";
   const current = isControlled ? value : internal;
-  const setValue = (v: string) => {
+  const setValue = useCallback((v: string) => {
     if (!isControlled) setInternal(v);
     onValueChange?.(v);
     setOpen(false);
-  };
-  const ctx = useMemo(() => ({ value: current, setValue, open, setOpen }), [current, open]);
+  }, [isControlled, onValueChange]);
+  const ctx = useMemo(
+    () => ({ value: current, setValue, open, setOpen }),
+    [current, open, setOpen, setValue],
+  );
   return <SelectContext.Provider value={ctx}>{children}</SelectContext.Provider>;
 }
 

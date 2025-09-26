@@ -13,7 +13,7 @@ import {
   FileText,
   Users,
   BarChart3,
-  Image,
+  Image as ImageIcon,
   Video,
   Music,
   Eye,
@@ -121,7 +121,7 @@ const getFileIcon = (fileType: ImportItem["fileType"]) => {
     case "document":
       return FileText;
     case "image":
-      return Image;
+      return ImageIcon;
     case "video":
       return Video;
     case "audio":
@@ -847,7 +847,7 @@ export default function DataPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Image className="h-4 w-4 text-green-500" />
+                  <ImageIcon className="h-4 w-4 text-green-500" />
                   <div>
                     <p className="font-medium">Images</p>
                     <p className="text-gray-500">JPG, PNG, BMP → EXIF & forensic analysis</p>

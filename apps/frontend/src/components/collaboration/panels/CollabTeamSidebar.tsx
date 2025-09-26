@@ -1,5 +1,6 @@
 // Collaboration team sidebar panel
 import { User, Settings, Crown, Shield, UserCheck, Circle } from "lucide-react";
+import NextImage from "next/image";
 import {
   Workspace,
   WorkspaceMember,
@@ -149,10 +150,13 @@ function MemberCard({ member, onAction }: MemberCardProps) {
         <div className="relative">
           <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             {member.avatar ? (
-              <img
+              <NextImage
                 src={member.avatar}
                 alt={member.name}
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded-full object-cover"
+                unoptimized
               />
             ) : (
               <User size={20} className="text-primary-600 dark:text-primary-400" />

@@ -70,6 +70,16 @@ export const useBreadcrumbs = (
   currentTab?: string,
   domain?: string,
 ): BreadcrumbItem[] => {
+  const hasTabs = (
+    c: any,
+  ): c is { label: string; tabs: Record<string, string> } & Record<string, unknown> =>
+    !!c && typeof c === "object" && (c as any).tabs && typeof (c as any).tabs === "object";
+
+  const hasDomains = (
+    c: any,
+  ): c is { label: string; domains: Record<string, string> } & Record<string, unknown> =>
+    !!c && typeof c === "object" && (c as any).domains && typeof (c as any).domains === "object";
+
   const pageConfig = {
     "/search": { label: "Search", tabs: {} },
     "/graphx": {
@@ -110,7 +120,7 @@ export const useBreadcrumbs = (
   const items: BreadcrumbItem[] = [{ label: config.label, href: basePage }];
 
   // Handle NLP domain-specific breadcrumbs
-  if (basePage === "/nlp" && domain && config.domains) {
+  if (basePage === "/nlp" && domain && hasDomains(config)) {
     const domainLabel = config.domains[domain as keyof typeof config.domains];
     if (domainLabel) {
       items.push({
@@ -122,7 +132,7 @@ export const useBreadcrumbs = (
   }
 
   // Handle tab-based breadcrumbs
-  if (currentTab && config.tabs) {
+  if (currentTab && hasTabs(config)) {
     const tabLabel = config.tabs[currentTab as keyof typeof config.tabs];
     if (tabLabel) {
       items.push({

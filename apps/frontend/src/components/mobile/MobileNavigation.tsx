@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { Settings, Menu, X, Bell, User, ChevronRight, Home } from "lucide-react";
 import { useNotifications } from "@/lib/notifications";
@@ -21,7 +22,7 @@ export function MobileNavigation({ isMenuOpen, onMenuToggle, currentUser }: Mobi
   // Close menu when route changes
   useEffect(() => {
     onMenuToggle();
-  }, [router.pathname]);
+  }, [router.pathname, onMenuToggle]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -33,7 +34,7 @@ export function MobileNavigation({ isMenuOpen, onMenuToggle, currentUser }: Mobi
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMenuOpen]);
+  }, [isMenuOpen, onMenuToggle]);
 
   const unreadNotifications = notifications.filter((n) => !n.persistent).length;
 
@@ -85,10 +86,13 @@ export function MobileNavigation({ isMenuOpen, onMenuToggle, currentUser }: Mobi
             </button>
             <div className="h-8 w-8 bg-primary-500 rounded-full flex items-center justify-center">
               {currentUser?.avatar ? (
-                <img
+                <Image
                   src={currentUser.avatar}
                   alt={currentUser.name}
+                  width={32}
+                  height={32}
                   className="h-8 w-8 rounded-full object-cover"
+                  unoptimized
                 />
               ) : (
                 <User size={16} className="text-white" />

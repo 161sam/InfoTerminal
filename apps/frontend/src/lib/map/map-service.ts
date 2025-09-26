@@ -1,5 +1,6 @@
 // Map service utilities for API interactions
 import { BoundingBox, GeoEntity, GeocodeResult, GeoStatistics, HeatmapPoint } from "./map-config";
+import { toSearchParams } from "@/lib/url";
 
 export class MapService {
   constructor(
@@ -8,7 +9,7 @@ export class MapService {
   ) {}
 
   async fetchGeoEntities(bounds: BoundingBox): Promise<GeoEntity[]> {
-    const params = new URLSearchParams({
+    const params = toSearchParams({
       south: bounds.south.toString(),
       west: bounds.west.toString(),
       north: bounds.north.toString(),
@@ -54,7 +55,7 @@ export class MapService {
   }
 
   async fetchHeatmapData(bounds: BoundingBox): Promise<HeatmapPoint[]> {
-    const params = new URLSearchParams({
+    const params = toSearchParams({
       south: bounds.south.toString(),
       west: bounds.west.toString(),
       north: bounds.north.toString(),

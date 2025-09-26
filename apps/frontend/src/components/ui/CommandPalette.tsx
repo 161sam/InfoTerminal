@@ -45,8 +45,8 @@ export interface Command {
 export function useKeyboardShortcut(
   keys: string[],
   callback: (event: KeyboardEvent) => void,
-  deps: React.DependencyList = [],
 ) {
+  const combo = useMemo(() => keys.join("+").toLowerCase(), [keys]);
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const keyCombo = [];
@@ -57,7 +57,7 @@ export function useKeyboardShortcut(
       keyCombo.push(event.key.toLowerCase());
 
       const shortcut = keyCombo.join("+");
-      const targetShortcut = keys.join("+").toLowerCase();
+      const targetShortcut = combo;
 
       if (shortcut === targetShortcut) {
         event.preventDefault();
@@ -67,7 +67,7 @@ export function useKeyboardShortcut(
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, deps);
+  }, [combo, callback]);
 }
 
 // Command Palette Provider
@@ -352,7 +352,10 @@ function CommandPalette({ customCommands }: { customCommands: Command[] }) {
   );
 
   // Combine all commands
-  const allCommands = [...builtInCommands, ...customCommands];
+  const allCommands = useMemo(
+    () => [...builtInCommands, ...customCommands],
+    [builtInCommands, customCommands],
+  );
 
   // Filter and search commands
   const filteredCommands = useMemo(() => {
@@ -567,13 +570,13 @@ function CommandItem({
 }
 
 // Hook to register commands dynamically
-export function useCommand(command: Command, deps: React.DependencyList = []) {
+export function useCommand(command: Command) {
   const { addCommand, removeCommand } = useCommandPalette();
 
   useEffect(() => {
     addCommand(command);
     return () => removeCommand(command.id);
-  }, deps);
+  }, [addCommand, removeCommand, command]);
 }
 
 // Quick Actions Helper

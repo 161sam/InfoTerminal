@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Loader2, RefreshCw, Zap } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -83,7 +84,7 @@ export function LoadingSpinner({
   return (
     <div className={cn(containerVariants({ layout }), className)} {...props}>
       <div className={cn(loadingVariants({ variant, size }))}>
-        <IconComponent size={iconSizes[size]} className="animate-spin" />
+        <IconComponent size={iconSizes[size as keyof typeof iconSizes]} className="animate-spin" />
       </div>
 
       {text && (
@@ -350,7 +351,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center">
       {illustration ? (
-        <img src={illustration} alt="" className="w-32 h-32 mb-6 opacity-50" />
+        <Image src={illustration} alt="" width={128} height={128} className="w-32 h-32 mb-6 opacity-50" />
       ) : Icon ? (
         <div className="mb-6 text-gray-400 dark:text-gray-500">
           <Icon size={64} />

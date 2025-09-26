@@ -44,7 +44,7 @@ export default function SearchSidebar({
       {/* Search Tips */}
       <Panel title="Search Tips">
         <div className="space-y-2 text-sm text-gray-600 dark:text-slate-400">
-          <div>• Use quotes for exact phrases: "ACME Corp"</div>
+          <div>• Use quotes for exact phrases: &quot;ACME Corp&quot;</div>
           <div>• Use AND, OR, NOT for boolean search</div>
           <div>• Wildcard search with * and ?</div>
           <div>• Search specific fields: title:report</div>

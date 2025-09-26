@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Panel from "@/components/layout/Panel";
 import { LoadingSpinner } from "@/components/ui/loading";
 import {
@@ -52,14 +52,7 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
   const [maxSources, setMaxSources] = useState(5);
   const [sourceTypes, setSourceTypes] = useState<string[]>(["web", "wikipedia", "news"]);
 
-  useEffect(() => {
-    if (claim && claim !== searchClaim) {
-      setSearchClaim(claim);
-      handleFindEvidence(claim);
-    }
-  }, [claim]);
-
-  const handleFindEvidence = async (claimText: string = searchClaim) => {
+  const handleFindEvidence = useCallback(async (claimText: string = searchClaim) => {
     if (!claimText.trim()) {
       setError("Please enter a claim to find evidence for");
       return;
@@ -93,7 +86,14 @@ export function EvidenceViewer({ claim, onStanceClassification, className }: Evi
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchClaim, maxSources, sourceTypes]);
+
+  useEffect(() => {
+    if (claim && claim !== searchClaim) {
+      setSearchClaim(claim);
+      handleFindEvidence(claim);
+    }
+  }, [claim, searchClaim, handleFindEvidence]);
 
   const getSourceIcon = (sourceType: string) => {
     switch (sourceType) {

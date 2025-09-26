@@ -68,27 +68,38 @@ export default function AnalyticsPage() {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
+  const {
+    refresh: refreshEntityAnalytics,
+  } = entityAnalytics;
+  const { refresh: refreshSourceCoverage } = sourceCoverage;
+  const { refresh: refreshEvidenceQuality } = evidenceQuality;
+  const { refresh: refreshWorkflowRuns } = workflowRuns;
+  const { refresh: refreshTimeline } = timeline;
+  const { refresh: refreshGeoEntities } = geoEntities;
+  const { refresh: refreshQueryInsights } = queryInsights;
+  const { refresh: refreshGraphMetrics } = graphMetrics;
+
   const handleRefreshAll = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
 
     // Trigger refresh on all hooks
-    entityAnalytics.refresh?.();
-    sourceCoverage.refresh?.();
-    evidenceQuality.refresh?.();
-    workflowRuns.refresh?.();
-    timeline.refresh?.();
-    geoEntities.refresh?.();
-    queryInsights.refresh?.();
-    graphMetrics.refresh?.();
+    refreshEntityAnalytics?.();
+    refreshSourceCoverage?.();
+    refreshEvidenceQuality?.();
+    refreshWorkflowRuns?.();
+    refreshTimeline?.();
+    refreshGeoEntities?.();
+    refreshQueryInsights?.();
+    refreshGraphMetrics?.();
   }, [
-    entityAnalytics.refresh,
-    sourceCoverage.refresh,
-    evidenceQuality.refresh,
-    workflowRuns.refresh,
-    timeline.refresh,
-    geoEntities.refresh,
-    queryInsights.refresh,
-    graphMetrics.refresh,
+    refreshEntityAnalytics,
+    refreshSourceCoverage,
+    refreshEvidenceQuality,
+    refreshWorkflowRuns,
+    refreshTimeline,
+    refreshGeoEntities,
+    refreshQueryInsights,
+    refreshGraphMetrics,
   ]);
 
   const handleOpenDossierExport = () => {
@@ -315,7 +326,7 @@ export default function AnalyticsPage() {
       id: "query-insights",
       name: "Query Insights",
       description: "Search patterns, performance, and user behavior analysis",
-      enabled: queryInsights.data && queryInsights.data.totalQueries > 0,
+      enabled: !!(queryInsights.data && queryInsights.data.totalQueries > 0),
       data: queryInsights.data,
     },
   ];

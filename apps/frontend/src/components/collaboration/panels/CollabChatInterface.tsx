@@ -1,5 +1,6 @@
 // Collaboration chat interface panel
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import {
   Search,
   MoreVertical,
@@ -225,10 +226,13 @@ function MessageBubble({ message, isConsecutive, onAction }: MessageBubbleProps)
         {!isConsecutive && (
           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
             {message.userAvatar ? (
-              <img
+              <Image
                 src={message.userAvatar}
                 alt={message.userName}
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full object-cover"
+                unoptimized
               />
             ) : (
               <User size={16} className="text-primary-600 dark:text-primary-400" />

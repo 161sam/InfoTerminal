@@ -1,7 +1,7 @@
 // Hook for entity analytics data
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { EntityStats, AnalyticsFilters } from "../analytics/types";
+import { EntityStats, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useEntityAnalytics(filters: AnalyticsFilters) {
   const [data, setData] = useState<EntityStats | null>(null);

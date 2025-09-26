@@ -212,7 +212,7 @@ export default function FacetPanel({ aggregations, selectedFilters, onToggle }: 
                       })
                     ) : (
                       <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                        No items match "{searchTerm}"
+                        No items match &quot;{searchTerm}&quot;
                       </p>
                     )}
                   </div>

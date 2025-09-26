@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
+import Image from "next/image";
 import { useAuth } from "@/components/auth/AuthProvider";
 
 interface PluginItem {
@@ -418,7 +419,7 @@ export default function PluginDetailPage() {
           <div className="flex items-start gap-4">
             <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
               {plugin.icon ? (
-                <img src={plugin.icon} alt={plugin.name} className="w-8 h-8" />
+                <Image src={plugin.icon} alt={plugin.name} width={32} height={32} className="w-8 h-8" unoptimized />
               ) : (
                 <Puzzle size={32} className="text-gray-600 dark:text-slate-400" />
               )}

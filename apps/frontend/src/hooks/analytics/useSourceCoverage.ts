@@ -1,7 +1,7 @@
 // Hook for source coverage analytics
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { SourceCoverage, AnalyticsFilters } from "../analytics/types";
+import { SourceCoverage, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useSourceCoverage(filters: AnalyticsFilters) {
   const [data, setData] = useState<SourceCoverage | null>(null);

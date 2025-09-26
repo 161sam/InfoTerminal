@@ -1,5 +1,5 @@
 import { Brain, FileText, Scale, Shield, Search } from "lucide-react";
-import { DomainConfig, Domain, ExampleText } from "../panels/types";
+import { DomainConfig, Domain, ExampleText } from "@/components/nlp/panels/types";
 
 export const DOMAINS: DomainConfig[] = [
   {

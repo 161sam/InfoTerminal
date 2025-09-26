@@ -96,7 +96,7 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-  web:
+  it-ui:
     <<: *runtime_defaults
     build:
       context: .

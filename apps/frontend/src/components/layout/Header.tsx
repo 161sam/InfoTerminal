@@ -2,6 +2,7 @@ import React from "react";
 import { Menu, ChevronDown } from "lucide-react";
 import { useRouter } from "next/router";
 import GlobalHealth from "../health/GlobalHealth";
+import Link from "next/link";
 import { getMainNavItems } from "@/components/navItems";
 import HeaderUserButton from "@/components/UserLogin/HeaderUserButton";
 import { ThemeToggle } from "@/lib/theme-provider";
@@ -36,19 +37,19 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
         </button>
 
         {/* Logo */}
-        <a
+        <Link
           href="/"
           className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
         >
           InfoTerminal
-        </a>
+        </Link>
         <div className="ml-4 text-sm text-gray-500 dark:text-gray-400">v1.0.0</div>
       </div>
 
       {/* Main Navigation - Desktop */}
       <nav className="hidden md:flex items-center gap-6">
         {mainNavItems.slice(0, 5).map((item) => (
-          <a
+          <Link
             key={item.key}
             href={item.href}
             className={`text-sm font-medium transition-colors ${
@@ -59,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
             title={item.description}
           >
             {item.name}
-          </a>
+          </Link>
         ))}
 
         {/* More dropdown for additional items */}
@@ -74,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
             <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <div className="py-2">
                 {mainNavItems.slice(5).map((item) => (
-                  <a
+                  <Link
                     key={item.key}
                     href={item.href}
                     className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
@@ -92,7 +93,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuClick }) => {
                         </div>
                       )}
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

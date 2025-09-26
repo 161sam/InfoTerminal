@@ -1,4 +1,5 @@
 import { isBrowser } from "./safe";
+import { toSearchParams } from "@/lib/url";
 import { GRAPH_DEEPLINK_FALLBACK } from "./config";
 
 export const DEEPLINK_STORAGE_KEY = "it.settings.graph.deeplinkBase";
@@ -33,6 +34,7 @@ export function buildGraphDeepLink(params: BuildGraphLinkParams): string {
   const qIndex = url.indexOf("?");
   const path = qIndex >= 0 ? url.slice(0, qIndex) : url;
   const query = qIndex >= 0 ? url.slice(qIndex + 1) : "";
+  // When a raw query string is provided, construct URLSearchParams directly
   const search = new URLSearchParams(query);
 
   if (params.type) search.set("type", params.type);

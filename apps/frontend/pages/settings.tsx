@@ -24,7 +24,12 @@ import { LucideIcon } from "lucide-react";
 function wrapLucideIcon(
   Icon: LucideIcon,
 ): ComponentType<{ size?: number | string; className?: string }> {
-  return ({ size = 20, className }) => <Icon size={size} className={className} />;
+  const Wrapped = ({ size = 20, className }: { size?: number | string; className?: string }) => (
+    <Icon size={size} className={className} />
+  );
+  const iconName = (Icon as any).displayName || (Icon as any).name || "Icon";
+  (Wrapped as any).displayName = `SettingsIcon(${iconName})`;
+  return Wrapped;
 }
 
 // Map SERVICE_ENDPOINTS to expected icon type

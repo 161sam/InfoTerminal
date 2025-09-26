@@ -1,5 +1,5 @@
 import { Search, Network, Shield, MapPin, User, Cpu } from "lucide-react";
-import { AgentCapability } from "../panels/types";
+import { AgentCapability } from "@/components/agents/panels/types";
 
 export const AGENT_CAPABILITIES: AgentCapability[] = [
   {

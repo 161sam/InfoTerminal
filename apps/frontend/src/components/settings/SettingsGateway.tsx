@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Globe,
   Shield,
@@ -44,20 +44,7 @@ export default function SettingsGateway() {
   const [isTesting, setIsTesting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (state.enabled && state.url) {
-      loadGatewayHealth();
-      loadGatewayMetrics();
-    }
-  }, [state.enabled, state.url]);
-
-  const updateState = (next: Partial<GatewayState>) => {
-    const newState = { ...state, ...next };
-    setState(newState);
-    saveGateway(newState);
-  };
-
-  const loadGatewayHealth = async () => {
+  const loadGatewayHealth = useCallback(async () => {
     try {
       const response = await fetch(`${state.url}/healthz`);
       const data = await response.json();
@@ -75,7 +62,22 @@ export default function SettingsGateway() {
         lastCheck: new Date().toISOString(),
       });
     }
+  }, [state.url]);
+
+  useEffect(() => {
+    if (state.enabled && state.url) {
+      loadGatewayHealth();
+      loadGatewayMetrics();
+    }
+  }, [state.enabled, state.url, loadGatewayHealth]);
+
+  const updateState = (next: Partial<GatewayState>) => {
+    const newState = { ...state, ...next };
+    setState(newState);
+    saveGateway(newState);
   };
+
+  
 
   const loadGatewayMetrics = () => {
     // Mock metrics - in real implementation, this would fetch from the gateway

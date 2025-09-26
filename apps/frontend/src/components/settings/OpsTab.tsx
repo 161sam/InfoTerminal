@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Play,
   Square,
@@ -78,10 +78,23 @@ export default function OpsTab() {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
+  const loadStacks = useCallback(async () => {
+    if (!canOperateStacks) return;
+    setLoading(true);
+    try {
+      const data = await listStacks();
+      setStacks(data.stacks || {});
+    } catch (error) {
+      toast("Failed to load stacks", { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+  }, [canOperateStacks]);
+
   useEffect(() => {
     if (!canOperateStacks) return;
     loadStacks();
-  }, [canOperateStacks]);
+  }, [canOperateStacks, loadStacks]);
 
   useEffect(() => {
     if (autoRefresh) {
@@ -97,20 +110,9 @@ export default function OpsTab() {
       clearInterval(refreshInterval);
       setRefreshInterval(null);
     }
-  }, [autoRefresh, status]);
+  }, [autoRefresh, status, refreshInterval]);
 
-  const loadStacks = async () => {
-    if (!canOperateStacks) return;
-    setLoading(true);
-    try {
-      const data = await listStacks();
-      setStacks(data.stacks || {});
-    } catch (error) {
-      toast("Failed to load stacks", { variant: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   if (!canOperateStacks) {
     return (

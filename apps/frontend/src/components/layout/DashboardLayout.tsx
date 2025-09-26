@@ -22,34 +22,31 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
+  // Manage body scroll lock and keyboard handler when sidebar is open
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSidebarOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    // focus first focusable in dialog
+    setTimeout(() => {
+      const el = dialogRef.current?.querySelector<HTMLElement>(
+        'a,button,[tabindex]:not([tabindex="-1"])',
+      );
+      el?.focus();
+    }, 0);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [sidebarOpen]);
+
   return (
     <div className={layoutStyles.pageContainer}>
-      {/* Sidebar state management effects */}
-      {(() => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useEffect(() => {
-          if (sidebarOpen) {
-            const onKey = (e: KeyboardEvent) => {
-              if (e.key === "Escape") setSidebarOpen(false);
-            };
-            document.addEventListener("keydown", onKey);
-            const prevOverflow = document.body.style.overflow;
-            document.body.style.overflow = "hidden";
-            // focus first focusable in dialog
-            setTimeout(() => {
-              const el = dialogRef.current?.querySelector<HTMLElement>(
-                'a,button,[tabindex]:not([tabindex="-1"])',
-              );
-              el?.focus();
-            }, 0);
-            return () => {
-              document.removeEventListener("keydown", onKey);
-              document.body.style.overflow = prevOverflow;
-            };
-          }
-        }, [sidebarOpen]);
-        return null;
-      })()}
+      {/* Sidebar state managed by top-level effect */}
 
       {/* Mobile sidebar */}
       <div
@@ -242,9 +239,9 @@ function SidebarContent({ items, currentPath, onClose }: SidebarContentProps) {
               key={item.name}
               href={item.href}
               onClick={onClose}
-              className={compose.navItem(isActive)}
+              className={compose.navItem(!!isActive)}
             >
-              <item.icon size={20} className={compose.navIcon(isActive)} />
+              <item.icon size={20} className={compose.navIcon(!!isActive)} />
               {item.name}
               {item.badge && <span className={navigationStyles.navBadge}>{item.badge}</span>}
             </Link>

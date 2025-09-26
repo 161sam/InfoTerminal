@@ -1,41 +1,25 @@
-export type ParamPrimitive = string | number | boolean | null | undefined | Date;
-export type ParamValue = ParamPrimitive | ParamPrimitive[];
+export type SearchParamInput = Record<string, unknown> | URLSearchParams | [string, string][];
 
 /**
- * Convert heterogenous values into URLSearchParams.
- * - undefined/null/"" are skipped
- * - boolean/number/Date are converted to strings
- * - arrays yield multiple entries
+ * Convert various inputs to a stable URLSearchParams instance.
+ * - Filters out undefined/null
+ * - Stringifies non-string values
  */
-export function toSearchParams(input: Record<string, ParamValue>): URLSearchParams {
+export function toSearchParams(input: SearchParamInput): URLSearchParams {
+  if (input instanceof URLSearchParams) return input;
   const params = new URLSearchParams();
-
-  const append = (k: string, v: ParamPrimitive) => {
-    if (v === undefined || v === null) return;
-    if (v instanceof Date) {
-      params.append(k, v.toISOString());
-      return;
-    }
-    const s = String(v);
-    if (s.length === 0) return;
-    params.append(k, s);
-  };
-
-  for (const [k, v] of Object.entries(input)) {
-    if (Array.isArray(v)) {
-      if (v.length === 0) continue;
-      for (const item of v) append(k, item);
+  if (Array.isArray(input)) {
+    for (const [k, v] of input) params.append(k, String(v));
+    return params;
+  }
+  for (const [key, value] of Object.entries(input || {})) {
+    if (value === undefined || value === null) continue;
+    if (Array.isArray(value)) {
+      value.forEach((v) => params.append(key, String(v)));
     } else {
-      append(k, v as ParamPrimitive);
+      params.set(key, String(value));
     }
   }
-
   return params;
 }
 
-/** Helper for building router links: returns "?a=b" or "" */
-export function toQueryString(input: Record<string, ParamValue>): string {
-  const sp = toSearchParams(input);
-  const qs = sp.toString();
-  return qs ? `?${qs}` : "";
-}

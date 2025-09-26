@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toSearchParams } from "@/lib/url";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Panel from "@/components/layout/Panel";
 import config from "@/lib/config";
@@ -56,7 +57,7 @@ export default function SearchPage() {
         minScore: String(filters.minScore),
       };
 
-      const params = new URLSearchParams({
+      const params = toSearchParams({
         q: searchTerm,
         sort,
         limit: "20",

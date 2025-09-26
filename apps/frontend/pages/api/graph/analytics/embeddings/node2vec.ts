@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { toSearchParams } from "@/lib/url";
 
 function graphUrl() {
   return process.env.NEXT_PUBLIC_GRAPH_API || "http://localhost:8612";
@@ -6,7 +7,7 @@ function graphUrl() {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     for (const k of ["dimensions", "walk_length", "walks_per_node", "window_size"]) {
       if (req.query[k]) params.set(k, String(req.query[k]));
     }

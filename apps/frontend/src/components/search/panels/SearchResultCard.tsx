@@ -7,7 +7,7 @@ interface SearchResultCardProps {
 }
 
 export default function SearchResultCard({ result }: SearchResultCardProps) {
-  const Icon = getResultTypeIcon(result.type);
+  const Icon = getResultTypeIcon(result.type || "other");
 
   return (
     <Panel className="hover:shadow-md transition-shadow">

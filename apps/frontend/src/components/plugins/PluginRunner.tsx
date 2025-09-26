@@ -293,7 +293,7 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
     }
   };
 
-  const cancelJob = async (jobId: string) => {
+  const cancelJob = React.useCallback(async (jobId: string) => {
     try {
       const response = await fetch(`${apiBaseUrl}/jobs/${jobId}`, {
         method: "DELETE",
@@ -303,7 +303,7 @@ export const PluginRunner: React.FC<PluginRunnerProps> = ({
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to cancel job");
     }
-  };
+  }, [apiBaseUrl, fetchJobs]);
 
   const handleCancelActiveJob = useCallback(async () => {
     if (!activeJobId) return;

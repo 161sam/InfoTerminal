@@ -35,6 +35,10 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+  }, []);
+
   const addNotification = useCallback(
     (notificationData: Omit<Notification, "id" | "timestamp">) => {
       const id = Math.random().toString(36).substr(2, 9);
@@ -54,12 +58,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         }, notification.duration);
       }
     },
-    [],
+    [removeNotification],
   );
-
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
-  }, []);
 
   const clearAll = useCallback(() => {
     setNotifications([]);

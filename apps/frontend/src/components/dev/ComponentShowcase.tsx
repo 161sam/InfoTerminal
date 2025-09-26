@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/loading";
 import Button from "@/components/ui/button";
 import Panel from "@/components/layout/Panel";
-import { PageLayout, TabbedPageLayout, DashboardLayout } from "@/components/layout/PageLayout";
+import PageLayout, { TabbedPageLayout, DashboardLayout } from "@/components/layout/PageLayout";
 import DarkModeCompatibilityTest from "./DarkModeTest";
 
 interface ComponentExampleProps {

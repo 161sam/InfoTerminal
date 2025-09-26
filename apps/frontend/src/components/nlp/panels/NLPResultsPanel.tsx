@@ -32,7 +32,7 @@ export default function NLPResultsPanel({
 }: NLPResultsPanelProps) {
   return (
     <Panel>
-      <Tabs value={activeTab} onValueChange={onTabChange}>
+      <Tabs value={activeTab} onValueChange={(v: string) => onTabChange(v as NLPTab)}>
         <div className="mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -141,7 +141,7 @@ export default function NLPResultsPanel({
               <div className="text-center py-8 text-gray-500 dark:text-slate-400">
                 <Users size={48} className="mx-auto mb-2 opacity-50" />
                 <p>
-                  Click "Extract Entities" to analyze your {currentDomain?.name.toLowerCase()} text
+                  Click &quot;Extract Entities&quot; to analyze your {currentDomain?.name.toLowerCase()} text
                 </p>
               </div>
             )}
@@ -173,7 +173,7 @@ export default function NLPResultsPanel({
             ) : (
               <div className="text-center py-8 text-gray-500 dark:text-slate-400">
                 <FileText size={48} className="mx-auto mb-2 opacity-50" />
-                <p>Click "Summarize" to generate a {currentDomain?.name.toLowerCase()} summary</p>
+                <p>Click &quot;Summarize&quot; to generate a {currentDomain?.name.toLowerCase()} summary</p>
               </div>
             )}
           </div>

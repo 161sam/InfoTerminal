@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Shield,
-  Image,
+  Image as ImageIcon,
   Video,
   Music,
   Activity,
@@ -66,7 +66,7 @@ export default function MediaForensicsPage() {
     {
       id: "image",
       label: "Image Analysis",
-      icon: Image,
+      icon: ImageIcon,
       description: "Analyze images for EXIF data, manipulation signs, and forensic evidence",
     },
     {
@@ -427,7 +427,7 @@ export default function MediaForensicsPage() {
               <div>
                 <Panel>
                   <div className="flex items-center gap-3 mb-6">
-                    <Image className="h-6 w-6 text-blue-500" />
+                    <ImageIcon className="h-6 w-6 text-blue-500" />
                     <h3 className={`${textStyles.h3} text-primary-600 dark:text-primary-400`}>
                       Image Forensics Analysis
                     </h3>

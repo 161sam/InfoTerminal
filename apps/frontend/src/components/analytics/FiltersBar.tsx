@@ -18,7 +18,7 @@ export function FiltersBar({
 }: FiltersBarProps) {
   const handleTimeRangeChange = (timeRange: string) => {
     const range = TIME_RANGES.find((r) => r.value === timeRange);
-    let dateRange = undefined;
+    let dateRange: NonNullable<AnalyticsFilters["dateRange"]> | undefined = undefined;
 
     if (timeRange !== "custom" && range?.days) {
       const to = new Date();
@@ -58,8 +58,11 @@ export function FiltersBar({
   };
 
   const handleCustomDateChange = (field: "from" | "to", value: string) => {
-    const dateRange = { ...filters.dateRange, [field]: value };
-    onFiltersChange({ dateRange });
+    const dateRange = { ...filters.dateRange, [field]: value } as {
+      from?: string;
+      to?: string;
+    };
+    onFiltersChange({ dateRange: { from: dateRange.from ?? "", to: dateRange.to ?? "" } });
   };
 
   const clearFilters = () => {

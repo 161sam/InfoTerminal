@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState, useCallback } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -88,10 +88,10 @@ function Tabs({
   const isControlled = typeof value !== "undefined";
   const current = isControlled ? value : internal;
 
-  const setValue = (v: string) => {
+  const setValue = useCallback((v: string) => {
     if (!isControlled) setInternal(v);
     onValueChange?.(v);
-  };
+  }, [isControlled, onValueChange]);
 
   const ctx = useMemo(
     () => ({
@@ -100,7 +100,7 @@ function Tabs({
       orientation,
       variant,
     }),
-    [current, orientation, variant],
+    [current, orientation, variant, setValue],
   );
 
   return (

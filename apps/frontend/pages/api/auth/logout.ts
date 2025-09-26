@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { toSearchParams } from "@/lib/url";
 import {
   clearAuthCookies,
   ensureNoCache,
@@ -24,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const metadata = await getOidcMetadata();
         if (metadata.end_session_endpoint) {
-          const params = new URLSearchParams({
+          const params = toSearchParams({
             id_token_hint: idToken,
             post_logout_redirect_uri: getRedirectUri(),
             client_id: getClientId(),

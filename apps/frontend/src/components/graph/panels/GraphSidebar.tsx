@@ -72,7 +72,9 @@ export default function GraphSidebar({
             .map((query, index) => (
               <button
                 key={index}
-                onClick={() => onQuerySelect?.(query)}
+                onClick={() => {
+                  if (query) onQuerySelect?.(query);
+                }}
                 className="w-full p-2 text-left text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-xs font-mono truncate"
               >
                 {query}

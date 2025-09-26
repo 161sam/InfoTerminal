@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ import {
   HardDrive,
   Database,
   FileText,
-  Image,
+  Image as ImageIcon,
   Download,
   Clock,
 } from "lucide-react";
@@ -50,13 +50,7 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
   const [confirmationRequired, setConfirmationRequired] = useState(false);
   const [lastScan, setLastScan] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (sessionId) {
-      scanDataCategories();
-    }
-  }, [sessionId]);
-
-  const scanDataCategories = async () => {
+  const scanDataCategories = useCallback(async () => {
     setIsLoading(true);
 
     try {
@@ -77,14 +71,22 @@ export function DataWipeControls({ sessionId, className }: DataWipeControlsProps
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (sessionId) {
+      scanDataCategories();
+    }
+  }, [sessionId, scanDataCategories]);
+
+  
 
   const getCategoryIcon = (categoryId: string): React.ReactNode => {
     switch (categoryId) {
       case "documents":
         return <FileText className="h-4 w-4" />;
       case "images":
-        return <Image className="h-4 w-4" />;
+        return <ImageIcon className="h-4 w-4" />;
       case "downloads":
         return <Download className="h-4 w-4" />;
       case "database":

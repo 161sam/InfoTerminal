@@ -144,10 +144,13 @@ function WorkspaceCard({ workspace, isSelected, onSelect }: WorkspaceCardProps) 
                 <div key={member.id} className="relative">
                   <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                     {member.avatar ? (
-                      <img
+                      <NextImage
                         src={member.avatar}
                         alt={member.name}
+                        width={24}
+                        height={24}
                         className="w-6 h-6 rounded-full object-cover"
+                        unoptimized
                       />
                     ) : (
                       <User size={12} className="text-primary-600 dark:text-primary-400" />
@@ -171,3 +174,4 @@ function WorkspaceCard({ workspace, isSelected, onSelect }: WorkspaceCardProps) 
 }
 
 export default CollabWorkspaceList;
+import NextImage from "next/image";

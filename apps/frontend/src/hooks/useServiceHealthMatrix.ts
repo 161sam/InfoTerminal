@@ -45,7 +45,7 @@ export function useServiceHealthMatrix(pollMs = 10000) {
       cancelled = true;
       clearInterval(id);
     };
-  }, [pollMs, JSON.stringify(endpoints)]);
+  }, [pollMs, endpoints]);
 
   return matrix;
 }

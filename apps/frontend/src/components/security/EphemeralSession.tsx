@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,16 +28,7 @@ export function EphemeralSession({ sessionId, className }: EphemeralSessionProps
   const [isLoading, setIsLoading] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
 
-  useEffect(() => {
-    if (sessionId) {
-      loadContainers();
-      // Auto-refresh every 10 seconds
-      const interval = setInterval(loadContainers, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [sessionId]);
-
-  const loadContainers = async () => {
+  const loadContainers = useCallback(async () => {
     if (!sessionId) return;
 
     try {
@@ -50,7 +41,18 @@ export function EphemeralSession({ sessionId, className }: EphemeralSessionProps
     } catch (error) {
       console.error("Failed to load containers:", error);
     }
-  };
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (sessionId) {
+      loadContainers();
+      // Auto-refresh every 10 seconds
+      const interval = setInterval(loadContainers, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [sessionId, loadContainers]);
+
+  
 
   const handleRefresh = async () => {
     setIsLoading(true);

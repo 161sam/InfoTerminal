@@ -1,5 +1,6 @@
 // Enhanced API client for InfoTerminal with error handling and retries
 import { getApis } from "./config";
+import { toSearchParams } from "@/lib/url";
 
 export interface ApiResponse<T = any> {
   data?: T;
@@ -37,7 +38,7 @@ export class ApiClient {
       ...fetchOptions
     } = options;
 
-    let lastError: Error;
+    let lastError: Error = new Error("Request failed");
 
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
@@ -140,7 +141,7 @@ export class AnalyticsApiClient extends ApiClient {
 
   // Entity Analytics
   async getEntityStats(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.timeRange) params.append("time_range", filters.timeRange);
     if (filters.entityTypes?.length) params.append("entity_types", filters.entityTypes.join(","));
     if (filters.sources?.length) params.append("sources", filters.sources.join(","));
@@ -149,7 +150,7 @@ export class AnalyticsApiClient extends ApiClient {
   }
 
   async getTopEntities(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.limit) params.append("limit", filters.limit.toString());
     if (filters.entityTypes?.length) params.append("types", filters.entityTypes.join(","));
 
@@ -158,7 +159,7 @@ export class AnalyticsApiClient extends ApiClient {
 
   // Source Coverage
   async getSourceCoverage(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.timeRange) params.append("time_range", filters.timeRange);
 
     return this.get(`${this.apis.SEARCH_API}/v1/analytics/sources?${params}`);
@@ -166,7 +167,7 @@ export class AnalyticsApiClient extends ApiClient {
 
   // Evidence Quality
   async getEvidenceQuality(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.timeRange) params.append("time_range", filters.timeRange);
 
     // Try verification service first, fallback to search
@@ -182,7 +183,7 @@ export class AnalyticsApiClient extends ApiClient {
 
   // Workflow Runs
   async getWorkflowRuns(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.limit) params.append("limit", filters.limit.toString());
     if (filters.status) params.append("status", filters.status);
 
@@ -191,7 +192,7 @@ export class AnalyticsApiClient extends ApiClient {
 
   // Timeline Data
   async getTimeline(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.timeRange) params.append("time_range", filters.timeRange);
     if (filters.entityTypes?.length) params.append("entity_types", filters.entityTypes.join(","));
 
@@ -200,7 +201,7 @@ export class AnalyticsApiClient extends ApiClient {
 
   // Geospatial Data
   async getGeoEntities(filters: any): Promise<ApiResponse<any>> {
-    const params = new URLSearchParams();
+    const params = toSearchParams({});
     if (filters.bbox) params.append("bbox", filters.bbox.join(","));
     if (filters.entityTypes?.length) params.append("entity_types", filters.entityTypes.join(","));
 

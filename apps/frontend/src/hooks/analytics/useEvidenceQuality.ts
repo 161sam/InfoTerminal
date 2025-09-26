@@ -1,7 +1,7 @@
 // Hook for evidence quality analytics
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { EvidenceQuality, AnalyticsFilters } from "../analytics/types";
+import { EvidenceQuality, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useEvidenceQuality(filters: AnalyticsFilters) {
   const [data, setData] = useState<EvidenceQuality | null>(null);

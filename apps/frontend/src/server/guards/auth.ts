@@ -1,4 +1,9 @@
-import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  NextApiResponse,
+} from "next";
 import {
   clearAuthCookies,
   refreshWithToken,
@@ -39,7 +44,7 @@ export function withAuthGuard<P extends Record<string, any> = Record<string, any
       const tokenResponse = await refreshWithToken(refreshToken);
       if (tokenResponse.refresh_token) {
         setRefreshCookie(
-          context.res,
+          (context.res as unknown) as NextApiResponse,
           tokenResponse.refresh_token,
           tokenResponse.refresh_expires_in,
           {
@@ -53,7 +58,7 @@ export function withAuthGuard<P extends Record<string, any> = Record<string, any
       }
       return { props: {} as P };
     } catch (error: any) {
-      clearAuthCookies(context.res);
+      clearAuthCookies((context.res as unknown) as NextApiResponse);
       const destination = `/login?returnTo=${encodeURIComponent(returnTo)}`;
       return {
         redirect: {

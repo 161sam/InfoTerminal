@@ -24,6 +24,23 @@ export function GeoMap({ filters, onEntityClick, className = "" }: GeoMapProps) 
   const [mapCenter, setMapCenter] = useState<[number, number]>([40.7128, -74.006]); // NYC default
   const [mapZoom, setMapZoom] = useState(10);
 
+  const calculateBounds = React.useCallback(
+    (entities: GeoEntity[]) => {
+      if (entities.length === 0) return { center: mapCenter };
+
+      const lats = entities.map((e) => e.latitude);
+      const lngs = entities.map((e) => e.longitude);
+
+      const center: [number, number] = [
+        (Math.max(...lats) + Math.min(...lats)) / 2,
+        (Math.max(...lngs) + Math.min(...lngs)) / 2,
+      ];
+
+      return { center };
+    },
+    [mapCenter],
+  );
+
   useEffect(() => {
     // Initialize map when component mounts
     // In real implementation: initialize Leaflet or MapLibre here
@@ -35,12 +52,12 @@ export function GeoMap({ filters, onEntityClick, className = "" }: GeoMapProps) 
 
   useEffect(() => {
     // Update map when data changes
-    if (data?.entities.length > 0 && mapInstance) {
+    if (data?.entities && data.entities.length > 0 && mapInstance) {
       // In real implementation: update map markers/layers
       const bounds = calculateBounds(data.entities);
       setMapCenter(bounds.center);
     }
-  }, [data, mapInstance]);
+  }, [data, mapInstance, calculateBounds]);
 
   if (loading) {
     return (
@@ -68,19 +85,7 @@ export function GeoMap({ filters, onEntityClick, className = "" }: GeoMapProps) 
     );
   }
 
-  const calculateBounds = (entities: GeoEntity[]) => {
-    if (entities.length === 0) return { center: mapCenter };
-
-    const lats = entities.map((e) => e.latitude);
-    const lngs = entities.map((e) => e.longitude);
-
-    const center: [number, number] = [
-      (Math.max(...lats) + Math.min(...lats)) / 2,
-      (Math.max(...lngs) + Math.min(...lngs)) / 2,
-    ];
-
-    return { center };
-  };
+  
 
   const filteredEntities =
     data?.entities.filter((entity) => {

@@ -2,6 +2,7 @@
 // Provides centrality analysis, community detection, and network statistics
 
 import React, { useState, useEffect, useCallback } from "react";
+import { toSearchParams } from "@/lib/url";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -89,9 +90,7 @@ export const GraphAnalytics: React.FC<GraphAnalyticsProps> = ({
     setError(null);
 
     try {
-      const params = new URLSearchParams({
-        limit: centralityLimit.toString(),
-      });
+      const params = toSearchParams({ limit: centralityLimit.toString() });
 
       if (nodeTypeFilter) {
         params.append("node_type", nodeTypeFilter);
@@ -173,7 +172,7 @@ export const GraphAnalytics: React.FC<GraphAnalyticsProps> = ({
     }
   }, [activeTab, fetchCentralityData, fetchCommunities, fetchGraphSummary]);
 
-  const downloadResults = (data: any, filename: string) => {
+  const downloadResults = useCallback((data: any, filename: string) => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -183,7 +182,7 @@ export const GraphAnalytics: React.FC<GraphAnalyticsProps> = ({
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
+  }, []);
 
   const renderCentralityTab = () => (
     <div className="space-y-6">
@@ -199,10 +198,7 @@ export const GraphAnalytics: React.FC<GraphAnalyticsProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <label className="text-sm font-medium">Centrality Type</label>
-              <Select
-                value={centralityType}
-                onValueChange={(value: "degree" | "betweenness") => setCentralityType(value)}
-              >
+              <Select value={centralityType} onValueChange={(value: string) => setCentralityType(value as any)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

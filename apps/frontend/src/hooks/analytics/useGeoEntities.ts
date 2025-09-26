@@ -1,7 +1,7 @@
 // Hook for geospatial entities data
 import { useState, useEffect, useCallback } from "react";
 import { analyticsApi } from "../../lib/api-client";
-import { GeoAnalytics, AnalyticsFilters } from "../analytics/types";
+import { GeoAnalytics, AnalyticsFilters } from "@/components/analytics/types";
 
 export function useGeoEntities(filters: AnalyticsFilters) {
   const [data, setData] = useState<GeoAnalytics | null>(null);

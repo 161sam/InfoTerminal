@@ -24,7 +24,7 @@ const OverviewCard = ({
   textColor,
   borderColor,
 }: {
-  icon: React.ComponentType<{ size: number; className: string }>;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   label: string;
   value: string | number;
   bgColor: string;

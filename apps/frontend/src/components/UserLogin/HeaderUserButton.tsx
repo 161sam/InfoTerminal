@@ -3,6 +3,7 @@ import { User, LogOut, Settings, Users, ChevronDown, Shield, Clock } from "lucid
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import LoginModal from "./LoginModal";
 
 interface HeaderUserButtonProps {
@@ -86,10 +87,13 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
         {/* User Avatar */}
         <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
           {user.avatar ? (
-            <img
+            <Image
               src={user.avatar}
               alt={displayName}
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full object-cover"
+              unoptimized
             />
           ) : (
             <span className="text-primary-600 dark:text-primary-400 text-sm font-medium">
@@ -125,10 +129,13 @@ export const HeaderUserButton: React.FC<HeaderUserButtonProps> = ({ className })
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
                 {user.avatar ? (
-                  <img
+                  <Image
                     src={user.avatar}
                     alt={displayName}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full object-cover"
+                    unoptimized
                   />
                 ) : (
                   <span className="text-primary-600 dark:text-primary-400 font-medium">

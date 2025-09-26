@@ -70,14 +70,7 @@ export function CredibilityDashboard({
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [showPerformancePanel, setShowPerformancePanel] = useState(false);
 
-  useEffect(() => {
-    if (sourceUrl && sourceUrl !== inputUrl) {
-      setInputUrl(sourceUrl);
-      handleAssessCredibility(sourceUrl);
-    }
-  }, [sourceUrl]);
-
-  const handleAssessCredibility = async (url: string = inputUrl) => {
+  const handleAssessCredibility = React.useCallback(async (url: string = inputUrl) => {
     if (!url.trim()) {
       setError("Please enter a URL to assess");
       return;
@@ -127,7 +120,14 @@ export function CredibilityDashboard({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [inputUrl, showAnalytics]);
+
+  useEffect(() => {
+    if (sourceUrl && sourceUrl !== inputUrl) {
+      setInputUrl(sourceUrl);
+      handleAssessCredibility(sourceUrl);
+    }
+  }, [sourceUrl, inputUrl, handleAssessCredibility]);
 
   // Analytics functions (v0.3.0+)
   const updateAnalytics = async (

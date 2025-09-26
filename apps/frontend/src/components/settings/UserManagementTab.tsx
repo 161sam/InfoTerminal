@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toSearchParams } from "@/lib/url";
 import {
   Users,
   User,
@@ -249,19 +250,8 @@ const UserManagementTab: React.FC<UserManagementTabProps> = ({ mode = "demo", cl
   const [actionLoading, setActionLoading] = useState<string>("");
   const [activeTab, setActiveTab] = useState("users");
 
-  // Load data on component mount and when filters change
-  useEffect(() => {
-    if (mode === "demo") {
-      loadDemoUsers();
-    } else {
-      loadApiUsers();
-    }
-    if (mode === "api") {
-      loadApiRoles();
-    }
-  }, [mode, currentPage, pageSize, searchTerm, selectedRole, statusFilter]);
-
-  const loadDemoUsers = () => {
+  // Loaders
+  const loadDemoUsers = React.useCallback(() => {
     // Apply filters to demo data
     let filteredUsers = DEMO_USERS.filter((user) => {
       const matchesSearch =
@@ -269,10 +259,10 @@ const UserManagementTab: React.FC<UserManagementTabProps> = ({ mode = "demo", cl
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (user.department || "").toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesStatus = statusFilter === "" || user.status === statusFilter;
-      const matchesRole = selectedRole === "" || user.role === selectedRole;
+    const matchesStatus = statusFilter === "" || user.status === statusFilter;
+    const matchesRole = selectedRole === "" || user.role === selectedRole;
 
-      return matchesSearch && matchesStatus && matchesRole;
+    return matchesSearch && matchesStatus && matchesRole;
     });
 
     // Apply pagination
@@ -282,13 +272,13 @@ const UserManagementTab: React.FC<UserManagementTabProps> = ({ mode = "demo", cl
     setUsers(paginatedUsers.map(normalizeUser));
     setTotalUsers(filteredUsers.length);
     setLoading(false);
-  };
+  }, [currentPage, pageSize, searchTerm, statusFilter, selectedRole]);
 
-  const loadApiUsers = async () => {
+  const loadApiUsers = React.useCallback(async () => {
     try {
       setLoading(true);
 
-      const params = new URLSearchParams({
+      const params = toSearchParams({
         page: currentPage.toString(),
         size: pageSize.toString(),
         ...(searchTerm && { search: searchTerm }),
@@ -317,7 +307,28 @@ const UserManagementTab: React.FC<UserManagementTabProps> = ({ mode = "demo", cl
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, pageSize, searchTerm, selectedRole, statusFilter, loadDemoUsers]);
+
+  // Load data on component mount and when filters change
+  useEffect(() => {
+    if (mode === "demo") {
+      loadDemoUsers();
+    } else {
+      loadApiUsers();
+    }
+    if (mode === "api") {
+      loadApiRoles();
+    }
+  }, [
+    mode,
+    currentPage,
+    pageSize,
+    searchTerm,
+    selectedRole,
+    statusFilter,
+    loadApiUsers,
+    loadDemoUsers,
+  ]);
 
   const loadApiRoles = async () => {
     try {
@@ -823,10 +834,13 @@ const UserManagementTab: React.FC<UserManagementTabProps> = ({ mode = "demo", cl
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
                                 {user.avatar_url ? (
-                                  <img
+                                  <NextImage
                                     src={user.avatar_url}
-                                    alt={user.name}
+                                    alt={user.name || "User avatar"}
+                                    width={32}
+                                    height={32}
                                     className="w-8 h-8 rounded-full object-cover"
+                                    unoptimized
                                   />
                                 ) : (
                                   <User
@@ -1076,3 +1090,4 @@ const UserManagementTab: React.FC<UserManagementTabProps> = ({ mode = "demo", cl
 };
 
 export default UserManagementTab;
+import NextImage from "next/image";

@@ -1,5 +1,5 @@
 // Enhanced dossier export utilities for analytics
-import { AnalyticsDossierExport, AnalyticsDossierSection } from "../components/analytics/types";
+import { AnalyticsDossierExport, AnalyticsDossierSection } from "@/components/analytics/types";
 
 export interface DossierExportOptions {
   format: "markdown" | "pdf" | "html";
@@ -134,7 +134,7 @@ export class AnalyticsDossierExporter {
     toc += `1. [Executive Summary](#executive-summary)\n`;
     toc += `2. [Filter Configuration](#filter-configuration)\n`;
 
-    sections.forEach((section, index) => {
+    sections.forEach((section: AnalyticsDossierSection, index: number) => {
       const anchor = section.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       toc += `${index + 3}. [${section.name}](#${anchor})\n`;
     });
@@ -149,15 +149,15 @@ export class AnalyticsDossierExporter {
     summary += `This analytics report covers the period of **${dossier.filters.timeRange}** `;
     summary += `and includes analysis across ${dossier.sections.length} key areas:\n\n`;
 
-    dossier.sections.forEach((section) => {
+    dossier.sections.forEach((section: AnalyticsDossierSection) => {
       summary += `- **${section.name}:** ${section.description}\n`;
     });
 
     summary += `\n`;
 
     // Key findings based on available data
-    if (dossier.sections.some((s) => s.id === "entity-analytics" && s.data)) {
-      const entityData = dossier.sections.find((s) => s.id === "entity-analytics")?.data;
+    if (dossier.sections.some((s: AnalyticsDossierSection) => s.id === "entity-analytics" && s.data)) {
+      const entityData = dossier.sections.find((s: AnalyticsDossierSection) => s.id === "entity-analytics")?.data;
       if (entityData?.totalEntities) {
         summary += `### Key Findings\n\n`;
         summary += `- **${entityData.totalEntities.toLocaleString()}** total entities identified\n`;
