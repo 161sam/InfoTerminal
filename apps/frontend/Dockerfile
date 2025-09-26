@@ -13,9 +13,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN mkdir -p apps/frontend
 COPY apps/frontend/package.json apps/frontend/package.json
 # Install pnpm
-RUN npm install -g pnpm
-# Install only the frontend's dependencies using the workspace lockfile
-RUN pnpm install --filter @infoterminal/frontend... --frozen-lockfile
+RUN npm install -g pnpm \
+    && pnpm config set node-linker hoisted \
+    && pnpm install --filter @infoterminal/frontend... --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -26,6 +26,10 @@ RUN apk add --no-cache bash
 COPY --from=deps /app/node_modules /app/node_modules
 # Copy only what is needed for building the frontend
 COPY apps/frontend/ /app/apps/frontend
+# Link workspace node_modules so package scripts resolve binaries (e.g. next)
+RUN rm -rf node_modules \
+    && ln -s /app/node_modules node_modules \
+    && test -f node_modules/next/dist/bin/next
 # Copy shared scripts referenced by prebuild hooks (../../scripts)
 COPY scripts /app/scripts
 COPY tools /app/tools
