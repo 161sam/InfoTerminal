@@ -212,6 +212,16 @@ jobs:
       - name: Validate synthetic smoke targets
         run: python scripts/synthetic_smoke.py --validate-only
 
+  compose-prod:
+    name: Compose (Prod)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate production compose file
+        run: |
+          docker compose -f docker-compose.prod.yml config >/dev/null
+          docker compose -f docker-compose.prod.yml config --services
+
   perf-smoke:
     name: Performance Smoke
     runs-on: ubuntu-latest
