@@ -12,10 +12,9 @@ x-runtime-defaults: &runtime_defaults
     - NET_BIND_SERVICE
     - SETGID
     - SETUID
-
 services:
   flowise-connector:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build: ./services/flowise-connector
     env_file:
       - .env
@@ -36,11 +35,10 @@ services:
     networks:
       - default
       - egress
-
   # Optional – standardmäßig OHNE Host-Port und wird von dev_up NICHT gestartet.
   # Wenn du ihn exponieren willst, mach das über ein separates Override-File.
   opa-audit-sink:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build: ./services/opa-audit-sink
     profiles: ["agents"]
     # keine ports: – bleibt intern
@@ -49,7 +47,6 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
-
 networks:
   default:
     internal: true

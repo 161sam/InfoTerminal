@@ -12,14 +12,13 @@ x-runtime-defaults: &runtime_defaults
     - SETGID
     - SETUID
     - NET_BIND_SERVICE
-
 services:
   search-api:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/search-api/Dockerfile
-    ports: ["${IT_PORT_SEARCH_API:-8611}:8080"]
+    ports: ["${IT_PORT_SEARCH_API:-8611}:8080", '8611:8080']
     env_file: .env
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
@@ -30,11 +29,11 @@ services:
       opensearch:
         condition: service_healthy
   graph-api:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/graph-api/Dockerfile
-    ports: ["${IT_PORT_GRAPH_API:-8612}:8080"]
+    ports: ["${IT_PORT_GRAPH_API:-8612}:8080", '8612:8080']
     env_file: .env
     environment:
       - NEO4J_PASSWORD=${NEO4J_PASSWORD:-test12345}
@@ -47,7 +46,7 @@ services:
       neo4j:
         condition: service_healthy
   graph-views:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/graph-views/Dockerfile
@@ -66,7 +65,7 @@ services:
       postgres:
         condition: service_healthy
   auth-service:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/auth-service/Dockerfile
@@ -97,7 +96,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
   it-ui:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
@@ -113,15 +112,24 @@ services:
       auth-service:
         condition: service_healthy
   opensearch:
-    <<: *runtime_defaults
-    image: opensearchproject/opensearch:2
+    !!merge <<: *runtime_defaults
+    image: opensearchproject/opensearch:2.11.1
+    # OpenSearch needs relaxed seccomp + higher ulimits in dev
     security_opt:
       - "no-new-privileges:true"
-      - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+      - "seccomp=unconfined"
       - "apparmor:docker-default"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     environment:
       - discovery.type=single-node
-      - plugins.security.disabled=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m # adjust memory
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD:-Admin123!Secure}
     # No host port mapping (policy: avoid standard ports)
@@ -133,7 +141,7 @@ services:
     volumes:
       - opensearch_data:/usr/share/opensearch/data
   neo4j:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     image: neo4j:5
     security_opt:
       - "no-new-privileges:true"
@@ -153,7 +161,7 @@ services:
     volumes:
       - neo4j_data:/data
   postgres:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     image: postgres:16
     security_opt:
       - "no-new-privileges:true"
@@ -174,7 +182,7 @@ services:
       - ./infra/postgres/init:/docker-entrypoint-initdb.d
     restart: unless-stopped
   doc-entities:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/doc-entities/Dockerfile
@@ -189,7 +197,7 @@ services:
       postgres:
         condition: service_healthy
   egress-gateway:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/egress-gateway/Dockerfile
@@ -208,7 +216,7 @@ services:
       - egress
     restart: unless-stopped
   rag-api:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/rag-api/Dockerfile
@@ -231,7 +239,7 @@ services:
       timeout: 5s
       retries: 10
   plugin-runner:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/plugin-runner/Dockerfile
@@ -254,7 +262,7 @@ services:
       retries: 5
     restart: unless-stopped
   xai:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/xai/Dockerfile
@@ -265,7 +273,7 @@ services:
       timeout: 5s
       retries: 10
   forensics:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/forensics/Dockerfile
@@ -278,7 +286,7 @@ services:
       timeout: 5s
       retries: 10
   collab-hub:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/collab-hub/Dockerfile
@@ -291,7 +299,7 @@ services:
       timeout: 5s
       retries: 10
   federation-proxy:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/federation-proxy/Dockerfile
@@ -302,7 +310,7 @@ services:
       timeout: 5s
       retries: 10
   verification:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/verification/Dockerfile
@@ -315,7 +323,7 @@ services:
       retries: 5
     restart: unless-stopped
   ops-controller:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/ops-controller/Dockerfile
@@ -339,7 +347,7 @@ services:
       - ./:/workspace:ro
     restart: unless-stopped
   media-forensics:
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/media-forensics/Dockerfile
@@ -358,27 +366,30 @@ services:
   # Optional modules --------------------------------------------------
   aleph:
     profiles: ["aleph"]
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     image: alephdata/aleph:latest
     environment:
       - ALEPH_DEBUG=true
     ports:
       - "${IT_PORT_ALEPH:-8641}:8080"
+      - 8641:8080
   superset:
     profiles: ["superset"]
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     image: apache/superset:latest
     ports:
       - "${IT_PORT_SUPERSET:-8644}:8088"
+      - 8644:8088
   airflow:
     profiles: ["airflow"]
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     image: apache/airflow:2
     ports:
       - "${IT_PORT_AIRFLOW:-8642}:8080"
+      - 8642:8080
   nifi:
     profiles: ["nifi"]
-    <<: *runtime_defaults
+    !!merge <<: *runtime_defaults
     image: apache/nifi:2.0.0
     environment:
       - NIFI_WEB_HTTPS_PORT=
@@ -391,7 +402,6 @@ volumes:
   postgres_data:
   demo_data:
   plugin_results:
-
 networks:
   default:
     name: infoterminal_internal
