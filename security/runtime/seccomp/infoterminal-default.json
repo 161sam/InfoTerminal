@@ -350,15 +350,7 @@
         "clone",
         "clone3"
       ],
-      "action": "SCMP_ACT_ALLOW",
-      "args": [
-        {
-          "index": 0,
-          "op": "SCMP_CMP_MASKED_EQ",
-          "datum": 2080505856,
-          "datumTwo": 2080505856
-        }
-      ]
+      "action": "SCMP_ACT_ALLOW"
     }
   ]
 }
