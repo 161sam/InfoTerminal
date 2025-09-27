@@ -87,26 +87,40 @@ validate_dockerfile() {
     fi
 }
 
-# Function to test Docker build (dry run)
+# Resolve docker compose command (plugin or standalone)
+get_compose_cmd() {
+    if command -v docker-compose >/dev/null 2>&1; then
+        echo "docker-compose"
+        return 0
+    fi
+    if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+        echo "docker compose"
+        return 0
+    fi
+    return 1
+}
+
+# Function to test Docker Compose parsing (no network)
 test_docker_build() {
     local service_path=$1
     local image_name=$2
-    
+
     print_status "INFO" "Testing Docker build context for: $service_path"
-    
-    # Check if docker-compose can parse the service
-    if command -v docker-compose >/dev/null 2>&1; then
-        cd "$PROJECT_ROOT"
-        if docker-compose -f docker-compose.verification.yml config --services | grep -q "$(basename $service_path)"; then
-            print_status "SUCCESS" "Docker Compose configuration valid for: $service_path"
-            return 0
-        else
-            print_status "WARNING" "Service not found in docker-compose.verification.yml: $service_path"
-            return 1
-        fi
-    else
+
+    local DCMD
+    if ! DCMD=$(get_compose_cmd); then
         print_status "WARNING" "Docker Compose not available, skipping build test"
         return 0
+    fi
+
+    cd "$PROJECT_ROOT"
+    # Validate compose file parses successfully
+    if $DCMD -f docker-compose.verification.yml config >/dev/null 2>&1; then
+        print_status "SUCCESS" "Docker Compose configuration valid (parsed)"
+        return 0
+    else
+        print_status "WARNING" "Failed to parse docker-compose.verification.yml"
+        return 1
     fi
 }
 

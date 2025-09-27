@@ -1,7 +1,7 @@
 x-runtime-defaults: &runtime_defaults
   security_opt:
     - "no-new-privileges:true"
-    - "seccomp=unconfined"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
     - "apparmor:docker-default"
   cap_drop:
     - ALL
@@ -117,7 +117,7 @@ services:
     image: opensearchproject/opensearch:2
     security_opt:
       - "no-new-privileges:true"
-      - "seccomp=unconfined"
+      - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
       - "apparmor:docker-default"
     environment:
       - discovery.type=single-node
@@ -137,7 +137,7 @@ services:
     image: neo4j:5
     security_opt:
       - "no-new-privileges:true"
-      - "seccomp=unconfined"
+      - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
       - "apparmor:docker-default"
     environment:
       - NEO4J_AUTH=neo4j/test12345
@@ -157,7 +157,7 @@ services:
     image: postgres:16
     security_opt:
       - "no-new-privileges:true"
-      - "seccomp=unconfined"
+      - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
       - "apparmor:docker-default"
     environment:
       - POSTGRES_USER=it_user

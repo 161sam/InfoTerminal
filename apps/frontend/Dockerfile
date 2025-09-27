@@ -12,10 +12,12 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 # Ensure workspace layout exists for the frontend package.json
 RUN mkdir -p apps/frontend
 COPY apps/frontend/package.json apps/frontend/package.json
-# Install pnpm
-RUN npm install -g pnpm \
-    && pnpm config set node-linker hoisted \
-    && pnpm install --filter @infoterminal/frontend... --frozen-lockfile
+# Enable corepack pnpm and install with cache
+RUN corepack enable \
+    && corepack prepare pnpm@10.17.1 --activate
+RUN pnpm config set node-linker hoisted
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    PNPM_STORE_PATH=/pnpm/store pnpm install --filter @infoterminal/frontend... --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -23,13 +25,10 @@ FROM base AS builder
 WORKDIR /app/apps/frontend
 # Install bash for prebuild scripts invoked via npm lifecycle
 RUN apk add --no-cache bash
-COPY --from=deps /app/node_modules /app/node_modules
+# Bring node_modules directly into the app to avoid symlink loops during Next tracing
+COPY --from=deps /app/node_modules /app/apps/frontend/node_modules
 # Copy only what is needed for building the frontend
 COPY apps/frontend/ /app/apps/frontend
-# Link workspace node_modules so package scripts resolve binaries (e.g. next)
-RUN rm -rf node_modules \
-    && ln -s /app/node_modules node_modules \
-    && test -f node_modules/next/dist/bin/next
 # Copy shared scripts referenced by prebuild hooks (../../scripts)
 COPY scripts /app/scripts
 COPY tools /app/tools
@@ -41,8 +40,8 @@ ENV DOCKER_BUILD true
 ENV NEXT_IGNORE_ESLINT 1
 ENV NEXT_IGNORE_TYPECHECK 1
 
-# Build the application
-RUN npm install -g pnpm && pnpm build
+# Build the application (use corepack pnpm)
+RUN corepack enable && pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner

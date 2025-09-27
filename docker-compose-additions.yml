@@ -1,6 +1,25 @@
+name: infoterminal
+
+x-runtime-defaults: &runtime_defaults
+  security_opt:
+    - "no-new-privileges:true"
+    - "seccomp=./security/runtime/seccomp/infoterminal-default.json"
+    - "apparmor:docker-default"
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - NET_BIND_SERVICE
+    - SETGID
+    - SETUID
+
+services:
   # === ADDITIONAL SERVICES (Missing from main docker-compose.yml) ===
   
   cache-manager:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/cache-manager/Dockerfile
@@ -19,6 +38,7 @@
     restart: unless-stopped
 
   performance-monitor:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/performance-monitor/Dockerfile
@@ -39,6 +59,7 @@
     restart: unless-stopped
 
   websocket-manager:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/websocket-manager/Dockerfile
@@ -57,6 +78,7 @@
     restart: unless-stopped
 
   feedback-aggregator:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/feedback-aggregator/Dockerfile  
@@ -78,6 +100,7 @@
     restart: unless-stopped
 
   agent-connector:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/agent-connector/Dockerfile
@@ -99,6 +122,7 @@
     restart: unless-stopped
 
   gateway:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/gateway/Dockerfile
@@ -120,26 +144,11 @@
       retries: 10
     restart: unless-stopped
 
-  policy:
-    build:
-      context: .
-      dockerfile: services/policy/Dockerfile
-    ports: ["${IT_PORT_POLICY:-8636}:8000"]
-    env_file: .env
-    environment:
-      - OPA_SERVER_URL=${OPA_SERVER_URL:-http://opa:8181}
-      - POLICY_RELOAD_INTERVAL=${POLICY_RELOAD_INTERVAL:-60}
-      - POLICY_CACHE_TTL=${POLICY_CACHE_TTL:-300}
-    volumes:
-      - ./policy/rules:/app/policies:ro
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
+  # policy service temporarily disabled (no Dockerfile in services/policy)
+  # To enable, add a Dockerfile and image, then restore this block.
 
   openbb-connector:
+    <<: *runtime_defaults
     build:
       context: .
       dockerfile: services/openbb-connector/Dockerfile
@@ -156,27 +165,12 @@
       retries: 10
     restart: unless-stopped
 
-  archive:
-    build:
-      context: .
-      dockerfile: services/archive/Dockerfile
-    ports: ["${IT_PORT_ARCHIVE:-8639}:8000"]
-    env_file: .env
-    environment:
-      - ARCHIVE_STORAGE_PATH=${ARCHIVE_STORAGE_PATH:-/data/archive}
-      - COMPRESSION_ENABLED=${COMPRESSION_ENABLED:-1}
-      - RETENTION_DAYS=${RETENTION_DAYS:-365}
-    volumes:
-      - archive-data:/data/archive
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
+  # archive service temporarily disabled (no Dockerfile in services/archive)
+  # To enable, add a Dockerfile and image, then restore this block.
 
   # Redis (if not already present)
   redis:
+    <<: *runtime_defaults
     image: redis:7.2-alpine
     ports: ["${IT_PORT_REDIS:-6379}:6379"]
     environment:
@@ -197,3 +191,8 @@ volumes:
   agent-configs:
   archive-data:
   redis-data:
+
+networks:
+  default:
+    name: infoterminal_internal
+    internal: true

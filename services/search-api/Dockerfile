@@ -4,26 +4,35 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install minimal system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
+# Pre-install heavyweight deps for better caching
+COPY services/search-api/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
 # Copy shared libraries first (for better caching)
 COPY services/_shared/ /app/_shared/
 COPY services/common/ /app/common/
 
-# Copy service files and install
+# Copy service files and install package in editable mode
 COPY services/search-api/ /app
 RUN pip install --no-cache-dir -e .
 
 # Set Python path to include shared modules
 ENV PYTHONPATH="/app/src:/app:$PYTHONPATH"
 
-# Expose port
+# Create non-root user and set permissions
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Expose port (policy: container 8080)
 EXPOSE 8080
 
 # Health check

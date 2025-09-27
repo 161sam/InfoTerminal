@@ -7,7 +7,10 @@
 **/*.pyo
 **/*.pyd
 node_modules/
+**/node_modules/
 apps/frontend/.next/
+apps/frontend/.turbo/
+**/.next/
 apps/frontend/.turbo/
 dist/
 build/

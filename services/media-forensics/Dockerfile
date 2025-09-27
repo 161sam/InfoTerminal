@@ -30,6 +30,10 @@ COPY ./services/media-forensics/ ./
 # Ensure shared modules are importable
 ENV PYTHONPATH="/app:$PYTHONPATH"
 
+# Use non-root user for runtime
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
 EXPOSE 8000
 
 # Health check

@@ -62,14 +62,14 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
 
     ports:
-      - "${GRAPH_VIEWS_PORT:-8403}:8403"
+      - "${GRAPH_VIEWS_PORT:-8403}:8000"
     volumes:
       - ${GEO_UPLOAD_DIR:-./data/geo}:${GEO_UPLOAD_DIR:-/data/geo}
 
     restart: unless-stopped
 
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8403/readyz || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/readyz || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 5

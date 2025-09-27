@@ -19,6 +19,10 @@ COPY services/performance-monitor/ /app/
 
 ENV PYTHONPATH=/app:$PYTHONPATH
 
+# Run as non-root
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
