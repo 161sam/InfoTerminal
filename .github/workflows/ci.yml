@@ -328,3 +328,15 @@ jobs:
         run: |
           echo "vuln_policy_images failed with status ${{ steps.images.outputs.images_status }}"
           exit 1
+
+  helm_lint:
+    name: Helm Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+      - name: Lint InfoTerminal chart
+        run: helm lint deploy/helm/infoterminal

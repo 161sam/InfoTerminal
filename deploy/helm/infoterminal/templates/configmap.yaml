@@ -1,0 +1,11 @@
+{{- range .Values.configMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-%s" (include "infoterminal.fullname" $) .name | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "infoterminal.labels" $ | nindent 4 }}
+data:
+  {{- toYaml .data | nindent 2 }}
+---
+{{- end }}

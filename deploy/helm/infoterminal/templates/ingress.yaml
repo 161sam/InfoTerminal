@@ -1,0 +1,45 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "infoterminal.fullname" . }}
+  labels:
+    {{- include "infoterminal.labels" . | nindent 4 }}
+  {{- $rawAnnotations := default (dict) .Values.ingress.annotations }}
+  {{- $annotations := merge (dict) $rawAnnotations }}
+  {{- $hasClassAnnotation := hasKey $rawAnnotations "kubernetes.io/ingress.class" }}
+  {{- if and .Values.ingress.className (not $hasClassAnnotation) }}
+  {{- $_ := set $annotations "kubernetes.io/ingress.class" .Values.ingress.className }}
+  {{- end }}
+  {{- if $annotations }}
+  annotations:
+    {{- toYaml $annotations | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.ingress.className (not $hasClassAnnotation) }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "infoterminal.fullname" $ }}
+                port:
+                  {{- if .servicePort }}
+                  name: {{ .servicePort }}
+                  {{- else }}
+                  number: {{ $.Values.service.port }}
+                  {{- end }}
+          {{- end }}
+    {{- end }}
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
