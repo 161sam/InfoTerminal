@@ -15,6 +15,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    name: Lint / Format Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install Python lint tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install black==24.10.0 ruff==0.7.4
+      - name: Run lint aggregate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: npm run lint --silent
+
   backend:
     name: Backend (graph-views)
     runs-on: ubuntu-latest

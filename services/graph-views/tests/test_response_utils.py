@@ -1,4 +1,4 @@
-from response import ok, err, bool_qp, safe_counts
+from response import bool_qp, err, ok, safe_counts
 
 
 def test_ok_err_boolqp():

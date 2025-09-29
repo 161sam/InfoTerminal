@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, Query
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 
 GEO_DIR = Path(os.getenv("GEO_UPLOAD_DIR", "/data/geo"))
 GEO_DIR.mkdir(parents=True, exist_ok=True)

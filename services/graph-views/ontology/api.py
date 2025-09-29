@@ -1,6 +1,9 @@
-import yaml, pathlib
+import pathlib
+
+import yaml
 from fastapi import APIRouter, HTTPException
-from .models import EntityType, RelationType, EntityInstance
+
+from .models import EntityInstance, EntityType, RelationType
 
 router = APIRouter(prefix="/ontology", tags=["ontology"])
 

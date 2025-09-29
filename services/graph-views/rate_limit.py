@@ -1,4 +1,5 @@
-import time, re
+import re
+import time
 from typing import Tuple
 
 

@@ -20,7 +20,7 @@ sys.modules.setdefault(
     types.SimpleNamespace(Pool=object, create_pool=lambda *a, **k: None),
 )
 
-import neo as neo_module
+import neo as neo_module  # noqa: E402
 
 
 class FakeRecord(dict):
