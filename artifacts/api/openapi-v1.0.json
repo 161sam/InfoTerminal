@@ -1,0 +1,1069 @@
+{
+  "components": {
+    "schemas": {
+      "DocumentResponse": {
+        "description": "Single document response.",
+        "properties": {
+          "found": {
+            "description": "Whether document was found",
+            "title": "Found",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Document ID",
+            "title": "Id",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Document source data",
+            "title": "Source"
+          }
+        },
+        "required": [
+          "id",
+          "found"
+        ],
+        "title": "DocumentResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "IndexRequest": {
+        "description": "Document indexing request.",
+        "properties": {
+          "documents": {
+            "description": "List of documents to index",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "index": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Target index name (optional)",
+            "title": "Index"
+          }
+        },
+        "required": [
+          "documents"
+        ],
+        "title": "IndexRequest",
+        "type": "object"
+      },
+      "IndexResponse": {
+        "description": "Document indexing response.",
+        "properties": {
+          "errors": {
+            "description": "Indexing errors",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "indexed": {
+            "description": "Number of documents indexed",
+            "title": "Indexed",
+            "type": "integer"
+          },
+          "took_ms": {
+            "description": "Indexing time in milliseconds",
+            "title": "Took Ms",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "indexed",
+          "took_ms"
+        ],
+        "title": "IndexResponse",
+        "type": "object"
+      },
+      "PaginatedResponse_SearchResult_": {
+        "properties": {
+          "has_next": {
+            "description": "Whether there are more pages",
+            "title": "Has Next",
+            "type": "boolean"
+          },
+          "has_prev": {
+            "description": "Whether there are previous pages",
+            "title": "Has Prev",
+            "type": "boolean"
+          },
+          "items": {
+            "description": "List of items for current page",
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "page": {
+            "description": "Current page number",
+            "title": "Page",
+            "type": "integer"
+          },
+          "pages": {
+            "description": "Total number of pages",
+            "title": "Pages",
+            "type": "integer"
+          },
+          "size": {
+            "description": "Items per page",
+            "title": "Size",
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total number of items",
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size",
+          "pages",
+          "has_next",
+          "has_prev"
+        ],
+        "title": "PaginatedResponse[SearchResult]",
+        "type": "object"
+      },
+      "SearchRequest": {
+        "description": "Search request model.",
+        "properties": {
+          "facets": {
+            "description": "Fields to return facet counts for",
+            "items": {
+              "type": "string"
+            },
+            "title": "Facets",
+            "type": "array"
+          },
+          "filters": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Search filters by field",
+            "title": "Filters"
+          },
+          "highlight": {
+            "default": true,
+            "description": "Whether to include search result highlighting",
+            "title": "Highlight",
+            "type": "boolean"
+          },
+          "q": {
+            "description": "Search query string",
+            "title": "Q",
+            "type": "string"
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sort configuration with field and order",
+            "title": "Sort"
+          }
+        },
+        "required": [
+          "q"
+        ],
+        "title": "SearchRequest",
+        "type": "object"
+      },
+      "SearchResult": {
+        "description": "Individual search result.",
+        "properties": {
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Document body content",
+            "title": "Body"
+          },
+          "entities": {
+            "description": "Extracted entities",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Entities",
+            "type": "array"
+          },
+          "id": {
+            "description": "Document ID",
+            "title": "Id",
+            "type": "string"
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Additional metadata",
+            "title": "Meta"
+          },
+          "score": {
+            "description": "Relevance score",
+            "title": "Score",
+            "type": "number"
+          },
+          "snippet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Search result snippet",
+            "title": "Snippet"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Document title",
+            "title": "Title"
+          }
+        },
+        "required": [
+          "id",
+          "score"
+        ],
+        "title": "SearchResult",
+        "type": "object"
+      },
+      "StandardError": {
+        "properties": {
+          "error": {
+            "properties": {
+              "code": {
+                "description": "Error code for programmatic handling",
+                "type": "string"
+              },
+              "details": {
+                "description": "Additional error context",
+                "type": "object"
+              },
+              "message": {
+                "description": "Human-readable error message",
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "ValidationError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StandardError"
+          },
+          {
+            "properties": {
+              "validation_errors": {
+                "description": "List of field validation errors",
+                "items": {
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "API key authentication",
+        "in": "header",
+        "name": "X-API-Key",
+        "type": "apiKey"
+      },
+      "BearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token authentication",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@infoterminal.org",
+      "name": "InfoTerminal API Support",
+      "url": "https://github.com/161sam/InfoTerminal"
+    },
+    "description": "Search and indexing service for InfoTerminal OSINT platform",
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "title": "InfoTerminal Search API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "description": "Service information and available endpoints.",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Root",
+        "tags": [
+          "root"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "description": "Health check endpoint (legacy response schema).",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Healthz",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/query": {
+      "post": {
+        "deprecated": true,
+        "description": "DEPRECATED: Use /v1/search instead.\n\nLegacy query endpoint for backward compatibility.\nWill be removed in a future version.",
+        "operationId": "legacy_query_query_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Body",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Legacy Query",
+        "tags": [
+          "legacy"
+        ]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "description": "Readiness check endpoint with legacy response schema.",
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Readyz",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/search": {
+      "get": {
+        "deprecated": true,
+        "description": "DEPRECATED: Use /v1/search instead.\n\nLegacy search endpoint for backward compatibility.\nWill be removed in a future version.",
+        "operationId": "legacy_search_search_get",
+        "parameters": [
+          {
+            "description": "Search query string",
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "description": "Search query string",
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "description": "comma-separated entity types",
+            "in": "query",
+            "name": "entity_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "comma-separated entity types",
+              "title": "Entity Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rerank",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Rerank"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Rerank",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Rerank"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Legacy Search",
+        "tags": [
+          "legacy"
+        ]
+      },
+      "post": {
+        "deprecated": true,
+        "description": "DEPRECATED: Use /v1/search instead.\n\nLegacy search endpoint for backward compatibility.\nWill be removed in a future version.",
+        "operationId": "legacy_search_search_post",
+        "parameters": [
+          {
+            "description": "Search query string",
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "description": "Search query string",
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "description": "comma-separated entity types",
+            "in": "query",
+            "name": "entity_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "comma-separated entity types",
+              "title": "Entity Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rerank",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Rerank"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Rerank",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Rerank"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Legacy Search",
+        "tags": [
+          "legacy"
+        ]
+      }
+    },
+    "/v1/documents/{doc_id}": {
+      "delete": {
+        "description": "Delete a specific document by ID",
+        "operationId": "delete_document_v1_documents__doc_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "doc_id",
+            "required": true,
+            "schema": {
+              "title": "Doc Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete document by ID",
+        "tags": [
+          "v1",
+          "search"
+        ]
+      },
+      "get": {
+        "description": "Retrieve a specific document by ID",
+        "operationId": "get_document_v1_documents__doc_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "doc_id",
+            "required": true,
+            "schema": {
+              "title": "Doc Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get document by ID",
+        "tags": [
+          "v1",
+          "search"
+        ]
+      }
+    },
+    "/v1/index/documents": {
+      "post": {
+        "description": "Index documents for search",
+        "operationId": "index_documents_v1_index_documents_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Index documents",
+        "tags": [
+          "v1",
+          "indexing"
+        ]
+      }
+    },
+    "/v1/search": {
+      "post": {
+        "description": "Search across indexed documents with filters, sorting, and pagination",
+        "operationId": "search_documents_v1_search_post",
+        "parameters": [
+          {
+            "description": "Enable AI-powered result reranking",
+            "in": "query",
+            "name": "enable_rerank",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Enable AI-powered result reranking",
+              "title": "Enable Rerank",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_SearchResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search documents",
+        "tags": [
+          "v1",
+          "search"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Development server (local process)",
+      "url": "http://localhost:8401"
+    },
+    {
+      "description": "Development server (Docker container)",
+      "url": "http://localhost:8611"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Search operations across indexed documents",
+      "name": "search"
+    },
+    {
+      "description": "Document indexing and management",
+      "name": "indexing"
+    },
+    {
+      "description": "Health and readiness checks",
+      "name": "health"
+    }
+  ]
+}
