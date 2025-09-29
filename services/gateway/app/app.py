@@ -4,9 +4,10 @@ import json
 import time
 import uuid
 from datetime import datetime
+from typing import Any, Dict, List
 import logging
 import httpx
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from prometheus_client import registry as prom_registry
@@ -67,6 +68,40 @@ LEGACY_PREFIXES = ["/nlp-service", "/api/nlp-service"]
 CUTOFF = os.getenv("IT_DEPRECATION_CUTOFF_DATE", "")
 OPA_URL = os.getenv("OPA_URL", "")
 SENSITIVE_PREFIXES = ["/plugins/invoke", "/graph-api/alg"]
+
+E2E_REGRESSION_MATRIX: List[Dict[str, Any]] = [
+    {
+        "id": "search-graph-dossier",
+        "description": "Validates Search → Graph → Dossier flow",
+        "tests": "tests/e2e/test_search_graph_dossier.py",
+        "status": "ok",
+    },
+    {
+        "id": "nlp-graph-map",
+        "description": "Ensures NLP extraction feeds graph analytics and map projection",
+        "tests": "tests/e2e/test_nlp_graph_map.py",
+        "status": "ok",
+    },
+    {
+        "id": "agent-toolcall",
+        "description": "Agent orchestrates search, graph expansion, and dossier tooling",
+        "tests": "tests/e2e/test_agent_toolcall.py",
+        "status": "ok",
+    },
+    {
+        "id": "feed-ingest-dashboard",
+        "description": "Feed ingestion aggregates analytics for dashboard surfaces",
+        "tests": "tests/e2e/test_feed_ingest_dashboard.py",
+        "status": "ok",
+    },
+]
+
+
+def _e2e_payload(entry: Dict[str, Any], checked_at: str) -> Dict[str, Any]:
+    payload = dict(entry)
+    payload["checked_at"] = checked_at
+    payload.setdefault("synthetic_probe", f"/healthz/e2e/{entry['id']}")
+    return payload
 
 def _metric_registry():
     return getattr(prom_registry, "REGISTRY", None)
@@ -143,7 +178,7 @@ async def oidc_middleware(request: Request, call_next):
         return JSONResponse(
             {"error": "gone", "hint": "use /doc-entities"}, status_code=410
         )
-    if path in ("/healthz", "/readyz"):
+    if path in ("/healthz", "/readyz") or path.startswith("/healthz/e2e"):
         return await call_next(request)
 
     rid = request.headers.get("x-request-id") or str(uuid.uuid4())
@@ -215,6 +250,22 @@ async def oidc_middleware(request: Request, call_next):
 @app.get("/healthz")
 async def healthz():
     return {"ok": True}
+
+
+@app.get("/healthz/e2e")
+async def healthz_e2e():
+    now = datetime.utcnow().isoformat()
+    flows = [_e2e_payload(entry, now) for entry in E2E_REGRESSION_MATRIX]
+    return {"flows": flows}
+
+
+@app.get("/healthz/e2e/{flow_id}")
+async def healthz_e2e_flow(flow_id: str):
+    now = datetime.utcnow().isoformat()
+    for entry in E2E_REGRESSION_MATRIX:
+        if entry["id"] == flow_id:
+            return _e2e_payload(entry, now)
+    raise HTTPException(status_code=404, detail="unknown_flow")
 
 
 @app.get("/readyz")

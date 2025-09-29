@@ -4,7 +4,7 @@
 
 - **Unit & Integration (Backend):** Pytest with async support and coverage for `search-api` and `graph-api`.
 - **Unit (Frontend):** Vitest + Testing Library with JSDOM environment.
-- **End-to-End:** Playwright runs a smoke test that performs a dummy login, executes a search, and opens the graph view.
+- **End-to-End:** Pytest-backed regression matrix in `tests/e2e/` (Search→Graph→Dossier, NLP→Graph→Map, Agent→Toolcall, Feed→Dashboard) plus Playwright smoke navigation for the UI shell.
 
 ## Dummy Login
 
@@ -63,6 +63,7 @@ in-memory stubs so that the suite is deterministic and fast.
 
 ## Continuous Integration
 
-The CI workflow runs separate jobs for backend, frontend, and E2E tests.
+The CI workflow runs separate jobs for backend, frontend, the E2E regression matrix, and ancillary checks.
+`pytest tests/e2e -q` powers the dedicated `e2e` job, and artifacts are uploaded alongside the Playwright smoke results.
 It also includes security scans and a performance smoke benchmark.
 Artifacts such as coverage reports and Playwright reports are uploaded for inspection.

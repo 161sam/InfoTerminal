@@ -16,7 +16,7 @@ This comprehensive test suite validates InfoTerminal's readiness for v1.0.0 prod
 | **Integration Tests** | Workflow data flows | `integration/integration_workflow_tests.sh` | 5 core workflows |
 | **Performance Tests** | Benchmarks & load testing | `performance/benchmark_core_workflows.sh`, `performance/load_testing.sh` | P95 < 200ms APIs |
 | **Chaos Engineering** | Resilience & recovery | `chaos/chaos_engineering_tests.sh` | Service failure scenarios |
-| **E2E Tests** | Complete user scenarios | `test_infoterminal_v020_e2e.sh` | End-to-end workflows |
+| **E2E Tests** | Canonical regression flows | `tests/e2e/*.py` | Search→Graph→Dossier, NLP→Graph→Map, Agent→Toolcall, Feed→Dashboard |
 | **Regression Tests** | Change impact analysis | `regression_test_suite.sh` | Performance & API stability |
 
 ## 🏗️ Quick Start
@@ -69,11 +69,25 @@ make test.clean         # Clean test artifacts
 
 The test suite validates these core InfoTerminal workflows:
 
-1. **Search Workflow**: Text Search → Ranking → Results → Export
-2. **Graph Workflow**: Entity Creation → Relationship Building → Analytics → Visualization  
-3. **NLP Workflow**: Document Ingestion → NER → Entity Resolution → Knowledge Graph Integration
-4. **Verification Workflow**: Claim Extraction → Evidence Retrieval → Stance Classification → Credibility Scoring
-5. **Security Workflow**: Incognito Mode → Secure Browsing → Data Wipe → Session Management
+1. **Search → Graph → Dossier** (tests/e2e/test_search_graph_dossier.py)
+2. **NLP → Graph → Map** (tests/e2e/test_nlp_graph_map.py)
+3. **Agent → Toolcall** (tests/e2e/test_agent_toolcall.py)
+4. **Feed → Ingest → Dashboard** (tests/e2e/test_feed_ingest_dashboard.py)
+
+### End-to-End Regression Matrix
+
+Run the canonical regression flows with:
+
+```bash
+python -m pytest tests/e2e -q
+```
+
+The matrix covers:
+
+- Search results promoted into graph analytics and dossier export.
+- NLP entity extraction wired into graph building and geospatial projection.
+- Agent execution traces spanning search, graph expansion, and dossier tooling.
+- Feed ingestion normalization feeding dashboard-ready aggregates.
 
 ### Performance Targets
 

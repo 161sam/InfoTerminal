@@ -73,6 +73,22 @@ jobs:
       - name: Test
         run: npm -w apps/frontend run test --silent -- --reporter=dot
 
+  e2e:
+    name: E2E Regression Matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/requirements.txt
+      - name: Run E2E regression matrix
+        run: python -m pytest tests/e2e -q
+
   migrations_smoke:
     name: DB Migrations Smoke
     runs-on: ubuntu-latest

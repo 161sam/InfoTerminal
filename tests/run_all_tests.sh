@@ -271,10 +271,16 @@ run_e2e_tests() {
     fi
     
     log_section "End-to-End Tests Phase"
-    
+
+    if [[ -d "$PROJECT_ROOT/tests/e2e" ]]; then
+        run_test_with_timeout "e2e_regression_matrix" \
+            "cd '$PROJECT_ROOT' && python -m pytest tests/e2e -q" \
+            300 || true
+    fi
+
     # Existing E2E test script
     if [[ -f "$PROJECT_ROOT/test_infoterminal_v020_e2e.sh" ]]; then
-        run_test_with_timeout "e2e_comprehensive" \
+        run_test_with_timeout "e2e_legacy_comprehensive" \
             "cd '$PROJECT_ROOT' && chmod +x test_infoterminal_v020_e2e.sh && ./test_infoterminal_v020_e2e.sh" \
             600 || true
     fi

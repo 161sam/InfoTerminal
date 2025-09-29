@@ -1,9 +1,9 @@
 {
-  "name": "Graph Workflow Test", 
+  "name": "Graph Workflow Test",
   "description": "Entity creation and relationship building",
   "entities": [
     {
-      "name": "Test_Organization_Fed",
+      "name": "Federal Reserve System",
       "type": "organization",
       "properties": {
         "test_marker": "integration_test",
@@ -11,8 +11,8 @@
       }
     },
     {
-      "name": "Test_Person_Powell",
-      "type": "person", 
+      "name": "Jerome Powell",
+      "type": "person",
       "properties": {
         "test_marker": "integration_test",
         "role": "central_banker"
@@ -21,8 +21,8 @@
   ],
   "relationships": [
     {
-      "from": "Test_Person_Powell",
-      "to": "Test_Organization_Fed",
+      "from": "Jerome Powell",
+      "to": "Federal Reserve System",
       "type": "leads",
       "properties": {
         "test_marker": "integration_test",

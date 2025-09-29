@@ -224,9 +224,16 @@ test.resilience: test.chaos
 # End-to-end tests
 .PHONY: test.e2e test.e2e.comprehensive test.e2e.user
 test.e2e.comprehensive:
-	@echo "🌐 Running comprehensive E2E tests..."
-	@chmod +x test_infoterminal_v020_e2e.sh
-	@./test_infoterminal_v020_e2e.sh
+	@echo "🌐 Running canonical E2E regression matrix..."
+	@python -m pytest tests/e2e -q
+
+test.e2e.legacy:
+	@echo "🧭 Running legacy shell-based E2E script..."
+	@if [ -f test_infoterminal_v020_e2e.sh ]; then \
+		chmod +x test_infoterminal_v020_e2e.sh && ./test_infoterminal_v020_e2e.sh; \
+	else \
+		echo "Legacy script not found"; \
+	fi
 
 test.e2e.user:
 	@echo "👤 Running user scenario tests..."
