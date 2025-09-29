@@ -14,48 +14,46 @@ InfoTerminal API standards:
 import os
 import sys
 import time
-import asyncio
-from typing import Any, Dict, List, Optional, Union
-from pathlib import Path
 from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-from fastapi import FastAPI, Depends, HTTPException, Query
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Query
 
 # Add shared standards to Python path
 SERVICE_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SERVICE_DIR.parent.parent
 sys.path.insert(0, str(REPO_ROOT / "services"))
 
-from _shared.api_standards import (
-    setup_standard_middleware,
-    setup_standard_exception_handlers,
-    setup_standard_openapi,
-    get_service_tags_metadata,
+# Import existing modules
+import neo  # noqa: E402
+from _shared.api_standards import (  # noqa: E402
+    APIError,
+    ErrorCodes,
     HealthChecker,
     check_database_connection,
     check_http_endpoint,
-    APIError,
-    ErrorCodes,
+    get_service_tags_metadata,
+    setup_standard_exception_handlers,
+    setup_standard_middleware,
+    setup_standard_openapi,
 )
+from it_logging import setup_logging  # noqa: E402
 
-from .models.view_models import (
+from .models.view_models import (  # noqa: E402
     EgoNetworkResponse,
     PathViewResponse,
     ViewNode,
     ViewRelationship,
 )
-from .routers.core_v1 import build_core_router
-from .routers.views_v1 import build_views_router
-from .routers.core_v1 import build_core_router
-
-# Import existing modules
-import neo
-from it_logging import setup_logging
+from .routers.core_v1 import build_core_router  # noqa: E402
+from .routers.views_v1 import build_views_router  # noqa: E402
 
 try:
     import neo4j
-    from neo4j.graph import Node as Neo4jNode, Relationship as Neo4jRelationship, Path as Neo4jPath
+    from neo4j.graph import Node as Neo4jNode
+    from neo4j.graph import Path as Neo4jPath
+    from neo4j.graph import Relationship as Neo4jRelationship
     NEO4J_AVAILABLE = True
 except ImportError:
     NEO4J_AVAILABLE = False
@@ -585,9 +583,9 @@ app.include_router(
 
 # Include existing routers for backward compatibility
 try:
-    from ontology.api import router as ontology_router
     from dossier.api import router as dossier_router
     from geo import router as geo_router
+    from ontology.api import router as ontology_router
     
     app.include_router(ontology_router)
     app.include_router(dossier_router)

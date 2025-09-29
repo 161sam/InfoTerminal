@@ -7,19 +7,25 @@
 ## Commit Style
 
 - Follow [Conventional Commits](https://www.conventionalcommits.org/).
-- Use `chore(format): …` for formatting-only changes (Prettier).
+- Use `chore(format): …` for formatting-only changes (Prettier/Black/Ruff).
 
 ## Development
 
 ```bash
 make dev-up
 make apps-up
+npm run lint
 npm run lint:docs
-pnpm --filter frontend lint
 gitleaks protect --staged --redact --config .gitleaks.toml
 ```
 
-Run tests and linters before pushing. For frontend formatting/lint checks run `pnpm --filter frontend lint` locally.
+Run tests and linters before pushing. `npm run lint` executes Prettier/ESLint for JS/TS and Ruff/Black for Python on files changed against the base branch (set `BASE_SHA` if needed locally).
+
+### Lint & Format Policy
+
+- `npm run lint` is the canonical pre-flight check and is mirrored by the CI `lint` gate.
+- `python scripts/lint_python.py [<base>]` and `python scripts/lint_js.py [<base>]` can be used to lint only one stack.
+- Use `npx prettier --write` and `python -m black <paths>` to apply formatting fixes locally before committing.
 
 ## Phase Flows & Idempotency
 

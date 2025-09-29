@@ -1,12 +1,11 @@
-import os
 import asyncio
+import logging
+import os
 import random
 import time
-import logging
 from typing import Optional, Tuple
 
 import asyncpg
-
 
 logger = logging.getLogger("graph-views.db")
 

@@ -32,6 +32,9 @@
   "scripts": {
     "build:fe": "npm -w apps/frontend run build",
     "dev:fe": "npm -w apps/frontend run dev",
+    "lint": "npm run lint:js && npm run lint:py",
+    "lint:js": "python scripts/lint_js.py && npm -w apps/frontend run lint --silent",
+    "lint:py": "python scripts/lint_python.py",
     "fmt": "prettier -w 'docs/**/*.md' 'cli/**/*.md' 'README.md'",
     "fmt:md": "prettier --write $(git ls-files '*.md')",
     "lint:docs": "npm -w docs run lint || echo 'skip'",

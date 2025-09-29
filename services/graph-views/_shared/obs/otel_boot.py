@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 
+
 def setup_otel(app, service_name: Optional[str] = None, service_version: Optional[str] = None, **_ignored) -> None:
     """
     Aktiviert OpenTelemetry für FastAPI, wenn OTEL_ENABLED/ENABLE_OTEL truthy ist.
@@ -12,11 +13,11 @@ def setup_otel(app, service_name: Optional[str] = None, service_version: Optiona
         return
     try:
         from opentelemetry import trace
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
-        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
         name = service_name or os.getenv("OTEL_SERVICE_NAME", "graph-views")
         version = service_version or os.getenv("OTEL_SERVICE_VERSION")

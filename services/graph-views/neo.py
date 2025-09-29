@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from typing import Any, Dict, Optional
 
 from neo4j import GraphDatabase, basic_auth
-from neo4j.exceptions import ServiceUnavailable, TransientError, ClientError
+from neo4j.exceptions import ClientError, ServiceUnavailable, TransientError
 
 _driver = None
 

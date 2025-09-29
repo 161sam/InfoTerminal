@@ -1,5 +1,6 @@
 from typing import Optional
 
+
 def enable_prometheus_metrics(
     app,
     route: str = "/metrics",
@@ -17,8 +18,8 @@ def enable_prometheus_metrics(
     endpoint = path or route
 
     try:
-        from prometheus_client import REGISTRY, generate_latest, CONTENT_TYPE_LATEST
         from fastapi import Response
+        from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, generate_latest
 
         # Falls eine Registry gereicht wurde, versuchen zu nutzen; sonst Default.
         reg = registry if registry is not None else REGISTRY

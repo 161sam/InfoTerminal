@@ -1,6 +1,8 @@
 import os
 from typing import Any, Dict, List
+
 from fastapi.middleware.cors import CORSMiddleware
+
 
 def get_cors_settings_from_env() -> Dict[str, Any]:
     origins_env = os.getenv("CORS_ORIGINS", "*").strip()
