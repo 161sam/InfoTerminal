@@ -1,0 +1,13 @@
+apiVersion: v2
+name: infoterminal
+description: Helm chart skeleton for deploying the InfoTerminal platform components.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - infoterminal
+  - knowledge-graph
+home: https://github.com/InfoTerminal/InfoTerminal
+maintainers:
+  - name: InfoTerminal Team
+    email: ops@infoterminal.local
