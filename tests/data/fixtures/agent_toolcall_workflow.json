@@ -1,0 +1,43 @@
+{
+  "name": "Agent Toolcall Regression",
+  "description": "Validates orchestrated agent tool calls across search, graph, and dossier tooling.",
+  "prompt": "Provide a situational brief on the Federal Reserve's current interest rate stance.",
+  "plan": [
+    {
+      "tool": "search.news",
+      "input": {
+        "query": "Federal Reserve interest rates",
+        "limit": 2,
+        "filters": {
+          "source_type": "official"
+        }
+      },
+      "save_as": "search_results"
+    },
+    {
+      "tool": "graph.expand",
+      "input": {
+        "entity": "Federal Reserve System",
+        "depth": 2
+      },
+      "save_as": "subgraph"
+    },
+    {
+      "tool": "dossier.build",
+      "input": {
+        "focus": "Federal Reserve System",
+        "summary_points": 3
+      },
+      "context": [
+        "search_results",
+        "subgraph"
+      ],
+      "save_as": "dossier"
+    }
+  ],
+  "expected_answer_contains": [
+    "Federal Reserve",
+    "5.25-5.50%",
+    "Jerome Powell"
+  ]
+}

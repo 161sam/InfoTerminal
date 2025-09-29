@@ -11,7 +11,12 @@
       "expected_results": {
         "min_results": 1,
         "top_result_relevance": 0.9,
-        "contains_terms": ["federal", "reserve", "interest", "rates"]
+        "contains_terms": [
+          "federal",
+          "reserve",
+          "interest",
+          "rates"
+        ]
       }
     },
     {
@@ -22,7 +27,11 @@
       "expected_results": {
         "min_results": 1,
         "top_result_relevance": 0.85,
-        "contains_terms": ["IMF", "economic", "growth", "2024"]
+        "contains_terms": [
+          "imf",
+          "growth",
+          "2024"
+        ]
       }
     }
   ]

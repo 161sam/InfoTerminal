@@ -1,0 +1,61 @@
+{
+  "name": "Feed → Ingest → Dashboard",
+  "description": "Ensures curated feeds produce analytics suitable for dashboarding.",
+  "feeds": [
+    {
+      "name": "monetary_policy",
+      "entries": [
+        {
+          "id": "feed_1",
+          "title": "Federal Reserve holds rates steady amid inflation watch",
+          "published_at": "2024-07-31T14:05:00Z",
+          "source": "Central Bank Bulletin",
+          "region": "US",
+          "topics": ["monetary_policy", "inflation"],
+          "sentiment": 0.35
+        },
+        {
+          "id": "feed_2",
+          "title": "IMF briefing highlights coordinated policy response",
+          "published_at": "2024-07-16T10:45:00Z",
+          "source": "IMF Press",
+          "region": "Global",
+          "topics": ["monetary_policy", "international"],
+          "sentiment": 0.55
+        }
+      ],
+      "expected_ingested": 2
+    },
+    {
+      "name": "energy_markets",
+      "entries": [
+        {
+          "id": "feed_3",
+          "title": "Renewable build-out accelerates in Europe",
+          "published_at": "2024-06-20T08:30:00Z",
+          "source": "Energy Monitor",
+          "region": "EU",
+          "topics": ["energy", "investment"],
+          "sentiment": 0.68
+        }
+      ],
+      "expected_ingested": 1
+    }
+  ],
+  "dashboard_expectations": {
+    "total_items": 3,
+    "top_topics": {
+      "monetary_policy": 2,
+      "inflation": 1,
+      "international": 1,
+      "energy": 1,
+      "investment": 1
+    },
+    "regional_breakdown": {
+      "US": 1,
+      "Global": 1,
+      "EU": 1
+    },
+    "average_sentiment": 0.5267
+  }
+}

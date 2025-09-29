@@ -38,5 +38,49 @@
     "targets": [
       "http://doc-entities:8000/readyz"
     ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "gateway",
+      "flow": "search-graph-dossier",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://gateway:8080/healthz/e2e/search-graph-dossier"
+    ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "gateway",
+      "flow": "nlp-graph-map",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://gateway:8080/healthz/e2e/nlp-graph-map"
+    ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "gateway",
+      "flow": "agent-toolcall",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://gateway:8080/healthz/e2e/agent-toolcall"
+    ]
+  },
+  {
+    "labels": {
+      "module": "http_2xx",
+      "service": "gateway",
+      "flow": "feed-ingest-dashboard",
+      "synthetic": "true"
+    },
+    "targets": [
+      "http://gateway:8080/healthz/e2e/feed-ingest-dashboard"
+    ]
   }
 ]
