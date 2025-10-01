@@ -397,9 +397,15 @@ def get_stack_logs(
         N = str(tail or TAIL)
         _audit("stack_logs", request, stack=name, service=service)
 
+        # Validate the `service` parameter if provided
+        valid_services = list(stacks[name].get("services", {}).keys())
+
         def stream():
             args = ["logs", "-f", "--tail", N]
             if service:
+                if service not in valid_services:
+                    yield f"Error: Invalid service name '{service}'\n".encode()
+                    return
                 args.append(service)
             
             try:
