@@ -14,7 +14,7 @@
     "formidable": "^3.5.1",
     "isomorphic-unfetch": "^4.0.2",
     "leaflet": "^1.9.4",
-    "@luma.gl/engine": "~9.1.9",
+    "@luma.gl/engine": "~9.2.2",
     "@luma.gl/core": "~9.1.9",
     "@luma.gl/shadertools": "~9.1.9",
     "@loaders.gl/core": "^4.3.4",
