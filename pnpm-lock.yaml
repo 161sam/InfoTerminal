@@ -148,8 +148,8 @@ importers:
         specifier: ^7.9.1
         version: 7.9.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts:
-        specifier: ^3.1.2
-        version: 3.2.0(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(redux@5.0.1)
+        specifier: ^3.2.1
+        version: 3.2.1(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(redux@5.0.1)
       tailwind-merge:
         specifier: ^2.2.0
         version: 2.6.0
@@ -299,8 +299,8 @@ packages:
   '@arcgis/core@4.33.14':
     resolution: {integrity: sha512-2/W8el2uGPib2NO7OoCqDx0Nniu7QlJQJr5AeU+50kVktJD3HhcwNJxqg8Jiibyml3AK0rB03HW1Ypbct7gMpg==}
 
-  '@arcgis/lumina@4.34.0-next.150':
-    resolution: {integrity: sha512-MsX/d+Yu2zaYUFTYkRGcrgUD8S735vgWlJFSDBmshOOP27afMX+lqcj8Xw0zoIdtbQvIY4YdkesH8GpYWvNyWQ==}
+  '@arcgis/lumina@4.34.0-next.151':
+    resolution: {integrity: sha512-0Tu/Dk5G+p5NvysqMeO9/7PW8MaQpHZ6PMCB2CwbEcx207leL5dCM3GUNjTUdwvPORnxsYMSckOr20SeGtQE4g==}
     peerDependencies:
       '@lit/context': ^1.1.5
       lit: ^3.3.0
@@ -308,8 +308,8 @@ packages:
       '@lit/context':
         optional: true
 
-  '@arcgis/toolkit@4.34.0-next.150':
-    resolution: {integrity: sha512-gZB8xrROFIN++4J7PGQ6dSun8AGpEwB2s2Mon5OUp3Z07KpoPtOLhzn9bbTmRXFcsePpIoqwkFxFf3cGo2kyaA==}
+  '@arcgis/toolkit@4.34.0-next.151':
+    resolution: {integrity: sha512-4olii8RRaeaPizr3fSSj1mKZCxwPDDpSDW9A2M5QfM0S8reP6qiUW7VnHQZg3cZC/pkTJyLRebDfPDULKyzq+w==}
 
   '@asamuzakjp/css-color@4.0.4':
     resolution: {integrity: sha512-cKjSKvWGmAziQWbCouOsFwb14mp1betm8Y7Fn+yglDMUUu3r9DCbJ9iJbeFDenLMqFbIMC0pQP8K+B8LAxX3OQ==}
@@ -649,8 +649,8 @@ packages:
     resolution: {integrity: sha512-einEveDJ/k1180NOp78PB/4Hje9eBy3dyOGLLtLn6bSkizpUfCwuYBIXOA7Y3F/k/BsTQXgKqUVwQ0eiscWMdA==}
     engines: {node: '>=18.0.0'}
 
-  '@esri/calcite-components@3.3.0':
-    resolution: {integrity: sha512-H5Lds2mFc7S/W33BfGtrnqI3/c8BQgKN+Y3lhm08Y1eAxvzJWJvG6+YxJdsx8xhBU9lb/qR6AYiAPvcVHtUsIg==}
+  '@esri/calcite-components@3.3.1':
+    resolution: {integrity: sha512-FII00C9+I53nOhczhHlCT+Y7dE8hvXOy4gPqJk3jnVhzb66MZciX6NDouD8afXdqFQVQoYWzbuI7dvLKcPjE0w==}
 
   '@esri/calcite-ui-icons@4.3.0':
     resolution: {integrity: sha512-iOOuRurpjFxFVw6+aXW2JpSkRBrdOpBcbdibfPOmSPqMd1aoHBtYmYXetKoH9vfrXoBiPyO2PkDnczhsu/N9IA==}
@@ -1950,6 +1950,9 @@ packages:
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
+
+  '@types/d3-array@3.2.2':
+    resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
 
   '@types/d3-color@1.4.5':
     resolution: {integrity: sha512-5sNP3DmtSnSozxcjqmzQKsDOuVJXZkceo1KJScDc1982kk/TS9mTPc6lpli1gTu1MIBF1YWutpHpjucNWcIj5g==}
@@ -4747,8 +4750,8 @@ packages:
   readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
 
-  recharts@3.2.0:
-    resolution: {integrity: sha512-fX0xCgNXo6mag9wz3oLuANR+dUQM4uIlTYBGTGq9CBRgW/8TZPzqPGYs5NTt8aENCf+i1CI8vqxT1py8L/5J2w==}
+  recharts@3.2.1:
+    resolution: {integrity: sha512-0JKwHRiFZdmLq/6nmilxEZl3pqb4T+aKkOkOi/ZISRZwfBhVMgInxzlYU9D4KnCH3KINScLy68m/OvMXoYGZUw==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -5537,7 +5540,7 @@ snapshots:
   '@arcgis/core@4.33.14':
     dependencies:
       '@esri/arcgis-html-sanitizer': 4.1.0
-      '@esri/calcite-components': 3.3.0
+      '@esri/calcite-components': 3.3.1
       '@vaadin/grid': 24.7.12
       '@zip.js/zip.js': 2.7.73
       luxon: 3.6.1
@@ -5545,14 +5548,14 @@ snapshots:
     transitivePeerDependencies:
       - '@lit/context'
 
-  '@arcgis/lumina@4.34.0-next.150(lit@3.3.1)':
+  '@arcgis/lumina@4.34.0-next.151(lit@3.3.1)':
     dependencies:
-      '@arcgis/toolkit': 4.34.0-next.150
+      '@arcgis/toolkit': 4.34.0-next.151
       csstype: 3.1.3
       lit: 3.3.1
       tslib: 2.8.1
 
-  '@arcgis/toolkit@4.34.0-next.150':
+  '@arcgis/toolkit@4.34.0-next.151':
     dependencies:
       tslib: 2.8.1
 
@@ -5919,10 +5922,10 @@ snapshots:
     dependencies:
       xss: 1.0.13
 
-  '@esri/calcite-components@3.3.0':
+  '@esri/calcite-components@3.3.1':
     dependencies:
-      '@arcgis/lumina': 4.34.0-next.150(lit@3.3.1)
-      '@arcgis/toolkit': 4.34.0-next.150
+      '@arcgis/lumina': 4.34.0-next.151(lit@3.3.1)
+      '@arcgis/toolkit': 4.34.0-next.151
       '@esri/calcite-ui-icons': 4.3.0
       '@floating-ui/dom': 1.7.4
       '@floating-ui/utils': 0.2.10
@@ -7565,6 +7568,8 @@ snapshots:
   '@types/crypto-js@4.2.2': {}
 
   '@types/d3-array@3.2.1': {}
+
+  '@types/d3-array@3.2.2': {}
 
   '@types/d3-color@1.4.5': {}
 
@@ -10819,7 +10824,7 @@ snapshots:
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
 
-  recharts@3.2.0(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(redux@5.0.1):
+  recharts@3.2.1(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(redux@5.0.1):
     dependencies:
       '@reduxjs/toolkit': 2.9.0(react-redux@9.2.0(@types/react@18.3.24)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       clsx: 2.1.1
@@ -11461,7 +11466,7 @@ snapshots:
 
   victory-vendor@37.3.6:
     dependencies:
-      '@types/d3-array': 3.2.1
+      '@types/d3-array': 3.2.2
       '@types/d3-ease': 3.0.2
       '@types/d3-interpolate': 3.0.4
       '@types/d3-scale': 4.0.9
