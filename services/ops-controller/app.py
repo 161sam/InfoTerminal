@@ -197,6 +197,11 @@ def stack_logs(name: str, service: Optional[str]=None, tail: Optional[int]=None,
     stacks = _stacks()["stacks"]
     if name not in stacks: raise HTTPException(404,"unknown stack")
     files = stacks[name]["files"]
+    # Validate that service is in the set of known services for the stack (if provided)
+    valid_services = stacks[name].get("services", [])
+    if service:
+        if not isinstance(service, str) or service.strip() == "" or service not in valid_services:
+            raise HTTPException(400, f"Service '{service}' not found in stack '{name}'")
     N = str(tail or TAIL)
     _audit("stack_logs", request, stack=name, service=service)
 
