@@ -9,7 +9,7 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.205.0",
     "@opentelemetry/sdk-node": "^0.205.0",
     "cors": "^2.8.5",
-    "express": "^4.19.2",
+    "express": "^5.1.0",
     "express-rate-limit": "^7.3.1",
     "helmet": "^8.1.0",
     "http-proxy-middleware": "^3.0.2",
