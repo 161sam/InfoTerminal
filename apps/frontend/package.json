@@ -10,7 +10,7 @@
     "clsx": "^2.0.0",
     "cytoscape": "^3.28.0",
     "deck.gl": "^9.1.14",
-    "framer-motion": "^11.0.28",
+    "framer-motion": "^12.23.22",
     "formidable": "^3.5.1",
     "isomorphic-unfetch": "^4.0.2",
     "leaflet": "^1.9.4",
