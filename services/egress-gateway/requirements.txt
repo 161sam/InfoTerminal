@@ -4,7 +4,7 @@ uvicorn[standard]==0.24.0
 pydantic==2.5.0
 httpx==0.25.2
 aiofiles==23.2.1
-python-multipart==0.0.6
+python-multipart==0.0.18
 
 # Tor/SOCKS support
 pysocks==1.7.1
@@ -15,7 +15,7 @@ requests[socks]==2.31.0
 
 # Security & Anonymization
 fake-useragent==1.4.0
-cryptography==41.0.7
+cryptography==44.0.1
 
 # Monitoring & Health
 prometheus-client==0.19.0
