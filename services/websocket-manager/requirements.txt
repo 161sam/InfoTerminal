@@ -3,5 +3,5 @@ uvicorn[standard]==0.24.0
 pydantic==2.5.0
 redis==5.0.1
 aioredis==2.0.1
-python-multipart==0.0.6
+python-multipart==0.0.18
 pyjwt==2.8.0
