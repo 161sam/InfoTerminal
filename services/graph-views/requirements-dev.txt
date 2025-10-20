@@ -1,10 +1,10 @@
 fastapi==0.116.1
 uvicorn==0.37.0
-neo4j==5.28.2
-pydantic==2.12.0
+neo4j==6.0.2
+pydantic==2.11.9
 httpx==0.28.1
 pytest==8.4.2
 pytest-cov==7.0.0
 pytest-asyncio==1.2.0
-anyio==4.10.0
+anyio==4.11.0
 ruff==0.13.2
