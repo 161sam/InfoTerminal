@@ -224,8 +224,8 @@ importers:
         specifier: ^27.0.0
         version: 27.0.0(postcss@8.5.6)
       playwright:
-        specifier: ^1.43.0
-        version: 1.55.0
+        specifier: ^1.56.0
+        version: 1.56.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -298,6 +298,7 @@ packages:
 
   '@arcgis/core@4.33.14':
     resolution: {integrity: sha512-2/W8el2uGPib2NO7OoCqDx0Nniu7QlJQJr5AeU+50kVktJD3HhcwNJxqg8Jiibyml3AK0rB03HW1Ypbct7gMpg==}
+
 
   '@arcgis/lumina@4.34.0':
     resolution: {integrity: sha512-5YE4uFHKIqgwMbk2kQhw1fOGrzcXsUGFcgCBrWblu5v8SQ/gX+jL+dPnAgbFvhW9VKtGwmU3RE3MHXWNbmFQiw==}
@@ -4605,8 +4606,18 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.56.0:
+    resolution: {integrity: sha512-1SXl7pMfemAMSDn5rkPeZljxOCYAmQnYLBTExuh6E8USHXGSX3dx6lYZN/xPpTz1vimXmPA9CDnILvmJaB8aSQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.55.0:
     resolution: {integrity: sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.56.0:
+    resolution: {integrity: sha512-X5Q1b8lOdWIE4KAoHpW3SE8HvUB+ZZsUoN64ZhjnN8dOb1UpujxBtENGiZFE+9F/yhzJwYa+ca3u43FeLbboHA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -10799,9 +10810,17 @@ snapshots:
 
   playwright-core@1.55.0: {}
 
+  playwright-core@1.56.0: {}
+
   playwright@1.55.0:
     dependencies:
       playwright-core: 1.55.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.56.0:
+    dependencies:
+      playwright-core: 1.56.0
     optionalDependencies:
       fsevents: 2.3.2
 
