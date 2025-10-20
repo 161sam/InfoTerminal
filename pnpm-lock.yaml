@@ -112,8 +112,8 @@ importers:
         specifier: ^3.5.1
         version: 3.5.4
       framer-motion:
-        specifier: ^11.0.28
-        version: 11.18.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.23.24
+        version: 12.23.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       isomorphic-unfetch:
         specifier: ^4.0.2
         version: 4.0.2
@@ -299,8 +299,8 @@ packages:
   '@arcgis/core@4.33.14':
     resolution: {integrity: sha512-2/W8el2uGPib2NO7OoCqDx0Nniu7QlJQJr5AeU+50kVktJD3HhcwNJxqg8Jiibyml3AK0rB03HW1Ypbct7gMpg==}
 
-  '@arcgis/lumina@4.34.0-next.157':
-    resolution: {integrity: sha512-n7HC4FSydOZlrl7hQcwAROXXeNgRivhWjJJKplQJPLJZAnUNiTsemNoXd8Sof8G6On7vYTC84+FbXZ6iXfhaig==}
+  '@arcgis/lumina@4.34.0':
+    resolution: {integrity: sha512-5YE4uFHKIqgwMbk2kQhw1fOGrzcXsUGFcgCBrWblu5v8SQ/gX+jL+dPnAgbFvhW9VKtGwmU3RE3MHXWNbmFQiw==}
     peerDependencies:
       '@lit/context': ^1.1.5
       lit: ^3.3.0
@@ -308,8 +308,8 @@ packages:
       '@lit/context':
         optional: true
 
-  '@arcgis/toolkit@4.34.0-next.157':
-    resolution: {integrity: sha512-T5N6XaiF8YsFA0Hc9CZso4Arb5P7hjFpfad1Debf7sF9YiPai0JZ/Knzy6wNNDYx3ujpxGnNWncnSNjTfQULxw==}
+  '@arcgis/toolkit@4.34.0':
+    resolution: {integrity: sha512-uN+9TxxUGuY4ALpUOffEH9XJi1Fye6HXXmGddKimNo7NoFEKUBm9pGBUlcBKWkLKuZe+WwOMWWXL79sXOPsRTg==}
 
   '@asamuzakjp/css-color@4.0.4':
     resolution: {integrity: sha512-cKjSKvWGmAziQWbCouOsFwb14mp1betm8Y7Fn+yglDMUUu3r9DCbJ9iJbeFDenLMqFbIMC0pQP8K+B8LAxX3OQ==}
@@ -649,8 +649,8 @@ packages:
     resolution: {integrity: sha512-einEveDJ/k1180NOp78PB/4Hje9eBy3dyOGLLtLn6bSkizpUfCwuYBIXOA7Y3F/k/BsTQXgKqUVwQ0eiscWMdA==}
     engines: {node: '>=18.0.0'}
 
-  '@esri/calcite-components@3.3.2':
-    resolution: {integrity: sha512-NSV7lM5nuPOhtCTs0MPfZzI6Bdhb+/psAzpdoWwQSsFaB/KAAAQl8zpx2S5LRG9mjwVuveSGwoRR5ZP53UQmjA==}
+  '@esri/calcite-components@3.3.3':
+    resolution: {integrity: sha512-tw+EfJ3pb+Odj71W6E9GUkm8rMbNxfW1KeiI8GgsKDzhr39hMKwY+zYYFFYuO0FONxWGvAB+B8yqB0NvH7WeHw==}
 
   '@esri/calcite-ui-icons@4.3.0':
     resolution: {integrity: sha512-iOOuRurpjFxFVw6+aXW2JpSkRBrdOpBcbdibfPOmSPqMd1aoHBtYmYXetKoH9vfrXoBiPyO2PkDnczhsu/N9IA==}
@@ -2997,6 +2997,9 @@ packages:
   es-toolkit@1.39.10:
     resolution: {integrity: sha512-E0iGnTtbDhkeczB0T+mxmoVlT4YNweEKBLq7oaU4p11mecdsZpNWOglI4895Vh4usbQ+LsJiuLuI2L0Vdmfm2w==}
 
+  es-toolkit@1.40.0:
+    resolution: {integrity: sha512-8o6w0KFmU0CiIl0/Q/BCEOabF2IJaELM1T2PWj6e8KqzHv1gdx+7JtFnDwOx1kJH/isJ5NwlDG1nCr1HrRF94Q==}
+
   esbuild@0.21.5:
     resolution: {integrity: sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==}
     engines: {node: '>=12'}
@@ -3291,8 +3294,8 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@11.18.2:
-    resolution: {integrity: sha512-5F5Och7wrvtLVElIpclDT0CBzMVg3dL22B64aZwHtsIY8RB4mXICLrkajK4G9R+ieSAGcgrLeae2SeUTg2pr6w==}
+  framer-motion@12.23.24:
+    resolution: {integrity: sha512-HMi5HRoRCTou+3fb3h9oTLyJGBxHfW+HnNE25tAXOvVx/IvwMHK0cx7IR4a2ZU6sh3IX1Z+4ts32PcYBOqka8w==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -4256,11 +4259,11 @@ packages:
     resolution: {integrity: sha512-223dMRJtI/l25dJKWpgij2cMtywuG/WiUKXdvwfbhGKBhy1puASqXwFzmWZ7+K73vUPoR7SS2Qz2cI/g9MKw0A==}
     engines: {node: '>= 0.8.0'}
 
-  motion-dom@11.18.1:
-    resolution: {integrity: sha512-g76KvA001z+atjfxczdRtw/RXOM3OMSdd1f4DL77qCTF/+avrRJiawSG4yDibEQ215sr9kpinSlX2pCTJ9zbhw==}
+  motion-dom@12.23.23:
+    resolution: {integrity: sha512-n5yolOs0TQQBRUFImrRfs/+6X4p3Q4n1dUEqt/H58Vx7OW6RF+foWEgmTVDhIWJIMXOuNNL0apKH2S16en9eiA==}
 
-  motion-utils@11.18.1:
-    resolution: {integrity: sha512-49Kt+HKjtbJKLtgO/LKj9Ld+6vw9BjH5d9sc40R/kVyH8GLAXgT42M2NnuPcJNuA3s9ZfZBUcwIgpmZWGEE+hA==}
+  motion-utils@12.23.6:
+    resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -5570,7 +5573,7 @@ snapshots:
   '@arcgis/core@4.33.14':
     dependencies:
       '@esri/arcgis-html-sanitizer': 4.1.0
-      '@esri/calcite-components': 3.3.2
+      '@esri/calcite-components': 3.3.3
       '@vaadin/grid': 24.7.12
       '@zip.js/zip.js': 2.7.73
       luxon: 3.6.1
@@ -5578,14 +5581,14 @@ snapshots:
     transitivePeerDependencies:
       - '@lit/context'
 
-  '@arcgis/lumina@4.34.0-next.157(lit@3.3.1)':
+  '@arcgis/lumina@4.34.0(lit@3.3.1)':
     dependencies:
-      '@arcgis/toolkit': 4.34.0-next.157
+      '@arcgis/toolkit': 4.34.0
       csstype: 3.1.3
       lit: 3.3.1
       tslib: 2.8.1
 
-  '@arcgis/toolkit@4.34.0-next.157':
+  '@arcgis/toolkit@4.34.0':
     dependencies:
       tslib: 2.8.1
 
@@ -5967,17 +5970,17 @@ snapshots:
     dependencies:
       xss: 1.0.13
 
-  '@esri/calcite-components@3.3.2':
+  '@esri/calcite-components@3.3.3':
     dependencies:
-      '@arcgis/lumina': 4.34.0-next.157(lit@3.3.1)
-      '@arcgis/toolkit': 4.34.0-next.157
+      '@arcgis/lumina': 4.34.0(lit@3.3.1)
+      '@arcgis/toolkit': 4.34.0
       '@esri/calcite-ui-icons': 4.3.0
       '@floating-ui/dom': 1.7.4
       '@floating-ui/utils': 0.2.10
       '@types/sortablejs': 1.15.8
       color: 5.0.2
       composed-offset-position: 0.0.6(@floating-ui/utils@0.2.10)
-      es-toolkit: 1.39.10
+      es-toolkit: 1.40.0
       focus-trap: 7.6.5
       interactjs: 1.10.27
       lit: 3.3.1
@@ -8822,6 +8825,8 @@ snapshots:
 
   es-toolkit@1.39.10: {}
 
+  es-toolkit@1.40.0: {}
+
   esbuild@0.21.5:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.21.5
@@ -9286,10 +9291,10 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@11.18.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  framer-motion@12.23.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      motion-dom: 11.18.1
-      motion-utils: 11.18.1
+      motion-dom: 12.23.23
+      motion-utils: 12.23.6
       tslib: 2.8.1
     optionalDependencies:
       react: 18.3.1
@@ -10397,11 +10402,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  motion-dom@11.18.1:
+  motion-dom@12.23.23:
     dependencies:
-      motion-utils: 11.18.1
+      motion-utils: 12.23.6
 
-  motion-utils@11.18.1: {}
+  motion-utils@12.23.6: {}
 
   ms@2.0.0: {}
 
