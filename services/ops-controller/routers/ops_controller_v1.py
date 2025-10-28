@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 import yaml
 import psutil
+import re
 
 from fastapi import APIRouter, HTTPException, Request, Query, status
 from fastapi.responses import StreamingResponse
@@ -399,11 +400,13 @@ def get_stack_logs(
 
         # Validate the `service` parameter if provided
         valid_services = list(stacks[name].get("services", {}).keys())
+        service_name_pattern = re.compile(r"^[a-zA-Z0-9_-]+$")
 
         def stream():
             args = ["logs", "-f", "--tail", N]
             if service:
-                if service not in valid_services:
+                # Check valid service AND safe service name
+                if service not in valid_services or not service_name_pattern.fullmatch(service):
                     yield f"Error: Invalid service name '{service}'\n".encode()
                     return
                 args.append(service)
