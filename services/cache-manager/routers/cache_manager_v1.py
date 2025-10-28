@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Request, Depends, Query, Path
 from fastapi.responses import JSONResponse
-
+from werkzeug.utils import secure_filename
 from main import (
     cache_manager, CacheKeyGenerator, CompressionManager,
     CacheLevel, CacheStrategy
@@ -583,7 +583,8 @@ async def restore_cache(restore_request: CacheRestoreRequest) -> CacheRestoreRes
     skipped_items = 0
     
     # In production, you'd load from persistent storage
-    backup_location = f"/tmp/{restore_request.backup_id}.json"
+    safe_backup_id = secure_filename(restore_request.backup_id)
+    backup_location = f"/tmp/{safe_backup_id}.json"
     
     try:
         with open(backup_location, 'r') as f:
