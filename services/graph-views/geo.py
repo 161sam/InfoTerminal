@@ -36,7 +36,9 @@ def list_geo():
 
 @router.get("/get")
 def get_geo(name: str = Query(...)):
-    path = GEO_DIR / name
+    path = (GEO_DIR / name).resolve()
+    if not str(path).startswith(str(GEO_DIR.resolve())):
+        raise HTTPException(400, "invalid name")
     if not path.exists():
         raise HTTPException(404, "not found")
     with path.open() as f:
