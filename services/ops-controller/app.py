@@ -183,6 +183,10 @@ def stack_scale(name: str, service: str, replicas: int, request: Request):
     stacks = _stacks()["stacks"]
     if name not in stacks: raise HTTPException(404,"unknown stack")
     files = stacks[name]["files"]
+    # Validate that service is in the set of known services for the stack
+    valid_services = stacks[name].get("services", [])
+    if not isinstance(service, str) or service.strip() == "" or service not in valid_services:
+        raise HTTPException(400, f"Service '{service}' not found in stack '{name}'")
     _lock_guard()
     try:
         p = _run(files, ["up","-d","--scale", f"{service}={replicas}"])
