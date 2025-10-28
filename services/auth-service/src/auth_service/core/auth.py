@@ -245,12 +245,12 @@ class SecurityUtils:
     @staticmethod
     def hash_api_key(api_key: str) -> str:
         """Hash API key for secure storage."""
-        return hashlib.sha256(api_key.encode()).hexdigest()
+        return pwd_context.hash(api_key)
     
     @staticmethod
     def verify_api_key(api_key: str, api_key_hash: str) -> bool:
         """Verify API key against its hash."""
-        return hashlib.sha256(api_key.encode()).hexdigest() == api_key_hash
+        return pwd_context.verify(api_key, api_key_hash)
     
     @staticmethod
     def generate_verification_token() -> str:
