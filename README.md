@@ -144,7 +144,7 @@ it fe test    # Vitest (dot reporter)
 
 ### Warum InfoTerminal?
 
-Weil es eine **offene, erweiterbare Alternative zu Palantir Gotham** bietet – für Journalist\:innen, Behörden, NGOs und Forschende.
+Weil es als eine **offene, erweiterbare OSINT Plattform** (#TODO: ausformulieren: workflows bündelt/erleichtert/automatisiert) bietet – für Journalist\:innen, NGOs, Forschende und Behörden.
 
 ### Wofür ist es gedacht?
 
@@ -156,9 +156,10 @@ Weil es eine **offene, erweiterbare Alternative zu Palantir Gotham** bietet – 
 ### Für wen?
 
 - Journalist\:innen (Recherche, Fake-News Erkennung)
-- Behörden & Sicherheitsorgane (Compliance, Risiko, Forensics)
 - Forschung & NGOs (Krisen, Klima, Humanitär)
 - Think Tanks & Unternehmen (Wirtschaft, Supply Chains, Märkte)
+- Behörden & Sicherheitsorgane (Compliance, Risiko, Forensics)
+
 
 ### Was kann InfoTerminal?
 
@@ -175,7 +176,7 @@ Weil es eine **offene, erweiterbare Alternative zu Palantir Gotham** bietet – 
 - Kein Ersatz für menschliche Bewertung → Human-in-the-Loop bleibt Pflicht
 - Kein Data-Lake für beliebige Rohdaten (fokus auf kuratierten Ingest)
 
-### Was unterscheidet InfoTerminal von Gotham?
+### Was unterscheidet InfoTerminal von (#TODO:ausformulieren: Vergleich alternativen bspw Palantir Gotham, andere)?
 
 - **Open Source, modular, föderiert**
 - **Ethical AI Toolkit** (Bias Checks, Transparenz)
