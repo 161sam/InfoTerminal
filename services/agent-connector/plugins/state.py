@@ -17,5 +17,13 @@ def _write_json(p: Path, data: Dict[str, Any]):
 def read_global(): return _read_json(STATE_DIR / "global.json")
 def write_global(d: Dict[str, Any]): _write_json(STATE_DIR / "global.json", d)
 
-def read_user(uid: str): return _read_json(STATE_DIR / f"users/{uid}.json")
-def write_user(uid: str, d: Dict[str, Any]): _write_json(STATE_DIR / f"users/{uid}.json", d)
+def _user_state_path(uid: str) -> Path:
+    # Prevent path traversal: normalize and verify stays inside users dir
+    base = (STATE_DIR / "users").resolve()
+    path = (base / f"{uid}.json").resolve()
+    if not str(path).startswith(str(base) + os.sep):
+        raise ValueError("Invalid uid: path traversal detected")
+    return path
+
+def read_user(uid: str): return _read_json(_user_state_path(uid))
+def write_user(uid: str, d: Dict[str, Any]): _write_json(_user_state_path(uid), d)
